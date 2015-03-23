@@ -1,0 +1,1 @@
+This contains the Dockerfiles (etc.) used for building Docker images used by "Scripts" on Kaggle.com.

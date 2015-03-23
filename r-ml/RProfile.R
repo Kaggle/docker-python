@@ -1,0 +1,1 @@
+options(device = function() png(width = 900))
