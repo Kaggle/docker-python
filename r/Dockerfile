@@ -84,7 +84,6 @@ RUN install2.r --error \
 	colorspace \
 	DBI \
 	devtools \
-	DiagrammeR \
 	dichromat \
 	digest \
 	dplyr \
