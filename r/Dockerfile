@@ -179,6 +179,11 @@ RUN install2.r --error \
 	yaml \
 	zoo
 
+
+# Needed for package DiagrammR, which xgboost needs
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends libv8-dev
+
 ADD RProfile.R /etc/R/Rprofile.site
 
 # package installation using devtools' install_github function
