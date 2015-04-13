@@ -7,3 +7,8 @@ RUN conda install pip statsmodels seaborn python-dateutil nltk -y && \
     # set backend for matplotlibrc to Agg
 RUN matplotlibrc_path=$(python -c "import site, os, fileinput; packages_dir = site.getsitepackages()[0]; print(os.path.join(packages_dir, 'matplotlib', 'mpl-data', 'matplotlibrc'))") && \
     sed -i 's/^backend      : Qt4Agg/backend      : Agg/' $matplotlibrc_path
+
+    # Install bleeding-edge xgboost
+RUN apt-get update && apt-get install -y git && apt-get install -y build-essential \
+    && cd && git clone https://github.com/dmlc/xgboost.git && cd xgboost && make \
+    && cd wrapper && python setup.py install
