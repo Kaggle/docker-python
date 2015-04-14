@@ -1,1 +1,3 @@
-This contains the Dockerfiles (etc.) used for building Docker images used by "Scripts" on Kaggle.com.
+# docker-python
+
+This contains the Dockerfile used for building the Python docker image for Kaggle Scripts.
