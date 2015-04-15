@@ -14,10 +14,6 @@ RUN conda install pip statsmodels seaborn python-dateutil nltk -y && \
     cd /usr/local/src && mkdir Lasagne && cd Lasagne && \
     git clone https://github.com/Lasagne/Lasagne.git && cd Lasagne && \
     pip install -r requirements.txt && python setup.py install && \
-    #keras
-    cd /usr/local/src && mkdir keras && cd keras && \
-    git clone https://github.com/fchollet/keras.git && \
-    cd keras && python setup.py install && \
     #nolearn
     cd /usr/local/src && mkdir nolearn && cd nolearn && \
     git clone https://github.com/dnouri/nolearn.git && cd nolearn && \
