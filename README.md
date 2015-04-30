@@ -1,4 +1,4 @@
-**Kaggle's Scripts** allow users to run scripts against our competition data sets without having to download data or set up their environment. Here's [an example](https://www.kaggle.com/users/213536/vasco/predict-west-nile-virus/west-nile-heatmap):
+**Kaggle Scripts** allow users to run scripts against our competition data sets without having to download data or set up their environment. Here's [an example](https://www.kaggle.com/users/213536/vasco/predict-west-nile-virus/west-nile-heatmap):
 
 ![example script](http://i.imgur.com/GrZ7diw.png)
 
