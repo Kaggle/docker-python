@@ -4,6 +4,8 @@ RUN conda install pip statsmodels seaborn python-dateutil nltk -y && \
     pip install pytagcloud pyyaml ggplot theano joblib husl && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
     apt-get update && apt-get install -y git && apt-get install -y build-essential && \
+    # ggplot
+    pip install ggplot && \
     #word cloud
     pip install git+git://github.com/amueller/word_cloud.git && \
     #xgboost
