@@ -23,7 +23,9 @@ RUN conda install pip statsmodels seaborn python-dateutil nltk scikit-learn -y &
     git clone https://github.com/dnouri/nolearn.git && cd nolearn && \
     python setup.py install && \
     # put theano compiledir inside /tmp (it needs to be in writable dir)
-    printf "[global]\nbase_compiledir = /tmp/.theano\n" > /.theanorc
+    printf "[global]\nbase_compiledir = /tmp/.theano\n" > /.theanorc && \
+    cd /usr/local/src &&  git clone https://github.com/pybrain/pybrain && \
+    cd pybrain && python setup.py install
     
     # set backend for matplotlibrc to Agg
 RUN matplotlibrc_path=$(python -c "import site, os, fileinput; packages_dir = site.getsitepackages()[0]; print(os.path.join(packages_dir, 'matplotlib', 'mpl-data', 'matplotlibrc'))") && \
