@@ -28,3 +28,17 @@ RUN conda install pip statsmodels seaborn python-dateutil nltk scikit-learn -y &
     # set backend for matplotlibrc to Agg
 RUN matplotlibrc_path=$(python -c "import site, os, fileinput; packages_dir = site.getsitepackages()[0]; print(os.path.join(packages_dir, 'matplotlib', 'mpl-data', 'matplotlibrc'))") && \
     sed -i 's/^backend      : Qt4Agg/backend      : Agg/' $matplotlibrc_path
+
+    # Install OpenCV-3 with Python support
+RUN apt-get -y install cmake && \
+    apt-get -y install libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev && \
+    apt-get -y install libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev && \
+    cd /usr/local/src && git clone https://github.com/Itseez/opencv.git && \
+    cd /usr/local/src/opencv && \
+    mkdir build && cd build && \
+    cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_TBB=ON -D BUILD_NEW_PYTHON_SUPPORT=ON -D WITH_V4L=ON -D WITH_QT=ON -D WITH_OPENGL=ON -D PYTHON3_LIBRARY=/opt/conda/lib/libpython3.4m.so -D PYTHON3_INCLUDE_DIR=/opt/conda/include/python3.4m/ .. && \
+    make -j $(nproc) && make install && \
+    echo "/usr/local/lib" > /etc/ld.so.conf.d/opencv.conf && ldconfig && \
+    cp /usr/local/lib/python3.4/site-packages/cv2.cpython-34m.so /opt/conda/lib/python3.4/site-packages/ 
+
+
