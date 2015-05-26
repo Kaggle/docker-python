@@ -32,7 +32,7 @@ RUN matplotlibrc_path=$(python -c "import site, os, fileinput; packages_dir = si
     sed -i 's/^backend      : Qt4Agg/backend      : Agg/' $matplotlibrc_path
 
     # Install OpenCV-3 with Python support
-RUN apt-get -y install cmake && \
+RUN apt-get -y install cmake imagemagick && \
     apt-get -y install libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev && \
     apt-get -y install libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev && \
     cd /usr/local/src && git clone https://github.com/Itseez/opencv.git && \
