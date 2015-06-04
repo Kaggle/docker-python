@@ -18,6 +18,10 @@ RUN conda install pip statsmodels seaborn python-dateutil nltk scikit-learn -y &
     cd /usr/local/src && mkdir keras && cd keras && \
     git clone https://github.com/fchollet/keras.git && \
     cd keras && python setup.py install && \
+    #neon
+    cd /usr/local/src && \
+    git clone https://github.com/NervanaSystems/neon.git && \
+    cd neon && pip install -e . && \
     #nolearn
     cd /usr/local/src && mkdir nolearn && cd nolearn && \
     git clone https://github.com/dnouri/nolearn.git && cd nolearn && \
