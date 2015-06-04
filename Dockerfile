@@ -18,14 +18,14 @@ RUN conda install pip statsmodels seaborn python-dateutil nltk scikit-learn -y &
     cd /usr/local/src && mkdir keras && cd keras && \
     git clone https://github.com/fchollet/keras.git && \
     cd keras && python setup.py install && \
+    #neon
+    cd /usr/local/src && \
+    git clone https://github.com/NervanaSystems/neon.git && \
+    cd neon && pip install -e . && \
     #nolearn
     cd /usr/local/src && mkdir nolearn && cd nolearn && \
     git clone https://github.com/dnouri/nolearn.git && cd nolearn && \
     python setup.py install && \
-    #neon
-    cd /usr/local/src && mkdir neon && cd neon && \
-    git clone https://github.com/NervanaSystems/neon.git && \
-    cd neon && python setup.py install && \
     # put theano compiledir inside /tmp (it needs to be in writable dir)
     printf "[global]\nbase_compiledir = /tmp/.theano\n" > /.theanorc && \
     cd /usr/local/src &&  git clone https://github.com/pybrain/pybrain && \
