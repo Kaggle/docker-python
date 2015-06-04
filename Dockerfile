@@ -25,6 +25,7 @@ RUN conda install pip statsmodels seaborn python-dateutil nltk scikit-learn -y &
     #nolearn
     cd /usr/local/src && mkdir nolearn && cd nolearn && \
     git clone https://github.com/dnouri/nolearn.git && cd nolearn && \
+    echo "x" > README.rst && echo "x" > CHANGES.rst && \
     python setup.py install && \
     # put theano compiledir inside /tmp (it needs to be in writable dir)
     printf "[global]\nbase_compiledir = /tmp/.theano\n" > /.theanorc && \
