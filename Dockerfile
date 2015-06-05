@@ -1,6 +1,6 @@
 FROM continuumio/anaconda3:latest
 
-RUN conda install pip statsmodels seaborn python-dateutil nltk scikit-learn -y && \
+RUN conda install pip statsmodels seaborn python-dateutil nltk scikit-learn -y -q && \
     pip install pytagcloud pyyaml ggplot theano joblib husl && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
     apt-get update && apt-get install -y git && apt-get install -y build-essential && \
@@ -52,5 +52,6 @@ RUN apt-get -y install cmake imagemagick && \
     make -j $(nproc) && make install && \
     echo "/usr/local/lib" > /etc/ld.so.conf.d/opencv.conf && ldconfig && \
     cp /usr/local/lib/python3.4/site-packages/cv2.cpython-34m.so /opt/conda/lib/python3.4/site-packages/ 
+
 
 
