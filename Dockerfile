@@ -53,5 +53,12 @@ RUN apt-get -y install cmake imagemagick && \
     echo "/usr/local/lib" > /etc/ld.so.conf.d/opencv.conf && ldconfig && \
     cp /usr/local/lib/python3.4/site-packages/cv2.cpython-34m.so /opt/conda/lib/python3.4/site-packages/ 
 
-
+    # matplotlib-toolkits
+RUN apt-get -y install libgeos-dev && \
+    cd /usr/local/src && git clone https://github.com/matplotlib/basemap.git && \
+    export GEOS_DIR=/usr/local && \
+    cd basemap && python setup.py install && \
+    # Pillow (PIL)
+    apt-get -y install zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev && \
+    pip install Pillow
 
