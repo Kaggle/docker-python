@@ -1,7 +1,7 @@
 FROM continuumio/anaconda3:latest
 
 RUN conda install pip statsmodels seaborn python-dateutil nltk scikit-learn -y -q && \
-    pip install pytagcloud pyyaml ggplot theano joblib husl geopy && \
+    pip install pytagcloud pyyaml ggplot theano joblib husl geopy tsne && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
     apt-get update && apt-get install -y git && apt-get install -y build-essential && \
     #word cloud
