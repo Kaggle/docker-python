@@ -1,7 +1,7 @@
 FROM continuumio/anaconda3:latest
 
 RUN conda install pip statsmodels seaborn python-dateutil nltk scikit-learn -y -q && \
-    pip install pytagcloud pyyaml ggplot theano joblib husl geopy tsne && \
+    pip install pytagcloud pyyaml ggplot theano joblib husl geopy && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
     apt-get update && apt-get install -y git && apt-get install -y build-essential && \
     #word cloud
@@ -30,7 +30,9 @@ RUN conda install pip statsmodels seaborn python-dateutil nltk scikit-learn -y -
     # put theano compiledir inside /tmp (it needs to be in writable dir)
     printf "[global]\nbase_compiledir = /tmp/.theano\n" > /.theanorc && \
     cd /usr/local/src &&  git clone https://github.com/pybrain/pybrain && \
-    cd pybrain && python setup.py install
+    cd pybrain && python setup.py install && \
+    # Base ATLAS plus tSNE
+    apt-get install -y libatlas-base-dev && pip install tsne
     
     # set backend for matplotlibrc to Agg
 RUN matplotlibrc_path=$(python -c "import site, os, fileinput; packages_dir = site.getsitepackages()[0]; print(os.path.join(packages_dir, 'matplotlib', 'mpl-data', 'matplotlibrc'))") && \
