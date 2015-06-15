@@ -62,5 +62,8 @@ RUN apt-get -y install libgeos-dev && \
     cd basemap && python setup.py install && \
     # Pillow (PIL)
     apt-get -y install zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev && \
-    pip install Pillow
+    pip install Pillow && 
+    cd /usr/local/src && git clone https://github.com/vitruvianscience/opendeep.git && \
+    cd opendeep && python setup.py develop
+
 
