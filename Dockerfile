@@ -34,7 +34,9 @@ RUN conda install pip statsmodels seaborn python-dateutil nltk scikit-learn -y -
     # Base ATLAS plus tSNE
     apt-get install -y libatlas-base-dev && pip install tsne && \
     cd /usr/local/src && git clone https://github.com/ztane/python-Levenshtein && \
-    cd python-Levenshtein && python setup.py install
+    cd python-Levenshtein && python setup.py install && \
+    cd /usr/local/src && git clone https://github.com/arogozhnikov/hep_ml.git && \
+    cd hep_ml && pip install .
     
     # set backend for matplotlibrc to Agg
 RUN matplotlibrc_path=$(python -c "import site, os, fileinput; packages_dir = site.getsitepackages()[0]; print(os.path.join(packages_dir, 'matplotlib', 'mpl-data', 'matplotlibrc'))") && \
