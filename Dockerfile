@@ -9,7 +9,7 @@ RUN conda install pip statsmodels seaborn python-dateutil nltk scikit-learn -y -
     #xgboost
     cd /usr/local/src && mkdir xgboost && cd xgboost && \
     git clone https://github.com/dmlc/xgboost.git && cd xgboost && \
-    make && cd wrapper && python setup.py install && \
+    make && cd python-package && python setup.py install && \
     #lasagne
     cd /usr/local/src && mkdir Lasagne && cd Lasagne && \
     git clone https://github.com/Lasagne/Lasagne.git && cd Lasagne && \
