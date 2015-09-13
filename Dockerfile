@@ -6,6 +6,8 @@ RUN conda install pip statsmodels seaborn python-dateutil nltk scikit-learn -y -
     apt-get update && apt-get install -y git && apt-get install -y build-essential && \
     #word cloud
     pip install git+git://github.com/amueller/word_cloud.git && \
+    #igraph
+    pip install python-igraph
     #xgboost
     cd /usr/local/src && mkdir xgboost && cd xgboost && \
     git clone https://github.com/dmlc/xgboost.git && cd xgboost && \
