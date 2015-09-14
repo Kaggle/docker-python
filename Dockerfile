@@ -4,6 +4,8 @@ RUN conda install pip statsmodels seaborn python-dateutil nltk scikit-learn spac
     pip install pytagcloud pyyaml ggplot theano joblib husl geopy ml_metrics mne pyshp gensim && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
     apt-get update && apt-get install -y git && apt-get install -y build-essential && \
+    # igraph
+    pip install python-igraph && \
     #word cloud
     pip install git+git://github.com/amueller/word_cloud.git && \
     #xgboost
