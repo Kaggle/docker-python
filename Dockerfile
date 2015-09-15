@@ -70,6 +70,8 @@ RUN apt-get -y install libgeos-dev && \
     apt-get -y install zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev && \
     pip install Pillow && \
     cd /usr/local/src && git clone https://github.com/vitruvianscience/opendeep.git && \
-    cd opendeep && python setup.py develop
+    cd opendeep && python setup.py develop  && \
+    # Cartopy
+    conda install -c scitools cartopy
 
 
