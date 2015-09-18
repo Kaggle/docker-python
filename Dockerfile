@@ -1,7 +1,7 @@
 FROM continuumio/anaconda3:latest
 
 RUN conda install pip statsmodels seaborn python-dateutil nltk scikit-learn spacy dask -y -q && \
-    pip install pytagcloud pyyaml ggplot theano joblib husl geopy ml_metrics mne pyshp gensim ibis-framework && \
+    pip install pytagcloud pyyaml ggplot theano joblib husl geopy ml_metrics mne pyshp gensim && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
     apt-get update && apt-get install -y git && apt-get install -y build-essential && \
     # igraph
@@ -74,4 +74,5 @@ RUN apt-get -y install libgeos-dev && \
     # Cartopy
     conda install -c scitools cartopy
 
-
+# hopefully installing ibis-framework
+RUN pip install ibis-framework
