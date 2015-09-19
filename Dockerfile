@@ -11,8 +11,6 @@ RUN conda install pip statsmodels seaborn python-dateutil nltk scikit-learn spac
     #xgboost
     cd /usr/local/src && mkdir xgboost && cd xgboost && \
     git clone https://github.com/dmlc/xgboost.git && cd xgboost && \
-    # latest Xgboost breaks Python 3. reverting to most recent functional commit
-    git checkout cf2ec238a4 && \
     make && cd python-package && python setup.py install && \
     #lasagne
     cd /usr/local/src && mkdir Lasagne && cd Lasagne && \
