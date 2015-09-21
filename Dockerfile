@@ -38,7 +38,9 @@ RUN conda install pip statsmodels seaborn python-dateutil nltk scikit-learn spac
     cd /usr/local/src && git clone https://github.com/ztane/python-Levenshtein && \
     cd python-Levenshtein && python setup.py install && \
     cd /usr/local/src && git clone https://github.com/arogozhnikov/hep_ml.git && \
-    cd hep_ml && pip install .
+    cd hep_ml && pip install .  && \
+    # chainer
+    pip install chainer
     
     # set backend for matplotlibrc to Agg
 RUN matplotlibrc_path=$(python -c "import site, os, fileinput; packages_dir = site.getsitepackages()[0]; print(os.path.join(packages_dir, 'matplotlib', 'mpl-data', 'matplotlibrc'))") && \
