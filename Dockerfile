@@ -9,9 +9,8 @@ RUN conda install pip statsmodels seaborn python-dateutil nltk scikit-learn spac
     #word cloud
     pip install git+git://github.com/amueller/word_cloud.git && \
     #xgboost
-    # Temporary switch to patched version
     cd /usr/local/src && mkdir xgboost && cd xgboost && \
-    git clone https://github.com/nerdcha/xgboost.git && cd xgboost && \
+    git clone https://github.com/dmlc/xgboost.git && cd xgboost && \
     make && cd python-package && python setup.py install && \
     #lasagne
     cd /usr/local/src && mkdir Lasagne && cd Lasagne && \
