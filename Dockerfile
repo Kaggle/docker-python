@@ -50,6 +50,8 @@ RUN conda install pip statsmodels seaborn python-dateutil nltk scikit-learn spac
     python -m nltk.downloader -d /usr/share/nltk_data all && \
     # Stop-words
     pip install stop-words
+    # Geohash
+    pip install Geohash
     
     # set backend for matplotlibrc to Agg
 RUN matplotlibrc_path=$(python -c "import site, os, fileinput; packages_dir = site.getsitepackages()[0]; print(os.path.join(packages_dir, 'matplotlib', 'mpl-data', 'matplotlibrc'))") && \
