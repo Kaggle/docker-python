@@ -6,6 +6,8 @@ RUN conda install pip statsmodels seaborn python-dateutil nltk scikit-learn spac
     apt-get update && apt-get install -y git && apt-get install -y build-essential && \
     # igraph
     pip install python-igraph && \
+    # textblob
+    pip install textblob && \
     #word cloud
     pip install git+git://github.com/amueller/word_cloud.git && \
     #igraph
