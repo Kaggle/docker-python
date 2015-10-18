@@ -47,7 +47,7 @@ RUN conda install pip statsmodels seaborn python-dateutil nltk scikit-learn spac
     mkdir -p /usr/share/nltk_data && \
     python -m nltk.downloader -d /usr/share/nltk_data all && \
     # Stop-words
-    pip install stop-words
+    pip install stop-words && \
     # Geohash
     pip install Geohash
     
