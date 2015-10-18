@@ -88,3 +88,8 @@ RUN apt-get -y install libgeos-dev && \
     # hopefully installing ibis-framework
 RUN pip install ibis-framework
 
+    # mxnet (has OpenCV as a dependency)
+RUN apt-get install -y libblas-dev && \
+    cd /usr/local/src && git clone --recursive https://github.com/dmlc/mxnet && \
+    cd mxnet && make
+
