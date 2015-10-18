@@ -4,6 +4,8 @@ RUN conda install pip statsmodels seaborn python-dateutil nltk scikit-learn spac
     pip install pytagcloud pyyaml ggplot theano joblib husl geopy ml_metrics mne pyshp gensim && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
     apt-get update && apt-get install -y git && apt-get install -y build-essential && \
+    # textblob
+    pip install textblob && \
     #word cloud
     pip install git+git://github.com/amueller/word_cloud.git && \
     #igraph
@@ -46,6 +48,8 @@ RUN conda install pip statsmodels seaborn python-dateutil nltk scikit-learn spac
     python -m nltk.downloader -d /usr/share/nltk_data all && \
     # Stop-words
     pip install stop-words
+    # Geohash
+    pip install Geohash
     
     # set backend for matplotlibrc to Agg
 RUN matplotlibrc_path=$(python -c "import site, os, fileinput; packages_dir = site.getsitepackages()[0]; print(os.path.join(packages_dir, 'matplotlib', 'mpl-data', 'matplotlibrc'))") && \
