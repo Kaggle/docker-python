@@ -1,10 +1,13 @@
 FROM continuumio/anaconda3:latest
 
-RUN conda install pip statsmodels seaborn python-dateutil nltk numpy scikit-learn spacy dask -y -q && \
+RUN conda install pip statsmodels seaborn python-dateutil nltk spacy dask -y -q && \
     pip install pytagcloud pyyaml ggplot theano joblib husl geopy ml_metrics mne pyshp gensim && \
     apt-get update && apt-get install -y git && apt-get install -y build-essential && \
     apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
+    # Latest sklearn && \
+    cd /usr/local/src && git clone https://github.com/scikit-learn/scikit-learn.git && \
+    cd scikit-learn && python setup.py build && python setup.py install && \
     # textblob
     pip install textblob && \
     #word cloud
