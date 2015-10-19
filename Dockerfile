@@ -1,6 +1,6 @@
 FROM continuumio/anaconda3:latest
 
-RUN conda install pip statsmodels seaborn python-dateutil nltk scikit-learn spacy dask -y -q && \
+RUN conda install pip statsmodels seaborn python-dateutil nltk numpy scikit-learn spacy dask -y -q && \
     pip install pytagcloud pyyaml ggplot theano joblib husl geopy ml_metrics mne pyshp gensim && \
     apt-get update && apt-get install -y git && apt-get install -y build-essential && \
     apt-get install -y libfreetype6-dev && \
