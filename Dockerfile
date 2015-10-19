@@ -2,8 +2,9 @@ FROM continuumio/anaconda3:latest
 
 RUN conda install pip statsmodels seaborn python-dateutil nltk scikit-learn spacy dask -y -q && \
     pip install pytagcloud pyyaml ggplot theano joblib husl geopy ml_metrics mne pyshp gensim && \
-    apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
     apt-get update && apt-get install -y git && apt-get install -y build-essential && \
+    apt-get install -y libfreetype6-dev && \
+    apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
     # textblob
     pip install textblob && \
     #word cloud
@@ -78,7 +79,7 @@ RUN apt-get -y install libgeos-dev && \
     export GEOS_DIR=/usr/local && \
     cd basemap && python setup.py install && \
     # Pillow (PIL)
-    apt-get -y install zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev && \
+    apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev && \
     pip install Pillow && \
     cd /usr/local/src && git clone https://github.com/vitruvianscience/opendeep.git && \
     cd opendeep && python setup.py develop  && \
