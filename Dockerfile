@@ -76,7 +76,7 @@ RUN apt-get -y install cmake imagemagick && \
     echo "/usr/local/lib" > /etc/ld.so.conf.d/opencv.conf && ldconfig && \
     cp /usr/local/lib/python3.4/site-packages/cv2.cpython-34m.so /opt/conda/lib/python3.4/site-packages/ 
 
-    # matplotlib-toolkits
+
 RUN apt-get -y install libgeos-dev && \
     cd /usr/local/src && git clone https://github.com/matplotlib/basemap.git && \
     export GEOS_DIR=/usr/local && \
@@ -86,11 +86,13 @@ RUN apt-get -y install libgeos-dev && \
     pip install Pillow && \
     cd /usr/local/src && git clone https://github.com/vitruvianscience/opendeep.git && \
     cd opendeep && python setup.py develop  && \
-    # Cartopy
-    conda install -c scitools cartopy
+    # Cartopy and dependencies
+    conda install proj4 && \
+    pip install packaging && \
+    cd /usr/local/src && git clone https://github.com/nerdcha/Shapely.git && \
+    cd Shapely && python setup.py install && \
+    cd /usr/local/src && git clone https://github.com/SciTools/cartopy.git && \
+    cd cartopy && python setup.py install && \
+    pip install ibis-framework
 
-    # hopefully installing ibis-framework
-RUN pip install ibis-framework
 
-    # Correct numpy/sklearn version clash
-RUN pip install --upgrade --force-reinstall numpy
