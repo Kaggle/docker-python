@@ -54,10 +54,6 @@ RUN conda install pip statsmodels seaborn python-dateutil nltk spacy dask -y -q 
     pip install stop-words && \
     # Geohash
     pip install Geohash
-    
-    # set backend for matplotlibrc to Agg
-RUN matplotlibrc_path=$(python -c "import site, os, fileinput; packages_dir = site.getsitepackages()[0]; print(os.path.join(packages_dir, 'matplotlib', 'mpl-data', 'matplotlibrc'))") && \
-    sed -i 's/^backend      : Qt4Agg/backend      : Agg/' $matplotlibrc_path
 
     # Install OpenCV-3 with Python support
     # We build libpng 1.6.17 from source because the apt-get version is too out of
@@ -76,6 +72,12 @@ RUN apt-get -y install cmake imagemagick && \
     echo "/usr/local/lib" > /etc/ld.so.conf.d/opencv.conf && ldconfig && \
     cp /usr/local/lib/python3.4/site-packages/cv2.cpython-34m.so /opt/conda/lib/python3.4/site-packages/ 
 
+    
+    # Matplotlib, with backend set to Agg
+RUN cd /usr/local/src && git clone https://github.com/matplotlib/matplotlib.git && \
+    cd matplotlib && python setup.py build && python setup.py install && \
+    matplotlibrc_path=$(python -c "import site, os, fileinput; packages_dir = site.getsitepackages()[0]; print(os.path.join(packages_dir, 'matplotlib', 'mpl-data', 'matplotlibrc'))") && \
+    sed -i 's/^backend      : Qt4Agg/backend      : Agg/' $matplotlibrc_path
 
 RUN apt-get -y install libgeos-dev && \
     cd /usr/local/src && git clone https://github.com/matplotlib/basemap.git && \
