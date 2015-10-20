@@ -62,19 +62,19 @@ RUN matplotlibrc_path=$(python -c "import site, os, fileinput; packages_dir = si
     # Install OpenCV-3 with Python support
     # We build libpng 1.6.17 from source because the apt-get version is too out of
     # date for OpenCV-3.
-#RUN apt-get -y install cmake imagemagick && \
-#    apt-get -y install libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev && \
-#    apt-get -y install libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev && \
-#    cd /usr/local/src && wget http://downloads.sourceforge.net/libpng/libpng-1.6.17.tar.xz && \
-#    tar -xf libpng-1.6.17.tar.xz && cd libpng-1.6.17 && \
-#    ./configure --prefix=/usr --disable-static && make && make install && \
-#    cd /usr/local/src && git clone https://github.com/Itseez/opencv.git && \
-#    cd /usr/local/src/opencv && \
-#    mkdir build && cd build && \
-#    cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_TBB=ON -D WITH_FFMPEG=OFF -D BUILD_NEW_PYTHON_SUPPORT=ON -D WITH_V4L=ON -D WITH_QT=ON -D WITH_OPENGL=ON -D PYTHON3_LIBRARY=/opt/conda/lib/libpython3.4m.so -D PYTHON3_INCLUDE_DIR=/opt/conda/include/python3.4m/ .. && \
-#    make -j $(nproc) && make install && \
-#    echo "/usr/local/lib" > /etc/ld.so.conf.d/opencv.conf && ldconfig && \
-#    cp /usr/local/lib/python3.4/site-packages/cv2.cpython-34m.so /opt/conda/lib/python3.4/site-packages/ 
+RUN apt-get -y install cmake imagemagick && \
+    apt-get -y install libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev && \
+    apt-get -y install libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev && \
+    cd /usr/local/src && wget http://downloads.sourceforge.net/libpng/libpng-1.6.17.tar.xz && \
+    tar -xf libpng-1.6.17.tar.xz && cd libpng-1.6.17 && \
+    ./configure --prefix=/usr --disable-static && make && make install && \
+    cd /usr/local/src && git clone https://github.com/Itseez/opencv.git && \
+    cd /usr/local/src/opencv && \
+    mkdir build && cd build && \
+    cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_TBB=ON -D WITH_FFMPEG=OFF -D BUILD_NEW_PYTHON_SUPPORT=ON -D WITH_V4L=ON -D WITH_QT=ON -D WITH_OPENGL=ON -D PYTHON3_LIBRARY=/opt/conda/lib/libpython3.4m.so -D PYTHON3_INCLUDE_DIR=/opt/conda/include/python3.4m/ .. && \
+    make -j $(nproc) && make install && \
+    echo "/usr/local/lib" > /etc/ld.so.conf.d/opencv.conf && ldconfig && \
+    cp /usr/local/lib/python3.4/site-packages/cv2.cpython-34m.so /opt/conda/lib/python3.4/site-packages/ 
 
     # matplotlib-toolkits
 RUN apt-get -y install libgeos-dev && \
