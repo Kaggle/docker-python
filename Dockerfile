@@ -92,6 +92,6 @@ RUN apt-get -y install libgeos-dev && \
     
     # Matplotlib, with backend set to Agg
 RUN cd /usr/local/src && git clone https://github.com/matplotlib/matplotlib.git && \
-    cd matplotlib && sed 's/^#backend = Agg/^backend = Agg/' setup.cfg.template && \
-    mv setup.cfg.template setup.cfg && python setup.py build && python setup.py install
+    cd matplotlib && mv setup.cfg.template setup.cfg && echo "backend = Agg" >> setup.cfg && \
+    python setup.py build && python setup.py install
 
