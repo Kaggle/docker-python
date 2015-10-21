@@ -72,13 +72,6 @@ RUN apt-get -y install cmake imagemagick && \
     echo "/usr/local/lib" > /etc/ld.so.conf.d/opencv.conf && ldconfig && \
     cp /usr/local/lib/python3.4/site-packages/cv2.cpython-34m.so /opt/conda/lib/python3.4/site-packages/ 
 
-    
-    # Matplotlib, with backend set to Agg
-RUN cd /usr/local/src && git clone https://github.com/matplotlib/matplotlib.git && \
-    cd matplotlib && python setup.py build && python setup.py install && \
-    matplotlibrc_path=$(python -c "import site, os, fileinput; packages_dir = site.getsitepackages()[0]; print(os.path.join(packages_dir, 'matplotlib', 'mpl-data', 'matplotlibrc'))") && \
-    sed -i 's/^backend      : Qt4Agg/backend      : Agg/' $matplotlibrc_path
-
 RUN apt-get -y install libgeos-dev && \
     cd /usr/local/src && git clone https://github.com/matplotlib/basemap.git && \
     export GEOS_DIR=/usr/local && \
@@ -96,5 +89,9 @@ RUN apt-get -y install libgeos-dev && \
     cd /usr/local/src && git clone https://github.com/SciTools/cartopy.git && \
     cd cartopy && python setup.py install && \
     pip install ibis-framework
-
+    
+    # Matplotlib, with backend set to Agg
+RUN cd /usr/local/src && git clone https://github.com/matplotlib/matplotlib.git && \
+    cd matplotlib && sed 's/^#backend = Agg/^backend = Agg/' setup.cfg.template && \
+    mv setup.cfg.template setup.cfg && python setup.py build && python setup.py install
 
