@@ -82,7 +82,7 @@ RUN apt-get -y install libgeos-dev && \
     cd /usr/local/src && git clone https://github.com/vitruvianscience/opendeep.git && \
     cd opendeep && python setup.py develop  && \
     # Cartopy and dependencies
-    conda install proj4 && \
+    yes | conda install proj4 && \
     pip install packaging && \
     cd /usr/local/src && git clone https://github.com/Toblerity/Shapely.git && \
     cd Shapely && python setup.py install && \
@@ -94,4 +94,23 @@ RUN apt-get -y install libgeos-dev && \
 RUN cd /usr/local/src && git clone https://github.com/matplotlib/matplotlib.git && \
     cd matplotlib && mv setup.cfg.template setup.cfg && echo "backend = Agg" >> setup.cfg && \
     python setup.py build && python setup.py install
+
+    # MXNet
+    # The g++4.8 dependency is not currently available via the default apt-get
+    # channels, so we add the Ubuntu repository (which requires python-software-properties
+    # so we can call `add-apt-repository`. There's also some mucking about with GPG keys
+    # required.
+RUN apt-get install -y python-software-properties && \
+    add-apt-repository "deb http://archive.ubuntu.com/ubuntu trusty main" && \
+    apt-get install debian-archive-keyring && apt-key update && apt-get update && \
+    apt-get install --force-yes -y ubuntu-keyring && \
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 40976EAF437D05B5 3B4FE6ACC0B21F32 && \
+    mv /var/lib/apt/lists /tmp && mkdir -p /var/lib/apt/lists/partial && \
+    apt-get clean && apt-get update && apt-get install -y g++-4.8 && \
+    cd /usr/local/src && git clone --recursive https://github.com/dmlc/mxnet && \
+    cp make/config.mk . && sed -i 's/CC = gcc/CC = gcc-4.8/' config.mk && \
+    sed -i 's/CXX = g++/CXX = g++-4.8/' config.mk && \
+    sed -i 's/ADD_LDFLAGS =/ADD_LDFLAGS = -lstdc++/' config.mk && \
+    cd mxnet && make && cd python && python setup.py install
+
 
