@@ -84,7 +84,7 @@ RUN apt-get -y install libgeos-dev && \
     # Cartopy and dependencies
     conda install proj4 && \
     pip install packaging && \
-    cd /usr/local/src && git clone https://github.com/nerdcha/Shapely.git && \
+    cd /usr/local/src && git clone https://github.com/Toblerity/Shapely.git && \
     cd Shapely && python setup.py install && \
     cd /usr/local/src && git clone https://github.com/SciTools/cartopy.git && \
     cd cartopy && python setup.py install && \
