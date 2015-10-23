@@ -82,7 +82,7 @@ RUN apt-get -y install libgeos-dev && \
     cd /usr/local/src && git clone https://github.com/vitruvianscience/opendeep.git && \
     cd opendeep && python setup.py develop  && \
     # Cartopy and dependencies
-    conda install proj4 && \
+    yes | conda install proj4 && \
     pip install packaging && \
     cd /usr/local/src && git clone https://github.com/Toblerity/Shapely.git && \
     cd Shapely && python setup.py install && \
