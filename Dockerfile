@@ -108,7 +108,7 @@ RUN apt-get install -y python-software-properties && \
     mv /var/lib/apt/lists /tmp && mkdir -p /var/lib/apt/lists/partial && \
     apt-get clean && apt-get update && apt-get install -y g++-4.8 && \
     cd /usr/local/src && git clone --recursive https://github.com/dmlc/mxnet && \
-    cp make/config.mk . && sed -i 's/CC = gcc/CC = gcc-4.8/' config.mk && \
+    cd mxnet && cp make/config.mk . && sed -i 's/CC = gcc/CC = gcc-4.8/' config.mk && \
     sed -i 's/CXX = g++/CXX = g++-4.8/' config.mk && \
     sed -i 's/ADD_LDFLAGS =/ADD_LDFLAGS = -lstdc++/' config.mk && \
     cd mxnet && make && cd python && python setup.py install
