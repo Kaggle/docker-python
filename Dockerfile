@@ -66,10 +66,9 @@ RUN conda install pip statsmodels seaborn python-dateutil nltk spacy dask -y -q 
     # Install OpenCV-3 with Python support
     # We build libpng 1.6.17 from source because the apt-get version is too out of
     # date for OpenCV-3.
-RUN apt-get update && apt-get -y install cmake imagemagick && \
+RUN apt-get update && apt-get -y install cmake imagemagick python3-dev && \
     apt-get -y install libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev && \
     apt-get -y install libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev && \
-    apt-get -y install python3-dev && \
     cd /usr/local/src && wget http://downloads.sourceforge.net/libpng/libpng-1.6.17.tar.xz && \
     tar -xf libpng-1.6.17.tar.xz && cd libpng-1.6.17 && \
     ./configure --prefix=/usr --disable-static && make && make install && \
