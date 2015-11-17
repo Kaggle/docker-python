@@ -53,7 +53,11 @@ RUN conda install pip statsmodels seaborn python-dateutil nltk spacy dask -y -q 
     # Stop-words
     pip install stop-words && \
     # Geohash
-    pip install Geohash
+    pip install Geohash && \
+    # DEAP genetic algorithms framework
+    pip install deap && \
+    # TPOT pipeline infrastructure
+    pip install tpot
 
     # Install OpenCV-3 with Python support
     # We build libpng 1.6.17 from source because the apt-get version is too out of
