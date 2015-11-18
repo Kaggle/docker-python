@@ -98,10 +98,9 @@ RUN apt-get -y install libgeos-dev && \
     cd cartopy && python setup.py install && \
     pip install ibis-framework
     
-    # Matplotlib, with backend set to Agg
-RUN cd /usr/local/src && git clone https://github.com/matplotlib/matplotlib.git && \
-    cd matplotlib && mv setup.cfg.template setup.cfg && echo "backend = Agg" >> setup.cfg && \
-    python setup.py build && python setup.py install
+    # set backend for matplotlib to Agg
+RUN matplotlibrc_path=$(python -c "import site, os, fileinput; packages_dir = site.getsitepackages()[0]; print(os.path.join(packages_dir, 'matplotlib', 'mpl-data', 'matplotlibrc'))") && \
+    sed -i 's/^backend      : Qt4Agg/backend      : Agg/' $matplotlibrc_path
 
     # MXNet
     # The g++4.8 dependency is not currently available via the default apt-get
