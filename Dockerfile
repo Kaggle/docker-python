@@ -61,7 +61,9 @@ RUN conda install pip statsmodels seaborn python-dateutil nltk spacy dask -y -q 
     # DEAP genetic algorithms framework
     pip install deap && \
     # TPOT pipeline infrastructure
-    pip install tpot
+    pip install tpot && \
+    # haversine
+    pip install haversine
 
     # Install OpenCV-3 with Python support
     # We build libpng 1.6.17 from source because the apt-get version is too out of
