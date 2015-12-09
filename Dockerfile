@@ -14,19 +14,6 @@ RUN conda install pip statsmodels seaborn python-dateutil nltk spacy dask -y -q 
     pip install git+git://github.com/amueller/word_cloud.git && \
     #igraph
     pip install python-igraph && \
-    #h2o
-    DEBIAN_FRONTEND=noninteractive apt-get install -y wget unzip software-properties-common python-software-properties && \
-    add-apt-repository -y ppa:webupd8team/java && \
-    apt-get update -q && \
-    echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
-    echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y oracle-java7-installer && \
-    apt-get clean && \
-    cd /usr/local/src && mkdir h2o && cd h2o && \
-    wget http://h2o-release.s3.amazonaws.com/h2o/latest_stable -O latest && \
-    wget --no-check-certificate -i latest -O h2o.zip && rm latest && \
-    unzip h2o.zip && rm h2o.zip && cp h2o-*/h2o.jar . && \
-    pip install `find . -name "*whl"`
     #xgboost
     cd /usr/local/src && mkdir xgboost && cd xgboost && \
     git clone https://github.com/dmlc/xgboost.git && cd xgboost && \
@@ -139,4 +126,17 @@ RUN apt-get install -y python-software-properties && \
 RUN mkdir -p /root/.jupyter && touch /root/.jupyter/jupyter_nbconvert_config.py && touch /root/.jupyter/migrated && \
     mkdir -p /.jupyter && touch /.jupyter/jupyter_nbconvert_config.py && touch /.jupyter/migrated
 
-
+    # h2o
+    # (This requires python-software-properties; see the MXNet section above for installation.)
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y wget unzip software-properties-common && \
+    add-apt-repository -y ppa:webupd8team/java && \
+    apt-get update -q && \
+    echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
+    echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y oracle-java7-installer && \
+    apt-get clean && \
+    cd /usr/local/src && mkdir h2o && cd h2o && \
+    wget http://h2o-release.s3.amazonaws.com/h2o/latest_stable -O latest && \
+    wget --no-check-certificate -i latest -O h2o.zip && rm latest && \
+    unzip h2o.zip && rm h2o.zip && cp h2o-*/h2o.jar . && \
+    pip install `find . -name "*whl"`
