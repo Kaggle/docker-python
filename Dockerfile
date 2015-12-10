@@ -143,7 +143,7 @@ RUN mkdir -p /root/.jupyter && touch /root/.jupyter/jupyter_nbconvert_config.py 
 
     # h2o
     # (This requires python-software-properties; see the MXNet section above for installation.)
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y wget unzip software-properties-common && \
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y wget unzip && \
     add-apt-repository -y ppa:webupd8team/java && \
     apt-get update -q && \
     echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
