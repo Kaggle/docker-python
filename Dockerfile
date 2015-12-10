@@ -62,7 +62,7 @@ comparative_sentences comtrans conll2000 conll2002 conll2007 crubadan dependency
 europarl_raw floresta framenet_v15 gazetteers genesis gutenberg hmm_treebank_pos_tagger \
 ieer inaugural indian jeita kimmo knbc large_grammars lin_thesaurus mac_morpho machado \
 masc_tagged maxent_ne_chunker maxent_treebank_pos_tagger moses_sample movie_reviews \
-mte_teip5 names nombank nps_chat oanc_masc omw opinion_lexicon panlex_swadesh paradigms \
+mte_teip5 names nps_chat oanc_masc omw opinion_lexicon panlex_swadesh paradigms \
 pil pl196x ppattach problem_reports product_reviews_1 product_reviews_2 propbank \
 pros_cons ptb punkt qc reuters rslp rte sample_grammars semcor senseval sentence_polarity \
 sentiwordnet shakespeare sinica_treebank smultron snowball_data spanish_grammars \
