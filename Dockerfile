@@ -148,7 +148,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y wget unzip && \
     apt-get update -q && \
     echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
     echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y oracle-java7-installer && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y -t trusty oracle-java7-installer && \
     apt-get clean && \
     cd /usr/local/src && mkdir h2o && cd h2o && \
     wget http://h2o-release.s3.amazonaws.com/h2o/latest_stable -O latest && \
