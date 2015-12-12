@@ -53,22 +53,7 @@ RUN conda install pip statsmodels seaborn python-dateutil nltk spacy dask -y -q 
     pip install chainer && \
     # NLTK Project datasets
     mkdir -p /usr/share/nltk_data && \
-    # NLTK Downloader no longer continues smoothly after an error, so we explicitly list
-    # the corpuses that work
-    python -m nltk.downloader -d /usr/share/nltk_data abc alpino \
-    averaged_perceptron_tagger basque_grammars biocreative_ppi bllip_wsj_no_aux \
-book_grammars brown brown_tei cess_cat cess_esp chat80 city_database cmudict \
-comparative_sentences comtrans conll2000 conll2002 conll2007 crubadan dependency_treebank \
-europarl_raw floresta framenet_v15 gazetteers genesis gutenberg hmm_treebank_pos_tagger \
-ieer inaugural indian jeita kimmo knbc large_grammars lin_thesaurus mac_morpho machado \
-masc_tagged maxent_ne_chunker maxent_treebank_pos_tagger moses_sample movie_reviews \
-mte_teip5 names nps_chat oanc_masc omw opinion_lexicon panlex_swadesh paradigms \
-pil pl196x ppattach problem_reports product_reviews_1 product_reviews_2 propbank \
-pros_cons ptb punkt qc reuters rslp rte sample_grammars semcor senseval sentence_polarity \
-sentiwordnet shakespeare sinica_treebank smultron snowball_data spanish_grammars \
-state_union stopwords subjectivity swadesh switchboard tagsets timit toolbox treebank \
-twitter_samples udhr2 udhr unicode_samples universal_tagset universal_treebanks_v20 \
-verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
+    python -m nltk.downloader -d /usr/share/nltk_data all && \
     # Stop-words
     pip install stop-words && \
     # Geohash
@@ -141,17 +126,5 @@ RUN apt-get install -y python-software-properties && \
 RUN mkdir -p /root/.jupyter && touch /root/.jupyter/jupyter_nbconvert_config.py && touch /root/.jupyter/migrated && \
     mkdir -p /.jupyter && touch /.jupyter/jupyter_nbconvert_config.py && touch /.jupyter/migrated
 
-    # h2o
-    # (This requires python-software-properties; see the MXNet section above for installation.)
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y wget unzip && \
-    add-apt-repository -y ppa:webupd8team/java && \
-    apt-get update -q && \
-    echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
-    echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y -t trusty oracle-java7-installer && \
-    apt-get clean && \
-    cd /usr/local/src && mkdir h2o && cd h2o && \
-    wget http://h2o-release.s3.amazonaws.com/h2o/latest_stable -O latest && \
-    wget --no-check-certificate -i latest -O h2o.zip && rm latest && \
-    unzip h2o.zip && rm h2o.zip && cp h2o-*/h2o.jar . && \
-    pip install `find . -name "*whl"`
+    # Installing TensorFlow
+RUN pip install --upgrade https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.6.0-cp34-none-linux_x86_64.whl
