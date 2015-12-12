@@ -1,6 +1,7 @@
 FROM continuumio/anaconda3:latest
 
-RUN conda install pip statsmodels seaborn python-dateutil nltk spacy dask -y -q && \
+# removed nltk from conda install because it was broken, as well as commented out nltk downloads
+RUN conda install pip statsmodels seaborn python-dateutil spacy dask -y -q && \
     pip install pytagcloud pyyaml ggplot theano joblib husl geopy ml_metrics mne pyshp gensim && \
     apt-get update && apt-get install -y git && apt-get install -y build-essential && \
     apt-get install -y libfreetype6-dev && \
@@ -52,8 +53,8 @@ RUN conda install pip statsmodels seaborn python-dateutil nltk spacy dask -y -q 
     # chainer
     pip install chainer && \
     # NLTK Project datasets
-    mkdir -p /usr/share/nltk_data && \
-    python -m nltk.downloader -d /usr/share/nltk_data all && \
+    # mkdir -p /usr/share/nltk_data && \
+    # python -m nltk.downloader -d /usr/share/nltk_data all && \
     # Stop-words
     pip install stop-words && \
     # Geohash
