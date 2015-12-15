@@ -83,7 +83,7 @@ RUN apt-get update && apt-get -y install cmake imagemagick && \
     cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_TBB=ON -D WITH_FFMPEG=OFF -D BUILD_NEW_PYTHON_SUPPORT=ON -D WITH_V4L=ON -D WITH_QT=OFF -D WITH_OPENGL=ON -D PYTHON3_LIBRARY=/opt/conda/lib/libpython3.4m.so -D PYTHON3_INCLUDE_DIR=/opt/conda/include/python3.4m/ .. && \
     make -j $(nproc) && make install && \
     echo "/usr/local/lib" > /etc/ld.so.conf.d/opencv.conf && ldconfig && \
-    cp /usr/local/lib/python3.4/site-packages/cv2.cpython-34m-x86_64-linux-gnu.so /opt/conda/lib/python3.4/site-packages/ 
+    cp /usr/local/lib/python3.4/site-packages/cv2.cpython-34m.so /opt/conda/lib/python3.4/site-packages/ 
 
 RUN apt-get -y install libgeos-dev && \
     cd /usr/local/src && git clone https://github.com/matplotlib/basemap.git && \
