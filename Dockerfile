@@ -139,6 +139,21 @@ RUN apt-get install -y python-software-properties && \
     sed -i 's/ADD_LDFLAGS =/ADD_LDFLAGS = -lstdc++/' config.mk && \
     make && cd python && python setup.py install
 
+    # h2o
+    # (This requires python-software-properties; see the MXNet section above for installation.)
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y wget unzip && \
+    add-apt-repository -y ppa:webupd8team/java && \
+    apt-get update -q && \
+    echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
+    echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y -t trusty oracle-java7-installer && \
+    apt-get clean && \
+    cd /usr/local/src && mkdir h2o && cd h2o && \
+    wget http://h2o-release.s3.amazonaws.com/h2o/latest_stable -O latest && \
+    wget --no-check-certificate -i latest -O h2o.zip && rm latest && \
+    unzip h2o.zip && rm h2o.zip && cp h2o-*/h2o.jar . && \
+    pip install `find . -name "*whl"`
+
     # Stop ipython nbconvert trying to rewrite its folder hierarchy
 RUN mkdir -p /root/.jupyter && touch /root/.jupyter/jupyter_nbconvert_config.py && touch /root/.jupyter/migrated && \
     mkdir -p /.jupyter && touch /.jupyter/jupyter_nbconvert_config.py && touch /.jupyter/migrated && \
