@@ -1,13 +1,30 @@
 FROM continuumio/anaconda3:latest
 
-# using python 3.4 instead of 3.5 because tensorflow's install breaks on 3.5
+    # g++4.8 (needed for MXNet) is not currently available via the default apt-get
+    # channels, so we add the Ubuntu repository (which requires python-software-properties
+    # so we can call `add-apt-repository`. There's also some mucking about with GPG keys
+    # required.
+RUN apt-get install -y python-software-properties && \
+    add-apt-repository "deb http://archive.ubuntu.com/ubuntu trusty main" && \
+    apt-get install debian-archive-keyring && apt-key update && apt-get update && \
+    apt-get install --force-yes -y ubuntu-keyring && \
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 40976EAF437D05B5 3B4FE6ACC0B21F32 && \
+    mv /var/lib/apt/lists /tmp && mkdir -p /var/lib/apt/lists/partial && \
+    apt-get clean && apt-get update && apt-get install -y g++-4.8 && \
+    ln -s /usr/bin/gcc-4.8 /usr/bin/gcc
+    
+    # using python 3.4 instead of 3.5 because tensorflow's install breaks on 3.5
 RUN conda install anaconda python=3.4 -y && \
-    conda install pip statsmodels seaborn python-dateutil nltk spacy dask -y -q && \
-    # pip currently has a more recent version of setuptools, which is required by
-    # TensorFlow, and `pip install --upgrade setuptools` breaks unless `conda remove` is
-    # called first.
-    conda remove setuptools && \
-    pip install --upgrade numpy protobuf setuptools && \
+    # TensorFlow wants bleeding-edge versions of numpy, setuptools and protobuf which
+    # clash with the conda-based installs of numpy and setuptools. So we first remove
+    # the existing installs and then replace them with the pip-based ones, so that
+    # other numpy-based packages will link correctly.
+    conda remove -y numpy && conda remove -y setuptools && \
+    # In building numpy from source, it's hard to persuade it to use gcc, so here's a patch
+    ln -s /usr/bin/gcc /usr/local/bin/cc && \
+    pip install --upgrade setuptools && \
+    pip install --upgrade protobuf && pip install --upgrade numpy && \
+    conda install statsmodels seaborn python-dateutil nltk spacy dask -y -q && \
     pip install pytagcloud pyyaml ggplot theano joblib husl geopy ml_metrics mne pyshp gensim && \
     apt-get update && apt-get install -y git && apt-get install -y build-essential && \
     apt-get install -y libfreetype6-dev && \
@@ -127,18 +144,7 @@ RUN matplotlibrc_path=$(python -c "import site, os, fileinput; packages_dir = si
     sed -i 's/^backend      : Qt4Agg/backend      : Agg/' $matplotlibrc_path
 
     # MXNet
-    # The g++4.8 dependency is not currently available via the default apt-get
-    # channels, so we add the Ubuntu repository (which requires python-software-properties
-    # so we can call `add-apt-repository`. There's also some mucking about with GPG keys
-    # required.
-RUN apt-get install -y python-software-properties && \
-    add-apt-repository "deb http://archive.ubuntu.com/ubuntu trusty main" && \
-    apt-get install debian-archive-keyring && apt-key update && apt-get update && \
-    apt-get install --force-yes -y ubuntu-keyring && \
-    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 40976EAF437D05B5 3B4FE6ACC0B21F32 && \
-    mv /var/lib/apt/lists /tmp && mkdir -p /var/lib/apt/lists/partial && \
-    apt-get clean && apt-get update && apt-get install -y g++-4.8 && \
-    cd /usr/local/src && git clone --recursive https://github.com/dmlc/mxnet && \
+RUN cd /usr/local/src && git clone --recursive https://github.com/dmlc/mxnet && \
     cd /usr/local/src/mxnet && cp make/config.mk . && sed -i 's/CC = gcc/CC = gcc-4.8/' config.mk && \
     sed -i 's/CXX = g++/CXX = g++-4.8/' config.mk && \
     sed -i 's/ADD_LDFLAGS =/ADD_LDFLAGS = -lstdc++/' config.mk && \
