@@ -107,11 +107,16 @@ verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
     # Install OpenCV-3 with Python support
     # We build libpng 1.6.17 from source because the apt-get version is too out of
     # date for OpenCV-3.
-RUN apt-get update && apt-get -y install cmake imagemagick && \
+RUN apt-get update && apt-get -y install cmake && \
+    # The apt-get version of imagemagick has gone mad, and wants to remove sysvinit.
+    apt-get -y build-dep imagemagick && \
+    wget http://www.imagemagick.org/download/ImageMagick-6.9.3-0.tar.gz && \
+    tar xzf ImageMagick-6.9.3-0.tar.gz && cd ImageMagick-6.9.3-0 && ./configure && \
+    make && make install && \
     apt-get -y install libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev && \
-    apt-get -y install libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev && \
-    cd /usr/local/src && wget http://downloads.sourceforge.net/libpng/libpng-1.6.17.tar.xz && \
-    tar -xf libpng-1.6.17.tar.xz && cd libpng-1.6.17 && \
+    apt-get -y install libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev && \
+    cd /usr/local/src && wget http://downloads.sourceforge.net/libpng/libpng-1.6.20.tar.xz && \
+    tar -xf libpng-1.6.20.tar.xz && cd libpng-1.6.20 && \
     ./configure --prefix=/usr --disable-static && make && make install && \
     cd /usr/local/src && git clone https://github.com/Itseez/opencv.git && \
     cd /usr/local/src/opencv && \
