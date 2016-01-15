@@ -105,23 +105,23 @@ verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
     pip install haversine
 
     # Install OpenCV-3 with Python support
-    # We build libpng 1.6.17 from source because the apt-get version is too out of
-    # date for OpenCV-3.
-RUN apt-get update && apt-get -y install cmake && \
+RUN apt-get update && \
     # The apt-get version of imagemagick has gone mad, and wants to remove sysvinit.
     apt-get -y build-dep imagemagick && \
     wget http://www.imagemagick.org/download/ImageMagick-6.9.3-0.tar.gz && \
     tar xzf ImageMagick-6.9.3-0.tar.gz && cd ImageMagick-6.9.3-0 && ./configure && \
     make && make install && \
     apt-get -y install libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev && \
-    apt-get -y install libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev && \
-    cd /usr/local/src && wget http://downloads.sourceforge.net/libpng/libpng-1.6.20.tar.xz && \
-    tar -xf libpng-1.6.20.tar.xz && cd libpng-1.6.20 && \
-    ./configure --prefix=/usr --disable-static && make && make install && \
+    apt-get -y install libtbb2 libtbb-dev libjpeg-dev libtiff-dev libjasper-dev && \
+    # apt-get gives you cmake 2.8, which fails to find Py3.4's libraries and headers. The current
+    # version is cmake 3.2, which does.
+    cd /usr/local/src && git clone https://github.com/Kitware/CMake.git && \
+    # --system-curl needed for OpenCV's IPP download, see https://stackoverflow.com/questions/29816529/unsupported-protocol-while-downlod-tar-gz-package/32370027#32370027
+    cd CMake && ./bootstrap --system-curl && make && make install && \
     cd /usr/local/src && git clone https://github.com/Itseez/opencv.git && \
     cd /usr/local/src/opencv && \
     mkdir build && cd build && \
-    cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_TBB=ON -D WITH_FFMPEG=OFF -D BUILD_NEW_PYTHON_SUPPORT=ON -D WITH_V4L=ON -D WITH_QT=OFF -D WITH_OPENGL=ON -D PYTHON3_LIBRARY=/opt/conda/lib/libpython3.4m.so -D PYTHON3_INCLUDE_DIR=/opt/conda/include/python3.4m/ .. && \
+    cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_TBB=ON -D WITH_FFMPEG=OFF -D WITH_V4L=ON -D WITH_QT=OFF -D WITH_OPENGL=ON -D PYTHON3_LIBRARY=/opt/conda/lib/libpython3.4m.so -D PYTHON3_INCLUDE_DIR=/opt/conda/include/python3.4m/ -D PYTHON_LIBRARY=/opt/conda/lib/libpython3.4m.so -D PYTHON_INCLUDE_DIR=/opt/conda/include/python3.4m/ .. && \
     make -j $(nproc) && make install && \
     echo "/usr/local/lib" > /etc/ld.so.conf.d/opencv.conf && ldconfig && \
     cp /usr/local/lib/python3.4/site-packages/cv2.cpython-34m.so /opt/conda/lib/python3.4/site-packages/ 
