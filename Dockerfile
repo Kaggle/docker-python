@@ -2,10 +2,7 @@ FROM kaggle/python1:latest
     
     # set backend for matplotlib to Agg
 RUN matplotlibrc_path=$(python -c "import site, os, fileinput; packages_dir = site.getsitepackages()[0]; print(os.path.join(packages_dir, 'matplotlib', 'mpl-data', 'matplotlibrc'))") && \
-    sed -i 's/^backend      : Qt4Agg/backend      : Agg/' $matplotlibrc_path  && \
-    # Stop Pyplot printing junk to the console on first load
-    python -c "import matplotlib.pyplot"
-
+    sed -i 's/^backend      : Qt4Agg/backend      : Agg/' $matplotlibrc_path
 
     # Stop ipython nbconvert trying to rewrite its folder hierarchy
 RUN mkdir -p /root/.jupyter && touch /root/.jupyter/jupyter_nbconvert_config.py && touch /root/.jupyter/migrated && \
@@ -13,7 +10,9 @@ RUN mkdir -p /root/.jupyter && touch /root/.jupyter/jupyter_nbconvert_config.py 
     # Keras likes to add a config file in a custom directory when it's
     # first imported. This doesn't work with our read-only filesystem, so we
     # have it done now
-    python -c "from keras.models import Sequential"
+    python -c "from keras.models import Sequential"  && \
+    # Stop Pyplot printing junk to the console on first load
+    python -c "import matplotlib.pyplot"
 
     # h2o
     # (This requires python-software-properties; see the MXNet section above for installation.)
