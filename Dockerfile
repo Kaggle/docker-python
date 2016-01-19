@@ -2,7 +2,9 @@ FROM kaggle/python1:latest
     
     # set backend for matplotlib to Agg
 RUN matplotlibrc_path=$(python -c "import site, os, fileinput; packages_dir = site.getsitepackages()[0]; print(os.path.join(packages_dir, 'matplotlib', 'mpl-data', 'matplotlibrc'))") && \
-    sed -i 's/^backend      : Qt4Agg/backend      : Agg/' $matplotlibrc_path
+    sed -i 's/^backend      : Qt4Agg/backend      : Agg/' $matplotlibrc_path  && \
+    # Stop Pyplot printing junk to the console on first load
+    python -c "import matplotlib.pyplot"
 
 
     # Stop ipython nbconvert trying to rewrite its folder hierarchy
