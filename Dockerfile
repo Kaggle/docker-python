@@ -11,8 +11,8 @@ RUN mkdir -p /root/.jupyter && touch /root/.jupyter/jupyter_nbconvert_config.py 
     # first imported. This doesn't work with our read-only filesystem, so we
     # have it done now
     python -c "from keras.models import Sequential"  && \
-    # Stop Pyplot printing junk to the console on first load
-    python -c "import matplotlib.pyplot"
+    # Stop Matplotlib printing junk to the console on first load
+    sed -i "s/^.*Matplotlib is building the font cache using fc-list.*$/# Warning removed by Kaggle/g" /opt/conda/lib/python3.4/site-packages/matplotlib/font_manager.py
 
     # h2o
     # (This requires python-software-properties; see the MXNet section above for installation.)
