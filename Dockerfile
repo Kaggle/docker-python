@@ -47,8 +47,9 @@ RUN python -c "from keras.models import Sequential"  && \
     mkdir -p /tmp/.keras && cp /.keras/keras.json /tmp/.keras
 
 
-    # More packages: (please add new pip installs here)
+    # More packages: (please add new pip/apt installs here)
 RUN pip install --upgrade mpld3 && \
     pip install mplleaflet && \
-    pip install gpxpy
+    pip install gpxpy && \
+    apt-get install python3-tk 
 
