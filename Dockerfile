@@ -40,7 +40,7 @@ RUN pip install --upgrade https://storage.googleapis.com/tensorflow/linux/cpu/te
     # have it done now
 RUN python -c "from keras.models import Sequential"  && \
     # Switch to TF backend
-    sed -i 's/theano/tensorflow/' /.keras/.keras.json  && \
+    sed -i 's/theano/tensorflow/' /.keras/keras.json  && \
     # Re-run it to flush any more disk writes
     python -c "from keras.models import Sequential; from keras.backend import backend; print(backend._BACKEND)"
 
