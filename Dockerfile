@@ -7,10 +7,6 @@ RUN matplotlibrc_path=$(python -c "import site, os, fileinput; packages_dir = si
     # Stop ipython nbconvert trying to rewrite its folder hierarchy
 RUN mkdir -p /root/.jupyter && touch /root/.jupyter/jupyter_nbconvert_config.py && touch /root/.jupyter/migrated && \
     mkdir -p /.jupyter && touch /.jupyter/jupyter_nbconvert_config.py && touch /.jupyter/migrated && \
-    # Keras likes to add a config file in a custom directory when it's
-    # first imported. This doesn't work with our read-only filesystem, so we
-    # have it done now
-    python -c "from keras.models import Sequential"  && \
     # Stop Matplotlib printing junk to the console on first load
     sed -i "s/^.*Matplotlib is building the font cache using fc-list.*$/# Warning removed by Kaggle/g" /opt/conda/lib/python3.4/site-packages/matplotlib/font_manager.py
 
@@ -37,3 +33,13 @@ RUN apt-get install -y wget unzip && \
 
     # TensorFlow
 RUN pip install --upgrade https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.6.0-cp34-none-linux_x86_64.whl
+
+    # Keras setup
+    # Keras likes to add a config file in a custom directory when it's
+    # first imported. This doesn't work with our read-only filesystem, so we
+    # have it done now
+RUN python -c "from keras.models import Sequential"  && \
+    # Switch to TF backend
+    sed -i 's/theano/tensorflow/' /.keras/.keras.json  && \
+    # Re-run it to flush any more disk writes
+    python -c "from keras.models import Sequential; from keras.backend import backend; print(backend._BACKEND)"
