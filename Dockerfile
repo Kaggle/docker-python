@@ -42,7 +42,7 @@ RUN python -c "from keras.models import Sequential"  && \
     # Switch to TF backend
     sed -i 's/theano/tensorflow/' /.keras/keras.json  && \
     # Re-run it to flush any more disk writes
-    python -c "from keras.models import Sequential; from keras.backend import backend; print(backend._BACKEND)"
+    python -c "from keras.models import Sequential; from keras import backend; print(backend._BACKEND)"
 
     # More packages: (please add new pip installs here)
 RUN pip install --upgrade mpld3 && \
