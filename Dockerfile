@@ -51,5 +51,6 @@ RUN python -c "from keras.models import Sequential"  && \
 RUN pip install --upgrade mpld3 && \
     pip install mplleaflet && \
     pip install gpxpy && \
+    pip install sexmachine && \
     apt-get install -y python3-tk 
 
