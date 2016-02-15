@@ -8,7 +8,9 @@ RUN matplotlibrc_path=$(python -c "import site, os, fileinput; packages_dir = si
 RUN mkdir -p /root/.jupyter && touch /root/.jupyter/jupyter_nbconvert_config.py && touch /root/.jupyter/migrated && \
     mkdir -p /.jupyter && touch /.jupyter/jupyter_nbconvert_config.py && touch /.jupyter/migrated && \
     # Stop Matplotlib printing junk to the console on first load
-    sed -i "s/^.*Matplotlib is building the font cache using fc-list.*$/# Warning removed by Kaggle/g" /opt/conda/lib/python3.4/site-packages/matplotlib/font_manager.py
+    sed -i "s/^.*Matplotlib is building the font cache using fc-list.*$/# Warning removed by Kaggle/g" /opt/conda/lib/python3.4/site-packages/matplotlib/font_manager.py && \
+    # Make matplotlib output in Jupyter notebooks display correctly
+    mkdir -p /etc/ipython/ && echo "c = get_config(); c.IPKernelApp.matplotlib = 'inline'" > /etc/ipython/ipython_config.py
 
     # h2o
     # (This requires python-software-properties; see the MXNet section above for installation.)
