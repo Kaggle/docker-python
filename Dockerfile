@@ -24,14 +24,11 @@ RUN apt-get install -y wget unzip && \
     echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
     echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections && \
     apt-get install -y oracle-java7-installer && \
-# NOTE: h2o's "latest_stable" file has gone stale with the 3.6.0.8 release--revert to these
-# lines when it's fixed
-#    cd /usr/local/src && mkdir h2o && cd h2o && \
-#    wget http://h2o-release.s3.amazonaws.com/h2o/latest_stable -O latest && \
-#    wget --no-check-certificate -i latest -O h2o.zip && rm latest && \
-#    unzip h2o.zip && rm h2o.zip && cp h2o-*/h2o.jar . && \
-#    pip install `find . -name "*whl"`
-    pip install http://h2o-release.s3.amazonaws.com/h2o/rel-tibshirani/8/Python/h2o-3.6.0.8-py2.py3-none-any.whl
+    cd /usr/local/src && mkdir h2o && cd h2o && \
+    wget http://h2o-release.s3.amazonaws.com/h2o/latest_stable -O latest && \
+    wget --no-check-certificate -i latest -O h2o.zip && rm latest && \
+    unzip h2o.zip && rm h2o.zip && cp h2o-*/h2o.jar . && \
+    pip install `find . -name "*whl"`
 
     # TensorFlow
 RUN pip install --upgrade https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.6.0-cp34-none-linux_x86_64.whl
