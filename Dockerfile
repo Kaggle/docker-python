@@ -31,7 +31,7 @@ RUN apt-get install -y wget unzip && \
     pip install `find . -name "*whl"`
 
     # TensorFlow
-RUN pip install --upgrade https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow-0.7.1-cp27-none-linux_x86_64.whl
+RUN pip install --upgrade https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow-0.7.1-cp34-none-linux_x86_64.whl
 
     # Keras setup
     # Keras likes to add a config file in a custom directory when it's
