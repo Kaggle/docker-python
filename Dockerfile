@@ -57,4 +57,8 @@ RUN pip install --upgrade mpld3 && \
     pip install deap && \
     pip install tpot && \
     pip install haversine && \
-    pip install toolz cytoolz
+    pip install toolz cytoolz && \
+    pip install dora && \
+    pip install sacred && \
+    pip install git+https://github.com/hyperopt/hyperopt.git
+    
