@@ -32,7 +32,7 @@ RUN apt-get install -y wget unzip && \
 
     # TensorFlow
     #  For the --ignore-installed flag see https://github.com/tensorflow/tensorflow/issues/622
-RUN pip install --upgrade https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow-0.7.1-cp34-none-linux_x86_64.whl --ignore-installed
+RUN pip install --upgrade https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.7.1-cp34-none-linux_x86_64.whl --ignore-installed
 
     # Keras setup
     # Keras likes to add a config file in a custom directory when it's
