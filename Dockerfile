@@ -4,8 +4,9 @@ FROM kaggle/python1:latest
 RUN matplotlibrc_path=$(python -c "import site, os, fileinput; packages_dir = site.getsitepackages()[0]; print(os.path.join(packages_dir, 'matplotlib', 'mpl-data', 'matplotlibrc'))") && \
     sed -i 's/^backend      : Qt4Agg/backend      : Agg/' $matplotlibrc_path
 
+RUN pip install --upgrade jupyter && \
     # Stop ipython nbconvert trying to rewrite its folder hierarchy
-RUN mkdir -p /root/.jupyter && touch /root/.jupyter/jupyter_nbconvert_config.py && touch /root/.jupyter/migrated && \
+    mkdir -p /root/.jupyter && touch /root/.jupyter/jupyter_nbconvert_config.py && touch /root/.jupyter/migrated && \
     mkdir -p /.jupyter && touch /.jupyter/jupyter_nbconvert_config.py && touch /.jupyter/migrated && \
     # Stop Matplotlib printing junk to the console on first load
     sed -i "s/^.*Matplotlib is building the font cache using fc-list.*$/# Warning removed by Kaggle/g" /opt/conda/lib/python3.4/site-packages/matplotlib/font_manager.py && \
@@ -57,8 +58,6 @@ RUN pip install --upgrade mpld3 && \
     pip install deap && \
     pip install tpot && \
     pip install haversine && \
-    pip install toolz cytoolz && \
-    pip install dora && \
-    pip install sacred && \
-    pip install git+https://github.com/hyperopt/hyperopt.git
+    pip install toolz cytoolz
+
     
