@@ -4,8 +4,8 @@ FROM kaggle/python1:latest
 RUN matplotlibrc_path=$(python -c "import site, os, fileinput; packages_dir = site.getsitepackages()[0]; print(os.path.join(packages_dir, 'matplotlib', 'mpl-data', 'matplotlibrc'))") && \
     sed -i 's/^backend      : Qt4Agg/backend      : Agg/' $matplotlibrc_path
 
-RUN pip install ipykernel nbconvert && \
-    # Stop ipython nbconvert trying to rewrite its folder hierarchy
+RUN pip install jupyter && \
+    # Stop jupyter nbconvert trying to rewrite its folder hierarchy
     mkdir -p /root/.jupyter && touch /root/.jupyter/jupyter_nbconvert_config.py && touch /root/.jupyter/migrated && \
     mkdir -p /.jupyter && touch /.jupyter/jupyter_nbconvert_config.py && touch /.jupyter/migrated && \
     # Stop Matplotlib printing junk to the console on first load
