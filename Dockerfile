@@ -58,6 +58,13 @@ RUN pip install --upgrade mpld3 && \
     pip install deap && \
     pip install tpot && \
     pip install haversine && \
-    pip install toolz cytoolz
+    pip install toolz cytoolz && \
+    yes | conda install proj4 && \
+    pip install packaging && \
+    cd /usr/local/src && git clone https://github.com/Toblerity/Shapely.git && \
+    cd Shapely && python setup.py install && \
+    cd /usr/local/src && git clone https://github.com/SciTools/cartopy.git && \
+    cd cartopy && python setup.py install
+
 
     
