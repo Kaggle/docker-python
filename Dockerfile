@@ -13,5 +13,5 @@ RUN pip install --upgrade mpld3 && \
     pip install toolz cytoolz && \
     pip install sacred && \
     pip install git+https://github.com/nicta/dora.git && \
-    pip install hyperopt
+    pip install git:https://github.com/hyperopt/hyperopt.git
 
