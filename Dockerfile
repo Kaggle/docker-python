@@ -1,4 +1,4 @@
-FROM kaggle/python2:latest
+FROM kaggle/python3:latest
 
     # Please add new pip/apt installs here:
 RUN pip install --upgrade mpld3 && \
@@ -10,5 +10,8 @@ RUN pip install --upgrade mpld3 && \
     pip install deap && \
     pip install tpot && \
     pip install haversine && \
-    pip install toolz cytoolz
+    pip install toolz cytoolz && \
+    pip install sacred && \
+    pip install dora && \
+    pip install hyperopt
 
