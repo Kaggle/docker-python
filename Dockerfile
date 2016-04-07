@@ -13,8 +13,7 @@ RUN pip install --upgrade mpld3 && \
     pip install toolz cytoolz && \
     pip install sacred && \
     pip install git+https://github.com/nicta/dora.git && \
-    pip install git+https://github.com/hyperopt/hyperopt.git
-    
+    pip install git+https://github.com/hyperopt/hyperopt.git && \
     # tflean. Deep learning library featuring a higher-level API for TensorFlow. http://tflearn.org
     pip install git+https://github.com/tflearn/tflearn.git
 
