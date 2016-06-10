@@ -4,6 +4,10 @@ FROM kaggle/python3:latest
 RUN cd /usr/local/src && git clone https://github.com/scikit-learn/scikit-learn.git && \
     cd scikit-learn && python setup.py build && python setup.py install
 
+    # Scipy nightly build
+RUN cd /usr/local/src && git clone https://github.com/scipy/scipy.git && \
+    cd scipy && git clean -xdf && python setup.py install
+    
     ###########
     #
     #      NEW CONTRIBUTORS:
