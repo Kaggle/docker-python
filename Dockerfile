@@ -4,7 +4,9 @@ FROM kaggle/python3:latest
 RUN cd /usr/local/src && git clone https://github.com/scikit-learn/scikit-learn.git && \
     cd scikit-learn && python setup.py build && python setup.py install && \
     # HDF5 support
-    conda install h5py
+    conda install h5py && \
+    # https://github.com/biopython/biopython
+    pip install biopython
 
     ###########
     #
