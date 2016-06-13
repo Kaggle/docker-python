@@ -2,7 +2,9 @@ FROM kaggle/python3:latest
 
     # Scikit-Learn nightly build
 RUN cd /usr/local/src && git clone https://github.com/scikit-learn/scikit-learn.git && \
-    cd scikit-learn && python setup.py build && python setup.py install
+    cd scikit-learn && python setup.py build && python setup.py install && \
+    # HDF5 support
+    conda install h5py
 
     ###########
     #
