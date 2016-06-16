@@ -33,5 +33,5 @@ RUN pip install --upgrade mpld3 && \
     pip install fitter && \
     pip install langid && \
     # Delorean. Useful for dealing with datetime
-    pip install delorean && \
+    pip install delorean
 
