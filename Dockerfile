@@ -31,5 +31,7 @@ RUN pip install --upgrade mpld3 && \
     # tflean. Deep learning library featuring a higher-level API for TensorFlow. http://tflearn.org
     pip install git+https://github.com/tflearn/tflearn.git && \
     pip install fitter && \
-    pip install langid
+    pip install langid && \
+    # Delorean. Useful for dealing with datetime
+    pip install delorean
 
