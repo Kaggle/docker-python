@@ -33,6 +33,7 @@ RUN pip install --upgrade mpld3 && \
     pip install git+https://github.com/tflearn/tflearn.git && \
     pip install fitter && \
     pip install langid && \
+    pip install trueskill && \
     # Delorean. Useful for dealing with datetime
     pip install delorean
 
