@@ -36,6 +36,8 @@ RUN pip install --upgrade mpld3 && \
     # Delorean. Useful for dealing with datetime
     pip install delorean && \
     pip install trueskill && \
-    pip install heamy
+    pip install heamy && \
+    pip install vida
+
 
 
