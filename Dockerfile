@@ -37,7 +37,9 @@ RUN pip install --upgrade mpld3 && \
     pip install delorean && \
     pip install trueskill && \
     pip install heamy && \
-    pip install vida
-
+    pip install vida && \
+    # Useful data exploration libraries (for missing data and generating reports)
+    pip install missingno && \
+    pip install pandas-profiling
 
 
