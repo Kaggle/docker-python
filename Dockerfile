@@ -40,6 +40,8 @@ RUN pip install --upgrade mpld3 && \
     pip install vida && \
     # Useful data exploration libraries (for missing data and generating reports)
     pip install missingno && \
-    pip install pandas-profiling
+    pip install pandas-profiling && \
+    pip install s2sphere
+
 
 
