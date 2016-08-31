@@ -6,7 +6,11 @@ RUN cd /usr/local/src && git clone https://github.com/scikit-learn/scikit-learn.
     # HDF5 support
     conda install h5py && \
     # https://github.com/biopython/biopython
-    pip install biopython
+    pip install biopython && \
+    # clean up
+    rm -rf /usr/local/src/* && \
+    conda clean -i -l -t -y && \
+    rm -rf /root/.cache/pip/*
 
     ###########
     #
@@ -41,7 +45,9 @@ RUN pip install --upgrade mpld3 && \
     # Useful data exploration libraries (for missing data and generating reports)
     pip install missingno && \
     pip install pandas-profiling && \
-    pip install s2sphere
+    pip install s2sphere && \
+    # clean up pip cache
+    rm -rf /root/.cache/pip/*
 
 
 
