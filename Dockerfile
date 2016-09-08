@@ -118,12 +118,6 @@ verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
 
     # Install OpenCV-3 with Python support
 RUN apt-get update && \
-    cd /usr/local/src/opencv && \
-    mkdir build && cd build && \
-    cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_TBB=ON -D WITH_FFMPEG=OFF -D WITH_V4L=ON -D WITH_QT=OFF -D WITH_OPENGL=ON -D PYTHON3_LIBRARY=/opt/conda/lib/libpython3.5m.so -D PYTHON3_INCLUDE_DIR=/opt/conda/include/python3.5m/ -D PYTHON_LIBRARY=/opt/conda/lib/libpython3.5m.so -D PYTHON_INCLUDE_DIR=/opt/conda/include/python3.5m/ -D BUILD_PNG=TRUE .. && \
-    make && make install && \
-    echo "/usr/local/lib/python3.5/site-packages" > /etc/ld.so.conf.d/opencv.conf && ldconfig && \
-    cp /usr/local/lib/python3.5/site-packages/cv2.cpython-35m-x86_64-linux-gnu.so /opt/conda/lib/python3.5/site-packages/ && \
     apt-get -y install libgeos-dev && \
     # pyshp and pyproj are now external dependencies of Basemap
     pip install pyshp pyproj && \
