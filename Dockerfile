@@ -193,6 +193,7 @@ RUN apt-get update && \
     pip install biopython && \ 
     rm -rf /root/.cache/pip/* && \
     apt-get autoremove -y && apt-get clean && \
+    conda clean -i -l -t -y && \
     rm -rf /usr/local/src/*
 
     ###########
@@ -228,4 +229,6 @@ RUN pip install --upgrade mpld3 && \
     # Useful data exploration libraries (for missing data and generating reports)
     pip install missingno && \
     pip install pandas-profiling && \
-    pip install s2sphere
+    pip install s2sphere && \
+    # clean up pip cache
+    rm -rf /root/.cache/pip/*
