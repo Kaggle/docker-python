@@ -225,6 +225,7 @@ RUN pip install --upgrade mpld3 && \
     pip install pandas-profiling && \
     pip install s2sphere && \
     pip install git+https://github.com/fmfn/BayesianOptimization.git && \
+    pip install matplotlib-venn && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/*
