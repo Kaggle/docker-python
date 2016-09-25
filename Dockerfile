@@ -184,7 +184,9 @@ RUN apt-get update && \
     # HDF5 support
     conda install h5py && \
     # https://github.com/biopython/biopython
-    pip install biopython && \ 
+    pip install biopython && \
+    cd /usr/local/src && git clone https://github.com/fukatani/rgf_python.git && \
+    cd rgf_python && python setup.py install && \
     rm -rf /root/.cache/pip/* && \
     apt-get autoremove -y && apt-get clean && \
     conda clean -i -l -t -y && \
