@@ -191,6 +191,8 @@ RUN apt-get update && \
     cd /usr/local/src && git clone https://github.com/fukatani/rgf_python.git && \
     cd rgf_python && sed -i 's/\/opt\/rgf1.2\/bin\/rgf/\/usr\/local\/bin\/rgf/' rgf/rgf.py && \
     python setup.py install && \
+    # PUDB, for local debugging convenience
+    pip install pudb && \
     rm -rf /root/.cache/pip/* && \
     apt-get autoremove -y && apt-get clean && \
     conda clean -i -l -t -y && \
