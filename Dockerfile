@@ -103,7 +103,7 @@ ieer inaugural indian jeita kimmo knbc large_grammars lin_thesaurus mac_morpho m
 masc_tagged maxent_ne_chunker maxent_treebank_pos_tagger moses_sample movie_reviews \
 mte_teip5 names nps_chat omw opinion_lexicon paradigms \
 pil pl196x ppattach problem_reports product_reviews_1 product_reviews_2 propbank \
-pros_cons ptb punkt qc reuters rslp rte sample_grammars semcor senseval sentence_polarity \
+pros_cons ptb punkt qc reuters rslp rte sample_grammars semcor sentence_polarity \
 sentiwordnet shakespeare sinica_treebank smultron snowball_data spanish_grammars \
 state_union stopwords subjectivity swadesh switchboard tagsets timit toolbox treebank \
 twitter_samples udhr2 udhr unicode_samples universal_tagset universal_treebanks_v20 \
