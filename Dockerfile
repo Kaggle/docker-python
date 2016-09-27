@@ -185,8 +185,12 @@ RUN apt-get update && \
     conda install h5py && \
     # https://github.com/biopython/biopython
     pip install biopython && \
+    # Regularized Greedy Forests
+    cd /usr/local/src && wget http://stat.rutgers.edu/home/tzhang/software/rgf/rgf1.2.zip && \
+    unzip rgf1.2.zip && cd rgf1.2 && make && mv bin/rgf /usr/local/bin && \
     cd /usr/local/src && git clone https://github.com/fukatani/rgf_python.git && \
-    cd rgf_python && python setup.py install && \
+    cd rgf_python && sed -i 's/\/opt\/rgf1.2\/bin\/rgf/\/usr\/local\/bin\/rgf/' rgf/rgf.py && \
+    python setup.py install && \
     rm -rf /root/.cache/pip/* && \
     apt-get autoremove -y && apt-get clean && \
     conda clean -i -l -t -y && \
