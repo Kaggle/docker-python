@@ -240,4 +240,4 @@ RUN pip install --upgrade mpld3 && \
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
     # Required to display Altair charts in Jupyter notebook
-    jupyter nbextension install --py vega
+    jupyter nbextension install --user --py vega
