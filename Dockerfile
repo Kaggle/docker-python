@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y build-essential && \
     pip install vowpalwabbit && \
     pip install seaborn python-dateutil spacy dask pytagcloud pyyaml ggplot joblib \
     husl geopy ml_metrics mne pyshp gensim && \
+    python -m spacy.en.download && \
     # The apt-get version of imagemagick is out of date and has compatibility issues, so we build from source
     apt-get -y install dbus fontconfig fontconfig-config fonts-dejavu-core fonts-droid ghostscript gsfonts hicolor-icon-theme \
   libavahi-client3 libavahi-common-data libavahi-common3 libcairo2 libcap-ng0 libcroco3 \
