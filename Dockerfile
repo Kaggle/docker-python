@@ -11,9 +11,9 @@ RUN apt-get update && apt-get install -y build-essential && \
     cd /usr/lib/x86_64-linux-gnu/ && rm -f libboost_python.a && rm -f libboost_python.so && \ 
     ln -sf libboost_python-py34.so libboost_python.so && ln -sf libboost_python-py34.a libboost_python.a && \
     pip install vowpalwabbit && \
-    pip install seaborn python-dateutil spacy dask pytagcloud pyyaml ggplot joblib \
+    pip install seaborn python-dateutil dask pytagcloud pyyaml ggplot joblib \
     husl geopy ml_metrics mne pyshp gensim && \
-    python -m spacy.en.download && \
+    #python -m spacy.en.download && \
     # The apt-get version of imagemagick is out of date and has compatibility issues, so we build from source
     apt-get -y install dbus fontconfig fontconfig-config fonts-dejavu-core fonts-droid ghostscript gsfonts hicolor-icon-theme \
   libavahi-client3 libavahi-common-data libavahi-common3 libcairo2 libcap-ng0 libcroco3 \
@@ -136,10 +136,11 @@ RUN apt-get update && \
     # Cartopy plus dependencies
     yes | conda install proj4 && \
     pip install packaging && \
-    cd /usr/local/src && git clone https://github.com/Toblerity/Shapely.git && \
-    cd Shapely && python setup.py install && \
-    cd /usr/local/src && git clone https://github.com/SciTools/cartopy.git && \
-    cd cartopy && python setup.py install && \
+    # Removing Shapely for now
+    #cd /usr/local/src && git clone https://github.com/Toblerity/Shapely.git && \
+    #cd Shapely && python setup.py install && \
+    #cd /usr/local/src && git clone https://github.com/SciTools/cartopy.git && \
+    #cd cartopy && python setup.py install && \
     # MXNet
     cd /usr/local/src && git clone --recursive https://github.com/dmlc/mxnet && \
     cd /usr/local/src/mxnet && cp make/config.mk . && \
