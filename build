@@ -1,8 +1,16 @@
 #!/bin/bash
 set -e
 
-docker pull continuumio/anaconda3:latest
-docker build --rm --no-cache -t kaggle/python-build .
+# Default behavior is to do everything from scratch.
+# The --use-cache option is useful if you're iterating on a broken build.
+if [[ "$1" ==  "--use-cache" ]]; then
+    docker build --rm -t kaggle/python-build .
+else
+    docker pull continuumio/anaconda3:latest
+    docker build --rm --no-cache -t kaggle/python-build .
+fi
+
+
 
 rm -rf /tmp/python-build
 mkdir -p /tmp/python-build/tmp
