@@ -1,8 +1,9 @@
 FROM continuumio/anaconda3:latest
 
-RUN apt-get update && apt-get install -y build-essential && \
+RUN apt-get update && \
     # Anaconda's gcc is out of date, which causes linking problems; this helps a bit
     conda install -y gcc && \
+    apt-get install -y build-essential && \
     cd /usr/local/src && \
     # https://github.com/tensorflow/tensorflow/issues/64#issuecomment-155270240
     # Why does this work, when `pip install tensorflow` fails? It is a mystery
