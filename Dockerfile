@@ -1,9 +1,6 @@
 FROM continuumio/anaconda3:latest
 
-RUN apt-get update && \
-    # Anaconda's gcc is out of date, which causes linking problems; this helps a bit
-    conda install -y gcc && \
-    apt-get install -y build-essential && \
+RUN apt-get update && apt-get install -y build-essential && \
     cd /usr/local/src && \
     # https://github.com/tensorflow/tensorflow/issues/64#issuecomment-155270240
     # Why does this work, when `pip install tensorflow` fails? It is a mystery
@@ -140,10 +137,10 @@ RUN apt-get update && \
     yes | conda install proj4 && \
     pip install packaging && \
     # Removing Shapely for now
-    #cd /usr/local/src && git clone https://github.com/Toblerity/Shapely.git && \
-    #cd Shapely && python setup.py install && \
-    #cd /usr/local/src && git clone https://github.com/SciTools/cartopy.git && \
-    #cd cartopy && python setup.py install && \
+    cd /usr/local/src && git clone https://github.com/Toblerity/Shapely.git && \
+    cd Shapely && python setup.py install && \
+    cd /usr/local/src && git clone https://github.com/SciTools/cartopy.git && \
+    cd cartopy && python setup.py install && \
     # MXNet
     cd /usr/local/src && git clone --recursive https://github.com/dmlc/mxnet && \
     cd /usr/local/src/mxnet && cp make/config.mk . && \
@@ -198,6 +195,12 @@ RUN apt-get update && \
     python setup.py install && \
     # PUDB, for local debugging convenience
     pip install pudb && \
+    # Anaconda's build of gcc is way out of date; monkey-patch some linking problems that affect
+    # packages like xgboost and Shapely
+    rm /opt/conda/lib/libstdc++* && rm /opt/conda/lib/libgomp.* && \
+    ln -s /usr/lib/x86_64-linux-gnu/libgomp.so.1 /opt/conda/lib/libgomp.so.1 && \
+    ln -s /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /opt/conda/lib/libstdc++.so.6 && \
+    # ~~~~ CLEAN UP ~~~~
     rm -rf /root/.cache/pip/* && \
     apt-get autoremove -y && apt-get clean && \
     conda clean -i -l -t -y && \
