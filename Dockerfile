@@ -119,6 +119,12 @@ verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
 
     # Install OpenCV-3 with Python support
 RUN apt-get update && \
+    # Anaconda's build of gcc is way out of date; monkey-patch some linking problems that affect
+    # packages like xgboost and Shapely
+    rm /opt/conda/lib/libstdc++* && rm /opt/conda/lib/libgomp.* && \
+    ln -s /usr/lib/x86_64-linux-gnu/libgomp.so.1 /opt/conda/lib/libgomp.so.1 && \
+    ln -s /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /opt/conda/lib/libstdc++.so.6 && \
+    # Libgeos, for mapping libraries
     apt-get -y install libgeos-dev && \
     # pyshp and pyproj are now external dependencies of Basemap
     pip install pyshp pyproj && \
@@ -136,7 +142,6 @@ RUN apt-get update && \
     # Cartopy plus dependencies
     yes | conda install proj4 && \
     pip install packaging && \
-    # Removing Shapely for now
     cd /usr/local/src && git clone https://github.com/Toblerity/Shapely.git && \
     cd Shapely && python setup.py install && \
     cd /usr/local/src && git clone https://github.com/SciTools/cartopy.git && \
@@ -195,11 +200,6 @@ RUN apt-get update && \
     python setup.py install && \
     # PUDB, for local debugging convenience
     pip install pudb && \
-    # Anaconda's build of gcc is way out of date; monkey-patch some linking problems that affect
-    # packages like xgboost and Shapely
-    rm /opt/conda/lib/libstdc++* && rm /opt/conda/lib/libgomp.* && \
-    ln -s /usr/lib/x86_64-linux-gnu/libgomp.so.1 /opt/conda/lib/libgomp.so.1 && \
-    ln -s /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /opt/conda/lib/libstdc++.so.6 && \
     # ~~~~ CLEAN UP ~~~~
     rm -rf /root/.cache/pip/* && \
     apt-get autoremove -y && apt-get clean && \
