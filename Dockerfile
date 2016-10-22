@@ -237,6 +237,7 @@ RUN pip install --upgrade mpld3 && \
     pip install git+https://github.com/fmfn/BayesianOptimization.git && \
     pip install matplotlib-venn && \
     pip install pyldavis && \
+    pip install pattern && \
     pip install git+git://github.com/rasbt/mlxtend.git#egg=mlxtend && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
