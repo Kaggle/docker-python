@@ -200,6 +200,9 @@ RUN apt-get update && \
     python setup.py install && \
     # PUDB, for local debugging convenience
     pip install pudb && \
+    # Imbalanced-learn
+    cd /usr/local/src && git clone https://github.com/scikit-learn-contrib/imbalanced-learn.git && \
+    cd imbalanced-learn && python setup.py install && \
     # ~~~~ CLEAN UP ~~~~
     rm -rf /root/.cache/pip/* && \
     apt-get autoremove -y && apt-get clean && \
