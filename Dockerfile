@@ -246,7 +246,8 @@ RUN pip install --upgrade mpld3 && \
     pip install git+https://github.com/fmfn/BayesianOptimization.git && \
     pip install matplotlib-venn && \
     pip install pyldavis && \
-    pip install pattern && \
+    # Pattern not yet Py3 compatible...
+    # pip install pattern && \
     pip install git+git://github.com/rasbt/mlxtend.git#egg=mlxtend && \
     pip install altair && \
     ##### ^^^^ Add new contributions above here
