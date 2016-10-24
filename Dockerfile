@@ -246,6 +246,9 @@ RUN pip install --upgrade mpld3 && \
     pip install git+https://github.com/fmfn/BayesianOptimization.git && \
     pip install matplotlib-venn && \
     pip install git+git://github.com/rasbt/mlxtend.git#egg=mlxtend && \
+    pip install altair && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
-    rm -rf /root/.cache/pip/*
+    rm -rf /root/.cache/pip/* && \
+    # Required to display Altair charts in Jupyter notebook
+    jupyter nbextension install --user --py vega
