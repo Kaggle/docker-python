@@ -112,7 +112,7 @@ vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
     # Stop-words
     pip install stop-words && \
     # clean up
-    find /usr/share/nltk_data/ -name *.zip | xargs -n1 -I@ rm @ && \ 
+    find /usr/share/nltk_data/ -name *.zip | grep -v vader_lexicon | xargs -n1 -I@ rm @ && \ 
     rm -rf /root/.cache/pip/* && \
     apt-get autoremove -y && apt-get clean && \
     rm -rf /usr/local/src/*
