@@ -202,6 +202,12 @@ RUN apt-get update && \
     # Imbalanced-learn
     cd /usr/local/src && git clone https://github.com/scikit-learn-contrib/imbalanced-learn.git && \
     cd imbalanced-learn && python setup.py install && \
+    # Convex Optimization library
+    pip install cvxopt && \
+    # Profiling and other utilities
+    pip install line_profiler && \
+    pip install orderedmultidict && \
+    pip install smhasher && \
     # ~~~~ CLEAN UP ~~~~
     rm -rf /root/.cache/pip/* && \
     apt-get autoremove -y && apt-get clean && \
