@@ -6,7 +6,7 @@ This is the Dockerfile (etc.) used for building the image that runs python scrip
 
 ## Getting started
 
-To get started with this image, read our (guide)[http://blog.kaggle.com/2016/02/05/how-to-get-started-with-data-science-in-containers/] to using it yourself, or browse [Kaggle Kernels](https://www.kaggle.com/kernels) for ideas.
+To get started with this image, read our [guide](http://blog.kaggle.com/2016/02/05/how-to-get-started-with-data-science-in-containers/) to using it yourself, or browse [Kaggle Kernels](https://www.kaggle.com/kernels) for ideas.
 
 ## Requesting new features
 
