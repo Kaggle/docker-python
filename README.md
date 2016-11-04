@@ -25,7 +25,7 @@ Then follow the package's installation instructions for a Linux system. It could
 
 ```
 root@d72b81a003e1:/# pip install coolpackage
-Collecking coolpackage
+Collecting coolpackage
 [...etc...]
 ```
 
@@ -40,7 +40,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>>
 ```
 
-Once that's working, add the necessary lines to our `Dockerfile`. (In this case, that would mean adding `pip install coolpackage` to the end section of the Dockerfile.) Then submit your pull request, and you're all set!
+Once that's working, add the necessary lines to our [Dockerfile](https://github.com/Kaggle/docker-python/blob/master/Dockerfile). (In this case, that would mean adding `pip install coolpackage` to the last section.) Then submit your pull request, and you're all set!
 
 
 
