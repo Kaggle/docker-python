@@ -208,6 +208,7 @@ RUN apt-get update && \
     pip install line_profiler && \
     pip install orderedmultidict && \
     pip install smhasher && \
+    conda install -y -c bokeh datashader && \
     # ~~~~ CLEAN UP ~~~~
     rm -rf /root/.cache/pip/* && \
     apt-get autoremove -y && apt-get clean && \
