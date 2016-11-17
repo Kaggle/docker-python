@@ -256,6 +256,7 @@ RUN pip install --upgrade mpld3 && \
     pip install git+git://github.com/rasbt/mlxtend.git#egg=mlxtend && \
     pip install altair && \
     pip install pystan && \
+    pip install ImageHash && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
