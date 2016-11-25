@@ -192,7 +192,7 @@ RUN apt-get update && \
     # https://github.com/biopython/biopython
     pip install biopython && \
     # Regularized Greedy Forests
-    cd /usr/local/src && wget http://stat.rutgers.edu/home/tzhang/software/rgf/rgf1.2.zip && \
+    cd /usr/local/src && wget https://github.com/fukatani/rgf_python/releases/download/0.2.0/rgf1.2.zip && \
     unzip rgf1.2.zip && cd rgf1.2 && make && mv bin/rgf /usr/local/bin && \
     cd /usr/local/src && git clone https://github.com/fukatani/rgf_python.git && \
     cd rgf_python && sed -i 's/\/opt\/rgf1.2\/bin\/rgf/\/usr\/local\/bin\/rgf/' rgf/rgf.py && \
