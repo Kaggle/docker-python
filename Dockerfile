@@ -137,6 +137,8 @@ RUN apt-get update && \
     cd opendeep && python setup.py develop  && \
     # sasl is apparently an ibis dependency
     apt-get -y install libsasl2-dev && \
+    # ...as is psycopg2
+    apt-get install -y libpq-dev && \
     pip install ibis-framework && \
     # Cartopy plus dependencies
     yes | conda install proj4 && \
