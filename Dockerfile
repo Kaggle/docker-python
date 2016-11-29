@@ -212,7 +212,7 @@ RUN apt-get update && \
     pip install smhasher && \
     conda install -y -c bokeh datashader && \
     # Boruta (python implementation)
-    cd /usr/local/src && git clone https://github.com/mbernico/boruta_py.git && \
+    cd /usr/local/src && git clone https://github.com/danielhomola/boruta_py.git && \
     cd boruta_py && python setup.py install && \
     # ~~~~ CLEAN UP ~~~~
     rm -rf /root/.cache/pip/* && \
