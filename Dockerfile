@@ -211,6 +211,12 @@ RUN apt-get update && \
     pip install orderedmultidict && \
     pip install smhasher && \
     conda install -y -c bokeh datashader && \
+    # Boruta (python implementation)
+    cd /usr/local/src && git clone https://github.com/danielhomola/boruta_py.git && \
+    cd boruta_py &&
+    # boruta_py's dependencies want to uninstall the nightlies of sklearn etc
+    sed -i "s/'numpy==1.10.4',//" setup.py && sed -i "s/'scikit-learn==0.17.1',//" setup.py && \
+    sed -i "s/'scipy==0.17.0'//" setup.py && python setup.py install && \
     # ~~~~ CLEAN UP ~~~~
     rm -rf /root/.cache/pip/* && \
     apt-get autoremove -y && apt-get clean && \
