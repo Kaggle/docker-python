@@ -64,6 +64,10 @@ RUN apt-get install -y libfreetype6-dev && \
     cd /usr/local/src && mkdir keras && cd keras && \
     git clone --depth 1 https://github.com/fchollet/keras.git && \
     cd keras && python setup.py install && \
+    #keras-rl
+    cd /usr/local/src && mkdir keras-rl && cd keras-rl && \
+    git clone --depth 1 https://github.com/matthiasplappert/keras-rl.git && \
+    cd keras-rl && python setup.py install && \
     #neon
     cd /usr/local/src && \
     git clone --depth 1 https://github.com/NervanaSystems/neon.git && \
