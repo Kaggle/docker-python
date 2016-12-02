@@ -209,7 +209,9 @@ RUN apt-get update && \
     cd /usr/local/src && git clone https://github.com/scikit-learn-contrib/imbalanced-learn.git && \
     cd imbalanced-learn && python setup.py install && \
     # Convex Optimization library
-    pip install cvxopt && \
+    # Latest version fails to install, see https://github.com/cvxopt/cvxopt/issues/77
+    #    and https://github.com/cvxopt/cvxopt/issues/80
+    # pip install cvxopt && \
     # Profiling and other utilities
     pip install line_profiler && \
     pip install orderedmultidict && \
