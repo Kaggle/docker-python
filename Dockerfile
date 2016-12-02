@@ -40,7 +40,7 @@ RUN apt-get update && apt-get install -y build-essential && \
     cp /usr/local/lib/python3.5/site-packages/cv2.cpython-35m-x86_64-linux-gnu.so /opt/conda/lib/python3.5/site-packages/ && \
     # Clean up install cruft
     rm -rf /usr/local/src/opencv && \
-    rm /usr/local/src/tensorflow-0.10.0rc0-cp35-cp35m-linux_x86_64.whl && \
+    rm /usr/local/src/tensorflow-*.whl && \
     rm -rf /root/.cache/pip/* && \
     apt-get autoremove -y && apt-get clean
 
