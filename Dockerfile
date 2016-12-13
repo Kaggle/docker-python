@@ -24,10 +24,10 @@ RUN apt-get update && apt-get install -y build-essential && \
   libpaper-utils libpaper1 libpixman-1-0 libpng12-0 librsvg2-2 librsvg2-common libthai-data libthai0 libtiff5 libwmf0.2-7 \
   libxcb-render0 libxcb-shm0 netpbm poppler-data && \
     wget http://www.imagemagick.org/download/ImageMagick.tar.gz && \
-    tar xzf ImageMagick*.tar.gz && cd `ls -d ImageMagick-*` && ./configure && \
+    tar xzf ImageMagick.tar.gz && cd `ls -d ImageMagick-*` && pwd && ls -al && ./configure && \
     make -j $(nproc) && make install && \
     # clean up ImageMagick source files
-    cd ../ && rm -rf ImageMagick-7.0.3* && \
+    cd ../ && rm -rf ImageMagick* && \
     apt-get -y install libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev && \
     apt-get -y install libtbb2 libtbb-dev libjpeg-dev libtiff-dev libjasper-dev && \
     apt-get -y install cmake && \
