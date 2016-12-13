@@ -221,6 +221,8 @@ RUN apt-get update && \
     # Boruta (python implementation)
     cd /usr/local/src && git clone https://github.com/danielhomola/boruta_py.git && \
     cd boruta_py && python setup.py install && \
+    cd /usr/local/src && git clone --recursive --depth 1 https://github.com/Microsoft/LightGBM && \
+    cd LightGBM && mkdir build && cd build && cmake .. && make -j $(nproc) && \
     # ~~~~ CLEAN UP ~~~~
     rm -rf /root/.cache/pip/* && \
     apt-get autoremove -y && apt-get clean && \
