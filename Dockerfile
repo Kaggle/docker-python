@@ -1,6 +1,9 @@
 FROM continuumio/anaconda3:latest
 
-RUN apt-get update && apt-get install -y build-essential && \
+    # Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
+    # as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
+RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list && \
+    apt-get update && apt-get install -y build-essential && \
     cd /usr/local/src && \
     # https://github.com/tensorflow/tensorflow/issues/64#issuecomment-155270240
     # Why does this work, when `pip install tensorflow` fails? It is a mystery
