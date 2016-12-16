@@ -279,8 +279,11 @@ RUN pip install --upgrade mpld3 && \
     pip install pystan && \
     pip install ImageHash && \
     pip install git+https://github.com/pymc-devs/pymc3 && \
+    pip install bqplot && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
     # Required to display Altair charts in Jupyter notebook
-    jupyter nbextension install --user --py vega
+    jupyter nbextension install --user --py vega && \
+    # Required to display bqplot in Jupyter notebook (https://github.com/bloomberg/bqplot#installation)
+    jupyter nbextension enable --py --sys-prefix bqplot
