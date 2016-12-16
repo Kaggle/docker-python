@@ -228,7 +228,7 @@ RUN apt-get update && \
     cd LightGBM && mkdir build && cd build && cmake .. && make -j $(nproc) && \
     cd /usr/local/src/LightGBM/python-package && python setup.py install && \
     cd /usr/local/src && git clone git://github.com/nicolashennetier/pyeconometrics.git && \
-    cd pyeconometrics && python setup.py install
+    cd pyeconometrics && python setup.py install && \
     # ~~~~ CLEAN UP ~~~~
     rm -rf /root/.cache/pip/* && \
     apt-get autoremove -y && apt-get clean && \
