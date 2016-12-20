@@ -11,7 +11,7 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     pip install tensorflow-0.12.0rc0-cp35-cp35m-linux_x86_64.whl  && \
     # Vowpal Rabbit
     apt-get install -y libboost-program-options-dev zlib1g-dev libboost-python-dev && \
-    cd /usr/lib/x86_64-linux-gnu/ && rm -f libboost_python.a && rm -f libboost_python.so && \ 
+    cd /usr/lib/x86_64-linux-gnu/ && rm -f libboost_python.a && rm -f libboost_python.so && \
     ln -sf libboost_python-py34.so libboost_python.so && ln -sf libboost_python-py34.a libboost_python.a && \
     pip install vowpalwabbit && \
     pip install seaborn python-dateutil dask pytagcloud pyyaml ggplot joblib \
@@ -279,6 +279,9 @@ RUN pip install --upgrade mpld3 && \
     pip install pystan && \
     pip install ImageHash && \
     pip install git+https://github.com/pymc-devs/pymc3 && \
+    pip install tifffile && \
+    pip install descartes && \
+    pip install geojson && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
