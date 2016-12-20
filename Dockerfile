@@ -278,6 +278,10 @@ RUN pip install --upgrade mpld3 && \
     pip install altair && \
     pip install pystan && \
     pip install ImageHash && \
+    
+    #Installation of Imputation module
+    pip install fancyimput && \
+    
     pip install git+https://github.com/pymc-devs/pymc3 && \
     pip install tifffile && \
     pip install descartes && \
