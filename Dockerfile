@@ -283,6 +283,7 @@ RUN pip install --upgrade mpld3 && \
     pip install tifffile && \
     pip install descartes && \
     pip install geojson && \
+    pip install pysal && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
