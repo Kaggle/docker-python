@@ -286,6 +286,7 @@ RUN pip install --upgrade mpld3 && \
     pip install pysal && \
     conda install -y gdal && \
     pip install pyflux && \
+    pip install terminalplot && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
