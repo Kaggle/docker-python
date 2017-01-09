@@ -229,6 +229,7 @@ RUN apt-get update && \
     cd /usr/local/src/LightGBM/python-package && python setup.py install && \
     cd /usr/local/src && git clone git://github.com/nicolashennetier/pyeconometrics.git && \
     cd pyeconometrics && python setup.py install && \
+    apt-get install -y graphviz && pip install graphviz && \
     # ~~~~ CLEAN UP ~~~~
     rm -rf /root/.cache/pip/* && \
     apt-get autoremove -y && apt-get clean && \
