@@ -289,6 +289,7 @@ RUN pip install --upgrade mpld3 && \
     conda install -y gdal && \
     pip install pyflux && \
     pip install terminalplot && \
+    pip install pydicom && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
