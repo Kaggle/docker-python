@@ -286,9 +286,12 @@ RUN pip install --upgrade mpld3 && \
     pip install descartes && \
     pip install geojson && \
     pip install pysal && \
+    pip install datascienceutils && \
+    pip install gpod && \
     conda install -y gdal && \
     pip install pyflux && \
     pip install terminalplot && \
+
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
