@@ -104,7 +104,7 @@ RUN apt-get install -y libfreetype6-dev && \
     # NLTK Downloader no longer continues smoothly after an error, so we explicitly list
     # the corpuses that work
     python -m nltk.downloader -d /usr/share/nltk_data abc alpino \
-    averaged_perceptron_tagger basque_grammars biocreative_ppi bllip_wsj_no_aux \
+    basque_grammars biocreative_ppi bllip_wsj_no_aux \
 book_grammars brown brown_tei cess_cat cess_esp chat80 city_database cmudict \
 comparative_sentences comtrans conll2000 conll2002 conll2007 crubadan dependency_treebank \
 europarl_raw floresta gazetteers genesis gutenberg hmm_treebank_pos_tagger \
