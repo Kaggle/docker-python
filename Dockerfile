@@ -291,6 +291,7 @@ RUN pip install --upgrade mpld3 && \
     pip install terminalplot && \
     pip install pydicom && \
     pip install wavio && \
+    pip install raccoon && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
