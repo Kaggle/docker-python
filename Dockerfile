@@ -290,6 +290,7 @@ RUN pip install --upgrade mpld3 && \
     pip install pyflux && \
     pip install terminalplot && \
     pip install pydicom && \
+    pip install wavio && \
     pip install raccoon && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
