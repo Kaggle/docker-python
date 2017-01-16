@@ -289,6 +289,7 @@ RUN pip install --upgrade mpld3 && \
     conda install -y gdal && \
     pip install pyflux && \
     pip install terminalplot && \
+    pip install raccoon && \
     pip install pydicom && \
     conda install --channel https://conda.anaconda.org/SimpleITK --quiet --yes 'SimpleITK=0.10.0' && \
     ##### ^^^^ Add new contributions above here
