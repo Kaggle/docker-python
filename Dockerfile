@@ -291,6 +291,7 @@ RUN pip install --upgrade mpld3 && \
     pip install terminalplot && \
     pip install raccoon && \
     pip install pydicom && \
+    pip install wavio && \
     conda install --channel https://conda.anaconda.org/SimpleITK --quiet --yes 'SimpleITK=0.10.0' && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
