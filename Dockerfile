@@ -293,6 +293,7 @@ RUN pip install --upgrade mpld3 && \
     pip install pydicom && \
     pip install wavio && \
     conda install --channel https://conda.anaconda.org/SimpleITK --quiet --yes 'SimpleITK=0.10.0' && \
+    pip install -U --user hmmlearn && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
