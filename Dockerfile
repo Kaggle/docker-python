@@ -298,6 +298,7 @@ RUN pip install --upgrade mpld3 && \
     pip install wavio && \
     conda install --channel https://conda.anaconda.org/SimpleITK --quiet --yes 'SimpleITK=0.10.0' && \
     pip install hmmlearn && \
+    pip install bayespy && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
