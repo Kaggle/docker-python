@@ -233,6 +233,8 @@ RUN apt-get update && \
     cd pyeconometrics && python setup.py install && \
     apt-get install -y graphviz && pip install graphviz && \
     apt-get install -y libgdal1-dev && GDAL_CONFIG=/usr/bin/gdal-config pip install fiona && pip install geopandas && \
+    cd /usr/local/src && git clone git://github.com/scikit-learn-contrib/py-earth.git && \
+    cd py-earth && python setup.py install && \
     # ~~~~ CLEAN UP ~~~~
     rm -rf /root/.cache/pip/* && \
     apt-get autoremove -y && apt-get clean && \
