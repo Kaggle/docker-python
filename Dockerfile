@@ -300,6 +300,7 @@ RUN pip install --upgrade mpld3 && \
     pip install hmmlearn && \
     pip install bayespy && \
     pip install gplearn && \
+    pip install PyAstronomy && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
