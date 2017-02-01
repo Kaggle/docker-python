@@ -1,5 +1,7 @@
 FROM continuumio/anaconda3:latest
 
+ADD cache_keras_weights.py
+
     # Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
     # as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
 RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list && \
@@ -235,6 +237,7 @@ RUN apt-get update && \
     apt-get install -y libgdal1-dev && GDAL_CONFIG=/usr/bin/gdal-config pip install fiona && pip install geopandas && \
     cd /usr/local/src && git clone git://github.com/scikit-learn-contrib/py-earth.git && \
     cd py-earth && python setup.py install && \
+    cd && python cache_keras_weights.py && \
     # ~~~~ CLEAN UP ~~~~
     rm -rf /root/.cache/pip/* && \
     apt-get autoremove -y && apt-get clean && \
