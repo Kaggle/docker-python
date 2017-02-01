@@ -1,6 +1,6 @@
 FROM continuumio/anaconda3:latest
 
-ADD cache_keras_weights.py
+ADD cache_keras_weights.py /usr/local/src/cache_keras_weights.py
 
     # Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
     # as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
@@ -123,6 +123,7 @@ twitter_samples udhr2 udhr unicode_samples universal_tagset universal_treebanks_
 vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
     # Stop-words
     pip install stop-words && \
+    cd /usr/local/src && python cache_keras_weights.py && \
     # clean up
     rm -rf /root/.cache/pip/* && \
     apt-get autoremove -y && apt-get clean && \
@@ -237,7 +238,6 @@ RUN apt-get update && \
     apt-get install -y libgdal1-dev && GDAL_CONFIG=/usr/bin/gdal-config pip install fiona && pip install geopandas && \
     cd /usr/local/src && git clone git://github.com/scikit-learn-contrib/py-earth.git && \
     cd py-earth && python setup.py install && \
-    cd && python cache_keras_weights.py && \
     # ~~~~ CLEAN UP ~~~~
     rm -rf /root/.cache/pip/* && \
     apt-get autoremove -y && apt-get clean && \
