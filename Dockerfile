@@ -304,6 +304,7 @@ RUN pip install --upgrade mpld3 && \
     conda install pytorch torchvision -c soumith && \
     pip install squarify && \
     pip install fuzzywuzzy && \
+    pip install python-louvain && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
