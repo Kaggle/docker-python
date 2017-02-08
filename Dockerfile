@@ -9,11 +9,7 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     # Newer version of Pandas than comes with continuumio/anaconda3
     conda uninstall -y pandas && pip install pandas && \
     cd /usr/local/src && \
-    # https://github.com/tensorflow/tensorflow/issues/64#issuecomment-155270240
-    # Why does this work, when `pip install tensorflow` fails? It is a mystery
-    wget https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.12.1-cp35-cp35m-linux_x86_64.whl && \
-    mv tensorflow-0.12.1-cp35-cp35m-linux_x86_64.whl tensorflow-0.12.1-cp36-cp36m-linux_x86_64.whl && \
-    pip install tensorflow-0.12.1-cp36-cp36m-linux_x86_64.whl && \
+    pip install tensorflow && \
     # Vowpal Rabbit
     apt-get install -y libboost-program-options-dev zlib1g-dev libboost-python-dev && \
     cd /usr/lib/x86_64-linux-gnu/ && rm -f libboost_python.a && rm -f libboost_python.so && \
