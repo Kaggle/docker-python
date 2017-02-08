@@ -303,6 +303,7 @@ RUN pip install --upgrade mpld3 && \
     pip install PyAstronomy && \
     conda install pytorch torchvision -c soumith && \
     pip install squarify && \
+    pip install fuzzywuzzy && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
