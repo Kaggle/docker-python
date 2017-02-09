@@ -45,7 +45,6 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     cp /usr/local/lib/python3.6/site-packages/cv2.cpython-36m-x86_64-linux-gnu.so /opt/conda/lib/python3.6/site-packages/ && \
     # Clean up install cruft
     rm -rf /usr/local/src/opencv && \
-    rm /usr/local/src/tensorflow-*.whl && \
     rm -rf /root/.cache/pip/* && \
     apt-get autoremove -y && apt-get clean
 
