@@ -289,7 +289,7 @@ RUN pip install --upgrade mpld3 && \
     pip install descartes && \
     pip install geojson && \
     pip install pysal && \
-    conda install -y gdal && \
+    #conda install -y gdal && \
     pip install pyflux && \
     pip install terminalplot && \
     pip install raccoon && \
