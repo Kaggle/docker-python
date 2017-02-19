@@ -306,6 +306,7 @@ RUN pip install --upgrade mpld3 && \
     pip install python-louvain && \
     pip install pyexcel-ods && \
     pip install sklearn-pandas && \
+    pip install stemming && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
