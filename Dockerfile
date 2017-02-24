@@ -306,7 +306,8 @@ RUN pip install --upgrade mpld3 && \
     pip install python-louvain && \
     pip install pyexcel-ods && \
     pip install sklearn-pandas && \
-    conda install -c conda-forge -c ioam holoviews>=1.6.2 geoviews && \
+    conda install -y -c conda-forge -c ioam holoviews && \
+    pip install git+https://github.com/ioam/geoviews.git && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
