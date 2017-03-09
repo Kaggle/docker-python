@@ -306,6 +306,7 @@ RUN pip install --upgrade mpld3 && \
     pip install python-louvain && \
     pip install pyexcel-ods && \
     pip install sklearn-pandas && \
+    pip install stemming && \
     pip install fbprophet && \
     conda install -y -c conda-forge -c ioam holoviews && \
     pip install git+https://github.com/ioam/geoviews.git && \
