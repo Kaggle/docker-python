@@ -310,6 +310,7 @@ RUN pip install --upgrade mpld3 && \
     pip install fbprophet && \
     conda install -y -c conda-forge -c ioam holoviews && \
     pip install git+https://github.com/ioam/geoviews.git && \
+    pip install hypertools && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
