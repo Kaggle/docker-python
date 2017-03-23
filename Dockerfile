@@ -311,6 +311,8 @@ RUN pip install --upgrade mpld3 && \
     conda install -y -c conda-forge -c ioam holoviews && \
     pip install git+https://github.com/ioam/geoviews.git && \
     pip install hypertools && \
+    conda install -c conda-forge jupyter_contrib_nbextensions && \
+    conda install -c conda-forge jupyter_nbextensions_configurator && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
