@@ -312,7 +312,8 @@ RUN pip install --upgrade mpld3 && \
     pip install git+https://github.com/ioam/geoviews.git && \
     pip install hypertools && \
     conda install -c conda-forge jupyter_contrib_nbextensions && \
-    conda install -c conda-forge jupyter_nbextensions_configurator
+    conda install -c conda-forge jupyter_nbextensions_configurator && \
+    conda install -c conda-forge yapf=0.13.2
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
