@@ -10,6 +10,15 @@ To get started with this image, read our [guide](http://blog.kaggle.com/2016/02/
 
 ## Requesting new features
 
+**To start container [Learn more](http://blog.kaggle.com/2016/02/05/how-to-get-started-with-data-science-in-containers/comment-page-1/)
+
+Mac
+```
+docker run --rm -p 8888:8888 -it kaggle/python jupyter notebook --ip="0.0.0.0"
+```
+
+
+
 **We welcome pull requests** if there are any packages you'd like to add!
 
 We can merge your request quickly if you check that it builds correctly. Here's how to do that.
