@@ -240,6 +240,10 @@ RUN apt-get update && \
     conda clean -i -l -t -y && \
     rm -rf /usr/local/src/*
 
+    # Scipy nightly build
+RUN cd /usr/local/src && git clone https://github.com/scipy/scipy.git && \
+    cd scipy && git clean -xdf && python setup.py install
+    
     ###########
     #
     #      NEW CONTRIBUTORS:
