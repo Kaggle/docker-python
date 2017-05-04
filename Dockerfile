@@ -286,6 +286,7 @@ RUN pip install --upgrade mpld3 && \
     pip install git+https://github.com/hammerlab/fancyimpute.git && \
     pip install git+https://github.com/pymc-devs/pymc3 && \
     pip install tifffile && \
+    pip install spectral && \
     pip install descartes && \
     pip install geojson && \
     pip install pysal && \
