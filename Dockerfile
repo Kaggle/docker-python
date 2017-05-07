@@ -313,6 +313,7 @@ RUN pip install --upgrade mpld3 && \
     pip install hypertools && \
     pip install nxviz && \
     pip install speedml && \
+    pip install nibabel && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
