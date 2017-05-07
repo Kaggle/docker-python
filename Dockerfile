@@ -312,6 +312,7 @@ RUN pip install --upgrade mpld3 && \
     pip install git+https://github.com/ioam/geoviews.git && \
     pip install hypertools && \
     pip install nxviz && \
+    pip install nibabel && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
