@@ -316,6 +316,8 @@ RUN pip install --upgrade mpld3 && \
     pip install py_stringsimjoin && \
     pip install speedml && \
     pip install nibabel && \
+    pip install mlens && \
+  
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
