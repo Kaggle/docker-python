@@ -291,6 +291,7 @@ RUN pip install --upgrade mpld3 && \
     pip install geojson && \
     pip install pysal && \
     #conda install -y gdal && \
+    pip install rasterio && \
     pip install pyflux && \
     pip install terminalplot && \
     pip install raccoon && \
