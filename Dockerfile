@@ -317,6 +317,7 @@ RUN pip install --upgrade mpld3 && \
     pip install speedml && \
     pip install nibabel && \
     pip install mlens && \
+    pip install scikit-multilearn && \
   
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
