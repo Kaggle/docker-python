@@ -206,7 +206,7 @@ RUN apt-get update && \
     cd /usr/local/src && wget https://github.com/fukatani/rgf_python/releases/download/0.2.0/rgf1.2.zip && \
     unzip rgf1.2.zip && cd rgf1.2 && make && mv bin/rgf /usr/local/bin && \
     cd /usr/local/src && git clone https://github.com/fukatani/rgf_python.git && \
-    cd rgf_python && sed -i 's/\/opt\/rgf1.2\/bin\/rgf/\/usr\/local\/bin\/rgf/' rgf/rgf.py && \
+    cd rgf_python && sed -i 's/\/opt\/rgf1.2\/bin\/rgf/\/usr\/local\/bin\/rgf/' rgf/sklearn.py && \
     python setup.py install && \
     # PUDB, for local debugging convenience
     pip install pudb && \
