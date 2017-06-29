@@ -1,6 +1,7 @@
 FROM continuumio/anaconda3:latest
 
 ADD cache_keras_weights.py /usr/local/src/cache_keras_weights.py
+ADD patches/ /tmp/patches/
 
     # Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
     # as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
@@ -319,9 +320,13 @@ RUN pip install --upgrade mpld3 && \
     pip install mlens && \
     pip install scikit-multilearn && \
     pip install -e git+http://github.com/tensorflow/cleverhans.git#egg=cleverhans && \
-  
+
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
     # Required to display Altair charts in Jupyter notebook
     jupyter nbextension install --user --py vega
+
+# Finally, apply any locally defined patches.
+RUN /bin/bash -c \
+    "cd / && for p in $(ls /tmp/patches/*.patch); do echo '= Applying patch '\${p}; patch -p2 < \${p}; done"
