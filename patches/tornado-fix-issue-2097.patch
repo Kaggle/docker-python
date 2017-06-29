@@ -1,0 +1,27 @@
+diff -Naur /base/opt/conda/pkgs/tornado-4.5.1-py36_0/lib/python3.6/site-packages/tornado/http1connection.py /patched/opt.new/conda/lib/python3.6/site-packages/tornado/http1connection.py
+--- /base/opt/conda/lib/python3.6/site-packages/tornado/http1connection.py 2017-04-16 23:47:57.000000000 +0000
++++ /patched/opt.new/conda/lib/python3.6/site-packages/tornado/http1connection.py     2017-06-28 21:18:59.902402220 +0000
+@@ -349,6 +349,11 @@
+                 # self._request_start_line.version or
+                 # start_line.version?
+                 self._request_start_line.version == 'HTTP/1.1' and
++                # 1xx, 204 and 304 responses have no body (not even a zero-length
++                # body), and so should not have either Content-Length or
++                # Transfer-Encoding headers.
++                start_line.code not in (204, 304) and
++                (start_line.code < 100 or start_line.code >= 200) and
+                 # 304 responses have no body (not even a zero-length body), and so
+                 # should not have either Content-Length or Transfer-Encoding.
+                 # headers.
+diff -Naur /base/opt/conda/lib/python3.6/site-packages/tornado/web.py /patched/opt.new/conda/lib/python3.6/site-packages/tornado/web.py
+--- /base/opt/conda/lib/python3.6/site-packages/tornado/web.py     2017-06-28 21:22:56.505186743 +0000
++++ /patched/opt.new/conda/lib/python3.6/site-packages/tornado/web.py 2017-06-28 21:22:48.421228255 +0000
+@@ -977,7 +977,8 @@
+             if self._status_code in (204, 304):
+                 assert not self._write_buffer, "Cannot send body with %s" % self._status_code
+                 self._clear_headers_for_304()
+-            elif "Content-Length" not in self._headers:
++            elif ("Content-Length" not in self._headers and
++                  (self._status_code < 100 or self._status_code >= 200)):
+                 content_length = sum(len(part) for part in self._write_buffer)
+                 self.set_header("Content-Length", content_length)
