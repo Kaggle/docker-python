@@ -320,7 +320,7 @@ RUN pip install --upgrade mpld3 && \
     pip install mlens && \
     pip install scikit-multilearn && \
     pip install -e git+http://github.com/tensorflow/cleverhans.git#egg=cleverhans && \
-
+    pip install leven && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
