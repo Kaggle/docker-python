@@ -322,6 +322,7 @@ RUN pip install --upgrade mpld3 && \
     pip install -e git+http://github.com/tensorflow/cleverhans.git#egg=cleverhans && \
     pip install leven && \
     pip install catboost && \
+    pip install pygeocoder && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
