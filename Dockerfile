@@ -1,6 +1,5 @@
 FROM continuumio/anaconda3:latest
 
-ADD cache_keras_weights.py /usr/local/src/cache_keras_weights.py
 ADD patches/ /tmp/patches/
 
     # Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
