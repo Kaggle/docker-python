@@ -226,8 +226,10 @@ RUN apt-get update && \
     # Boruta (python implementation)
     cd /usr/local/src && git clone https://github.com/danielhomola/boruta_py.git && \
     cd boruta_py && python setup.py install && \
+    # LightGBM requires a newer cmake than apt-get currently provides
+    cd /usr/local/src && wget https://cmake.org/files/v3.8/cmake-3.8.2.tar.gz && tar xzf cmake-3.8.2.tar.gz && \ 
+    cd cmake-3.8.2 && ./bootstrap && make -j2 && make install && \
     cd /usr/local/src && git clone --recursive --depth 1 https://github.com/Microsoft/LightGBM && \
-    cd LightGBM && mkdir build && cd build && cmake .. && make -j $(nproc) && \
     cd /usr/local/src/LightGBM/python-package && python setup.py install && \
     cd /usr/local/src && git clone git://github.com/nicolashennetier/pyeconometrics.git && \
     cd pyeconometrics && python setup.py install && \
