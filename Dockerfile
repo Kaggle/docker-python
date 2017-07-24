@@ -60,6 +60,7 @@ RUN apt-get install -y libfreetype6-dev && \
     cd /usr/local/src && mkdir xgboost && cd xgboost && \
     git clone --depth 1 --recursive https://github.com/dmlc/xgboost.git && cd xgboost && \
     make && cd python-package && python setup.py install && \
+    pip install lightgbm && \
     #lasagne
     cd /usr/local/src && mkdir Lasagne && cd Lasagne && \
     git clone --depth 1 https://github.com/Lasagne/Lasagne.git && cd Lasagne && \
@@ -225,7 +226,6 @@ RUN apt-get update && \
     # Boruta (python implementation)
     cd /usr/local/src && git clone https://github.com/danielhomola/boruta_py.git && \
     cd boruta_py && python setup.py install && \
-    pip install lightgbm && \
     cd /usr/local/src && git clone git://github.com/nicolashennetier/pyeconometrics.git && \
     cd pyeconometrics && python setup.py install && \
     apt-get install -y graphviz && pip install graphviz && \
