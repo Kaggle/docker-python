@@ -120,7 +120,6 @@ twitter_samples udhr2 udhr unicode_samples universal_tagset universal_treebanks_
 vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
     # Stop-words
     pip install stop-words && \
-    cd /usr/local/src && python cache_keras_weights.py && \
     # clean up
     rm -rf /root/.cache/pip/* && \
     apt-get autoremove -y && apt-get clean && \
