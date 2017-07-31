@@ -17,7 +17,7 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     pip install vowpalwabbit && \
     pip install seaborn python-dateutil dask pytagcloud pyyaml ggplot joblib \
     husl geopy ml_metrics mne pyshp gensim && \
-    #python -m spacy.en.download && \
+    pip install -U spacy && python -m spacy download en && \
     # The apt-get version of imagemagick is out of date and has compatibility issues, so we build from source
     apt-get -y install dbus fontconfig fontconfig-config fonts-dejavu-core fonts-droid ghostscript gsfonts hicolor-icon-theme \
   libavahi-client3 libavahi-common-data libavahi-common3 libcairo2 libcap-ng0 libcroco3 \
