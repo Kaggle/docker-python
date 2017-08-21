@@ -323,6 +323,7 @@ RUN pip install --upgrade mpld3 && \
     pip install mlbox && \
     pip install paramnb && \
     pip install folium && \
+    pip install dipy && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
