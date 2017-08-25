@@ -325,6 +325,7 @@ RUN pip install --upgrade mpld3 && \
     pip install folium && \
     pip install scikit-plot && \
     pip install dipy && \
+    pip install git+https://github.com/dvaida/hallucinate.git && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
