@@ -1,7 +1,7 @@
 FROM continuumio/anaconda3:latest
 
 ADD patches/ /tmp/patches/
-ADD nbconvert-extensions.tpl /tmp/nbconvert-extensions.tpl
+ADD nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 
     # Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
     # as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
