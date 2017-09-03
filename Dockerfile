@@ -7,8 +7,6 @@ ADD nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
     # as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
 RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list && \
     apt-get update && apt-get install -y build-essential && \
-    # https://github.com/ContinuumIO/anaconda-issues/issues/720
-    conda install -f -y numpy && \
     cd /usr/local/src && \
     pip install tensorflow && \
     # Vowpal Rabbit
@@ -333,6 +331,8 @@ RUN pip install --upgrade mpld3 && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
+    # https://github.com/ContinuumIO/anaconda-issues/issues/720
+    conda install -f -y numpy && \
     # Required to display Altair charts in Jupyter notebook
     jupyter nbextension install --user --py vega
 
