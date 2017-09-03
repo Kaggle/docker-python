@@ -1,6 +1,7 @@
 FROM continuumio/anaconda3:latest
 
 ADD patches/ /tmp/patches/
+ADD nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 
     # Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
     # as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
@@ -321,11 +322,14 @@ RUN pip install --upgrade mpld3 && \
     pip install leven && \
     pip install catboost && \
     pip install mlbox && \
+    pip install fastFM && \
+    pip install lightfm && \
     pip install paramnb && \
     pip install folium && \
     pip install scikit-plot && \
     pip install dipy && \
     pip install plotnine && \
+    pip install git+https://github.com/dvaida/hallucinate.git && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
