@@ -1,0 +1,30 @@
+#!/bin/bash
+set -e
+
+# Default behavior is to do everything from scratch.
+# The --use-cache option is useful if you're iterating on a broken build.
+if [[ "$1" ==  "--use-cache" ]]; then
+    docker build --rm --cpu-period=100000 --cpu-quota=200000 -t kaggle/python-build .
+else
+    docker pull continuumio/anaconda3:latest
+    docker build --rm --no-cache --cpu-period=100000 --cpu-quota=200000 -t kaggle/python-build .
+fi
+
+
+
+rm -rf /tmp/python-build
+docker rm jupyter_test || true
+mkdir -p /tmp/python-build/tmp
+mkdir -p /tmp/python-build/devshm
+mkdir -p /tmp/python-build/working
+# Check that Jupyter server can run; if it dies on startup, the `docker kill` command will throw an error
+docker run -d --name=jupyter_test --read-only --net=none -e HOME=/tmp -v $PWD:/input:ro -v /tmp/python-build/working:/working -w=/working -v /tmp/python-build/tmp:/tmp -v /tmp/python-build/devshm:/dev/shm kaggle/python-build jupyter notebook --allow-root
+sleep 3
+docker kill jupyter_test && docker rm jupyter_test
+docker run --rm -t --read-only --net=none -e HOME=/tmp -v $PWD:/input:ro -v /tmp/python-build/working:/working -w=/working -v /tmp/python-build/tmp:/tmp -v /tmp/python-build/devshm:/dev/shm kaggle/python-build /bin/bash -c 'python /input/test_build.py'
+
+# The test_build.py script creates a plot called plot1.png; check that it exists
+[ -s /tmp/python-build/working/plot1.png ] || exit 1
+
+docker tag kaggle/python-build:latest kaggle/python:latest
+docker push kaggle/python:latest
