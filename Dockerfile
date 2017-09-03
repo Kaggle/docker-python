@@ -322,6 +322,8 @@ RUN pip install --upgrade mpld3 && \
     pip install leven && \
     pip install catboost && \
     pip install mlbox && \
+    pip install fastFM && \
+    pip install lightfm && \
     pip install paramnb && \
     pip install folium && \
     pip install scikit-plot && \
