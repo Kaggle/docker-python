@@ -310,7 +310,8 @@ RUN pip install --upgrade mpld3 && \
     conda install -y -c conda-forge -c ioam holoviews && \
     pip install git+https://github.com/ioam/geoviews.git && \
     pip install hypertools && \
-    pip install nxviz && \
+    # Nxviz has been causing an installation issue by trying unsuccessfully to remove setuptools.
+    #pip install nxviz && \
     pip install py_stringsimjoin && \
     pip install speedml && \
     pip install nibabel && \
