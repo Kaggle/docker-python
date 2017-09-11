@@ -329,6 +329,7 @@ RUN pip install --upgrade mpld3 && \
     pip install dipy && \
     pip install plotnine && \
     pip install git+https://github.com/dvaida/hallucinate.git && \
+    pip install scikit-surprise && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
