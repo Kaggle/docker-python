@@ -331,6 +331,7 @@ RUN pip install --upgrade mpld3 && \
     pip install git+https://github.com/dvaida/hallucinate.git && \
     pip install scikit-surprise && \
     pip install pymongo && \
+    pip install ethnicolr && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
