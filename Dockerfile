@@ -331,6 +331,8 @@ RUN pip install --upgrade mpld3 && \
     pip install git+https://github.com/dvaida/hallucinate.git && \
     pip install scikit-surprise && \
     pip install pymongo && \
+    # Update setuptools and add tensorpack
+    pip install --upgrade --ignore-installed setuptools && pip install --no-cache-dir git+git://github.com/ppwwyyxx/tensorpack && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
