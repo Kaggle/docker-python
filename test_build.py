@@ -32,6 +32,11 @@ print("matplotlib.pyplot ok")
 from mpl_toolkits.basemap import Basemap
 print("Basemap ok")
 
+import plotly.plotly as py
+import plotly.graph_objs as go
+
+from ggplot import *
+
 import theano
 print("Theano ok")
 
