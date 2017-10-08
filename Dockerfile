@@ -331,7 +331,8 @@ RUN pip install --upgrade mpld3 && \
     pip install git+https://github.com/dvaida/hallucinate.git && \
     pip install scikit-surprise && \
     pip install pymongo && \
-    pip install edward # http://edwardlib.org/
+    pip install edward && \
+    pip install geoplot && \
     # Add google PAIR-code Facets
     cd /opt/ && git clone https://github.com/PAIR-code/facets && cd facets/ && jupyter nbextension install facets-dist/ --user && \
     export PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/ && \    
