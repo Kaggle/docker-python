@@ -87,12 +87,8 @@ RUN apt-get install -y libfreetype6-dev && \
     printf "[global]\nbase_compiledir = /tmp/.theano\n" > /.theanorc && \
     cd /usr/local/src &&  git clone --depth 1 https://github.com/pybrain/pybrain && \
     cd pybrain && python setup.py install && \
-    # Base ATLAS plus tSNE
+    # Base ATLAS
     apt-get install -y libatlas-base-dev && \
-    # NOTE: we provide the tsne package, but sklearn.manifold.TSNE now does the same
-    # job
-    cd /usr/local/src && git clone --depth 1 https://github.com/danielfrg/tsne.git && \
-    cd tsne && python setup.py install && \
     cd /usr/local/src && git clone --depth 1 https://github.com/ztane/python-Levenshtein && \
     cd python-Levenshtein && python setup.py install && \
     cd /usr/local/src && git clone --depth 1 https://github.com/arogozhnikov/hep_ml.git && \
