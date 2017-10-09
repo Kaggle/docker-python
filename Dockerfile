@@ -7,7 +7,9 @@ ADD nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
     # as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
 RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list && \
     apt-get update && apt-get install -y build-essential && \
-    cd /usr/local/src && \
+    # https://stackoverflow.com/a/46498173
+    conda update -y conda && conda update -y python && \
+    # Tensorflow
     pip install tensorflow && \
     # Vowpal Rabbit
     apt-get install -y libboost-program-options-dev zlib1g-dev libboost-python-dev && \
