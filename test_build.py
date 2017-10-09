@@ -60,3 +60,6 @@ print(sess.run(hello))
 import cv2
 img = cv2.imread('plot1.png',0)
 print("OpenCV ok")
+
+import essentia
+print("Essentia ok")
