@@ -54,7 +54,7 @@ RUN apt-get install -y libfreetype6-dev && \
     #word cloud
     conda install -y -c https://conda.anaconda.org/amueller wordcloud && \
     #igraph
-    pip install python-igraph && \
+    conda install -y -c conda-forge python-igraph && \
     #xgboost
     cd /usr/local/src && mkdir xgboost && cd xgboost && \
     git clone --depth 1 --recursive https://github.com/dmlc/xgboost.git && cd xgboost && \
