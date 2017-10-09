@@ -230,6 +230,9 @@ RUN apt-get update && \
     apt-get install -y libgdal1-dev && GDAL_CONFIG=/usr/bin/gdal-config pip install fiona && pip install geopandas && \
     cd /usr/local/src && git clone git://github.com/scikit-learn-contrib/py-earth.git && \
     cd py-earth && python setup.py install && \
+    cd /usr/local/src && git clone https://github.com/MTG/essentia.git && cd essentia && \
+    ./waf configure --mode=release --build-static --with-python --with-cpptests --with-examples --with-vamp && \
+    ./waf && ./waf install && mv /usr/local/lib/python3.6/site-packages/essentia /opt/conda/lib/python3.6 && \
     # ~~~~ CLEAN UP ~~~~
     rm -rf /root/.cache/pip/* && \
     apt-get autoremove -y && apt-get clean && \
