@@ -321,7 +321,7 @@ RUN pip install --upgrade mpld3 && \
     pip install -e git+http://github.com/tensorflow/cleverhans.git#egg=cleverhans && \
     pip install leven && \
     pip install catboost && \
-    cd /usr/local/src && git clone --depth=1 https://github.com/AxeldeRomblay/MLBox && cd MLBox && python setup.py install && \
+    cd /usr/local/src && git clone --depth=1 https://github.com/AxeldeRomblay/MLBox && cd MLBox/python-package && python setup.py install && \
     pip install fastFM && \
     pip install lightfm && \
     pip install paramnb && \
