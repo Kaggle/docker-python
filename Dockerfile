@@ -155,7 +155,7 @@ RUN apt-get update && \
     make && cd python && python setup.py install && \
     # set backend for matplotlib to Agg
     matplotlibrc_path=$(python -c "import site, os, fileinput; packages_dir = site.getsitepackages()[0]; print(os.path.join(packages_dir, 'matplotlib', 'mpl-data', 'matplotlibrc'))") && \
-    sed -i 's/^backend      : qt5agg/backend      : Agg/' $matplotlibrc_path  && \
+    sed -i 's/^backend      : qt5agg/backend      : agg/' $matplotlibrc_path  && \
     # Stop jupyter nbconvert trying to rewrite its folder hierarchy
     mkdir -p /root/.jupyter && touch /root/.jupyter/jupyter_nbconvert_config.py && touch /root/.jupyter/migrated && \
     mkdir -p /.jupyter && touch /.jupyter/jupyter_nbconvert_config.py && touch /.jupyter/migrated && \
