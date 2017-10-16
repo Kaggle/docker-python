@@ -1,4 +1,4 @@
-FROM continuumio/anaconda3:latest
+FROM continuumio/anaconda3:4.4.0
 
 ADD patches/ /tmp/patches/
 ADD nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
