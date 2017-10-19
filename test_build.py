@@ -19,6 +19,13 @@ rf1 = RandomForestClassifier()
 rf1.fit(X,y)
 print("sklearn RandomForestClassifier: ok")
 
+from sklearn.linear_model import LinearRegression
+boston = datasets.load_boston()
+X, y = boston.data, boston.target
+lr1 = LinearRegression()
+lr1.fit(X,y)
+print("sklearn LinearRegression: ok")
+
 from xgboost import XGBClassifier
 xgb1 = XGBClassifier(n_estimators=3)
 xgb1.fit(X[0:70],y[0:70])
