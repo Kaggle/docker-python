@@ -344,6 +344,9 @@ RUN pip install --upgrade mpld3 && \
     # Required to display Altair charts in Jupyter notebook
     jupyter nbextension install --user --py vega
 
+# For Facets
+ENV PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/
+
 # Temporary fix for Anaconda linking error
 # See https://github.com/Kaggle/docker-python/issues/103
 RUN conda install -f -y numpy==1.13.0
