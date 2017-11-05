@@ -16,7 +16,7 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     cd /usr/lib/x86_64-linux-gnu/ && rm -f libboost_python.a && rm -f libboost_python.so && \
     ln -sf libboost_python-py34.so libboost_python.so && ln -sf libboost_python-py34.a libboost_python.a && \
     pip install vowpalwabbit && \
-    pip install seaborn python-dateutil dask pytagcloud pyyaml ggplot joblib \
+    pip install seaborn python-dateutil pytagcloud pyyaml ggplot joblib \
     husl geopy ml_metrics mne pyshp gensim && \
     conda install -y -c conda-forge spacy && python -m spacy download en && \
     # The apt-get version of imagemagick is out of date and has compatibility issues, so we build from source
@@ -351,7 +351,9 @@ ENV PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/
 
 # Temporary fix for Anaconda linking error
 # See https://github.com/Kaggle/docker-python/issues/103
-RUN conda install -f -y numpy==1.13.0
+RUN conda install -f -y numpy==1.13.0 && \
+    # Temporary patch for Dask getting downgraded, which breaks Keras
+    pip install --upgrade dask
 
 # Finally, apply any locally defined patches.
 RUN /bin/bash -c \
