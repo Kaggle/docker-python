@@ -16,7 +16,7 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     cd /usr/lib/x86_64-linux-gnu/ && rm -f libboost_python.a && rm -f libboost_python.so && \
     ln -sf libboost_python-py34.so libboost_python.so && ln -sf libboost_python-py34.a libboost_python.a && \
     pip install vowpalwabbit && \
-    pip install seaborn python-dateutil pytagcloud pyyaml ggplot joblib \
+    pip install seaborn python-dateutil dask pytagcloud pyyaml ggplot joblib \
     husl geopy ml_metrics mne pyshp gensim && \
     conda install -y -c conda-forge spacy && python -m spacy download en && \
     # The apt-get version of imagemagick is out of date and has compatibility issues, so we build from source
