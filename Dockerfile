@@ -329,7 +329,7 @@ RUN pip install --upgrade mpld3 && \
     pip install pymongo && \
     pip install edward && \
     pip install geoplot && \
-    pip install pydash && \
+    pip install eli5 && \
     # Add google PAIR-code Facets
     cd /opt/ && git clone https://github.com/PAIR-code/facets && cd facets/ && jupyter nbextension install facets-dist/ --user && \
     export PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/ && \    
@@ -337,6 +337,7 @@ RUN pip install --upgrade mpld3 && \
     # Update setuptools and add tensorpack
     pip install --upgrade --ignore-installed setuptools && pip install --no-cache-dir git+git://github.com/ppwwyyxx/tensorpack && \
     pip install pycountry && pip install iso3166 && \
+    pip install pydash && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
