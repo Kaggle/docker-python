@@ -153,16 +153,6 @@ RUN apt-get update && \
     cd /usr/local/src/mxnet && cp make/config.mk . && \
     sed -i 's/ADD_LDFLAGS =/ADD_LDFLAGS = -lstdc++/' config.mk && \
     make && cd python && python setup.py install && \
-    # set backend for matplotlib to Agg
-    matplotlibrc_path=$(python -c "import site, os, fileinput; packages_dir = site.getsitepackages()[0]; print(os.path.join(packages_dir, 'matplotlib', 'mpl-data', 'matplotlibrc'))") && \
-    sed -i 's/^backend      : TkAgg/backend      : agg/' $matplotlibrc_path  && \
-    # Stop jupyter nbconvert trying to rewrite its folder hierarchy
-    mkdir -p /root/.jupyter && touch /root/.jupyter/jupyter_nbconvert_config.py && touch /root/.jupyter/migrated && \
-    mkdir -p /.jupyter && touch /.jupyter/jupyter_nbconvert_config.py && touch /.jupyter/migrated && \
-    # Stop Matplotlib printing junk to the console on first load
-    sed -i "s/^.*Matplotlib is building the font cache using fc-list.*$/# Warning removed by Kaggle/g" /opt/conda/lib/python3.6/site-packages/matplotlib/font_manager.py && \
-    # Make matplotlib output in Jupyter notebooks display correctly
-    mkdir -p /etc/ipython/ && echo "c = get_config(); c.IPKernelApp.matplotlib = 'inline'" > /etc/ipython/ipython_config.py && \
     # h2o
     # This requires python-software-properties and Java.
     apt-get install -y python-software-properties zip && \
@@ -355,7 +345,18 @@ ENV PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/
 # See https://github.com/Kaggle/docker-python/issues/103
 RUN conda install -f -y numpy==1.13.0 && \
     # Temporary patch for Dask getting downgraded, which breaks Keras
-    pip install --upgrade dask
+    pip install --upgrade dask && \
+    # Matplotlib corrections:
+    # set backend for matplotlib to Agg
+    matplotlibrc_path=$(python -c "import site, os, fileinput; packages_dir = site.getsitepackages()[0]; print(os.path.join(packages_dir, 'matplotlib', 'mpl-data', 'matplotlibrc'))") && \
+    sed -i 's/^backend      : TkAgg/backend      : agg/' $matplotlibrc_path  && \
+    # Stop jupyter nbconvert trying to rewrite its folder hierarchy
+    mkdir -p /root/.jupyter && touch /root/.jupyter/jupyter_nbconvert_config.py && touch /root/.jupyter/migrated && \
+    mkdir -p /.jupyter && touch /.jupyter/jupyter_nbconvert_config.py && touch /.jupyter/migrated && \
+    # Stop Matplotlib printing junk to the console on first load
+    sed -i "s/^.*Matplotlib is building the font cache using fc-list.*$/# Warning removed by Kaggle/g" /opt/conda/lib/python3.6/site-packages/matplotlib/font_manager.py && \
+    # Make matplotlib output in Jupyter notebooks display correctly
+    mkdir -p /etc/ipython/ && echo "c = get_config(); c.IPKernelApp.matplotlib = 'inline'" > /etc/ipython/ipython_config.py
 
 # Finally, apply any locally defined patches.
 RUN /bin/bash -c \
