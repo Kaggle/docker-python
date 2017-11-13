@@ -330,6 +330,7 @@ RUN pip install --upgrade mpld3 && \
     pip install edward && \
     pip install geoplot && \
     pip install eli5 && \
+    pip install implicit && \
     pip install kmeans-smote && \
     # Add google PAIR-code Facets
     cd /opt/ && git clone https://github.com/PAIR-code/facets && cd facets/ && jupyter nbextension install facets-dist/ --user && \
