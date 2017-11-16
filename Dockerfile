@@ -330,6 +330,8 @@ RUN pip install --upgrade mpld3 && \
     pip install --upgrade --ignore-installed setuptools && pip install --no-cache-dir git+git://github.com/ppwwyyxx/tensorpack && \
     pip install pycountry && pip install iso3166 && \
     pip install pydash && \
+    pip install kmodes && \
+    pip install librosa && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
