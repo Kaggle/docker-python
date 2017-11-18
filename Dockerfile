@@ -222,6 +222,8 @@ RUN apt-get update && \
     apt-get install -y sox libsox-dev libsox-fmt-all && \
     pip install cffi && \
     cd /usr/local/src && git clone https://github.com/pytorch/audio && cd audio && python setup.py install && \
+    # JupyterLab
+    conda install -y -c conda-forge jupyterlab && \
     # ~~~~ CLEAN UP ~~~~
     rm -rf /root/.cache/pip/* && \
     apt-get autoremove -y && apt-get clean && \
