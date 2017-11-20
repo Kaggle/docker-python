@@ -353,6 +353,8 @@ ENV PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/
 RUN conda install -f -y numpy==1.13.0 && \
     # Temporary patch for Dask getting downgraded, which breaks Keras
     pip install --upgrade dask && \
+    # Temporary downgrade for Pandas to circumvent https://github.com/pandas-dev/pandas/issues/18186
+    pip uninstall -y pandas && pip install pandas==0.20.3 && \
     # Matplotlib corrections:
     # set backend for matplotlib to Agg
     matplotlibrc_path=$(python -c "import site, os, fileinput; packages_dir = site.getsitepackages()[0]; print(os.path.join(packages_dir, 'matplotlib', 'mpl-data', 'matplotlibrc'))") && \
