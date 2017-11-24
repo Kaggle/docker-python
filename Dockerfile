@@ -370,3 +370,6 @@ RUN conda install -f -y numpy==1.13.0 && \
 # Finally, apply any locally defined patches.
 RUN /bin/bash -c \
     "cd / && for p in $(ls /tmp/patches/*.patch); do echo '= Applying patch '\${p}; patch -p2 < \${p}; done"
+
+# importing fastai library for dl and ml
+RUN pip install fastai
