@@ -239,6 +239,7 @@ RUN pip install --upgrade mpld3 && \
     pip install mplleaflet && \
     pip install gpxpy && \
     pip install arrow && \
+    pip install vtk && \
     pip install sexmachine  && \
     pip install Geohash && \
     # https://github.com/vinsci/geohash/issues/4
