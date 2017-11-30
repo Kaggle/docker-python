@@ -337,6 +337,7 @@ RUN pip install --upgrade mpld3 && \
     pip install pydash && \
     pip install kmodes && \
     pip install librosa && \
+    pip install pykoko && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
