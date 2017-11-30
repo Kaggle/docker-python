@@ -337,6 +337,7 @@ RUN pip install --upgrade mpld3 && \
     pip install pydash && \
     pip install kmodes && \
     pip install librosa && \
+    pip install fastai && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
@@ -370,6 +371,3 @@ RUN conda install -f -y numpy==1.13.0 && \
 # Finally, apply any locally defined patches.
 RUN /bin/bash -c \
     "cd / && for p in $(ls /tmp/patches/*.patch); do echo '= Applying patch '\${p}; patch -p2 < \${p}; done"
-
-# importing fastai library for dl and ml
-RUN pip install fastai
