@@ -240,6 +240,8 @@ RUN pip install --upgrade mpld3 && \
     pip install Geohash && \
     # https://github.com/vinsci/geohash/issues/4
     sed -i -- 's/geohash/.geohash/g' /opt/conda/lib/python3.6/site-packages/Geohash/__init__.py && \
+    # Pandoc is a dependency of deap
+    apt-get install pandoc && \
     pip install deap && \
     pip install tpot && \
     pip install haversine && \
