@@ -149,10 +149,7 @@ RUN apt-get update && \
     cd /usr/local/src && git clone https://github.com/SciTools/cartopy.git && \
     cd cartopy && python setup.py install && \
     # MXNet
-    cd /usr/local/src && git clone --recursive https://github.com/dmlc/mxnet && \
-    cd /usr/local/src/mxnet && cp make/config.mk . && \
-    sed -i 's/ADD_LDFLAGS =/ADD_LDFLAGS = -lstdc++/' config.mk && \
-    make && cd python && python setup.py install && \
+    pip install mxnet==0.11.0 && \
     # h2o
     # This requires python-software-properties and Java.
     apt-get install -y python-software-properties zip && \
