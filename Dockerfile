@@ -340,6 +340,10 @@ RUN pip install --upgrade mpld3 && \
     pip install librosa && \
     pip install fastai && \
     pip install polyglot && \
+    pip install mmh3 && \
+    pip install fbpca && \
+    pip install sentencepiece && \
+    pip install glmnet_py && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
