@@ -346,6 +346,7 @@ RUN pip install --upgrade mpld3 && \
     pip install fbpca && \
     pip install sentencepiece && \
     pip install glmnet_py && \
+    pip install lime && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
