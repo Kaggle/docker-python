@@ -353,7 +353,9 @@ RUN pip install --upgrade mpld3 && \
     # https://github.com/ContinuumIO/anaconda-issues/issues/720
     conda install -f -y numpy && \
     # Required to display Altair charts in Jupyter notebook
-    jupyter nbextension install --user --py vega
+    jupyter nbextension install --user --py vega && \
+    # JupyterLab
+    conda install -y -c conda-forge jupyterlab
 
 # For Facets
 ENV PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/
