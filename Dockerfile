@@ -19,6 +19,7 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     pip install seaborn python-dateutil dask pytagcloud pyyaml joblib \
     husl geopy ml_metrics mne pyshp gensim && \
     conda install -y -c conda-forge spacy && python -m spacy download en && \
+    python -m spacy download en_core_web_lg && \
     # The apt-get version of imagemagick is out of date and has compatibility issues, so we build from source
     apt-get -y install dbus fontconfig fontconfig-config fonts-dejavu-core fonts-droid ghostscript gsfonts hicolor-icon-theme \
   libavahi-client3 libavahi-common-data libavahi-common3 libcairo2 libcap-ng0 libcroco3 \
@@ -214,7 +215,7 @@ RUN apt-get update && \
     #./waf configure --mode=release --build-static --with-python --with-cpptests --with-examples --with-vamp && \
     #./waf && ./waf install && mv /usr/local/lib/python3.6/site-packages/essentia /opt/conda/lib/python3.6 && \
     # PyTorch
-    conda install pytorch torchvision -c soumith && \
+    conda install -y pytorch torchvision -c soumith && \
     # PyTorch Audio
     apt-get install -y sox libsox-dev libsox-fmt-all && \
     pip install cffi && \
@@ -347,6 +348,8 @@ RUN pip install --upgrade mpld3 && \
     pip install sentencepiece && \
     pip install glmnet_py && \
     pip install lime && \
+    pip install memory_profiler && \
+    pip install pyfasttext && \
     pip install annoy && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
