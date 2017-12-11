@@ -353,6 +353,7 @@ RUN pip install --upgrade mpld3 && \
     pip install memory_profiler && \
     pip install pyfasttext && \
     pip install annoy && \
+    pip install category_encoders && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
