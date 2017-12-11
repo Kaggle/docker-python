@@ -240,6 +240,8 @@ RUN pip install --upgrade mpld3 && \
     pip install gpxpy && \
     pip install arrow && \
     pip install vtk && \
+    pip install pronouncing && \
+    pip install markovify && \
     pip install sexmachine  && \
     pip install Geohash && \
     # https://github.com/vinsci/geohash/issues/4
