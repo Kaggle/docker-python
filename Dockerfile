@@ -240,6 +240,8 @@ RUN pip install --upgrade mpld3 && \
     pip install gpxpy && \
     pip install arrow && \
     pip install vtk && \
+    pip install pronouncing && \
+    pip install markovify && \
     pip install sexmachine  && \
     pip install Geohash && \
     # https://github.com/vinsci/geohash/issues/4
@@ -350,6 +352,8 @@ RUN pip install --upgrade mpld3 && \
     pip install lime && \
     pip install memory_profiler && \
     pip install pyfasttext && \
+    pip install annoy && \
+    pip install category_encoders && \
     pip install google-cloud-bigquery && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
