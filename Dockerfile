@@ -1,7 +1,7 @@
 FROM continuumio/anaconda3:4.4.0
 
 ADD patches/ /tmp/patches/
-ADD nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
+ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 
     # Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
     # as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
@@ -350,6 +350,7 @@ RUN pip install --upgrade mpld3 && \
     pip install lime && \
     pip install memory_profiler && \
     pip install pyfasttext && \
+    pip install google-cloud-bigquery && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
@@ -379,6 +380,10 @@ RUN conda install -f -y numpy==1.13.0 && \
     sed -i "s/^.*Matplotlib is building the font cache using fc-list.*$/# Warning removed by Kaggle/g" /opt/conda/lib/python3.6/site-packages/matplotlib/font_manager.py && \
     # Make matplotlib output in Jupyter notebooks display correctly
     mkdir -p /etc/ipython/ && echo "c = get_config(); c.IPKernelApp.matplotlib = 'inline'" > /etc/ipython/ipython_config.py
+
+# Add BigQuery client proxy settings
+ENV PYTHONUSERBASE "/root/.local"
+ADD patches/sitecustomize.py /root/.local/lib/python3.6/site-packages/sitecustomize.py
 
 # Finally, apply any locally defined patches.
 RUN /bin/bash -c \
