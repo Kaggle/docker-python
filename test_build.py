@@ -70,3 +70,7 @@ print("OpenCV ok")
 
 from skimage.io import imread
 print("skimage ok")
+
+from google.cloud import bigquery
+client = bigquery.Client()
+print("bigquery ok")
