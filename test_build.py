@@ -93,7 +93,7 @@ class HTTPHandler(BaseHTTPRequestHandler):
         s.send_response(200)
 
 httpd = HTTPServer((HOSTNAME, PORT), HTTPHandler)
-thread = threading.Thread(target=httpd.serve_forever).start()
+threading.Thread(target=httpd.serve_forever).start()
 
 client = bigquery.Client()
 
