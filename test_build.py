@@ -91,7 +91,7 @@ class HTTPHandler(BaseHTTPRequestHandler):
     def do_GET(s):
         global fake_bq_called
         global fake_bq_header_found
-        fale_bq_called = True
+        fake_bq_called = True
         fake_bq_header_found = any(k for k in s.headers if k == "X-KAGGLE-PROXY-DATA" and s.headers[k] == "test-key")
         s.send_response(200)
 
