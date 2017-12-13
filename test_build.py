@@ -81,15 +81,18 @@ HOSTNAME = "127.0.0.1"
 PORT = 8000
 URL = "http://%s:%s" % (HOSTNAME, PORT)
 
-header_found = False
+fake_bq_called = False
+fake_bq_header_found = False
 
 class HTTPHandler(BaseHTTPRequestHandler):
     def do_HEAD(s):
         s.send_response(200)
 
     def do_GET(s):
-        global header_found
-        header_found = any(k for k in s.headers if k == "X-KAGGLE-PROXY-DATA" and s.headers[k] == "test-key")
+        global fake_bq_called
+        global fake_bq_header_found
+        fale_bq_called = True
+        fake_bq_header_found = any(k for k in s.headers if k == "X-KAGGLE-PROXY-DATA" and s.headers[k] == "test-key")
         s.send_response(200)
 
 httpd = HTTPServer((HOSTNAME, PORT), HTTPHandler)
@@ -102,9 +105,10 @@ try:
 except:
     pass
 
-if header_found:
-    print("bigquery proxy ok")
-else:
-    print("bigquery proxy failed")
-
 httpd.shutdown()
+
+assert fake_bq_called, "Fake server did not recieve a request from the BQ client."
+assert fake_bq_header_found, "X-KAGGLE-PROXY-DATA header was missing from the BQ request."
+
+print("bigquery proxy ok")
+
