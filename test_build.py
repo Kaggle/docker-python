@@ -32,6 +32,7 @@ xgb1.fit(X[0:70],y[0:70])
 print("xgboost XGBClassifier: ok")
 
 import matplotlib.pyplot as plt
+plt.switch_backend('agg')
 plt.plot(np.linspace(0,1,50), np.random.rand(50))
 plt.savefig("plot1.png")
 print("matplotlib.pyplot ok")
@@ -71,6 +72,39 @@ print("OpenCV ok")
 from skimage.io import imread
 print("skimage ok")
 
+import os
+import threading
+from http.server import BaseHTTPRequestHandler, HTTPServer
 from google.cloud import bigquery
+
+HOSTNAME = "127.0.0.1"
+PORT = 8000
+URL = "http://%s:%s" % (HOSTNAME, PORT)
+
+header_found = False
+
+class HTTPHandler(BaseHTTPRequestHandler):
+    def do_HEAD(s):
+        s.send_response(200)
+
+    def do_GET(s):
+        global header_found
+        header_found = any(k for k in s.headers if k == "X-KAGGLE-PROXY-DATA" and s.headers[k] == "test-key")
+        s.send_response(200)
+
+httpd = HTTPServer((HOSTNAME, PORT), HTTPHandler)
+thread = threading.Thread(target=httpd.serve_forever).start()
+
 client = bigquery.Client()
-print("bigquery ok")
+
+try:
+    for ds in client.list_datasets(): pass
+except:
+    pass
+
+if header_found:
+    print("bigquery proxy ok")
+else:
+    print("bigquery proxy failed")
+
+httpd.shutdown()
