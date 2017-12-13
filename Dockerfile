@@ -1,7 +1,7 @@
 FROM continuumio/anaconda3:4.4.0
 
 ADD patches/ /tmp/patches/
-ADD nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
+ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 
     # Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
     # as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
@@ -22,31 +22,19 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     python -m spacy download en_core_web_lg && \
     # The apt-get version of imagemagick is out of date and has compatibility issues, so we build from source
     apt-get -y install dbus fontconfig fontconfig-config fonts-dejavu-core fonts-droid ghostscript gsfonts hicolor-icon-theme \
-  libavahi-client3 libavahi-common-data libavahi-common3 libcairo2 libcap-ng0 libcroco3 \
-  libcups2 libcupsfilters1 libcupsimage2 libdatrie1 libdbus-1-3 libdjvulibre-text libdjvulibre21 libfftw3-double3 libfontconfig1 \
-  libfreetype6 libgdk-pixbuf2.0-0 libgdk-pixbuf2.0-common libgomp1 libgraphite2-3 libgs9 libgs9-common libharfbuzz0b libijs-0.35 \
-  libilmbase6 libjasper1 libjbig0 libjbig2dec0 libjpeg62-turbo liblcms2-2 liblqr-1-0 libltdl7 libmagickcore-6.q16-2 \
-  libmagickcore-6.q16-2-extra libmagickwand-6.q16-2 libnetpbm10 libopenexr6 libpango-1.0-0 libpangocairo-1.0-0 libpangoft2-1.0-0 \
-  libpaper-utils libpaper1 libpixman-1-0 libpng12-0 librsvg2-2 librsvg2-common libthai-data libthai0 libtiff5 libwmf0.2-7 \
-  libxcb-render0 libxcb-shm0 netpbm poppler-data p7zip-full && \
-    cd /usr/local/src && \
-    wget http://transloadit.imagemagick.org/download/ImageMagick.tar.gz && \
-    tar xzf ImageMagick.tar.gz && cd `ls -d ImageMagick-*` && pwd && ls -al && ./configure && \
-    make -j $(nproc) && make install && \
-    # clean up ImageMagick source files
-    cd ../ && rm -rf ImageMagick* && \
+libavahi-client3 libavahi-common-data libavahi-common3 libcairo2 libcap-ng0 libcroco3 \
+libcups2 libcupsfilters1 libcupsimage2 libdatrie1 libdbus-1-3 libdjvulibre-text libdjvulibre21 libfftw3-double3 libfontconfig1 \
+libfreetype6 libgdk-pixbuf2.0-0 libgdk-pixbuf2.0-common libgomp1 libgraphite2-3 libgs9 libgs9-common libharfbuzz0b libijs-0.35 \
+libilmbase6 libjasper1 libjbig0 libjbig2dec0 libjpeg62-turbo liblcms2-2 liblqr-1-0 libltdl7 libmagickcore-6.q16-2 \
+libmagickcore-6.q16-2-extra libmagickwand-6.q16-2 libnetpbm10 libopenexr6 libpango-1.0-0 libpangocairo-1.0-0 libpangoft2-1.0-0 \
+libpaper-utils libpaper1 libpixman-1-0 libpng12-0 librsvg2-2 librsvg2-common libthai-data libthai0 libtiff5 libwmf0.2-7 \
+libxcb-render0 libxcb-shm0 netpbm poppler-data p7zip-full && \
+    conda install -y -c conda-forge imagemagick && \
     apt-get -y install libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev && \
     apt-get -y install libtbb2 libtbb-dev libjpeg-dev libtiff-dev libjasper-dev && \
     apt-get -y install cmake && \
-    cd /usr/local/src && git clone --depth 1 https://github.com/Itseez/opencv.git && \
-    cd opencv && \
-    mkdir build && cd build && \
-    cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_TBB=ON -D WITH_FFMPEG=OFF -D WITH_V4L=ON -D WITH_QT=OFF -D WITH_OPENGL=ON -D PYTHON3_LIBRARY=/opt/conda/lib/libpython3.6m.so -D PYTHON3_INCLUDE_DIR=/opt/conda/include/python3.6m/ -D PYTHON_LIBRARY=/opt/conda/lib/libpython3.6m.so -D PYTHON_INCLUDE_DIR=/opt/conda/include/python3.6m/ -D BUILD_PNG=TRUE .. && \
-    make -j $(nproc) && make install && \
-    echo "/usr/local/lib/python3.6/site-packages" > /etc/ld.so.conf.d/opencv.conf && ldconfig && \
-    cp /usr/local/lib/python3.6/site-packages/cv2.cpython-36m-x86_64-linux-gnu.so /opt/conda/lib/python3.6/site-packages/ && \
+    conda install -y -c conda-forge opencv && \
     # Clean up install cruft
-    rm -rf /usr/local/src/opencv && \
     rm -rf /root/.cache/pip/* && \
     apt-get autoremove -y && apt-get clean
 
@@ -123,7 +111,6 @@ vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
     apt-get autoremove -y && apt-get clean && \
     rm -rf /usr/local/src/*
 
-    # Install OpenCV-3 with Python support
 RUN apt-get update && \
     # Libgeos, for mapping libraries
     apt-get -y install libgeos-dev && \
@@ -209,6 +196,8 @@ RUN apt-get update && \
     cd pyeconometrics && python setup.py install && \
     apt-get install -y graphviz && pip install graphviz && \
     apt-get install -y libgdal1-dev && GDAL_CONFIG=/usr/bin/gdal-config pip install fiona && pip install geopandas && \
+    # Pandoc is a dependency of deap
+    apt-get install -y pandoc && \
     cd /usr/local/src && git clone git://github.com/scikit-learn-contrib/py-earth.git && \
     cd py-earth && python setup.py install && \
     #cd /usr/local/src && git clone https://github.com/MTG/essentia.git && cd essentia && \
@@ -246,8 +235,6 @@ RUN pip install --upgrade mpld3 && \
     pip install Geohash && \
     # https://github.com/vinsci/geohash/issues/4
     sed -i -- 's/geohash/.geohash/g' /opt/conda/lib/python3.6/site-packages/Geohash/__init__.py && \
-    # Pandoc is a dependency of deap
-    apt-get install -y pandoc && \
     pip install deap && \
     pip install tpot && \
     pip install haversine && \
@@ -278,7 +265,9 @@ RUN pip install --upgrade mpld3 && \
     pip install altair && \
     pip install pystan && \
     pip install ImageHash && \
-    pip install git+https://github.com/hammerlab/fancyimpute.git && \
+    conda install -y ecos && \
+    conda install -y CVXcanon && \
+    pip install fancyimpute && \
     pip install git+https://github.com/pymc-devs/pymc3 && \
     pip install tifffile && \
     pip install spectral && \
@@ -302,9 +291,8 @@ RUN pip install --upgrade mpld3 && \
     pip install pyexcel-ods && \
     pip install sklearn-pandas && \
     pip install stemming && \
-    pip install fbprophet && \
-    conda install -y -c conda-forge -c ioam holoviews && \
-    pip install git+https://github.com/ioam/geoviews.git && \
+    conda install -y -c conda-forge fbprophet && \
+    conda install -y -c conda-forge -c ioam holoviews geoviews && \
     pip install hypertools && \
     # Nxviz has been causing an installation issue by trying unsuccessfully to remove setuptools.
     #pip install nxviz && \
@@ -354,6 +342,7 @@ RUN pip install --upgrade mpld3 && \
     pip install pyfasttext && \
     pip install annoy && \
     pip install category_encoders && \
+    pip install google-cloud-bigquery && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
@@ -383,6 +372,10 @@ RUN conda install -f -y numpy==1.13.0 && \
     sed -i "s/^.*Matplotlib is building the font cache using fc-list.*$/# Warning removed by Kaggle/g" /opt/conda/lib/python3.6/site-packages/matplotlib/font_manager.py && \
     # Make matplotlib output in Jupyter notebooks display correctly
     mkdir -p /etc/ipython/ && echo "c = get_config(); c.IPKernelApp.matplotlib = 'inline'" > /etc/ipython/ipython_config.py
+
+# Add BigQuery client proxy settings
+ENV PYTHONUSERBASE "/root/.local"
+ADD patches/sitecustomize.py /root/.local/lib/python3.6/site-packages/sitecustomize.py
 
 # Finally, apply any locally defined patches.
 RUN /bin/bash -c \
