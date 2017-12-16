@@ -361,10 +361,6 @@ RUN conda install -f -y numpy==1.13.0 && \
     pip install --upgrade dask && \
     # Temporary downgrade for Pandas to circumvent https://github.com/pandas-dev/pandas/issues/18186
     pip uninstall -y pandas && pip install pandas==0.20.3 && \
-    # Matplotlib corrections:
-    # set backend for matplotlib to Agg
-    matplotlibrc_path=$(python -c "import site, os, fileinput; packages_dir = site.getsitepackages()[0]; print(os.path.join(packages_dir, 'matplotlib', 'mpl-data', 'matplotlibrc'))") && \
-    sed -i 's/^backend      : TkAgg/backend      : agg/' $matplotlibrc_path  && \
     # Stop jupyter nbconvert trying to rewrite its folder hierarchy
     mkdir -p /root/.jupyter && touch /root/.jupyter/jupyter_nbconvert_config.py && touch /root/.jupyter/migrated && \
     mkdir -p /.jupyter && touch /.jupyter/jupyter_nbconvert_config.py && touch /.jupyter/migrated && \
@@ -376,6 +372,9 @@ RUN conda install -f -y numpy==1.13.0 && \
 # Add BigQuery client proxy settings
 ENV PYTHONUSERBASE "/root/.local"
 ADD patches/sitecustomize.py /root/.local/lib/python3.6/site-packages/sitecustomize.py
+
+# Set backend for matplotlib
+ENV MPLBACKEND "agg"
 
 # Finally, apply any locally defined patches.
 RUN /bin/bash -c \

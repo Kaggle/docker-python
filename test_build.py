@@ -32,7 +32,6 @@ xgb1.fit(X[0:70],y[0:70])
 print("xgboost XGBClassifier: ok")
 
 import matplotlib.pyplot as plt
-plt.switch_backend('agg')
 plt.plot(np.linspace(0,1,50), np.random.rand(50))
 plt.savefig("plot1.png")
 print("matplotlib.pyplot ok")
