@@ -355,6 +355,7 @@ RUN pip install --upgrade mpld3 && \
     pip install annoy && \
     pip install category_encoders && \
     pip install google-cloud-bigquery && \
+    pip install ortools && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
