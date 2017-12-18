@@ -241,6 +241,7 @@ RUN pip install --upgrade mpld3 && \
     pip install gpxpy && \
     pip install arrow && \
     pip install vtk && \
+    pip install nibabel && \
     pip install pronouncing && \
     pip install markovify && \
     pip install sexmachine  && \
@@ -356,6 +357,7 @@ RUN pip install --upgrade mpld3 && \
     pip install category_encoders && \
     pip install google-cloud-bigquery && \
     pip install ortools && \
+    pip install scattertext && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
