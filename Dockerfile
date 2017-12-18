@@ -349,6 +349,7 @@ RUN pip install --upgrade mpld3 && \
     pip install mmh3 && \
     pip install fbpca && \
     pip install sentencepiece && \
+    pip install cufflinks && \
     pip install glmnet_py && \
     pip install lime && \
     pip install memory_profiler && \
