@@ -356,6 +356,7 @@ RUN pip install --upgrade mpld3 && \
     pip install annoy && \
     pip install category_encoders && \
     pip install google-cloud-bigquery && \
+    pip install ortools && \
     pip install scattertext && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
