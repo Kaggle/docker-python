@@ -359,6 +359,8 @@ RUN pip install --upgrade mpld3 && \
     pip install google-cloud-bigquery && \
     pip install ortools && \
     pip install scattertext && \
+    # Add Japanese morphological analysis engine
+    pip install janome &&\
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
