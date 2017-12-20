@@ -241,6 +241,7 @@ RUN pip install --upgrade mpld3 && \
     pip install gpxpy && \
     pip install arrow && \
     pip install vtk && \
+    pip install nilearn && \
     pip install nibabel && \
     pip install pronouncing && \
     pip install markovify && \
