@@ -359,6 +359,7 @@ RUN pip install --upgrade mpld3 && \
     pip install google-cloud-bigquery && \
     pip install ortools && \
     pip install scattertext && \
+    pip install emoji && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
