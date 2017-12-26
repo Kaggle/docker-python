@@ -395,3 +395,7 @@ ENV MPLBACKEND "agg"
 # Finally, apply any locally defined patches.
 RUN /bin/bash -c \
     "cd / && for p in $(ls /tmp/patches/*.patch); do echo '= Applying patch '\${p}; patch -p2 < \${p}; done"
+    
+# Pandas data reader
+RUN pip install pandas-datareader
+
