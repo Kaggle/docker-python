@@ -10,7 +10,7 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     # https://stackoverflow.com/a/46498173
     conda update -y conda && conda update -y python && \
     # Tensorflow
-    pip install tensorflow && \
+    pip install tf-nightly && \
     # Vowpal Rabbit
     #apt-get install -y libboost-program-options-dev zlib1g-dev libboost-python-dev && \
     #cd /usr/lib/x86_64-linux-gnu/ && rm -f libboost_python.a && rm -f libboost_python.so && \
