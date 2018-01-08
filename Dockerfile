@@ -106,7 +106,7 @@ RUN apt-get install -y libfreetype6-dev && \
     basque_grammars biocreative_ppi bllip_wsj_no_aux \
 book_grammars brown brown_tei cess_cat cess_esp chat80 city_database cmudict \
 comtrans conll2000 conll2002 conll2007 crubadan dependency_treebank \
-europarl_raw floresta gazetteers genesis gutenberg hmm_treebank_pos_tagger \
+europarl_raw floresta gazetteers genesis gutenberg \
 ieer inaugural indian jeita kimmo knbc large_grammars lin_thesaurus mac_morpho machado \
 masc_tagged maxent_ne_chunker maxent_treebank_pos_tagger moses_sample movie_reviews \
 mte_teip5 names nps_chat omw opinion_lexicon paradigms \
