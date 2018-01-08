@@ -360,6 +360,7 @@ RUN pip install --upgrade mpld3 && \
     pip install google-cloud-bigquery && \
     pip install ortools && \
     pip install scattertext && \
+    pip install pykoko && \
     pip install featuretools && \
     pip install emoji && \
     # Add Japanese morphological analysis engine
