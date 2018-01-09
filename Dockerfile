@@ -239,6 +239,10 @@ RUN pip install --upgrade mpld3 && \
     pip install nibabel && \
     pip install pronouncing && \
     pip install markovify && \
+    pip install imgaug && \
+    pip install preprocessing && \
+    pip install Baker && \
+    pip install path.py && \
     pip install sexmachine  && \
     pip install Geohash && \
     # https://github.com/vinsci/geohash/issues/4
