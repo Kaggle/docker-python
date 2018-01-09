@@ -366,6 +366,8 @@ RUN pip install --upgrade mpld3 && \
     pip install google-cloud-bigquery && \
     pip install ortools && \
     pip install scattertext && \
+    # Pandas data reader
+    pip install pandas-datareader && \
     pip install pykoko && \
     pip install featuretools && \
     pip install wordsegment && \
@@ -410,3 +412,6 @@ ENV MPLBACKEND "agg"
 # Finally, apply any locally defined patches.
 RUN /bin/bash -c \
     "cd / && for p in $(ls /tmp/patches/*.patch); do echo '= Applying patch '\${p}; patch -p2 < \${p}; done"
+    
+
+
