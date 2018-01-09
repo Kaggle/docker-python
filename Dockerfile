@@ -9,8 +9,6 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     apt-get update && apt-get install -y build-essential && \
     # https://stackoverflow.com/a/46498173
     conda update -y conda && conda update -y python && \
-    # Tensorflow
-    pip install tensorflow && \
     # Vowpal Rabbit
     #apt-get install -y libboost-program-options-dev zlib1g-dev libboost-python-dev && \
     #cd /usr/lib/x86_64-linux-gnu/ && rm -f libboost_python.a && rm -f libboost_python.so && \
@@ -49,6 +47,22 @@ libxcb-render0 libxcb-shm0 netpbm poppler-data p7zip-full && \
     rm -rf /usr/local/src/opencv && \
     rm -rf /root/.cache/pip/* && \
     apt-get autoremove -y && apt-get clean
+
+# Tensorflow source build
+RUN apt-get install -y python-software-properties zip && \
+    echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list &&     echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list &&     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886 C857C906 2B90D010 && \
+    apt-get update && \
+    echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
+    echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections && \
+    apt-get install -y oracle-java8-installer && \
+    echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list && \
+    curl https://bazel.build/bazel-release.pub.gpg | apt-key add - && \
+    apt-get update && apt-get install -y bazel && apt-get upgrade -y bazel && \
+    cd /usr/local/src && git clone https://github.com/tensorflow/tensorflow && \
+    cd tensorflow && echo "\n" | ./configure && \
+    bazel build --config=opt //tensorflow/tools/pip_package:build_pip_package && \
+    bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg && \
+    pip install /tmp/tensorflow_pkg/tensorflow*.whl
 
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
@@ -106,7 +120,7 @@ RUN apt-get install -y libfreetype6-dev && \
     basque_grammars biocreative_ppi bllip_wsj_no_aux \
 book_grammars brown brown_tei cess_cat cess_esp chat80 city_database cmudict \
 comtrans conll2000 conll2002 conll2007 crubadan dependency_treebank \
-europarl_raw floresta gazetteers genesis gutenberg hmm_treebank_pos_tagger \
+europarl_raw floresta gazetteers genesis gutenberg \
 ieer inaugural indian jeita kimmo knbc large_grammars lin_thesaurus mac_morpho machado \
 masc_tagged maxent_ne_chunker maxent_treebank_pos_tagger moses_sample movie_reviews \
 mte_teip5 names nps_chat omw opinion_lexicon paradigms \
@@ -151,13 +165,7 @@ RUN apt-get update && \
     # MXNet
     pip install mxnet==0.11.0 && \
     # h2o
-    # This requires python-software-properties and Java.
-    apt-get install -y python-software-properties zip && \
-    echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list &&     echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list &&     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886 C857C906 2B90D010 && \
-    apt-get update && \
-    echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
-    echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections && \
-    apt-get install -y oracle-java8-installer && \
+    # This requires python-software-properties and Java, which were installed above.
     cd /usr/local/src && mkdir h2o && cd h2o && \
     wget http://h2o-release.s3.amazonaws.com/h2o/latest_stable -O latest && \
     wget --no-check-certificate -i latest -O h2o.zip && rm latest && \
@@ -181,12 +189,6 @@ RUN apt-get update && \
     conda install h5py && \
     # https://github.com/biopython/biopython
     pip install biopython && \
-    # Regularized Greedy Forests
-    cd /usr/local/src && wget https://github.com/fukatani/rgf_python/releases/download/0.2.0/rgf1.2.zip && \
-    unzip rgf1.2.zip && cd rgf1.2 && make && mv bin/rgf /usr/local/bin && \
-    cd /usr/local/src && git clone https://github.com/fukatani/rgf_python.git && \
-    cd rgf_python && sed -i 's/\/opt\/rgf1.2\/bin\/rgf/\/usr\/local\/bin\/rgf/' rgf/sklearn.py && \
-    python setup.py install && \
     # PUDB, for local debugging convenience
     pip install pudb && \
     # Imbalanced-learn
@@ -241,9 +243,14 @@ RUN pip install --upgrade mpld3 && \
     pip install gpxpy && \
     pip install arrow && \
     pip install vtk && \
+    pip install nilearn && \
     pip install nibabel && \
     pip install pronouncing && \
     pip install markovify && \
+    pip install imgaug && \
+    pip install preprocessing && \
+    pip install Baker && \
+    pip install path.py && \
     pip install sexmachine  && \
     pip install Geohash && \
     # https://github.com/vinsci/geohash/issues/4
@@ -361,6 +368,14 @@ RUN pip install --upgrade mpld3 && \
     pip install scattertext && \
     # Pandas data reader
     pip install pandas-datareader && \
+    pip install pykoko && \
+    pip install featuretools && \
+    pip install wordsegment && \
+    pip install pyahocorasick && \
+    pip install wordbatch && \
+    pip install emoji && \
+    # Add Japanese morphological analysis engine
+    pip install janome && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
