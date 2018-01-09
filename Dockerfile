@@ -360,6 +360,9 @@ RUN pip install --upgrade mpld3 && \
     pip install scattertext && \
     pip install pykoko && \
     pip install featuretools && \
+    pip install wordsegment && \
+    pip install pyahocorasick && \
+    pip install wordbatch && \
     pip install emoji && \
     # Add Japanese morphological analysis engine
     pip install janome && \
