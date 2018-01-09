@@ -359,6 +359,8 @@ RUN pip install --upgrade mpld3 && \
     pip install google-cloud-bigquery && \
     pip install ortools && \
     pip install scattertext && \
+    # Pandas data reader
+    pip install pandas-datareader && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
@@ -396,6 +398,5 @@ ENV MPLBACKEND "agg"
 RUN /bin/bash -c \
     "cd / && for p in $(ls /tmp/patches/*.patch); do echo '= Applying patch '\${p}; patch -p2 < \${p}; done"
     
-# Pandas data reader
-RUN pip install pandas-datareader
+
 
