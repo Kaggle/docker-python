@@ -387,11 +387,9 @@ RUN pip install --upgrade mpld3 && \
 # For Facets
 ENV PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/
 
-# Temporary fix for Anaconda linking error
-# See https://github.com/Kaggle/docker-python/issues/103
-RUN conda install -f -y numpy==1.13.0 && \
+# Temporary fixes and patches
     # Temporary patch for Dask getting downgraded, which breaks Keras
-    pip install --upgrade dask && \
+RUN pip install --upgrade dask && \
     # Temporary downgrade for Pandas to circumvent https://github.com/pandas-dev/pandas/issues/18186
     pip uninstall -y pandas && pip install pandas==0.20.3 && \
     # Stop jupyter nbconvert trying to rewrite its folder hierarchy
