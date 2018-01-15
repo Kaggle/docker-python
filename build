@@ -4,10 +4,10 @@ set -e
 # Default behavior is to do everything from scratch.
 # The --use-cache option is useful if you're iterating on a broken build.
 if [[ "$1" ==  "--use-cache" ]]; then
-    docker build --rm --cpu-period=100000 --cpu-quota=200000 -t kaggle/python-build .
+    docker build --rm -t kaggle/python-build .
 else
     docker pull continuumio/anaconda3:latest
-    docker build --rm --no-cache --cpu-period=100000 --cpu-quota=200000 -t kaggle/python-build .
+    docker build --rm --no-cache -t kaggle/python-build .
 fi
 
 
@@ -25,6 +25,9 @@ docker run --rm -t --read-only --net=none -e HOME=/tmp -e KAGGLE_PROXY_TOKEN=tes
 
 # The test_build.py script creates a plot called plot1.png; check that it exists
 [ -s /tmp/python-build/working/plot1.png ] || exit 1
+
+docker tag kaggle/python-build gcr.io/kaggle-images/python
+gcloud docker -- push gcr.io/kaggle-images/python
 
 docker tag kaggle/python-build:latest kaggle/python:latest
 docker push kaggle/python:latest
