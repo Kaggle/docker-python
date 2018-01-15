@@ -71,6 +71,12 @@ print("OpenCV ok")
 from skimage.io import imread
 print("skimage ok")
 
+from wordbatch.extractors import WordBag
+print("wordbatch ok")
+
+import pyfasttext
+print("pyfasttext ok")
+
 import os
 import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
