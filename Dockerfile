@@ -1,4 +1,4 @@
-FROM continuumio/anaconda3:4.4.0
+FROM continuumio/anaconda3:5.0.1
 
 ADD patches/ /tmp/patches/
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
@@ -136,6 +136,9 @@ vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
     rm -rf /root/.cache/pip/* && \
     apt-get autoremove -y && apt-get clean && \
     rm -rf /usr/local/src/*
+
+# Make sure the dynamic linker finds the right libstdc++
+ENV LD_LIBRARY_PATH=/opt/conda/lib
 
 RUN apt-get update && \
     # Libgeos, for mapping libraries
@@ -379,13 +382,13 @@ RUN pip install --upgrade mpld3 && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
-    # https://github.com/ContinuumIO/anaconda-issues/issues/720
-    conda install -f -y numpy && \
     # Required to display Altair charts in Jupyter notebook
     jupyter nbextension install --user --py vega
 
 # For Facets
 ENV PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/
+# For Theano with MKL
+ENV MKL_THREADING_LAYER=GNU
 
 # Temporary fixes and patches
     # Temporary patch for Dask getting downgraded, which breaks Keras
