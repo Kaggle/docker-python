@@ -21,7 +21,7 @@ mkdir -p /tmp/python-build/working
 docker run -d --name=jupyter_test --read-only --net=none -e HOME=/tmp -v $PWD:/input:ro -v /tmp/python-build/working:/working -w=/working -v /tmp/python-build/tmp:/tmp -v /tmp/python-build/devshm:/dev/shm kaggle/python-build jupyter notebook --allow-root --ip="*"
 sleep 3
 docker kill jupyter_test && docker rm jupyter_test
-docker run --rm -t --read-only --net=none -e HOME=/tmp -e KAGGLE_PROXY_TOKEN=test-key -e KAGGLE_PROXY_URL=http://127.0.0.1:8000 -e KAGGLE_PROXY_PROJECT=test -v $PWD:/input:ro -v /tmp/python-build/working:/working -w=/working -v /tmp/python-build/tmp:/tmp -v /tmp/python-build/devshm:/dev/shm kaggle/python-build /bin/bash -c 'python /input/test_build.py'
+docker run --rm -t --read-only --net=none -e HOME=/tmp -e KAGGLE_DATA_PROXY_TOKEN=test-key -e KAGGLE_DATA_PROXY_URL=http://127.0.0.1:8000 -e KAGGLE_DATA_PROXY_PROJECT=test -v $PWD:/input:ro -v /tmp/python-build/working:/working -w=/working -v /tmp/python-build/tmp:/tmp -v /tmp/python-build/devshm:/dev/shm kaggle/python-build /bin/bash -c 'python /input/test_build.py'
 
 # The test_build.py script creates a plot called plot1.png; check that it exists
 [ -s /tmp/python-build/working/plot1.png ] || exit 1
