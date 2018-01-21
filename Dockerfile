@@ -381,7 +381,7 @@ RUN pip install --upgrade mpld3 && \
     pip install emoji && \
     # Add Japanese morphological analysis engine
     pip install janome && \
-    pip install wfdb && \ # Read data from physionet
+    pip install wfdb && \
     pip install vecstack && \
     pip install sklearn-contrib-lightning && \
     ##### ^^^^ Add new contributions above here
