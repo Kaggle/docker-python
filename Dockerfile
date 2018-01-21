@@ -365,6 +365,7 @@ RUN pip install --upgrade mpld3 && \
     pip install memory_profiler && \
     pip install pyfasttext && \
     cd /usr/local/src && git clone --depth=1 https://github.com/facebookresearch/fastText.git && cd fastText && pip install . && \
+    apt-get install -y libhunspell-dev && pip install hunspell && \
     pip install annoy && \
     pip install category_encoders && \
     pip install google-cloud-bigquery && \
@@ -381,6 +382,8 @@ RUN pip install --upgrade mpld3 && \
     # Add Japanese morphological analysis engine
     pip install janome && \
     pip install wfdb && \ # Read data from physionet
+    pip install vecstack && \
+    pip install sklearn-contrib-lightning && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
