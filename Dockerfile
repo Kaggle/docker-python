@@ -364,6 +364,7 @@ RUN pip install --upgrade mpld3 && \
     pip install lime && \
     pip install memory_profiler && \
     pip install pyfasttext && \
+    cd /usr/local/src && git clone --depth=1 https://github.com/facebookresearch/fastText.git && cd fastText && pip install . && \
     pip install annoy && \
     pip install category_encoders && \
     pip install google-cloud-bigquery && \
