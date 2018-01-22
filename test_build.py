@@ -77,6 +77,9 @@ print("wordbatch ok")
 import pyfasttext
 print("pyfasttext ok")
 
+import fastText
+print("fastText ok")
+
 import os
 import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
