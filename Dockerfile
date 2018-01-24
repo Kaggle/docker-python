@@ -166,7 +166,7 @@ RUN apt-get update && \
     cd /usr/local/src && git clone https://github.com/SciTools/cartopy.git && \
     cd cartopy && python setup.py install && \
     # MXNet
-    pip install mxnet==0.11.0 && \
+    pip install mxnet && \
     # h2o
     # This requires python-software-properties and Java, which were installed above.
     cd /usr/local/src && mkdir h2o && cd h2o && \
