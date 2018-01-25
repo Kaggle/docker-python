@@ -373,7 +373,6 @@ RUN pip install --upgrade mpld3 && \
     # Pandas data reader
     pip install pandas-datareader && \
     pip install pykoko && \
-    pip install featuretools && \
     pip install wordsegment && \
     pip install pyahocorasick && \
     pip install wordbatch && \
