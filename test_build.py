@@ -86,6 +86,10 @@ print("pyfasttext ok")
 import fastText
 print("fastText ok")
 
+import pycuda
+print("pycuda ok")
+
+# bigquery proxy
 import os
 import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
