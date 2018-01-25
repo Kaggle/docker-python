@@ -6,6 +6,12 @@ import numpy as np
 print("Numpy imported ok")
 print("Your lucky number is: " + str(np.random.randint(100)))
 
+# Numpy must be linked to the MKL. (Occasionally, a third-party package will muck up the installation
+# and numpy will be reinstalled with an OpenBLAS backing.)
+from numpy.distutils.system_info import get_info
+# This will throw an exception if the MKL is not linked correctly.
+get_info("blas_mkl")
+
 import pandas as pd
 print("Pandas imported ok")
 
