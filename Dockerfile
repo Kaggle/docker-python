@@ -221,7 +221,7 @@ RUN apt-get update && \
     #./waf configure --mode=release --build-static --with-python --with-cpptests --with-examples --with-vamp && \
     #./waf && ./waf install && mv /usr/local/lib/python3.6/site-packages/essentia /opt/conda/lib/python3.6 && \
     # PyTorch
-    conda install -y pytorch torchvision -c soumith && \
+    conda install -y pytorch torchvision -c pytorch && \
     # PyTorch Audio
     apt-get install -y sox libsox-dev libsox-fmt-all && \
     pip install cffi && \
