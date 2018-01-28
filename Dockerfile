@@ -382,6 +382,8 @@ RUN pip install --upgrade mpld3 && \
     pip install wfdb && \
     pip install vecstack && \
     pip install sklearn-contrib-lightning && \
+    pip install dash && \
+    pip install jupyter_dashboards && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
