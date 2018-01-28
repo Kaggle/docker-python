@@ -382,6 +382,8 @@ RUN pip install --upgrade mpld3 && \
     pip install wfdb && \
     pip install vecstack && \
     pip install sklearn-contrib-lightning && \
+    # yellowbrick machine learning visualization library
+    pip install yellowbrick && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
@@ -416,6 +418,3 @@ ENV MPLBACKEND "agg"
 # Finally, apply any locally defined patches.
 RUN /bin/bash -c \
     "cd / && for p in $(ls /tmp/patches/*.patch); do echo '= Applying patch '\${p}; patch -p2 < \${p}; done"
-    
-
-
