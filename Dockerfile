@@ -89,6 +89,8 @@ RUN apt-get install -y libfreetype6-dev && \
     cd /usr/local/src && mkdir keras-rl && cd keras-rl && \
     git clone --depth 1 https://github.com/matthiasplappert/keras-rl.git && \
     cd keras-rl && python setup.py install && \
+    #keras-rcnn
+    pip install git+https://github.com/broadinstitute/keras-rcnn && \
     #neon
     cd /usr/local/src && \
     git clone --depth 1 https://github.com/NervanaSystems/neon.git && \
