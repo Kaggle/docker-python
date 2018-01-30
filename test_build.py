@@ -86,6 +86,10 @@ print("pyfasttext ok")
 import fastText
 print("fastText ok")
 
+import mxnet
+import mxnet.gluon
+print("mxnet ok")
+
 import pycuda
 print("pycuda ok")
 

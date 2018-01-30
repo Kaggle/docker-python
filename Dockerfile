@@ -202,7 +202,7 @@ RUN apt-get update && \
     cd /usr/local/src && git clone https://github.com/SciTools/cartopy.git && \
     cd cartopy && python setup.py install && \
     # MXNet
-    pip install mxnet==0.11.0 && \
+    pip install mxnet && \
     # h2o
     # This requires python-software-properties and Java, which were installed above.
     cd /usr/local/src && mkdir h2o && cd h2o && \
@@ -257,7 +257,7 @@ RUN apt-get update && \
     #./waf configure --mode=release --build-static --with-python --with-cpptests --with-examples --with-vamp && \
     #./waf && ./waf install && mv /usr/local/lib/python3.6/site-packages/essentia /opt/conda/lib/python3.6 && \
     # PyTorch
-    conda install -y pytorch torchvision -c soumith && \
+    conda install -y pytorch torchvision -c pytorch && \
     # PyTorch Audio
     apt-get install -y sox libsox-dev libsox-fmt-all && \
     pip install cffi && \
@@ -420,6 +420,8 @@ RUN pip install --upgrade mpld3 && \
     pip install wfdb && \
     pip install vecstack && \
     pip install sklearn-contrib-lightning && \
+    # yellowbrick machine learning visualization library
+    pip install yellowbrick && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
@@ -454,6 +456,3 @@ ENV MPLBACKEND "agg"
 # Finally, apply any locally defined patches.
 RUN /bin/bash -c \
     "cd / && for p in $(ls /tmp/patches/*.patch); do echo '= Applying patch '\${p}; patch -p2 < \${p}; done"
-    
-
-
