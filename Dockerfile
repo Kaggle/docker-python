@@ -85,6 +85,8 @@ RUN apt-get install -y libfreetype6-dev && \
     cd /usr/local/src && mkdir keras && cd keras && \
     git clone --depth 1 https://github.com/fchollet/keras.git && \
     cd keras && python setup.py install && \
+    #tqdm-keras
+    pip install tqdm-keras
     #keras-rl
     cd /usr/local/src && mkdir keras-rl && cd keras-rl && \
     git clone --depth 1 https://github.com/matthiasplappert/keras-rl.git && \
