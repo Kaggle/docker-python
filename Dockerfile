@@ -386,6 +386,7 @@ RUN pip install --upgrade mpld3 && \
     pip install sklearn-contrib-lightning && \
     # yellowbrick machine learning visualization library
     pip install yellowbrick && \
+    pip install mlcrate && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
