@@ -250,6 +250,7 @@ RUN pip install --upgrade mpld3 && \
     pip install nibabel && \
     pip install pronouncing && \
     pip install markovify && \
+    pip install rf_perm_feat_import && \
     pip install imgaug && \
     pip install preprocessing && \
     pip install Baker && \
