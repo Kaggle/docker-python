@@ -396,6 +396,7 @@ RUN pip install --upgrade mpld3 && \
     ###########
 RUN pip install flashtext && \
     pip install marisa-trie && \
+    pip install pyemd && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/*
