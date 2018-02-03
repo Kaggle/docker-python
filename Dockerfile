@@ -397,6 +397,7 @@ RUN pip install --upgrade mpld3 && \
 RUN pip install flashtext && \
     pip install marisa-trie && \
     pip install pyemd && \
+    pip install pyupset && \
     pip install -e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
