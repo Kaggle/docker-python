@@ -359,6 +359,7 @@ RUN pip install --upgrade mpld3 && \
     pip install lime && \
     pip install memory_profiler && \
     pip install pyfasttext && \
+    pip install ktext && \
     cd /usr/local/src && git clone --depth=1 https://github.com/facebookresearch/fastText.git && cd fastText && pip install . && \
     apt-get install -y libhunspell-dev && pip install hunspell && \
     pip install annoy && \
