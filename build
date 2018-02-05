@@ -1,6 +1,29 @@
 #!/bin/bash
 set -e
 
+# Sync restricted dependencies to the local filesystem so that the docker build can pick them up.
+# We cannot make these dependencies in their installable form public as they have licensing
+# restrictions. They are however listed here for reproducability:
+#
+#   1. From http://docs.nvidia.com/deeplearning/sdk/cudnn-install/. Requires a NVidia developer
+#   account:
+#     libcudnn7_7.0.5.15-1+cuda9.1_amd64.deb
+#     libcudnn7-dev_7.0.5.15-1+cuda9.1_amd64.deb
+#     libcudnn7-doc_7.0.5.15-1+cuda9.1_amd64.deb
+#
+# You can either sync these deps locally yourself (prior to calling build) by setting
+# KAGGLE_SKIP_SYNC_DEPS. For example:
+#   KAGGLE_SKIP_SYNC_DEPS=1 ./build
+#
+# Alternatively, to sync these from a gsutil supported location, specify the source path of the
+# deps location to sync using KAGGLE_DEPS_SRC_PATH. For example:
+#  KAGGLE_DEPS_SRC_PATH=s3://my-aws-bucket/kaggle-python-docker-deps/ ./build
+KAGGLE_DEPS_SRC_PATH="${KAGGLE_DEPS_SRC_PATH:-gs://kaggle-image-deps/}"  # Private to Kaggle.
+if [[ "$KAGGLE_SKIP_SYNC_DEPS" != "1" ]]; then
+  mkdir -p deps
+  gsutil rsync "$KAGGLE_DEPS_SRC_PATH" deps/
+fi
+
 # Default behavior is to do everything from scratch.
 # The --use-cache option is useful if you're iterating on a broken build.
 if [[ "$1" ==  "--use-cache" ]]; then
@@ -10,24 +33,51 @@ else
     docker build --rm --no-cache -t kaggle/python-build .
 fi
 
-
-
 rm -rf /tmp/python-build
 docker rm jupyter_test || true
 mkdir -p /tmp/python-build/tmp
 mkdir -p /tmp/python-build/devshm
 mkdir -p /tmp/python-build/working
-# Check that Jupyter server can run; if it dies on startup, the `docker kill` command will throw an error
-docker run -d --name=jupyter_test --read-only --net=none -e HOME=/tmp -v $PWD:/input:ro -v /tmp/python-build/working:/working -w=/working -v /tmp/python-build/tmp:/tmp -v /tmp/python-build/devshm:/dev/shm kaggle/python-build jupyter notebook --allow-root --ip="*"
+# Check that Jupyter server can run; if it dies on startup, the `docker kill` command will throw an error.
+docker run \
+    -d \
+    --name=jupyter_test \
+    --read-only \
+    --net=none \
+    -e HOME=/tmp \
+    -v $PWD:/input:ro \
+    -v /tmp/python-build/working:/working \
+    -w=/working \
+    -v /tmp/python-build/tmp:/tmp \
+    -v /tmp/python-build/devshm:/dev/shm \
+    kaggle/python-build \
+    jupyter notebook --allow-root --ip="*"
 sleep 3
 docker kill jupyter_test && docker rm jupyter_test
-docker run --rm -t --read-only --net=none -e HOME=/tmp -e KAGGLE_DATA_PROXY_TOKEN=test-key -e KAGGLE_DATA_PROXY_URL=http://127.0.0.1:8000 -e KAGGLE_DATA_PROXY_PROJECT=test -v $PWD:/input:ro -v /tmp/python-build/working:/working -w=/working -v /tmp/python-build/tmp:/tmp -v /tmp/python-build/devshm:/dev/shm kaggle/python-build /bin/bash -c 'python /input/test_build.py'
+docker run \
+    --rm \
+    -t \
+    --read-only \
+    --net=none \
+    -e HOME=/tmp \
+    -e KAGGLE_DATA_PROXY_TOKEN=test-key \
+    -e KAGGLE_DATA_PROXY_URL=http://127.0.0.1:8000 \
+    -e KAGGLE_DATA_PROXY_PROJECT=test \
+    -v $PWD:/input:ro \
+    -v /tmp/python-build/working:/working \
+    -w=/working \
+    -v /tmp/python-build/tmp:/tmp \
+    -v /tmp/python-build/devshm:/dev/shm \
+    kaggle/python-build \
+    /bin/bash -c 'python /input/test_build.py'
 
-# The test_build.py script creates a plot called plot1.png; check that it exists
+# The test_build.py script creates a plot called plot1.png; check that it exists.
 [ -s /tmp/python-build/working/plot1.png ] || exit 1
 
-docker tag kaggle/python-build gcr.io/kaggle-images/python
-gcloud docker -- push gcr.io/kaggle-images/python
+# TODO(seb): DO NOT MERGE.  This is temporary until we figure out how to approach the NVIDIA
+# licensing requirements in our public images.
+docker tag kaggle/python-build gcr.io/kaggle-private-byod/python
+gcloud docker -- push gcr.io/kaggle-private-byod/python
 
-docker tag kaggle/python-build:latest kaggle/python:latest
-docker push kaggle/python:latest
+#docker tag kaggle/python-build:latest kaggle/python:latest
+#docker push kaggle/python:latest

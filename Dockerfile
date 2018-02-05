@@ -1,10 +1,7 @@
 FROM continuumio/anaconda3:5.0.1
 
-ADD patches/ /tmp/patches/
-ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
-
-    # Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
-    # as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
+# Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
+# as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
 RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list && \
     apt-get update && apt-get install -y build-essential && \
     # https://stackoverflow.com/a/46498173
@@ -52,12 +49,13 @@ libxcb-render0 libxcb-shm0 netpbm poppler-data p7zip-full && \
 # This integrates the bits from the base, runtime and development nvidia/cuda images (see
 # https://hub.docker.com/r/nvidia/cuda/) and is done prior to other ML package installations
 # as they will detect Cuda and include the necessary GPU support with it in place.
+ADD deps/libcudnn7*.deb /tmp/deps/
 ENV CUDA_VERSION 9.1.85
 ENV CUDA_PKG_VERSION 9-1=$CUDA_VERSION-1
 LABEL com.nvidia.volumes.needed="nvidia_driver"
 LABEL com.nvidia.cuda.version="${CUDA_VERSION}"
 ENV PATH /usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
-ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64
+ENV LD_LIBRARY_PATH /usr/local/cuda/lib64:/usr/local/cuda/lib64/stubs/
 ENV NVIDIA_VISIBLE_DEVICES all
 ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
 ENV NVIDIA_REQUIRE_CUDA "cuda>=9.0"
@@ -75,14 +73,20 @@ RUN NVIDIA_GPGKEY_SUM=d1be581509378368edeec8c1eb2958702feedf3bc3d17011adbf24efac
       cuda-nvml-dev-$CUDA_PKG_VERSION \
       cuda-minimal-build-$CUDA_PKG_VERSION \
       cuda-command-line-tools-$CUDA_PKG_VERSION && \
-    echo "/usr/local/nvidia/lib" >> /etc/ld.so.conf.d/nvidia.conf && \
-    echo "/usr/local/nvidia/lib64" >> /etc/ld.so.conf.d/nvidia.conf && \
     ln -s cuda-9.1 /usr/local/cuda && \
+    ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1 && \
+    echo "/usr/local/cuda/lib64/stubs" >> /etc/ld.so.conf.d/cuda-stubs.conf && \
     rm -rf /var/lib/apt/lists/* && \
     rm -f /etc/apt/sources.list.d/nvidia-ml.list && \
-    apt-get update
+    apt-get update && \
+    dpkg -i /tmp/deps/libcudnn7*.deb && \
+    rm -f /tmp/deps/libcudnn7*.deb
 
 # Tensorflow source build
+ENV TF_NEED_CUDA=1
+ENV TF_CUDA_VERSION=9.1
+# Precompile for Tesla k80 and p100.  See https://developer.nvidia.com/cuda-gpus.
+ENV TF_CUDA_COMPUTE_CAPABILITIES=3.7,6.0
 RUN apt-get install -y python-software-properties zip && \
     echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list && \
     echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list && \
@@ -98,7 +102,8 @@ RUN apt-get install -y python-software-properties zip && \
     cd tensorflow && echo "\n" | ./configure && \
     bazel build --config=opt //tensorflow/tools/pip_package:build_pip_package && \
     bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg && \
-    pip install /tmp/tensorflow_pkg/tensorflow*.whl
+    pip install /tmp/tensorflow_pkg/tensorflow*.whl && \
+    rm -Rf /tmp/tensorflow_pkg
 
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
@@ -278,6 +283,8 @@ RUN apt-get update && \
     # Please add new pip/apt installs in this block. Don't forget a "&& \" at the end
     # of all non-final lines. Thanks!
     #
+    # TODO(seb): Unpin implicit once https://github.com/benfred/implicit/issues/77 is resolved.
+    #
     ###########
 RUN pip install --upgrade mpld3 && \
     pip install mplleaflet && \
@@ -378,7 +385,7 @@ RUN pip install --upgrade mpld3 && \
     pip install edward && \
     pip install geoplot && \
     pip install eli5 && \
-    pip install implicit && \
+    pip install implicit==0.2.7 && \
     pip install dask-ml[xgboost] && \
     pip install kmeans-smote && \
     # Add google PAIR-code Facets
@@ -433,8 +440,8 @@ ENV PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/
 # For Theano with MKL
 ENV MKL_THREADING_LAYER=GNU
 
-# Temporary fixes and patches
-    # Temporary patch for Dask getting downgraded, which breaks Keras
+# Temporary fixes and patches:
+# Temporary patch for Dask getting downgraded, which breaks Keras
 RUN pip install --upgrade dask && \
     # Temporary downgrade for Pandas to circumvent https://github.com/pandas-dev/pandas/issues/18186
     pip uninstall -y pandas && pip install pandas==0.20.3 && \
@@ -453,6 +460,10 @@ ADD patches/sitecustomize.py /root/.local/lib/python3.6/site-packages/sitecustom
 # Set backend for matplotlib
 ENV MPLBACKEND "agg"
 
+# Customize nbconvert.
+ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
+
 # Finally, apply any locally defined patches.
+ADD patches/ /tmp/patches/
 RUN /bin/bash -c \
-    "cd / && for p in $(ls /tmp/patches/*.patch); do echo '= Applying patch '\${p}; patch -p2 < \${p}; done"
+    "cd / && for p in $(ls /tmp/patches/*.patch); do echo '= Applying patch '\${p}; patch -p2 < \${p}; done && rm -Rf /tmp/patches"

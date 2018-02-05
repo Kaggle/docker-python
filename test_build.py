@@ -66,9 +66,11 @@ from nltk.stem import WordNetLemmatizer
 print("nltk ok")
 
 import tensorflow as tf
-hello = tf.constant('TensorFlow ok')
-sess = tf.Session()
-print(sess.run(hello))
+with tf.device('/cpu:0'):
+    hello = tf.constant('TensorFlow ok')
+
+sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
+print(sess.run(hello).decode())
 
 import cv2
 img = cv2.imread('plot1.png',0)
@@ -92,6 +94,10 @@ print("mxnet ok")
 
 import pycuda
 print("pycuda ok")
+
+import torch
+# Note: torch.cuda.is_available() returns whether GPU support is present AND at least one GPU is available.
+print("torch ok (gpu available: %s, count: %d)" % (torch.cuda.is_available(), torch.cuda.device_count()))
 
 # bigquery proxy
 import os
