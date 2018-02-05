@@ -255,6 +255,7 @@ RUN pip install --upgrade mpld3 && \
     sed -i -- 's/geohash/.geohash/g' /opt/conda/lib/python3.6/site-packages/Geohash/__init__.py && \
     pip install deap && \
     pip install tpot && \
+    pip install scikit-optimize && \
     pip install haversine && \
     pip install toolz cytoolz && \
     pip install sacred && \
