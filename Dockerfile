@@ -400,6 +400,7 @@ RUN pip install flashtext && \
     pip install pyemd && \
     pip install pyupset && \
     pip install -e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper && \
+    cd /usr/local/src && git clone https://github.com/hyperopt/hyperopt-sklearn.git && cd hyperopt-sklearn && pip install -e . && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/*
