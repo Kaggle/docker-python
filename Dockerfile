@@ -91,6 +91,8 @@ RUN apt-get install -y libfreetype6-dev && \
     cd keras-rl && python setup.py install && \
     #keras-rcnn
     pip install git+https://github.com/broadinstitute/keras-rcnn && \
+    #keras-tqdm
+    pip install keras-tqdm
     #neon
     cd /usr/local/src && \
     git clone --depth 1 https://github.com/NervanaSystems/neon.git && \
