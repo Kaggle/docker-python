@@ -87,6 +87,7 @@ ENV TF_NEED_CUDA=1
 ENV TF_CUDA_VERSION=9.1
 # Precompile for Tesla k80 and p100.  See https://developer.nvidia.com/cuda-gpus.
 ENV TF_CUDA_COMPUTE_CAPABILITIES=3.7,6.0
+ENV TF_CUDNN_VERSION=7
 RUN apt-get install -y python-software-properties zip && \
     echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list && \
     echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list && \
@@ -99,8 +100,8 @@ RUN apt-get install -y python-software-properties zip && \
     curl https://bazel.build/bazel-release.pub.gpg | apt-key add - && \
     apt-get update && apt-get install -y bazel && apt-get upgrade -y bazel && \
     cd /usr/local/src && git clone https://github.com/tensorflow/tensorflow && \
-    cd tensorflow && echo "\n" | ./configure && \
-    bazel build --config=opt //tensorflow/tools/pip_package:build_pip_package && \
+    cd tensorflow && cat /dev/null | ./configure && \
+    bazel build --config=opt --config=cuda --cxxopt="-D_GLIBCXX_USE_CXX11_ABI=0" //tensorflow/tools/pip_package:build_pip_package && \
     bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg && \
     pip install /tmp/tensorflow_pkg/tensorflow*.whl && \
     rm -Rf /tmp/tensorflow_pkg
