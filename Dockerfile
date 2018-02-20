@@ -130,6 +130,8 @@ RUN apt-get install -y libfreetype6-dev && \
     cd /usr/local/src && mkdir keras-rl && cd keras-rl && \
     git clone --depth 1 https://github.com/matthiasplappert/keras-rl.git && \
     cd keras-rl && python setup.py install && \
+    #keras-rcnn
+    pip install git+https://github.com/broadinstitute/keras-rcnn && \
     #neon
     cd /usr/local/src && \
     git clone --depth 1 https://github.com/NervanaSystems/neon.git && \
@@ -277,15 +279,6 @@ RUN apt-get update && \
     conda clean -i -l -t -y && \
     rm -rf /usr/local/src/*
 
-    ###########
-    #
-    #      NEW CONTRIBUTORS:
-    # Please add new pip/apt installs in this block. Don't forget a "&& \" at the end
-    # of all non-final lines. Thanks!
-    #
-    # TODO(seb): Unpin implicit once https://github.com/benfred/implicit/issues/77 is resolved.
-    #
-    ###########
 RUN pip install --upgrade mpld3 && \
     pip install mplleaflet && \
     pip install gpxpy && \
@@ -295,6 +288,7 @@ RUN pip install --upgrade mpld3 && \
     pip install nibabel && \
     pip install pronouncing && \
     pip install markovify && \
+    pip install rf_perm_feat_import && \
     pip install imgaug && \
     pip install preprocessing && \
     pip install Baker && \
@@ -385,7 +379,7 @@ RUN pip install --upgrade mpld3 && \
     pip install edward && \
     pip install geoplot && \
     pip install eli5 && \
-    pip install implicit==0.2.7 && \
+    pip install implicit && \
     pip install dask-ml[xgboost] && \
     pip install kmeans-smote && \
     # Add google PAIR-code Facets
@@ -408,6 +402,7 @@ RUN pip install --upgrade mpld3 && \
     pip install lime && \
     pip install memory_profiler && \
     pip install pyfasttext && \
+    pip install ktext && \
     cd /usr/local/src && git clone --depth=1 https://github.com/facebookresearch/fastText.git && cd fastText && pip install . && \
     apt-get install -y libhunspell-dev && pip install hunspell && \
     pip install annoy && \
@@ -429,11 +424,29 @@ RUN pip install --upgrade mpld3 && \
     pip install sklearn-contrib-lightning && \
     # yellowbrick machine learning visualization library
     pip install yellowbrick && \
-    ##### ^^^^ Add new contributions above here
+    pip install mlcrate && \
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
     # Required to display Altair charts in Jupyter notebook
     jupyter nbextension install --user --py vega
+
+
+    ###########
+    #
+    #      NEW CONTRIBUTORS:
+    # Please add new pip/apt installs in this block. Don't forget a "&& \" at the end
+    # of all non-final lines. Thanks!
+    #
+    ###########
+RUN pip install flashtext && \
+    pip install marisa-trie && \
+    pip install pyemd && \
+    pip install pyupset && \
+    pip install -e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper && \
+    ##### ^^^^ Add new contributions above here
+    # clean up pip cache
+    rm -rf /root/.cache/pip/*
+
 
 # For Facets
 ENV PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/
