@@ -1,29 +1,6 @@
 #!/bin/bash
 set -e
 
-# Sync restricted dependencies to the local filesystem so that the docker build can pick them up.
-# We cannot make these dependencies in their installable form public as they have licensing
-# restrictions. They are however listed here for reproducability:
-#
-#   1. From http://docs.nvidia.com/deeplearning/sdk/cudnn-install/. Requires a NVidia developer
-#   account:
-#     libcudnn7_7.0.5.15-1+cuda9.1_amd64.deb
-#     libcudnn7-dev_7.0.5.15-1+cuda9.1_amd64.deb
-#     libcudnn7-doc_7.0.5.15-1+cuda9.1_amd64.deb
-#
-# You can either sync these deps locally yourself (prior to calling build) by setting
-# KAGGLE_SKIP_SYNC_DEPS. For example:
-#   KAGGLE_SKIP_SYNC_DEPS=1 ./build
-#
-# Alternatively, to sync these from a gsutil supported location, specify the source path of the
-# deps location to sync using KAGGLE_DEPS_SRC_PATH. For example:
-#  KAGGLE_DEPS_SRC_PATH=s3://my-aws-bucket/kaggle-python-docker-deps/ ./build
-KAGGLE_DEPS_SRC_PATH="${KAGGLE_DEPS_SRC_PATH:-gs://kaggle-image-deps/}"  # Private to Kaggle.
-if [[ "$KAGGLE_SKIP_SYNC_DEPS" != "1" ]]; then
-  mkdir -p deps
-  gsutil rsync "$KAGGLE_DEPS_SRC_PATH" deps/
-fi
-
 # Default behavior is to do everything from scratch.
 # The --use-cache option is useful if you're iterating on a broken build.
 if [[ "$1" ==  "--use-cache" ]]; then

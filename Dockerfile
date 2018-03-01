@@ -1,4 +1,38 @@
-FROM continuumio/anaconda3:5.0.1
+FROM nvidia/cuda:9.1-cudnn7-devel-ubuntu16.04 AS nvidia
+
+FROM continuumio/anaconda3:latest
+
+COPY --from=nvidia /etc/apt/sources.list.d/cuda.list /etc/apt/sources.list.d/
+COPY --from=nvidia /etc/apt/sources.list.d/nvidia-ml.list /etc/apt/sources.list.d/
+COPY --from=nvidia /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d/cuda.gpg
+
+# Cuda support.
+ENV CUDA_VERSION=9.1.85
+ENV CUDA_PKG_VERSION=9-1=$CUDA_VERSION-1
+LABEL com.nvidia.volumes.needed="nvidia_driver"
+LABEL com.nvidia.cuda.version="${CUDA_VERSION}"
+ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
+# The stub is useful to us both for built-time linking and run-time linking, on CPU-only systems.
+# When intended to be used with actual GPUs, make sure to (besides providing access to the host
+# CUDA user libraries, either manually or through the use of nvidia-docker) exclude them. One
+# convenient way to do so is to obscure its contents by a bind mount:
+#   docker run .... -v /non-existing-directory:/usr/local/cuda/lib64/stubs:ro ...
+ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/cuda/lib64:/usr/local/cuda/lib64/stubs"
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
+ENV NVIDIA_REQUIRE_CUDA="cuda>=9.0"
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      cuda-cudart-$CUDA_PKG_VERSION \
+      cuda-libraries-$CUDA_PKG_VERSION \
+      cuda-libraries-dev-$CUDA_PKG_VERSION \
+      cuda-nvml-dev-$CUDA_PKG_VERSION \
+      cuda-minimal-build-$CUDA_PKG_VERSION \
+      cuda-command-line-tools-$CUDA_PKG_VERSION \
+      libcudnn7=7.0.5.15-1+cuda9.1 \
+      libcudnn7-dev=7.0.5.15-1+cuda9.1 && \
+    ln -s /usr/local/cuda-9.1 /usr/local/cuda && \
+    ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1 && \
+    rm -rf /var/lib/apt/lists/*
 
 # Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
 # as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
@@ -45,50 +79,16 @@ libxcb-render0 libxcb-shm0 netpbm poppler-data p7zip-full && \
     rm -rf /root/.cache/pip/* && \
     apt-get autoremove -y && apt-get clean
 
-# Cuda support.
-# This integrates the bits from the base, runtime and development nvidia/cuda images (see
-# https://hub.docker.com/r/nvidia/cuda/) and is done prior to other ML package installations
-# as they will detect Cuda and include the necessary GPU support with it in place.
-ADD deps/libcudnn7*.deb /tmp/deps/
-ENV CUDA_VERSION 9.1.85
-ENV CUDA_PKG_VERSION 9-1=$CUDA_VERSION-1
-LABEL com.nvidia.volumes.needed="nvidia_driver"
-LABEL com.nvidia.cuda.version="${CUDA_VERSION}"
-ENV PATH /usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
-ENV LD_LIBRARY_PATH /usr/local/cuda/lib64:/usr/local/cuda/lib64/stubs/
-ENV NVIDIA_VISIBLE_DEVICES all
-ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
-ENV NVIDIA_REQUIRE_CUDA "cuda>=9.0"
-RUN NVIDIA_GPGKEY_SUM=d1be581509378368edeec8c1eb2958702feedf3bc3d17011adbf24efacce4ab5 && \
-    NVIDIA_GPGKEY_FPR=ae09fe4bbd223a84b2ccfce3f60f4b3d7fa2af80 && \
-    apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub && \
-    apt-key adv --export --no-emit-version -a $NVIDIA_GPGKEY_FPR | tail -n +2 > cudasign.pub && \
-    echo "$NVIDIA_GPGKEY_SUM  cudasign.pub" | sha256sum -c --strict - && rm cudasign.pub && \
-    echo "deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64 /" > /etc/apt/sources.list.d/cuda.list && \
-    echo "deb http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1604/x86_64 /" > /etc/apt/sources.list.d/nvidia-ml.list && \
-    apt-get update && apt-get install -y --no-install-recommends \
-      cuda-cudart-$CUDA_PKG_VERSION \
-      cuda-libraries-$CUDA_PKG_VERSION \
-      cuda-libraries-dev-$CUDA_PKG_VERSION \
-      cuda-nvml-dev-$CUDA_PKG_VERSION \
-      cuda-minimal-build-$CUDA_PKG_VERSION \
-      cuda-command-line-tools-$CUDA_PKG_VERSION && \
-    ln -s cuda-9.1 /usr/local/cuda && \
-    ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1 && \
-    echo "/usr/local/cuda/lib64/stubs" >> /etc/ld.so.conf.d/cuda-stubs.conf && \
-    rm -rf /var/lib/apt/lists/* && \
-    rm -f /etc/apt/sources.list.d/nvidia-ml.list && \
-    apt-get update && \
-    dpkg -i /tmp/deps/libcudnn7*.deb && \
-    rm -f /tmp/deps/libcudnn7*.deb
-
 # Tensorflow source build
 ENV TF_NEED_CUDA=1
 ENV TF_CUDA_VERSION=9.1
 # Precompile for Tesla k80 and p100.  See https://developer.nvidia.com/cuda-gpus.
 ENV TF_CUDA_COMPUTE_CAPABILITIES=3.7,6.0
 ENV TF_CUDNN_VERSION=7
-RUN apt-get install -y python-software-properties zip && \
+# Build with standard malloc.  We will override that with tcmalloc at run-time (see LD_PRELOAD below).
+ENV TF_NEED_JEMALLOC=0
+RUN apt-get update && \
+    apt-get install -y python-software-properties zip google-perftools && \
     echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list && \
     echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list && \
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886 C857C906 2B90D010 && \
@@ -105,6 +105,7 @@ RUN apt-get install -y python-software-properties zip && \
     bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg && \
     pip install /tmp/tensorflow_pkg/tensorflow*.whl && \
     rm -Rf /tmp/tensorflow_pkg
+ENV LD_PRELOAD=/usr/lib/libtcmalloc.so.4
 
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
@@ -182,7 +183,7 @@ vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
     rm -rf /usr/local/src/*
 
 # Make sure the dynamic linker finds the right libstdc++
-ENV LD_LIBRARY_PATH=/opt/conda/lib
+ENV LD_LIBRARY_PATH="/opt/conda/lib:${LD_LIBRARY_PATH}"
 
 RUN apt-get update && \
     # Libgeos, for mapping libraries
