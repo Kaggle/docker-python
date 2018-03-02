@@ -477,8 +477,3 @@ ENV MPLBACKEND "agg"
 
 # Customize nbconvert.
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
-
-# Finally, apply any locally defined patches.
-ADD patches/ /tmp/patches/
-RUN /bin/bash -c \
-    "cd / && for p in $(ls /tmp/patches/*.patch); do echo '= Applying patch '\${p}; patch -p2 < \${p}; done && rm -Rf /tmp/patches"
