@@ -219,10 +219,12 @@ RUN apt-get update && \
     wget --no-check-certificate -i latest -O h2o.zip && rm latest && \
     unzip h2o.zip && rm h2o.zip && cp h2o-*/h2o.jar . && \
     pip install `find . -name "*whl"` && \
+    # Work around https://github.com/tensorflow/tensorflow/issues/16488
+    pip install numpy --upgrade && \
     # Keras setup
     # Keras likes to add a config file in a custom directory when it's
     # first imported. This doesn't work with our read-only filesystem, so we
-    # have it done now
+    # have it done now.
     python -c "from keras.models import Sequential"  && \
     # Switch to TF backend
     sed -i 's/theano/tensorflow/' /root/.keras/keras.json  && \
