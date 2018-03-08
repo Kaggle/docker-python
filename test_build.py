@@ -90,6 +90,12 @@ import mxnet
 import mxnet.gluon
 print("mxnet ok")
 
+import bokeh
+print("bokeh ok")
+
+import seaborn
+print("seaborn ok")
+
 import os
 import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
