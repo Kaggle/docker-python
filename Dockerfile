@@ -386,18 +386,73 @@ RUN pip install --upgrade mpld3 && \
     # yellowbrick machine learning visualization library
     pip install yellowbrick && \
     pip install mlcrate && \
-    pip install opencv-python && \
-    pip install pyarrow && \
-    # Ensure we have pandas >= 0.21
-    pip install --upgrade pandas && \
-    cd /usr/local/src && git clone --depth=1 https://github.com/fastai/fastai && \
-    cd fastai && python setup.py install && \
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
     # Required to display Altair charts in Jupyter notebook
     jupyter nbextension install --user --py vega
 
-
+# Fast.ai and dependencies
+RUN pip install bcolz && \
+    pip install bleach && \
+    pip install certifi && \
+    pip install cycler && \
+    pip install decorator && \
+    pip install entrypoints && \
+    pip install html5lib && \
+    pip install ipykernel && \
+    pip install ipython && \
+    pip install ipython-genutils && \
+    pip install ipywidgets && \
+    pip install isoweek && \
+    pip install jedi && \
+    pip install Jinja2 && \
+    pip install jsonschema && \
+    pip install jupyter && \
+    pip install jupyter-client && \
+    pip install jupyter-console && \
+    pip install jupyter-core && \
+    pip install MarkupSafe && \
+    pip install matplotlib && \
+    pip install mistune && \
+    pip install nbconvert && \
+    pip install nbformat && \
+    pip install notebook && \
+    pip install numpy && \
+    pip install olefile && \
+    pip install opencv-python && \
+    pip install --upgrade pandas && \
+    pip install pandas_summary && \
+    pip install pandocfilters && \
+    pip install pexpect && \
+    pip install pickleshare && \
+    pip install Pillow && \
+    pip install prompt-toolkit && \
+    pip install ptyprocess && \
+    pip install Pygments && \
+    pip install pyparsing && \
+    pip install python-dateutil && \
+    pip install pytz && \
+    pip install PyYAML && \
+    pip install pyzmq && \
+    pip install qtconsole && \
+    pip install scipy && \
+    pip install seaborn && \
+    pip install simplegeneric && \
+    pip install six && \
+    pip install terminado && \
+    pip install testpath && \
+    pip install tornado && \
+    pip install tqdm && \
+    pip install traitlets && \
+    pip install wcwidth && \
+    pip install webencodings && \
+    pip install widgetsnbextension && \
+    cd /usr/local/src && git clone --depth=1 https://github.com/fastai/fastai && \
+    cd fastai && python setup.py install && \
+    # clean up pip cache
+    rm -rf /root/.cache/pip/* && \
+    cd && rm -rf /usr/local/src/*
+    
     ###########
     #
     #      NEW CONTRIBUTORS:
