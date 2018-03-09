@@ -71,7 +71,7 @@ RUN apt-get install -y libfreetype6-dev && \
     # textblob
     pip install textblob && \
     #word cloud
-    conda install -y -c https://conda.anaconda.org/amueller wordcloud && \
+    pip install wordcloud && \
     #igraph
     conda install -y -c conda-forge python-igraph && \
     #xgboost
