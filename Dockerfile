@@ -388,6 +388,8 @@ RUN pip install --upgrade mpld3 && \
     pip install mlcrate && \
     pip install opencv-python && \
     pip install pyarrow && \
+    # Ensure we have pandas >= 0.21
+    pip install --upgrade pandas && \
     cd /usr/local/src && git clone --depth=1 https://github.com/fastai/fastai && \
     cd fastai && python setup.py install && \
     # clean up pip cache
@@ -421,8 +423,6 @@ ENV MKL_THREADING_LAYER=GNU
 # Temporary fixes and patches
     # Temporary patch for Dask getting downgraded, which breaks Keras
 RUN pip install --upgrade dask && \
-    # Temporary downgrade for Pandas to circumvent https://github.com/pandas-dev/pandas/issues/18186
-    pip uninstall -y pandas && pip install pandas==0.20.3 && \
     # Stop jupyter nbconvert trying to rewrite its folder hierarchy
     mkdir -p /root/.jupyter && touch /root/.jupyter/jupyter_nbconvert_config.py && touch /root/.jupyter/migrated && \
     mkdir -p /.jupyter && touch /.jupyter/jupyter_nbconvert_config.py && touch /.jupyter/migrated && \
