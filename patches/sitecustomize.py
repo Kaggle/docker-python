@@ -1,4 +1,8 @@
 # Monkey patches BigQuery client creation to use proxy.
+
+# Import torch before anything else. This is a hacky workaround to an error on dlopen
+# reporting a limit on static TLS, tracked in https://github.com/pytorch/pytorch/issues/2575
+import torch
 import os
 
 kaggle_proxy_token = os.getenv("KAGGLE_DATA_PROXY_TOKEN")
