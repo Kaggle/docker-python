@@ -96,6 +96,20 @@ print("bokeh ok")
 import seaborn
 print("seaborn ok")
 
+# PyTorch smoke test based on http://pytorch.org/tutorials/beginner/nlp/deep_learning_tutorial.html
+import torch
+import torch.nn as tnn
+import torch.autograd as autograd
+torch.manual_seed(31337)
+linear_torch = tnn.Linear(5,3)
+data_torch = autograd.Variable(torch.randn(2, 5))
+print(linear_torch(data_torch))
+print("PyTorch ok")
+
+import fastai
+from fastai.io import get_data
+print("fast.ai ok")
+
 import os
 import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
