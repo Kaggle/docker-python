@@ -91,8 +91,6 @@ RUN apt-get install -y libfreetype6-dev && \
     cd keras-rl && python setup.py install && \
     #keras-rcnn
     pip install git+https://github.com/broadinstitute/keras-rcnn && \
-    #keras-tqdm
-    pip install keras-tqdm
     #neon
     cd /usr/local/src && \
     git clone --depth 1 https://github.com/NervanaSystems/neon.git && \
@@ -402,6 +400,7 @@ RUN pip install flashtext && \
     pip install pyemd && \
     pip install pyupset && \
     pip install -e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper && \
+    pip install keras-tqdm
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/*
