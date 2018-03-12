@@ -400,7 +400,7 @@ RUN pip install flashtext && \
     pip install pyemd && \
     pip install pyupset && \
     pip install -e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper && \
-    pip install keras-tqdm
+    pip install keras-tqdm && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/*
