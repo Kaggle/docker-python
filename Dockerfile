@@ -386,6 +386,8 @@ RUN pip install --upgrade mpld3 && \
     # yellowbrick machine learning visualization library
     pip install yellowbrick && \
     pip install mlcrate && \
+    # pandasql - query pandas dataframes using sql syntax
+    pip install pandasql && \
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
     # Required to display Altair charts in Jupyter notebook
@@ -452,7 +454,7 @@ RUN pip install bcolz && \
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
     cd && rm -rf /usr/local/src/*
-    
+
     ###########
     #
     #      NEW CONTRIBUTORS:
