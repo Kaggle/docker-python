@@ -389,7 +389,7 @@ RUN pip install --upgrade mpld3 && \
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
     # Required to display Altair charts in Jupyter notebook
-    jupyter nbextension install --user --py vega
+    jupyter nbextension install --user --py vega 
 
 # Fast.ai and dependencies
 RUN pip install bcolz && \
@@ -496,5 +496,6 @@ ENV MPLBACKEND "agg"
 # Finally, apply any locally defined patches.
 RUN /bin/bash -c \
     "cd / && for p in $(ls /tmp/patches/*.patch); do echo '= Applying patch '\${p}; patch -p2 < \${p}; done"
-    
+
+# neptune.ml cli
 RUN pip install neptune-cli --upgrade
