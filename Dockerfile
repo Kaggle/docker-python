@@ -45,6 +45,8 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     #cd /usr/lib/x86_64-linux-gnu/ && rm -f libboost_python.a && rm -f libboost_python.so && \
     #ln -sf libboost_python-py34.so libboost_python.so && ln -sf libboost_python-py34.a libboost_python.a && \
     #pip install vowpalwabbit && \
+    # Anaconda's scipy is currently behind the main release (1.0)
+    pip install scipy --upgrade && \
     pip install seaborn python-dateutil dask pytagcloud pyyaml joblib \
     husl geopy ml_metrics mne pyshp gensim && \
     conda install -y -c conda-forge spacy && python -m spacy download en && \
@@ -112,7 +114,7 @@ RUN apt-get install -y libfreetype6-dev && \
     # textblob
     pip install textblob && \
     #word cloud
-    conda install -y -c https://conda.anaconda.org/amueller wordcloud && \
+    pip install wordcloud && \
     #igraph
     conda install -y -c conda-forge python-igraph && \
     #xgboost
@@ -213,6 +215,8 @@ RUN apt-get update && \
     # MXNet
     pip install mxnet && \
     # h2o
+    # Temporary sync of conda's numpy with pip's, needed to avoid an install error
+    conda upgrade -y numpy && \
     # This requires python-software-properties and Java, which were installed above.
     cd /usr/local/src && mkdir h2o && cd h2o && \
     wget http://h2o-release.s3.amazonaws.com/h2o/latest_stable -O latest && \
@@ -302,6 +306,7 @@ RUN pip install --upgrade mpld3 && \
     sed -i -- 's/geohash/.geohash/g' /opt/conda/lib/python3.6/site-packages/Geohash/__init__.py && \
     pip install deap && \
     pip install tpot && \
+    pip install scikit-optimize && \
     pip install haversine && \
     pip install toolz cytoolz && \
     pip install sacred && \
@@ -396,7 +401,6 @@ RUN pip install --upgrade mpld3 && \
     pip install pydash && \
     pip install kmodes && \
     pip install librosa && \
-    pip install fastai && \
     pip install polyglot && \
     pip install mmh3 && \
     pip install fbpca && \
@@ -434,7 +438,68 @@ RUN pip install --upgrade mpld3 && \
     # Required to display Altair charts in Jupyter notebook
     jupyter nbextension install --user --py vega
 
-
+# Fast.ai and dependencies
+RUN pip install bcolz && \
+    pip install bleach && \
+    pip install certifi && \
+    pip install cycler && \
+    pip install decorator && \
+    pip install entrypoints && \
+    pip install html5lib && \
+    pip install ipykernel && \
+    pip install ipython && \
+    pip install ipython-genutils && \
+    pip install ipywidgets && \
+    pip install isoweek && \
+    pip install jedi && \
+    pip install Jinja2 && \
+    pip install jsonschema && \
+    pip install jupyter && \
+    pip install jupyter-client && \
+    pip install jupyter-console && \
+    pip install jupyter-core && \
+    pip install MarkupSafe && \
+    pip install matplotlib && \
+    pip install mistune && \
+    pip install nbconvert && \
+    pip install nbformat && \
+    pip install notebook && \
+    pip install numpy && \
+    pip install olefile && \
+    pip install opencv-python && \
+    pip install --upgrade pandas && \
+    pip install pandas_summary && \
+    pip install pandocfilters && \
+    pip install pexpect && \
+    pip install pickleshare && \
+    pip install Pillow && \
+    pip install prompt-toolkit && \
+    pip install ptyprocess && \
+    pip install Pygments && \
+    pip install pyparsing && \
+    pip install python-dateutil && \
+    pip install pytz && \
+    pip install PyYAML && \
+    pip install pyzmq && \
+    pip install qtconsole && \
+    pip install scipy && \
+    pip install seaborn && \
+    pip install simplegeneric && \
+    pip install six && \
+    pip install terminado && \
+    pip install testpath && \
+    pip install tornado && \
+    pip install tqdm && \
+    pip install traitlets && \
+    pip install wcwidth && \
+    pip install webencodings && \
+    pip install widgetsnbextension && \
+    cd /usr/local/src && git clone --depth=1 https://github.com/fastai/fastai && \
+    cd fastai && python setup.py install && \
+    # clean up pip cache
+    rm -rf /root/.cache/pip/* && \
+    cd && rm -rf /usr/local/src/*
+    
     ###########
     #
     #      NEW CONTRIBUTORS:
@@ -460,8 +525,6 @@ ENV MKL_THREADING_LAYER=GNU
 # Temporary fixes and patches:
 # Temporary patch for Dask getting downgraded, which breaks Keras
 RUN pip install --upgrade dask && \
-    # Temporary downgrade for Pandas to circumvent https://github.com/pandas-dev/pandas/issues/18186
-    pip uninstall -y pandas && pip install pandas==0.20.3 && \
     # Stop jupyter nbconvert trying to rewrite its folder hierarchy
     mkdir -p /root/.jupyter && touch /root/.jupyter/jupyter_nbconvert_config.py && touch /root/.jupyter/migrated && \
     mkdir -p /.jupyter && touch /.jupyter/jupyter_nbconvert_config.py && touch /.jupyter/migrated && \
