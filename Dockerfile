@@ -430,7 +430,7 @@ RUN pip install bcolz && \
     pip install ptyprocess && \
     pip install Pygments && \
     pip install pyparsing && \
-    pip install python-dateutil && \
+    pip install python-dateutil==2.6.0 && \
     pip install pytz && \
     pip install PyYAML && \
     pip install pyzmq && \
