@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+
+# TODO(seb): DO NOT MERGE.  This is temporary until we figure out how to approach the NVIDIA
+# licensing requirements in our public images.
+docker tag kaggle/python-build gcr.io/kaggle-private-byod/python
+gcloud docker -- push gcr.io/kaggle-private-byod/python
+
+#docker tag kaggle/python-build:latest kaggle/python:latest
+#docker push kaggle/python:latest

@@ -271,10 +271,19 @@ RUN apt-get update && \
     #cd /usr/local/src && git clone https://github.com/MTG/essentia.git && cd essentia && \
     #./waf configure --mode=release --build-static --with-python --with-cpptests --with-examples --with-vamp && \
     #./waf && ./waf install && mv /usr/local/lib/python3.6/site-packages/essentia /opt/conda/lib/python3.6 && \
-    # PyTorch
-    conda install -y pytorch torchvision -c pytorch && \
+    # Install torch and torchvision from source, so we're using the cuda/cudnn libraries installed above.
+    conda install mkl setuptools cmake cffi typing && \
+    conda install -c pytorch magma-cuda90 && \
+    cd /usr/local/src && \
+    git clone --recursive https://github.com/pytorch/pytorch && \
+    cd pytorch && \
+    python setup.py install && \
+    cd /usr/local/src && \
+    git clone --recursive https://github.com/pytorch/vision && \
+    cd vision && \
+    python setup.py install && \
     # PyTorch Audio
-    apt-get install -y sox libsox-dev libsox-fmt-all && \
+    CXXFLAGS="-std=c++11" CFLAGS="-std=c99" apt-get install -y sox libsox-dev libsox-fmt-all && \
     pip install cffi && \
     cd /usr/local/src && git clone https://github.com/pytorch/audio && cd audio && python setup.py install && \
     # ggpy / ggplot
@@ -499,7 +508,7 @@ RUN pip install bcolz && \
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
     cd && rm -rf /usr/local/src/*
-    
+
     ###########
     #
     #      NEW CONTRIBUTORS:
