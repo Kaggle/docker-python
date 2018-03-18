@@ -87,10 +87,8 @@ ENV TF_CUDA_VERSION=9.1
 # Precompile for Tesla k80 and p100.  See https://developer.nvidia.com/cuda-gpus.
 ENV TF_CUDA_COMPUTE_CAPABILITIES=3.7,6.0
 ENV TF_CUDNN_VERSION=7
-# Build with standard malloc.  We will override that with tcmalloc at run-time (see LD_PRELOAD below).
-ENV TF_NEED_JEMALLOC=0
 RUN apt-get update && \
-    apt-get install -y python-software-properties zip google-perftools && \
+    apt-get install -y python-software-properties zip && \
     echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list && \
     echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list && \
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886 C857C906 2B90D010 && \
@@ -107,7 +105,6 @@ RUN apt-get update && \
     bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg && \
     pip install /tmp/tensorflow_pkg/tensorflow*.whl && \
     rm -Rf /tmp/tensorflow_pkg
-ENV LD_PRELOAD=/usr/lib/libtcmalloc.so.4
 
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
@@ -283,9 +280,12 @@ RUN apt-get update && \
     cd vision && \
     python setup.py install && \
     # PyTorch Audio
-    CXXFLAGS="-std=c++11" CFLAGS="-std=c99" apt-get install -y sox libsox-dev libsox-fmt-all && \
+    apt-get install -y sox libsox-dev libsox-fmt-all && \
     pip install cffi && \
-    cd /usr/local/src && git clone https://github.com/pytorch/audio && cd audio && python setup.py install && \
+    cd /usr/local/src && \
+    git clone https://github.com/pytorch/audio && \
+    cd audio && \
+    CXXFLAGS="-std=c++11" CFLAGS="-std=c99" python setup.py install && \
     # ggpy / ggplot
     pip install git+https://github.com/yhat/ggplot.git && \
     # Basic cuda support library for python.
