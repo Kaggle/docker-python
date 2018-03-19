@@ -8,6 +8,14 @@
 
 import os
 
+# General GPU support.
+if os.environ.get("EXPECT_GPU") == "1":
+    import subprocess
+    import sys
+    smi = subprocess.Popen(['nvidia-smi'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    print(smi.communicate()[0].decode())
+
+
 import numpy as np
 print("Numpy imported ok")
 print("Your lucky number is: " + str(np.random.randint(100)))
@@ -72,11 +80,50 @@ from nltk.stem import WordNetLemmatizer
 print("nltk ok")
 
 import tensorflow as tf
+# There should always be at least one CPU available.
 with tf.device('/cpu:0'):
-    hello = tf.constant('TensorFlow ok')
+    hello = tf.constant('TensorFlow ok (CPU)')
 
 sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
 print(sess.run(hello).decode())
+sess.close()
+
+print("GPU device name (empty if no GPU present): %s" % tf.test.gpu_device_name())
+
+if os.environ.get("EXPECT_GPU") == "1":
+    # Basic test:
+    with tf.device('/gpu:0'):
+        a = tf.constant([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], shape=[2, 3], name='a')
+        b = tf.constant([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], shape=[3, 2], name='b')
+        c = tf.matmul(a, b)
+
+    sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
+    print(sess.run(c))
+    sess.close()
+
+    # Extensive test:
+    import timeit
+    # See https://www.tensorflow.org/tutorials/using_gpu#allowing_gpu_memory_growth
+    config = tf.ConfigProto()
+    config.gpu_options.allow_growth = True
+
+    with tf.device('/gpu:0'):
+        random_image_gpu = tf.random_normal((128, 128, 128, 3))
+        net_gpu = tf.layers.conv2d(random_image_gpu, 32, 7)
+        net_gpu = tf.reduce_sum(net_gpu)
+
+    sess = tf.Session(config=config)
+    sess.run(tf.global_variables_initializer())
+
+    def gpu():
+        sess.run(net_gpu)
+
+    print('GPU (s): ', end='')
+    first_gpu_time = timeit.timeit('gpu()', number=1, setup="from __main__ import gpu")
+    print('%s (first run), '% first_gpu_time, end='')
+    gpu_time = timeit.timeit('gpu()', number=10, setup="from __main__ import gpu")
+    print('%s (10 following runs)' % (gpu_time/10))
+    sess.close()
 
 import cv2
 img = cv2.imread('plot1.png',0)
@@ -99,11 +146,16 @@ import mxnet.gluon
 print("mxnet ok")
 
 import pycuda
+import pycuda.driver
+
+if os.environ.get("EXPECT_GPU") == "1":
+    import pycuda.driver
+    pycuda.driver.Device(0).name()
+
 print("pycuda ok")
 
 import torch
 # Note: torch.cuda.is_available() returns whether GPU support is present AND at least one GPU is available.
-print("torch ok (gpu available: %s, count: %d)" % (torch.cuda.is_available(), torch.cuda.device_count()))
 if os.environ.get("EXPECT_GPU") == "1":
     assert torch.cuda.is_available(), "torch reports cuda is not available"
     expected_device_count = 1
@@ -112,6 +164,7 @@ else:
 
 assert torch.cuda.device_count() == expected_device_count, (
     "%d GPU devices reported, expecting %d" % (torch.cuda.device_count(), expected_device_count))
+print("torch ok (gpu available: %s, count: %d)" % (torch.cuda.is_available(), torch.cuda.device_count()))
 
 import bokeh
 print("bokeh ok")
