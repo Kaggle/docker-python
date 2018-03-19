@@ -1,6 +1,12 @@
 # This script should run without errors whenever we update the
 # kaggle/python container. It checks that all our most popular packages can
 # be loaded and used without errors.
+#
+# When the EXPECT_GPU environment variable is set to 1, the test will
+# expect GPU support and a single GPU device to be present. Otherwise no GPU
+# device is expected (and GPU support is undetermined).
+
+import os
 
 import numpy as np
 print("Numpy imported ok")
@@ -98,6 +104,14 @@ print("pycuda ok")
 import torch
 # Note: torch.cuda.is_available() returns whether GPU support is present AND at least one GPU is available.
 print("torch ok (gpu available: %s, count: %d)" % (torch.cuda.is_available(), torch.cuda.device_count()))
+if os.environ.get("EXPECT_GPU") == "1":
+    assert torch.cuda.is_available(), "torch reports cuda is not available"
+    expected_device_count = 1
+else:
+    expected_device_count = 0
+
+assert torch.cuda.device_count() == expected_device_count, (
+    "%d GPU devices reported, expecting %d" % (torch.cuda.device_count(), expected_device_count))
 
 import bokeh
 print("bokeh ok")

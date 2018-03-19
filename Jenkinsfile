@@ -51,7 +51,7 @@ pipeline {
         sh '''#!/bin/bash
           gcloud docker -- pull gcr.io/kaggle-private-byod/python:gpu-test
           docker tag gcr.io/kaggle-private-byod/python:gpu-test kaggle/python-build:latest
-          ./test
+          EXPECT_GPU=1 ./test
         '''
       }
     }

@@ -31,6 +31,7 @@ docker run \
     -e KAGGLE_DATA_PROXY_TOKEN=test-key \
     -e KAGGLE_DATA_PROXY_URL=http://127.0.0.1:8000 \
     -e KAGGLE_DATA_PROXY_PROJECT=test \
+    -e EXPECT_GPU="$EXPECT_GPU" \
     -v $PWD:/input:ro \
     -v /tmp/python-build/working:/working \
     -w=/working \
