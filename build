@@ -9,25 +9,3 @@ else
     docker pull continuumio/anaconda3:latest
     docker build --rm --no-cache -t kaggle/python-build .
 fi
-
-
-
-rm -rf /tmp/python-build
-docker rm jupyter_test || true
-mkdir -p /tmp/python-build/tmp
-mkdir -p /tmp/python-build/devshm
-mkdir -p /tmp/python-build/working
-# Check that Jupyter server can run; if it dies on startup, the `docker kill` command will throw an error
-docker run -d --name=jupyter_test --read-only --net=none -e HOME=/tmp -v $PWD:/input:ro -v /tmp/python-build/working:/working -w=/working -v /tmp/python-build/tmp:/tmp -v /tmp/python-build/devshm:/dev/shm kaggle/python-build jupyter notebook --allow-root --ip="*"
-sleep 3
-docker kill jupyter_test && docker rm jupyter_test
-docker run --rm -t --read-only --net=none -e HOME=/tmp -e KAGGLE_DATA_PROXY_TOKEN=test-key -e KAGGLE_DATA_PROXY_URL=http://127.0.0.1:8000 -e KAGGLE_DATA_PROXY_PROJECT=test -v $PWD:/input:ro -v /tmp/python-build/working:/working -w=/working -v /tmp/python-build/tmp:/tmp -v /tmp/python-build/devshm:/dev/shm kaggle/python-build /bin/bash -c 'python /input/test_build.py'
-
-# The test_build.py script creates a plot called plot1.png; check that it exists
-[ -s /tmp/python-build/working/plot1.png ] || exit 1
-
-docker tag kaggle/python-build gcr.io/kaggle-images/python
-gcloud docker -- push gcr.io/kaggle-images/python
-
-docker tag kaggle/python-build:latest kaggle/python:latest
-docker push kaggle/python:latest
