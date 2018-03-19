@@ -244,6 +244,7 @@ RUN pip install --upgrade mpld3 && \
     pip install mplleaflet && \
     pip install gpxpy && \
     pip install arrow && \
+    pip install pydataset && \
     pip install vtk && \
     pip install nilearn && \
     pip install nibabel && \
