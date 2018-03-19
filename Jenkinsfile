@@ -1,7 +1,7 @@
 String cron_string = BRANCH_NAME == "ci" ? "H 12 * * 1-5" : ""
 
 pipeline {
-  agent { label 'linux' }
+  agent { label 'linux && !gpu' }
   options {
     disableConcurrentBuilds()
   }
@@ -35,11 +35,32 @@ pipeline {
       }
     }
 
-    stage('Push Image') {
+    stage('Push Temporary Image') {
+      steps {
+        slackSend color: 'none', message: "*<${env.BUILD_URL}console|pushing temporary image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
+        sh '''#!/bin/bash
+          ./push gpu-test
+        '''
+      }
+    }
+
+    stage('Test Image on GPU') {
+      agent { label 'linux && gpu' }
+      steps {
+        slackSend color: 'none', message: "*<${env.BUILD_URL}console|testing image on GPU>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
+        sh '''#!/bin/bash
+          gcloud docker -- pull gcr.io/kaggle-private-byod/python:gpu-test
+          docker tag gcr.io/kaggle-private-byod/python:gpu-test kaggle/python-build:latest
+          ./test
+        '''
+      }
+    }
+
+    stage('Push Final Image') {
       steps {
         slackSend color: 'none', message: "*<${env.BUILD_URL}console|pushing image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
         sh '''#!/bin/bash
-          ./push
+          ./push staging
         '''
       }
     }
