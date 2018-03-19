@@ -21,7 +21,7 @@ pipeline {
       steps {
         slackSend color: 'none', message: "*<${env.BUILD_URL}console|docker build>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
         sh '''#!/bin/bash
-          ./build
+          ./build | ts
         '''
       }
     }
@@ -30,6 +30,7 @@ pipeline {
       steps {
         slackSend color: 'none', message: "*<${env.BUILD_URL}console|test image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
         sh '''#!/bin/bash
+          date
           ./test
         '''
       }
@@ -39,6 +40,7 @@ pipeline {
       steps {
         slackSend color: 'none', message: "*<${env.BUILD_URL}console|pushing temporary image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
         sh '''#!/bin/bash
+          date
           ./push gpu-test
         '''
       }
@@ -49,8 +51,10 @@ pipeline {
       steps {
         slackSend color: 'none', message: "*<${env.BUILD_URL}console|testing image on GPU>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
         sh '''#!/bin/bash
+          date
           gcloud docker -- pull gcr.io/kaggle-private-byod/python:gpu-test
           docker tag gcr.io/kaggle-private-byod/python:gpu-test kaggle/python-build:latest
+          date
           EXPECT_GPU=1 ./test
         '''
       }
