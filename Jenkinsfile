@@ -39,8 +39,7 @@ pipeline {
       steps {
         slackSend color: 'none', message: "*<${env.BUILD_URL}console|pushing image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
         sh '''#!/bin/bash
-          echo "TODO(seb): Push with non-prod label."
-          sleep 10
+          ./push
         '''
       }
     }
