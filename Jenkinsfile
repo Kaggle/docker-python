@@ -21,6 +21,8 @@ pipeline {
       steps {
         slackSend color: 'none', message: "*<${env.BUILD_URL}console|docker build>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
         sh '''#!/bin/bash
+          set -exo pipefail
+
           ./build | ts
         '''
       }
@@ -30,6 +32,8 @@ pipeline {
       steps {
         slackSend color: 'none', message: "*<${env.BUILD_URL}console|test image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
         sh '''#!/bin/bash
+          set -exo pipefail
+
           date
           ./test
         '''
@@ -40,6 +44,8 @@ pipeline {
       steps {
         slackSend color: 'none', message: "*<${env.BUILD_URL}console|pushing temporary image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
         sh '''#!/bin/bash
+          set -exo pipefail
+
           date
           ./push gpu-test
         '''
@@ -51,6 +57,8 @@ pipeline {
       steps {
         slackSend color: 'none', message: "*<${env.BUILD_URL}console|testing image on GPU>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
         sh '''#!/bin/bash
+          set -exo pipefail
+
           date
           gcloud docker -- pull gcr.io/kaggle-private-byod/python:gpu-test
           docker tag gcr.io/kaggle-private-byod/python:gpu-test kaggle/python-build:latest
