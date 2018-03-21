@@ -1,7 +1,7 @@
 String cron_string = BRANCH_NAME == "master" ? "H 12 * * 1-5" : ""
 
 pipeline {
-  agent { label 'linux' }
+  agent { label 'linux && !gpu' }
   options {
     disableConcurrentBuilds()
   }
@@ -21,7 +21,9 @@ pipeline {
       steps {
         slackSend color: 'none', message: "*<${env.BUILD_URL}console|docker build>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
         sh '''#!/bin/bash
-          ./build
+          set -exo pipefail
+
+          ./build | ts
         '''
       }
     }
@@ -30,6 +32,9 @@ pipeline {
       steps {
         slackSend color: 'none', message: "*<${env.BUILD_URL}console|test image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
         sh '''#!/bin/bash
+          set -exo pipefail
+
+          date
           ./test
         '''
       }
@@ -39,6 +44,9 @@ pipeline {
       steps {
         slackSend color: 'none', message: "*<${env.BUILD_URL}console|pushing image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
         sh '''#!/bin/bash
+          set -exo pipefail
+
+          date
           ./push staging
         '''
       }
