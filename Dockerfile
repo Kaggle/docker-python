@@ -272,11 +272,11 @@ RUN apt-get update && \
     conda install mkl setuptools cmake cffi typing && \
     conda install -c pytorch magma-cuda90 && \
     cd /usr/local/src && \
-    git clone --recursive https://github.com/pytorch/pytorch && \
+    git clone -b v0.3.1 --recursive https://github.com/pytorch/pytorch && \
     cd pytorch && \
     python setup.py install && \
     cd /usr/local/src && \
-    git clone --recursive https://github.com/pytorch/vision && \
+    git clone -b v0.2.0 --recursive https://github.com/pytorch/vision && \
     cd vision && \
     python setup.py install && \
     # PyTorch Audio
