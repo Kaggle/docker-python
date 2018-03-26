@@ -1,6 +1,6 @@
 FROM nvidia/cuda:9.1-cudnn7-devel-ubuntu16.04 AS nvidia
 
-FROM continuumio/anaconda3:latest
+FROM continuumio/anaconda3:5.0.1
 
 COPY --from=nvidia /etc/apt/sources.list.d/cuda.list /etc/apt/sources.list.d/
 COPY --from=nvidia /etc/apt/sources.list.d/nvidia-ml.list /etc/apt/sources.list.d/
