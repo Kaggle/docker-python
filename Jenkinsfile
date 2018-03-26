@@ -19,7 +19,7 @@ pipeline {
   stages {
     stage('Docker Build') {
       steps {
-        slackSend color: 'none', message: "*<${env.BUILD_URL}console|docker build>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
+        slackSend color: 'none', message: "*<${env.BUILD_URL}console|docker-python build>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
         sh '''#!/bin/bash
           set -exo pipefail
 
@@ -30,22 +30,12 @@ pipeline {
 
     stage('Test Image') {
       steps {
-        slackSend color: 'none', message: "*<${env.BUILD_URL}console|test image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
+        slackSend color: 'none', message: "*<${env.BUILD_URL}console|docker-python non-GPU test>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
         sh '''#!/bin/bash
           set -exo pipefail
 
           date
           ./test
-        '''
-      }
-    }
-
-    stage('Push Temporary Image') {
-      steps {
-        slackSend color: 'none', message: "*<${env.BUILD_URL}console|pushing temporary image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
-        sh '''#!/bin/bash
-          set -exo pipefail
-
           date
           ./push gpu-test
         '''
@@ -55,7 +45,7 @@ pipeline {
     stage('Test Image on GPU') {
       agent { label 'linux && gpu' }
       steps {
-        slackSend color: 'none', message: "*<${env.BUILD_URL}console|testing image on GPU>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
+        slackSend color: 'none', message: "*<${env.BUILD_URL}console|docker-python GPU test>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
         sh '''#!/bin/bash
           set -exo pipefail
 
@@ -70,7 +60,7 @@ pipeline {
 
     stage('Push Final Image') {
       steps {
-        slackSend color: 'none', message: "*<${env.BUILD_URL}console|pushing image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
+        slackSend color: 'none', message: "*<${env.BUILD_URL}console|docker-python push>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
         sh '''#!/bin/bash
           ./push staging
         '''
@@ -80,13 +70,13 @@ pipeline {
 
   post {
     failure {
-      slackSend color: 'danger', message: "*<${env.BUILD_URL}console|failed>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
+      slackSend color: 'danger', message: "*<${env.BUILD_URL}console|docker-python failed>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
     }
     success {
-      slackSend color: 'good', message: "*<${env.BUILD_URL}console|passed>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
+      slackSend color: 'good', message: "*<${env.BUILD_URL}console|docker-python passed>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
     }
     aborted {
-      slackSend color: 'warning', message: "*<${env.BUILD_URL}console|aborted>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
+      slackSend color: 'warning', message: "*<${env.BUILD_URL}console|docker-python aborted>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
     }
   }
 }
