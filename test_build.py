@@ -186,6 +186,9 @@ import fastai
 from fastai.io import get_data
 print("fast.ai ok")
 
+import gym
+print("gym ok")
+
 # bigquery proxy
 import os
 import threading

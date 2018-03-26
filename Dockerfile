@@ -442,6 +442,7 @@ RUN pip install --upgrade mpld3 && \
     # yellowbrick machine learning visualization library
     pip install yellowbrick && \
     pip install mlcrate && \
+    pip install gym && \
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
     # Required to display Altair charts in Jupyter notebook
