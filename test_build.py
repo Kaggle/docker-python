@@ -189,6 +189,20 @@ print("fast.ai ok")
 import gym
 print("gym ok")
 
+import ray
+import time
+
+@ray.remote
+def f():
+    time.sleep(0.1)
+    return 1
+
+
+ray.init()
+results = ray.get([f.remote() for i in range(4)])
+assert results == [1]*4
+print("ray ok")
+
 # bigquery proxy
 import os
 import threading

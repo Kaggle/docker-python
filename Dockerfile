@@ -443,6 +443,7 @@ RUN pip install --upgrade mpld3 && \
     pip install yellowbrick && \
     pip install mlcrate && \
     pip install gym && \
+    pip install ray && \
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
     # Required to display Altair charts in Jupyter notebook
