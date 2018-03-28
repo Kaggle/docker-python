@@ -7,5 +7,7 @@ label=${1:-testing}
 docker tag kaggle/python-build:latest gcr.io/kaggle-images/python:${label}
 gcloud docker -- push gcr.io/kaggle-images/python:${label}
 
-docker tag kaggle/python-build:latest kaggle/python:${label}
-docker push kaggle/python:${label}
+if [[ "$label" == "latest" ]]; then
+  docker tag kaggle/python-build:latest kaggle/python:${label}
+  docker push kaggle/python:${label}
+fi
