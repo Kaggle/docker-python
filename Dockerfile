@@ -104,7 +104,8 @@ RUN apt-get update && \
     bazel build --config=opt --config=cuda --cxxopt="-D_GLIBCXX_USE_CXX11_ABI=0" //tensorflow/tools/pip_package:build_pip_package && \
     bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg && \
     pip install /tmp/tensorflow_pkg/tensorflow*.whl && \
-    rm -Rf /tmp/tensorflow_pkg
+    rm -Rf /tmp/tensorflow_pkg && \
+    rm -Rf /root/.cache/bazel
 
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
