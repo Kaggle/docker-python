@@ -452,7 +452,7 @@ RUN pip install bcolz && \
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
     cd && rm -rf /usr/local/src/*
-    
+
     ###########
     #
     #      NEW CONTRIBUTORS:
@@ -466,6 +466,7 @@ RUN pip install flashtext && \
     pip install pyupset && \
     pip install -e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper && \
     pip install hpsklearn && \
+    pip install git+https://github.com/Kaggle/learntools && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/*
