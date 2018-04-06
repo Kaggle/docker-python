@@ -12,14 +12,14 @@ pipeline {
     GIT_COMMIT_SHORT = sh(returnStdout: true, script:"git rev-parse --short=7 HEAD").trim()
     GIT_COMMIT_SUBJECT = sh(returnStdout: true, script:"git log --format=%s -n 1 HEAD").trim()
     GIT_COMMIT_AUTHOR = sh(returnStdout: true, script:"git log --format='%an' -n 1 HEAD").trim()
-    GIT_COMMIT_SUMMARY = "${GIT_BRANCH} `<https://github.com/Kaggle/kaggle-python/commit/${GIT_COMMIT}|${GIT_COMMIT_SHORT}>` ${GIT_COMMIT_SUBJECT} - ${GIT_COMMIT_AUTHOR}"
+    GIT_COMMIT_SUMMARY = "`<https://github.com/Kaggle/kaggle-python/commit/${GIT_COMMIT}|${GIT_COMMIT_SHORT}>` ${GIT_COMMIT_SUBJECT} - ${GIT_COMMIT_AUTHOR}"
     SLACK_CHANNEL = sh(returnStdout: true, script: "if [[ \"${GIT_BRANCH}\" == \"master\" ]]; then echo \"#kernels\"; else echo \"#builds\"; fi").trim()
   }
 
   stages {
     stage('Docker Build') {
       steps {
-        slackSend color: 'none', message: "*<${env.BUILD_URL}console|docker build>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
+        slackSend color: 'none', message: "*<${env.BUILD_URL}console|${JOB_NAME} docker build>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
         sh '''#!/bin/bash
           set -exo pipefail
 
@@ -30,7 +30,7 @@ pipeline {
 
     stage('Test Image') {
       steps {
-        slackSend color: 'none', message: "*<${env.BUILD_URL}console|test image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
+        slackSend color: 'none', message: "*<${env.BUILD_URL}console|${JOB_NAME} test image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
         sh '''#!/bin/bash
           set -exo pipefail
 
@@ -42,7 +42,7 @@ pipeline {
 
     stage('Push Image') {
       steps {
-        slackSend color: 'none', message: "*<${env.BUILD_URL}console|pushing image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
+        slackSend color: 'none', message: "*<${env.BUILD_URL}console|${JOB_NAME} pushing image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
         sh '''#!/bin/bash
           set -exo pipefail
 
@@ -55,13 +55,13 @@ pipeline {
 
   post {
     failure {
-      slackSend color: 'danger', message: "*<${env.BUILD_URL}console|failed>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
+      slackSend color: 'danger', message: "*<${env.BUILD_URL}console|${JOB_NAME} failed>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
     }
     success {
-      slackSend color: 'good', message: "*<${env.BUILD_URL}console|passed>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
+      slackSend color: 'good', message: "*<${env.BUILD_URL}console|${JOB_NAME} passed>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
     }
     aborted {
-      slackSend color: 'warning', message: "*<${env.BUILD_URL}console|aborted>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
+      slackSend color: 'warning', message: "*<${env.BUILD_URL}console|${JOB_NAME} aborted>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
     }
   }
 }
