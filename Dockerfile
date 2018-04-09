@@ -266,7 +266,9 @@ RUN pip install --upgrade mpld3 && \
     pip install plotly && \
     pip install git+https://github.com/nicta/dora.git && \
     pip install git+https://github.com/hyperopt/hyperopt.git && \
-    # tflean. Deep learning library featuring a higher-level API for TensorFlow. http://tflearn.org
+    # tensorflow hub
+    pip install tensorflow-hub
+    # tflearn. Deep learning library featuring a higher-level API for TensorFlow. http://tflearn.org
     pip install git+https://github.com/tflearn/tflearn.git && \
     pip install fitter && \
     pip install langid && \
