@@ -63,11 +63,12 @@ RUN apt-get install -y python-software-properties zip && \
     echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list && \
     curl https://bazel.build/bazel-release.pub.gpg | apt-key add - && \
     apt-get update && apt-get install -y bazel && apt-get upgrade -y bazel && \
-    cd /usr/local/src && git clone https://github.com/tensorflow/tensorflow && \
-    cd tensorflow && echo "\n" | ./configure && \
-    bazel build --config=opt //tensorflow/tools/pip_package:build_pip_package && \
-    bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg && \
-    pip install /tmp/tensorflow_pkg/tensorflow*.whl
+    pip install tensorflow 
+    #cd /usr/local/src && git clone https://github.com/tensorflow/tensorflow && \
+    #cd tensorflow && echo "\n" | ./configure && \
+    #bazel build --config=opt //tensorflow/tools/pip_package:build_pip_package && \
+    #bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg && \
+    #pip install /tmp/tensorflow_pkg/tensorflow*.whl
 
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
@@ -366,8 +367,9 @@ RUN pip install --upgrade mpld3 && \
     pip install lime && \
     pip install memory_profiler
 
-# Temp fix for pyfasttext (cysignals 1.7.0 causes build to fail)
-RUN pip install --upgrade cysignals==1.6.9 && \
+# install cython & cysignals before pyfasttext
+RUN pip install --upgrade cython && \
+    pip install --upgrade cysignals && \
     pip install pyfasttext && \
     pip install ktext && \
     cd /usr/local/src && git clone --depth=1 https://github.com/facebookresearch/fastText.git && cd fastText && pip install . && \

@@ -55,24 +55,27 @@ print("ggplot ok")
 import theano
 print("Theano ok")
 
-from keras.models import Sequential
-from keras.layers.core import Dense, Dropout, Activation, Flatten
-from keras.layers.convolutional import Convolution2D, MaxPooling2D
-from keras.optimizers import SGD
-print("keras ok")
-
 import nltk
 from nltk.stem import WordNetLemmatizer
 print("nltk ok")
 
-import tensorflow as tf
-hello = tf.constant('TensorFlow ok')
-sess = tf.Session()
-print(sess.run(hello))
-
 import cv2
 img = cv2.imread('plot1.png',0)
 print("OpenCV ok")
+
+import tensorflow as tf
+print(tf.__version__)
+hello = tf.constant('TensorFlow ok')
+sess = tf.Session()
+print(sess.run(hello))
+print("Tensorflow ok")
+
+from keras.models import Sequential
+from keras.layers.core import Dense, Dropout, Activation, Flatten
+from keras.layers.convolutional import Convolution2D, MaxPooling2D
+from keras.optimizers import SGD
+print("Keras ok")
+
 
 from skimage.io import imread
 print("skimage ok")
@@ -110,18 +113,16 @@ import fastai
 from fastai.io import get_data
 print("fast.ai ok")
 
+# Test BigQuery
 import os
 import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from google.cloud import bigquery
-
 HOSTNAME = "127.0.0.1"
 PORT = 8000
 URL = "http://%s:%s" % (HOSTNAME, PORT)
-
 fake_bq_called = False
 fake_bq_header_found = False
-
 class HTTPHandler(BaseHTTPRequestHandler):
     def do_HEAD(s):
         s.send_response(200)
@@ -135,18 +136,13 @@ class HTTPHandler(BaseHTTPRequestHandler):
 
 httpd = HTTPServer((HOSTNAME, PORT), HTTPHandler)
 threading.Thread(target=httpd.serve_forever).start()
-
 client = bigquery.Client()
-
 try:
     for ds in client.list_datasets(): pass
 except:
     pass
-
 httpd.shutdown()
-
 assert fake_bq_called, "Fake server did not recieve a request from the BQ client."
 assert fake_bq_header_found, "X-KAGGLE-PROXY-DATA header was missing from the BQ request."
-
 print("bigquery proxy ok")
 
