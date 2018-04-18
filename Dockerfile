@@ -472,6 +472,9 @@ RUN pip install flashtext && \
     pip install marisa-trie && \
     pip install pyemd && \
     pip install pyupset && \
+    pip install pympler && \
+    pip install s3fs && \
+    pip install featuretools && \
     pip install -e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper && \
     pip install hpsklearn && \
     pip install git+https://github.com/Kaggle/learntools && \
