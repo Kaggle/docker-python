@@ -478,6 +478,7 @@ RUN pip install flashtext && \
     pip install -e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper && \
     pip install hpsklearn && \
     pip install git+https://github.com/Kaggle/learntools && \
+    pip install ray && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/*
