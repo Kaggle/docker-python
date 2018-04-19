@@ -53,22 +53,27 @@ RUN pip install opencv-python
     #rm -rf /root/.cache/pip/* && \
     #apt-get autoremove -y && apt-get clean
 
-# Tensorflow source build
-RUN apt-get install -y python-software-properties zip && \
-    echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list &&     echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list &&     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886 C857C906 2B90D010 && \
+RUN apt-get update && apt-get install -y python-software-properties zip && \
+    echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list && \
+    echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list && \
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886 C857C906 2B90D010 && \
     apt-get update && \
     echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
     echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections && \
     apt-get install -y oracle-java8-installer && \
     echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list && \
     curl https://bazel.build/bazel-release.pub.gpg | apt-key add - && \
-    apt-get update && apt-get install -y bazel && apt-get upgrade -y bazel && \
-    pip install tensorflow 
-    #cd /usr/local/src && git clone https://github.com/tensorflow/tensorflow && \
-    #cd tensorflow && echo "\n" | ./configure && \
-    #bazel build --config=opt //tensorflow/tools/pip_package:build_pip_package && \
-    #bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg && \
-    #pip install /tmp/tensorflow_pkg/tensorflow*.whl
+    apt-get update && apt-get install -y bazel && \
+    apt-get upgrade -y bazel
+
+# Tensorflow source build
+RUN cd /usr/local/src && \
+    git clone https://github.com/tensorflow/tensorflow && \
+    cd tensorflow && \
+    cat /dev/null | ./configure && \
+    bazel build --config=opt //tensorflow/tools/pip_package:build_pip_package && \
+    bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg && \
+    pip install /tmp/tensorflow_pkg/tensorflow*.whl
 
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
