@@ -34,21 +34,24 @@ libxcb-render0 libxcb-shm0 netpbm poppler-data p7zip-full && \
     tar xzf ImageMagick.tar.gz && cd `ls -d ImageMagick-*` && pwd && ls -al && ./configure && \
     make -j $(nproc) && make install && \
     # clean up ImageMagick source files
-    cd ../ && rm -rf ImageMagick* && \
-    apt-get -y install libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev && \
-    apt-get -y install libtbb2 libtbb-dev libjpeg-dev libtiff-dev libjasper-dev && \
-    apt-get -y install cmake && \
-    cd /usr/local/src && git clone --depth 1 https://github.com/Itseez/opencv.git && \
-    cd opencv && \
-    mkdir build && cd build && \
-    cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_TBB=ON -D WITH_FFMPEG=OFF -D WITH_V4L=ON -D WITH_QT=OFF -D WITH_OPENGL=ON -D PYTHON3_LIBRARY=/opt/conda/lib/libpython3.6m.so -D PYTHON3_INCLUDE_DIR=/opt/conda/include/python3.6m/ -D PYTHON_LIBRARY=/opt/conda/lib/libpython3.6m.so -D PYTHON_INCLUDE_DIR=/opt/conda/include/python3.6m/ -D BUILD_PNG=TRUE .. && \
-    make -j $(nproc) && make install && \
-    echo "/usr/local/lib/python3.6/site-packages" > /etc/ld.so.conf.d/opencv.conf && ldconfig && \
-    cp /usr/local/lib/python3.6/site-packages/cv2.cpython-36m-x86_64-linux-gnu.so /opt/conda/lib/python3.6/site-packages/ && \
+    cd ../ && rm -rf ImageMagick*
+
+# OpenCV install (from pip or source)
+RUN pip install opencv-python
+    #apt-get -y install libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev && \
+    #apt-get -y install libtbb2 libtbb-dev libjpeg-dev libtiff-dev libjasper-dev && \
+    #apt-get -y install cmake && \
+    #cd /usr/local/src && git clone --depth 1 https://github.com/Itseez/opencv.git && \
+    #cd opencv && \
+    #mkdir build && cd build && \
+    #cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_TBB=ON -D WITH_FFMPEG=OFF -D WITH_V4L=ON -D WITH_QT=OFF -D WITH_OPENGL=ON -D PYTHON3_LIBRARY=/opt/conda/lib/libpython3.6m.so -D PYTHON3_INCLUDE_DIR=/opt/conda/include/python3.6m/ -D PYTHON_LIBRARY=/opt/conda/lib/libpython3.6m.so -D PYTHON_INCLUDE_DIR=/opt/conda/include/python3.6m/ -D BUILD_PNG=TRUE .. && \
+    #make -j $(nproc) && make install && \
+    #echo "/usr/local/lib/python3.6/site-packages" > /etc/ld.so.conf.d/opencv.conf && ldconfig && \
+    #cp /usr/local/lib/python3.6/site-packages/cv2.cpython-36m-x86_64-linux-gnu.so /opt/conda/lib/python3.6/site-packages/ && \
     # Clean up install cruft
-    rm -rf /usr/local/src/opencv && \
-    rm -rf /root/.cache/pip/* && \
-    apt-get autoremove -y && apt-get clean
+    #rm -rf /usr/local/src/opencv && \
+    #rm -rf /root/.cache/pip/* && \
+    #apt-get autoremove -y && apt-get clean
 
 # Tensorflow source build
 RUN apt-get install -y python-software-properties zip && \
@@ -60,11 +63,12 @@ RUN apt-get install -y python-software-properties zip && \
     echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list && \
     curl https://bazel.build/bazel-release.pub.gpg | apt-key add - && \
     apt-get update && apt-get install -y bazel && apt-get upgrade -y bazel && \
-    cd /usr/local/src && git clone https://github.com/tensorflow/tensorflow && \
-    cd tensorflow && echo "\n" | ./configure && \
-    bazel build --config=opt //tensorflow/tools/pip_package:build_pip_package && \
-    bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg && \
-    pip install /tmp/tensorflow_pkg/tensorflow*.whl
+    pip install tensorflow 
+    #cd /usr/local/src && git clone https://github.com/tensorflow/tensorflow && \
+    #cd tensorflow && echo "\n" | ./configure && \
+    #bazel build --config=opt //tensorflow/tools/pip_package:build_pip_package && \
+    #bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg && \
+    #pip install /tmp/tensorflow_pkg/tensorflow*.whl
 
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
@@ -361,7 +365,11 @@ RUN pip install --upgrade mpld3 && \
     pip install cufflinks && \
     pip install glmnet_py && \
     pip install lime && \
-    pip install memory_profiler && \
+    pip install memory_profiler
+
+# install cython & cysignals before pyfasttext
+RUN pip install --upgrade cython && \
+    pip install --upgrade cysignals && \
     pip install pyfasttext && \
     pip install ktext && \
     cd /usr/local/src && git clone --depth=1 https://github.com/facebookresearch/fastText.git && cd fastText && pip install . && \
@@ -464,10 +472,14 @@ RUN pip install flashtext && \
     pip install marisa-trie && \
     pip install pyemd && \
     pip install pyupset && \
+    pip install pympler && \
+    pip install s3fs && \
+    pip install featuretools && \
     pip install -e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper && \
     pip install hpsklearn && \
     pip install git+https://github.com/Kaggle/learntools && \
     pip install shap && \
+    pip install ray && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/*
