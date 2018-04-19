@@ -2,6 +2,33 @@
 # kaggle/python container. It checks that all our most popular packages can
 # be loaded and used without errors.
 
+import tensorflow as tf
+print(tf.__version__)
+hello = tf.constant('TensorFlow ok')
+sess = tf.Session()
+print(sess.run(hello))
+print("Tensorflow ok")
+
+from keras.models import Sequential
+from keras.layers.core import Dense, Dropout, Activation, Flatten
+from keras.layers.convolutional import Convolution2D, MaxPooling2D
+from keras.optimizers import SGD
+print("Keras ok")
+
+# PyTorch smoke test based on http://pytorch.org/tutorials/beginner/nlp/deep_learning_tutorial.html
+import torch
+import torch.nn as tnn
+import torch.autograd as autograd
+torch.manual_seed(31337)
+linear_torch = tnn.Linear(5,3)
+data_torch = autograd.Variable(torch.randn(2, 5))
+print(linear_torch(data_torch))
+print("PyTorch ok")
+
+import fastai
+from fastai.io import get_data
+print("fast.ai ok")
+
 import numpy as np
 print("Numpy imported ok")
 print("Your lucky number is: " + str(np.random.randint(100)))
@@ -63,20 +90,6 @@ import cv2
 img = cv2.imread('plot1.png',0)
 print("OpenCV ok")
 
-import tensorflow as tf
-print(tf.__version__)
-hello = tf.constant('TensorFlow ok')
-sess = tf.Session()
-print(sess.run(hello))
-print("Tensorflow ok")
-
-from keras.models import Sequential
-from keras.layers.core import Dense, Dropout, Activation, Flatten
-from keras.layers.convolutional import Convolution2D, MaxPooling2D
-from keras.optimizers import SGD
-print("Keras ok")
-
-
 from skimage.io import imread
 print("skimage ok")
 
@@ -98,20 +111,6 @@ print("bokeh ok")
 
 import seaborn
 print("seaborn ok")
-
-# PyTorch smoke test based on http://pytorch.org/tutorials/beginner/nlp/deep_learning_tutorial.html
-import torch
-import torch.nn as tnn
-import torch.autograd as autograd
-torch.manual_seed(31337)
-linear_torch = tnn.Linear(5,3)
-data_torch = autograd.Variable(torch.randn(2, 5))
-print(linear_torch(data_torch))
-print("PyTorch ok")
-
-import fastai
-from fastai.io import get_data
-print("fast.ai ok")
 
 # Test BigQuery
 import os
@@ -145,4 +144,3 @@ httpd.shutdown()
 assert fake_bq_called, "Fake server did not recieve a request from the BQ client."
 assert fake_bq_header_found, "X-KAGGLE-PROXY-DATA header was missing from the BQ request."
 print("bigquery proxy ok")
-
