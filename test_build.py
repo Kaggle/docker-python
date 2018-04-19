@@ -146,3 +146,6 @@ assert fake_bq_called, "Fake server did not recieve a request from the BQ client
 assert fake_bq_header_found, "X-KAGGLE-PROXY-DATA header was missing from the BQ request."
 print("bigquery proxy ok")
 
+import shap
+print("shap ok")
+
