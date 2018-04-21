@@ -485,6 +485,7 @@ RUN pip install flashtext && \
     pip install git+https://github.com/Kaggle/learntools && \
     pip install shap && \
     pip install ray && \
+    pip install jieba && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/*
