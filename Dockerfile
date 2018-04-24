@@ -482,10 +482,15 @@ RUN pip install flashtext && \
     pip install featuretools && \
     pip install -e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper && \
     pip install hpsklearn && \
+    pip install keras-tqdm && \
     pip install git+https://github.com/Kaggle/learntools && \
     pip install shap && \
     pip install ray && \
-    ##### ^^^^ Add new contributions above here
+
+    ##### ^^^^ Add new contributions above here ^^^^ #####
+
+
+
     # clean up pip cache
     rm -rf /root/.cache/pip/*
 
