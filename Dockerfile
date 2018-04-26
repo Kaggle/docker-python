@@ -220,6 +220,7 @@ RUN apt-get update && \
     pip install line_profiler && \
     pip install orderedmultidict && \
     pip install smhasher && \
+    conda install -y -c bokeh bokeh && \
     conda install -y -c bokeh datashader && \
     # Boruta (python implementation)
     cd /usr/local/src && git clone https://github.com/danielhomola/boruta_py.git && \
