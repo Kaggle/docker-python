@@ -237,6 +237,8 @@ RUN apt-get update && \
     #./waf configure --mode=release --build-static --with-python --with-cpptests --with-examples --with-vamp && \
     #./waf && ./waf install && mv /usr/local/lib/python3.6/site-packages/essentia /opt/conda/lib/python3.6 && \
     # PyTorch
+    export CXXFLAGS="-std=c++11" && \
+    export CFLAGS="-std=c99" && \
     conda install -y pytorch torchvision -c pytorch && \
     # PyTorch Audio
     apt-get install -y sox libsox-dev libsox-fmt-all && \
