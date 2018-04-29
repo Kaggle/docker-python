@@ -148,3 +148,5 @@ print("bigquery proxy ok")
 import shap
 print("shap ok")
 
+import kmapper
+print("kmapper ok")
