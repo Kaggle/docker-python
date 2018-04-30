@@ -487,6 +487,7 @@ RUN pip install flashtext && \
     pip install hpsklearn && \
     pip install keras-tqdm && \
     pip install git+https://github.com/Kaggle/learntools && \
+    pip install kmapper && \
     pip install shap && \
     pip install ray && \
 
