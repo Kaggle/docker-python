@@ -107,7 +107,12 @@ RUN apt-get update && \
     apt-get update && apt-get install -y bazel && apt-get upgrade -y bazel && \
     cd /usr/local/src && git clone https://github.com/tensorflow/tensorflow && \
     cd tensorflow && cat /dev/null | ./configure && \
-    bazel build --config=opt --config=cuda --cxxopt="-D_GLIBCXX_USE_CXX11_ABI=0" //tensorflow/tools/pip_package:build_pip_package && \
+    echo "/usr/local/cuda-${TF_CUDA_VERSION}/targets/x86_64-linux/lib/stubs" > /etc/ld.so.conf.d/cuda-stubs.conf && ldconfig && \
+    bazel build --config=opt \
+                --config=cuda \
+                --cxxopt="-D_GLIBCXX_USE_CXX11_ABI=0" \
+                //tensorflow/tools/pip_package:build_pip_package && \
+    rm /etc/ld.so.conf.d/cuda-stubs.conf && ldconfig && \
     bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg && \
     pip install /tmp/tensorflow_pkg/tensorflow*.whl && \
     rm -Rf /tmp/tensorflow_pkg && \
