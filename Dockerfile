@@ -68,7 +68,13 @@ libxcb-render0 libxcb-shm0 netpbm poppler-data p7zip-full && \
     cd ../ && rm -rf ImageMagick* && \
     apt-get -y install libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev && \
     apt-get -y install libtbb2 libtbb-dev libjpeg-dev libtiff-dev libjasper-dev && \
-    apt-get -y install cmake && \
+    apt-get remove cmake && \
+    apt-get purge --auto-remove cmake && \
+    export CMAKE_VERSION=3.11 CMAKE_BUILD=1 && \
+    cd /usr/local/src && wget https://cmake.org/files/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}.${CMAKE_BUILD}.tar.gz && \
+    tar -xzvf cmake-${CMAKE_VERSION}.${CMAKE_BUILD}.tar.gz && \
+    cd cmake-${CMAKE_VERSION}.${CMAKE_BUILD}/ && \
+    ./bootstrap && make -j4 && make install && \
     cd /usr/local/src && git clone --depth 1 https://github.com/Itseez/opencv.git && \
     cd opencv && \
     mkdir build && cd build && \
