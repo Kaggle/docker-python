@@ -6,6 +6,12 @@
 # expect GPU support and a single GPU device to be present. Otherwise no GPU
 # device is expected (and GPU support is undetermined).
 
+# For a similar issue to the pytorch static TLS issue, which is referenced and
+# already handled by patches/sitecustomize.py, we need to import tensorflow
+# first as well. This test script (in terms of imports) may not be sufficiently
+# realistic for this problem to occur in production uses of the image.
+import tensorflow
+
 import os
 
 # General GPU support.
