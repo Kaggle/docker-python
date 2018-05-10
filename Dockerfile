@@ -490,7 +490,8 @@ RUN pip install flashtext && \
     pip install kmapper && \
     pip install shap && \
     pip install ray && \
-
+    pip install gym && \
+    pip install tensorforce && \
     ##### ^^^^ Add new contributions above here ^^^^ #####
 
 
