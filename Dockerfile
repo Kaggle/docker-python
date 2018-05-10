@@ -2,6 +2,8 @@ FROM nvidia/cuda:9.1-cudnn7-devel-ubuntu16.04 AS nvidia
 
 FROM continuumio/anaconda3:5.0.1
 
+RUN apt-get update && apt-get install apt-transport-https
+
 COPY --from=nvidia /etc/apt/sources.list.d/cuda.list /etc/apt/sources.list.d/
 COPY --from=nvidia /etc/apt/sources.list.d/nvidia-ml.list /etc/apt/sources.list.d/
 COPY --from=nvidia /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d/cuda.gpg
