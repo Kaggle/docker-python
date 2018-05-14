@@ -4,6 +4,7 @@ FROM continuumio/anaconda3:5.0.1
 
 RUN apt-get update && apt-get install apt-transport-https
 
+
 COPY --from=nvidia /etc/apt/sources.list.d/cuda.list /etc/apt/sources.list.d/
 COPY --from=nvidia /etc/apt/sources.list.d/nvidia-ml.list /etc/apt/sources.list.d/
 COPY --from=nvidia /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d/cuda.gpg
@@ -51,7 +52,7 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     pip install scipy --upgrade && \
     pip install seaborn python-dateutil dask pytagcloud pyyaml joblib \
     husl geopy ml_metrics mne pyshp gensim && \
-    conda install -y -c conda-forge spacy && python -m spacy download en && \
+    pip install spacy && python -m spacy download en && \ 
     python -m spacy download en_core_web_lg && \
     # The apt-get version of imagemagick is out of date and has compatibility issues, so we build from source
     apt-get -y install dbus fontconfig fontconfig-config fonts-dejavu-core fonts-droid ghostscript gsfonts hicolor-icon-theme \
@@ -157,7 +158,7 @@ RUN apt-get install -y libfreetype6-dev && \
     echo "x" > README.rst && echo "x" > CHANGES.rst && \
     python setup.py install && \
     # Dev branch of Theano
-    pip install git+git://github.com/Theano/Theano.git --upgrade --no-deps && \
+    pip install https://github.com/Theano/Theano/archive/rel-0.8.2.zip --upgrade --no-deps && \
     # put theano compiledir inside /tmp (it needs to be in writable dir)
     printf "[global]\nbase_compiledir = /tmp/.theano\n" > /.theanorc && \
     cd /usr/local/src &&  git clone --depth 1 https://github.com/pybrain/pybrain && \
@@ -198,14 +199,14 @@ vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
 # Make sure the dynamic linker finds the right libstdc++
 ENV LD_LIBRARY_PATH="/opt/conda/lib:${LD_LIBRARY_PATH}"
 
+#RUN pip install --upgrade pip setuptools
+
 RUN apt-get update && \
     # Libgeos, for mapping libraries
     apt-get -y install libgeos-dev && \
     # pyshp and pyproj are now external dependencies of Basemap
     pip install pyshp pyproj && \
-    cd /usr/local/src && git clone https://github.com/matplotlib/basemap.git && \
-    export GEOS_DIR=/usr/local && \
-    cd basemap && python setup.py install && \
+    conda install -c conda-forge basemap && \
     # Pillow (PIL)
     apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev && \
     pip install Pillow && \
@@ -247,9 +248,7 @@ RUN apt-get update && \
     python -c "from keras.models import Sequential; from keras import backend; print(backend._BACKEND)" && \
     # Keras reverts to /tmp from ~ when it detects a read-only file system
     mkdir -p /tmp/.keras && cp /root/.keras/keras.json /tmp/.keras && \
-    # Scikit-Learn nightly build
-    cd /usr/local/src && git clone https://github.com/scikit-learn/scikit-learn.git && \
-    cd scikit-learn && python setup.py build && python setup.py install && \
+    pip install scikit-learn && \
     # HDF5 support
     conda install h5py && \
     # https://github.com/biopython/biopython
@@ -284,13 +283,15 @@ RUN apt-get update && \
     #./waf && ./waf install && mv /usr/local/lib/python3.6/site-packages/essentia /opt/conda/lib/python3.6 && \
     # Install torch and torchvision from source, so we're using the cuda/cudnn libraries installed above.
     conda install mkl setuptools cmake cffi typing && \
+    #mkl-include is needed to compile pytorch
+    conda install mkl-include && \
     conda install -c pytorch magma-cuda90 && \
     cd /usr/local/src && \
-    git clone -b v0.3.1 --recursive https://github.com/pytorch/pytorch && \
+    git clone -b v0.4.0 --recursive https://github.com/pytorch/pytorch && \
     cd pytorch && \
     python setup.py install && \
     cd /usr/local/src && \
-    git clone -b v0.2.0 --recursive https://github.com/pytorch/vision && \
+    git clone -b v0.2.1 --recursive https://github.com/pytorch/vision && \
     cd vision && \
     python setup.py install && \
     # PyTorch Audio
@@ -361,7 +362,7 @@ RUN pip install --upgrade mpld3 && \
     conda install -y ecos && \
     conda install -y CVXcanon && \
     pip install fancyimpute && \
-    pip install git+https://github.com/pymc-devs/pymc3 && \
+    pip install https://github.com/pymc-devs/pymc3/archive/v3.0.zip && \
     pip install tifffile && \
     pip install spectral && \
     pip install descartes && \
@@ -465,6 +466,7 @@ RUN pip install --upgrade cython && \
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
     # Required to display Altair charts in Jupyter notebook
+    pip install vega && \
     jupyter nbextension install --user --py vega
 
 # Fast.ai and dependencies
