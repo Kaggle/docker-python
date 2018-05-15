@@ -9,7 +9,11 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     apt-get update && apt-get install -y build-essential && \
     # https://stackoverflow.com/a/46498173
     conda update -y conda && conda update -y python && \
-    # Vowpal Rabbit
+    # Vowpal Wabbit binary (precompiled, statically linked)
+    wget http://finance.yendor.com/ML/VW/Binaries/vw-8.20170920 && \
+    [[ `sha256sum vw-8.20170920` == "fe903770359b2d7bfb22affed2f7a51ad17dcb2c6f3fa2f4379ab9eaa36f7c61  vw-8.20170920" ]] && \
+    mv vw-8.20170920 /usr/local/bin/vw && chmod a+rx /usr/local/bin/vw && \
+    # Vowpal Wabbit libraries
     #apt-get install -y libboost-program-options-dev zlib1g-dev libboost-python-dev && \
     #cd /usr/lib/x86_64-linux-gnu/ && rm -f libboost_python.a && rm -f libboost_python.so && \
     #ln -sf libboost_python-py34.so libboost_python.so && ln -sf libboost_python-py34.a libboost_python.a && \
