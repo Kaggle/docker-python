@@ -9,13 +9,14 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     apt-get update && apt-get install -y build-essential && \
     # https://stackoverflow.com/a/46498173
     conda update -y conda && conda update -y python && \
+    pip install --upgrade pip && \
     # Vowpal Rabbit
     #apt-get install -y libboost-program-options-dev zlib1g-dev libboost-python-dev && \
     #cd /usr/lib/x86_64-linux-gnu/ && rm -f libboost_python.a && rm -f libboost_python.so && \
     #ln -sf libboost_python-py34.so libboost_python.so && ln -sf libboost_python-py34.a libboost_python.a && \
     #pip install vowpalwabbit && \
     # Anaconda's scipy is currently behind the main release (1.0)
-    pip install scipy --upgrade && \
+    #pip install scipy --upgrade && \
     pip install seaborn python-dateutil dask pytagcloud pyyaml joblib \
     husl geopy ml_metrics mne pyshp gensim && \
     conda install -y -c conda-forge spacy && python -m spacy download en && \
@@ -199,8 +200,11 @@ RUN apt-get update && \
     # Re-run it to flush any more disk writes
     python -c "from keras.models import Sequential; from keras import backend; print(backend._BACKEND)" && \
     # Keras reverts to /tmp from ~ when it detects a read-only file system
-    mkdir -p /tmp/.keras && cp /root/.keras/keras.json /tmp/.keras && \
-    # Scikit-Learn nightly build
+    mkdir -p /tmp/.keras && cp /root/.keras/keras.json /tmp/.keras
+
+    # scikit-learn dependencies
+RUN pip install scipy && \
+    # Scikit-Learn pinned to 0.19.X until 0.20.0 (many packages break with scikitlearn 0.20.0dev)
     cd /usr/local/src && git clone https://github.com/scikit-learn/scikit-learn.git && \
     cd scikit-learn && python setup.py build && python setup.py install && \
     # HDF5 support
@@ -354,8 +358,9 @@ RUN pip install --upgrade mpld3 && \
     pip install geoplot && \
     pip install eli5 && \
     pip install implicit && \
-    pip install dask-ml[xgboost] && \
-    pip install kmeans-smote && \
+    pip install dask-ml[xgboost]
+
+RUN pip install kmeans-smote --no-dependencies && \
     # Add google PAIR-code Facets
     cd /opt/ && git clone https://github.com/PAIR-code/facets && cd facets/ && jupyter nbextension install facets-dist/ --user && \
     export PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/ && \
@@ -364,7 +369,7 @@ RUN pip install --upgrade mpld3 && \
     pip install --upgrade --ignore-installed setuptools && pip install --no-cache-dir git+git://github.com/ppwwyyxx/tensorpack && \
     pip install pycountry && pip install iso3166 && \
     pip install pydash && \
-    pip install kmodes && \
+    pip install kmodes --no-dependencies && \
     pip install librosa && \
     pip install polyglot && \
     pip install mmh3 && \
@@ -402,10 +407,11 @@ RUN pip install --upgrade cython && \
     # yellowbrick machine learning visualization library
     pip install yellowbrick && \
     pip install mlcrate && \
-    # clean up pip cache
-    rm -rf /root/.cache/pip/* && \
     # Required to display Altair charts in Jupyter notebook
-    jupyter nbextension install --user --py vega
+    pip install vega3 && \
+    jupyter nbextension install --sys-prefix --py vega3  && \
+    # clean up pip cache
+    rm -rf /root/.cache/pip/*
 
 # Fast.ai and dependencies
 RUN pip install bcolz && \
@@ -451,7 +457,6 @@ RUN pip install bcolz && \
     pip install PyYAML && \
     pip install pyzmq && \
     pip install qtconsole && \
-    pip install scipy && \
     pip install seaborn && \
     pip install simplegeneric && \
     pip install six && \
@@ -490,11 +495,7 @@ RUN pip install flashtext && \
     pip install kmapper && \
     pip install shap && \
     pip install ray && \
-
     ##### ^^^^ Add new contributions above here ^^^^ #####
-
-
-
     # clean up pip cache
     rm -rf /root/.cache/pip/*
 
