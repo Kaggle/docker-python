@@ -76,9 +76,6 @@ import plotly.plotly as py
 import plotly.graph_objs as go
 print("plotly ok")
 
-from ggplot import *
-print("ggplot ok")
-
 import theano
 print("Theano ok")
 

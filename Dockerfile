@@ -10,6 +10,7 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     # https://stackoverflow.com/a/46498173
     conda update -y conda && conda update -y python && \
     pip install --upgrade pip && \
+    apt-get -y install cmake && \
     # Vowpal Rabbit
     #apt-get install -y libboost-program-options-dev zlib1g-dev libboost-python-dev && \
     #cd /usr/lib/x86_64-linux-gnu/ && rm -f libboost_python.a && rm -f libboost_python.so && \
@@ -41,7 +42,6 @@ libxcb-render0 libxcb-shm0 netpbm poppler-data p7zip-full && \
 RUN pip install opencv-python
     #apt-get -y install libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev && \
     #apt-get -y install libtbb2 libtbb-dev libjpeg-dev libtiff-dev libjasper-dev && \
-    #apt-get -y install cmake && \
     #cd /usr/local/src && git clone --depth 1 https://github.com/Itseez/opencv.git && \
     #cd opencv && \
     #mkdir build && cd build && \
@@ -154,18 +154,24 @@ vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
 # Make sure the dynamic linker finds the right libstdc++
 ENV LD_LIBRARY_PATH=/opt/conda/lib
 
+# Install Basemap via conda temporarily
 RUN apt-get update && \
-    # Libgeos, for mapping libraries
-    apt-get -y install libgeos-dev && \
-    # pyshp and pyproj are now external dependencies of Basemap
-    pip install pyshp pyproj && \
-    cd /usr/local/src && git clone https://github.com/matplotlib/basemap.git && \
-    export GEOS_DIR=/usr/local && \
-    cd basemap && python setup.py install && \
+    #apt-get -y install libgeos-dev && \
+    #pip install matplotlib && \
+    #pip install pyshp && \
+    #pip install pyproj && \
+    #cd /usr/local/src && git clone https://github.com/matplotlib/basemap.git && \
+    #cd basemap/geos-3.3.3 && \
+    #export GEOS_DIR=/usr/local && \
+    #./configure --prefix=$GEOS_DIR && \
+    #make && make install && \
+    #cd .. && python setup.py install && \
+    conda install basemap && \
     # Pillow (PIL)
     apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev && \
-    pip install Pillow && \
-    cd /usr/local/src && git clone https://github.com/vitruvianscience/opendeep.git && \
+    pip install Pillow 
+
+RUN cd /usr/local/src && git clone https://github.com/vitruvianscience/opendeep.git && \
     cd opendeep && python setup.py develop  && \
     # sasl is apparently an ibis dependency
     apt-get -y install libsasl2-dev && \
@@ -248,8 +254,6 @@ RUN pip install scipy && \
     apt-get install -y sox libsox-dev libsox-fmt-all && \
     pip install cffi && \
     cd /usr/local/src && git clone https://github.com/pytorch/audio && cd audio && python setup.py install && \
-    # ggpy / ggplot
-    pip install git+https://github.com/yhat/ggplot.git && \
     # ~~~~ CLEAN UP ~~~~
     rm -rf /root/.cache/pip/* && \
     apt-get autoremove -y && apt-get clean && \
@@ -305,8 +309,11 @@ RUN pip install --upgrade mpld3 && \
     pip install pystan && \
     pip install ImageHash && \
     conda install -y ecos && \
-    conda install -y CVXcanon && \
-    pip install fancyimpute && \
+    conda install -y CVXcanon
+
+RUN cd /usr/local/src && git clone https://github.com/iskandr/fancyimpute && \
+    cd fancyimpute && \
+    python setup.py install && \
     pip install git+https://github.com/pymc-devs/pymc3 && \
     pip install tifffile && \
     pip install spectral && \
