@@ -496,6 +496,7 @@ RUN pip install flashtext && \
     pip install s3fs && \
     pip install featuretools && \
     pip install -e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper && \
+    pip install conx && \
     pip install hpsklearn && \
     pip install keras-tqdm && \
     pip install git+https://github.com/Kaggle/learntools && \
