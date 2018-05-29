@@ -310,6 +310,12 @@ RUN pip install --upgrade mpld3 && \
     pip install ImageHash && \
     conda install -y ecos && \
     conda install -y CVXcanon
+    sudo apt-get install g++ openjdk-7-jdk python-dev python3-dev   # Install Java 1.7 or up
+    pip install JPype1-py3   
+    pip install konlpy       
+    sudo apt-get install curl
+    bash <(curl -s https://raw.githubusercontent.com/konlpy/konlpy/master/scripts/mecab.sh)
+
 
 RUN cd /usr/local/src && git clone https://github.com/iskandr/fancyimpute && \
     cd fancyimpute && \
