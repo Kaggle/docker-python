@@ -2,6 +2,10 @@ FROM nvidia/cuda:9.1-cudnn7-devel-ubuntu16.04 AS nvidia
 
 FROM continuumio/anaconda3:5.0.1
 
+# This is necessary to for apt to access HTTPS sources
+RUN apt-get update && \
+    apt-get install apt-transport-https
+
 COPY --from=nvidia /etc/apt/sources.list.d/cuda.list /etc/apt/sources.list.d/
 COPY --from=nvidia /etc/apt/sources.list.d/nvidia-ml.list /etc/apt/sources.list.d/
 COPY --from=nvidia /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d/cuda.gpg
@@ -40,6 +44,8 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     apt-get update && apt-get install -y build-essential && \
     # https://stackoverflow.com/a/46498173
     conda update -y conda && conda update -y python && \
+    pip install --upgrade pip && \
+    apt-get -y install cmake && \
     # Vowpal Rabbit
     #apt-get install -y libboost-program-options-dev zlib1g-dev libboost-python-dev && \
     #cd /usr/lib/x86_64-linux-gnu/ && rm -f libboost_python.a && rm -f libboost_python.so && \
@@ -65,27 +71,24 @@ libxcb-render0 libxcb-shm0 netpbm poppler-data p7zip-full && \
     tar xzf ImageMagick.tar.gz && cd `ls -d ImageMagick-*` && pwd && ls -al && ./configure && \
     make -j $(nproc) && make install && \
     # clean up ImageMagick source files
-    cd ../ && rm -rf ImageMagick* && \
-    apt-get -y install libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev && \
-    apt-get -y install libtbb2 libtbb-dev libjpeg-dev libtiff-dev libjasper-dev && \
-    apt-get remove cmake && \
-    apt-get purge --auto-remove cmake && \
-    export CMAKE_VERSION=3.11 CMAKE_BUILD=1 && \
-    cd /usr/local/src && wget https://cmake.org/files/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}.${CMAKE_BUILD}.tar.gz && \
-    tar -xzvf cmake-${CMAKE_VERSION}.${CMAKE_BUILD}.tar.gz && \
-    cd cmake-${CMAKE_VERSION}.${CMAKE_BUILD}/ && \
-    ./bootstrap && make -j4 && make install && \
-    cd /usr/local/src && git clone --depth 1 https://github.com/Itseez/opencv.git && \
-    cd opencv && \
-    mkdir build && cd build && \
-    cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_TBB=ON -D WITH_FFMPEG=OFF -D WITH_V4L=ON -D WITH_QT=OFF -D WITH_OPENGL=ON -D PYTHON3_LIBRARY=/opt/conda/lib/libpython3.6m.so -D PYTHON3_INCLUDE_DIR=/opt/conda/include/python3.6m/ -D PYTHON_LIBRARY=/opt/conda/lib/libpython3.6m.so -D PYTHON_INCLUDE_DIR=/opt/conda/include/python3.6m/ -D BUILD_PNG=TRUE .. && \
-    make -j $(nproc) && make install && \
-    echo "/usr/local/lib/python3.6/site-packages" > /etc/ld.so.conf.d/opencv.conf && ldconfig && \
-    cp /usr/local/lib/python3.6/site-packages/cv2.cpython-36m-x86_64-linux-gnu.so /opt/conda/lib/python3.6/site-packages/ && \
+    cd ../ && rm -rf ImageMagick* 
+
+#OpenCV install (from pip or source)
+RUN pip install opencv-python
+    #apt-get -y install libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev && \
+    #apt-get -y install libtbb2 libtbb-dev libjpeg-dev libtiff-dev libjasper-dev && \
+    #cd /usr/local/src && git clone --depth 1 https://github.com/Itseez/opencv.git && \
+    #cd opencv && \
+    #mkdir build && cd build && \
+    #cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_TBB=ON -D WITH_FFMPEG=OFF -D WITH_V4L=ON -D WITH_QT=OFF -D WITH_OPENGL=ON -D PYTHON3_LIBRARY=/opt/conda/lib/libpython3.6m.so -D PYTHON3_INCLUDE_DIR=/opt/conda/include/python3.6m/ -D PYTHON_LIBRARY=/opt/conda/lib/libpython3.6m.so -D PYTHON_INCLUDE_DIR=/opt/conda/include/python3.6m/ -D BUILD_PNG=TRUE .. && \
+    #make -j $(nproc) && make install && \
+    #echo "/usr/local/lib/python3.6/site-packages" > /etc/ld.so.conf.d/opencv.conf && ldconfig && \
+    #cp /usr/local/lib/python3.6/site-packages/cv2.cpython-36m-x86_64-linux-gnu.so /opt/conda/lib/python3.6/site-packages/ && \
     # Clean up install cruft
-    rm -rf /usr/local/src/opencv && \
-    rm -rf /root/.cache/pip/* && \
-    apt-get autoremove -y && apt-get clean
+    #rm -rf /usr/local/src/opencv && \
+    #rm -rf /root/.cache/pip/* && \
+    #apt-get autoremove -y && apt-get clean
+
 
 # Tensorflow source build
 ENV TF_NEED_CUDA=1
@@ -104,8 +107,9 @@ RUN apt-get update && \
     apt-get install -y oracle-java8-installer && \
     echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list && \
     curl https://bazel.build/bazel-release.pub.gpg | apt-key add - && \
-    apt-get update && apt-get install -y bazel && apt-get upgrade -y bazel && \
-    cd /usr/local/src && git clone https://github.com/tensorflow/tensorflow && \
+    apt-get update && apt-get install -y bazel && \
+    apt-get upgrade -y bazel
+RUN cd /usr/local/src && git clone https://github.com/tensorflow/tensorflow && \
     cd tensorflow && cat /dev/null | ./configure && \
     echo "/usr/local/cuda-${TF_CUDA_VERSION}/targets/x86_64-linux/lib/stubs" > /etc/ld.so.conf.d/cuda-stubs.conf && ldconfig && \
     bazel build --config=opt \
@@ -196,18 +200,24 @@ vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
 # Make sure the dynamic linker finds the right libstdc++
 ENV LD_LIBRARY_PATH="/opt/conda/lib:${LD_LIBRARY_PATH}"
 
+# Install Basemap via conda temporarily
 RUN apt-get update && \
-    # Libgeos, for mapping libraries
-    apt-get -y install libgeos-dev && \
-    # pyshp and pyproj are now external dependencies of Basemap
-    pip install pyshp pyproj && \
-    cd /usr/local/src && git clone https://github.com/matplotlib/basemap.git && \
-    export GEOS_DIR=/usr/local && \
-    cd basemap && python setup.py install && \
+    #apt-get -y install libgeos-dev && \
+    #pip install matplotlib && \
+    #pip install pyshp && \
+    #pip install pyproj && \
+    #cd /usr/local/src && git clone https://github.com/matplotlib/basemap.git && \
+    #cd basemap/geos-3.3.3 && \
+    #export GEOS_DIR=/usr/local && \
+    #./configure --prefix=$GEOS_DIR && \
+    #make && make install && \
+    #cd .. && python setup.py install && \
+    conda install basemap && \
     # Pillow (PIL)
     apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev && \
-    pip install Pillow && \
-    cd /usr/local/src && git clone https://github.com/vitruvianscience/opendeep.git && \
+    pip install Pillow
+
+RUN cd /usr/local/src && git clone https://github.com/vitruvianscience/opendeep.git && \
     cd opendeep && python setup.py develop  && \
     # sasl is apparently an ibis dependency
     apt-get -y install libsasl2-dev && \
@@ -224,8 +234,6 @@ RUN apt-get update && \
     # MXNet
     pip install mxnet && \
     # h2o
-    # Temporary sync of conda's numpy with pip's, needed to avoid an install error
-    conda upgrade -y numpy && \
     # This requires python-software-properties and Java, which were installed above.
     cd /usr/local/src && mkdir h2o && cd h2o && \
     wget http://h2o-release.s3.amazonaws.com/h2o/latest_stable -O latest && \
@@ -233,12 +241,13 @@ RUN apt-get update && \
     unzip h2o.zip && rm h2o.zip && cp h2o-*/h2o.jar . && \
     pip install `find . -name "*whl"` && \
     # Work around https://github.com/tensorflow/tensorflow/issues/16488
-    pip install numpy --upgrade && \
+    pip install numpy --upgrade
+
     # Keras setup
     # Keras likes to add a config file in a custom directory when it's
     # first imported. This doesn't work with our read-only filesystem, so we
     # have it done now.
-    python -c "from keras.models import Sequential"  && \
+RUN python -c "from keras.models import Sequential"  && \
     # Switch to TF backend
     sed -i 's/theano/tensorflow/' /root/.keras/keras.json  && \
     # Re-run it to flush any more disk writes
@@ -276,19 +285,22 @@ RUN apt-get update && \
     # Pandoc is a dependency of deap
     apt-get install -y pandoc && \
     cd /usr/local/src && git clone git://github.com/scikit-learn-contrib/py-earth.git && \
-    cd py-earth && python setup.py install && \
+    cd py-earth && python setup.py install
     #cd /usr/local/src && git clone https://github.com/MTG/essentia.git && cd essentia && \
     #./waf configure --mode=release --build-static --with-python --with-cpptests --with-examples --with-vamp && \
-    #./waf && ./waf install && mv /usr/local/lib/python3.6/site-packages/essentia /opt/conda/lib/python3.6 && \
+    #./waf && ./waf install && mv /usr/local/lib/python3.6/site-packages/essentia /opt/conda/lib/python3.6
+   
     # Install torch and torchvision from source, so we're using the cuda/cudnn libraries installed above.
-    conda install mkl setuptools cmake cffi typing && \
+RUN export CXXFLAGS="-std=c++11" && \
+    export CFLAGS="-std=c99" && \
+    conda install mkl mkl-include setuptools cmake cffi typing && \
     conda install -c pytorch magma-cuda90 && \
     cd /usr/local/src && \
-    git clone -b v0.3.1 --recursive https://github.com/pytorch/pytorch && \
+    git clone -b v0.4.0 --recursive https://github.com/pytorch/pytorch && \
     cd pytorch && \
     python setup.py install && \
     cd /usr/local/src && \
-    git clone -b v0.2.0 --recursive https://github.com/pytorch/vision && \
+    git clone -b v0.2.1 --recursive https://github.com/pytorch/vision && \
     cd vision && \
     python setup.py install && \
     # PyTorch Audio
@@ -297,7 +309,7 @@ RUN apt-get update && \
     cd /usr/local/src && \
     git clone https://github.com/pytorch/audio && \
     cd audio && \
-    CXXFLAGS="-std=c++11" CFLAGS="-std=c99" python setup.py install && \
+    python setup.py install && \
     # ggpy / ggplot
     pip install git+https://github.com/yhat/ggplot.git && \
     # Basic cuda support library for python.
@@ -410,8 +422,9 @@ RUN pip install --upgrade mpld3 && \
     pip install geoplot && \
     pip install eli5 && \
     pip install implicit && \
-    pip install dask-ml[xgboost] && \
-    pip install kmeans-smote && \
+    pip install dask-ml[xgboost]
+
+RUN pip install kmeans-smote --no-dependencies && \
     # Add google PAIR-code Facets
     cd /opt/ && git clone https://github.com/PAIR-code/facets && cd facets/ && jupyter nbextension install facets-dist/ --user && \
     export PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/ && \
@@ -420,7 +433,7 @@ RUN pip install --upgrade mpld3 && \
     pip install --upgrade --ignore-installed setuptools && pip install --no-cache-dir git+git://github.com/ppwwyyxx/tensorpack && \
     pip install pycountry && pip install iso3166 && \
     pip install pydash && \
-    pip install kmodes && \
+    pip install kmodes --no-dependencies && \
     pip install librosa && \
     pip install polyglot && \
     pip install mmh3 && \
@@ -460,10 +473,11 @@ RUN pip install --upgrade cython && \
     pip install mlcrate && \
     pip install gym && \
     pip install ray && \
-    # clean up pip cache
-    rm -rf /root/.cache/pip/* && \
     # Required to display Altair charts in Jupyter notebook
-    jupyter nbextension install --user --py vega
+    pip install vega3 && \
+    jupyter nbextension install --sys-prefix --py vega3  && \
+    # clean up pip cache
+    rm -rf /root/.cache/pip/*
 
 # Fast.ai and dependencies
 RUN pip install bcolz && \

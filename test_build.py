@@ -10,11 +10,31 @@
 # already handled by patches/sitecustomize.py, we need to import tensorflow
 # first as well. This test script (in terms of imports) may not be sufficiently
 # realistic for this problem to occur in production uses of the image.
-import tensorflow
+import tensorflow as tf
+print(tf.__version__)
+hello = tf.constant('TensorFlow ok')
+sess = tf.Session()
+print(sess.run(hello))
+print("Tensorflow ok")
 
-import os
+from keras.models import Sequential
+from keras.layers.core import Dense, Dropout, Activation, Flatten
+from keras.layers.convolutional import Convolution2D, MaxPooling2D
+from keras.optimizers import SGD
+print("Keras ok")
+
+# PyTorch smoke test based on http://pytorch.org/tutorials/beginner/nlp/deep_learning_tutorial.html
+import torch
+import torch.nn as tnn
+import torch.autograd as autograd
+torch.manual_seed(31337)
+linear_torch = tnn.Linear(5,3)
+data_torch = autograd.Variable(torch.randn(2, 5))
+print(linear_torch(data_torch))
+print("PyTorch ok")
 
 # General GPU support.
+import os
 if os.environ.get("EXPECT_GPU") == "1":
     import subprocess
     import sys
@@ -68,9 +88,6 @@ print("Basemap ok")
 import plotly.plotly as py
 import plotly.graph_objs as go
 print("plotly ok")
-
-from ggplot import *
-print("ggplot ok")
 
 import theano
 print("Theano ok")
