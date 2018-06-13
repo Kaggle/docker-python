@@ -189,7 +189,9 @@ RUN cd /usr/local/src && git clone https://github.com/vitruvianscience/opendeep.
     pip install mxnet && \
     # h2o
     # Temporary sync of conda's numpy with pip's, needed to avoid an install error
-    conda upgrade -y numpy && \
+    #conda upgrade -y numpy && \
+    # Upgrade numpy with pip to avoid install errors
+    pip install --upgrade numpy && \
     # This requires python-software-properties and Java, which were installed above.
     cd /usr/local/src && mkdir h2o && cd h2o && \
     wget http://h2o-release.s3.amazonaws.com/h2o/latest_stable -O latest && \
