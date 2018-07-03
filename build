@@ -4,8 +4,8 @@ set -e
 # Default behavior is to do everything from scratch.
 # The --use-cache option is useful if you're iterating on a broken build.
 if [[ "$1" ==  "--use-cache" ]]; then
-    docker build --rm -t kaggle/python-build .
+    docker build --rm --network=host -t kaggle/python-build .
 else
     docker pull continuumio/anaconda3:latest
-    docker build --rm --no-cache -t kaggle/python-build .
+    docker build --rm --network=host --no-cache -t kaggle/python-build .
 fi
