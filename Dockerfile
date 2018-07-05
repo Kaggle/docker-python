@@ -240,7 +240,8 @@ RUN pip install scipy && \
     cd /usr/local/src && git clone git://github.com/nicolashennetier/pyeconometrics.git && \
     cd pyeconometrics && python setup.py install && \
     apt-get install -y graphviz && pip install graphviz && \
-    apt-get install -y libgdal1-dev && GDAL_CONFIG=/usr/bin/gdal-config pip install fiona && pip install geopandas && \
+    apt-get install -y libgdal1-dev && GDAL_CONFIG=/usr/bin/gdal-config && \
+    pip install geopandas && \
     # Pandoc is a dependency of deap
     apt-get install -y pandoc && \
     cd /usr/local/src && git clone git://github.com/scikit-learn-contrib/py-earth.git && \
@@ -509,6 +510,10 @@ RUN pip install flashtext && \
     pip install pandasql && \
     pip install trackml && \
     cd /usr/local/src && git clone https://github.com/JohnLangford/vowpal_wabbit.git && ./vowpal_wabbit/python/conda_install.sh && \
+    # Although fiona is installed as a dependency of geopandas (installed above), 
+    #   importing geopandas led to an ImportError due to an error importing fiona. 
+    # Force installing fiona seems to fix the issue.
+    pip install -I fiona && \
     ##### ^^^^ Add new contributions above here ^^^^ #####
     # clean up pip cache
     rm -rf /root/.cache/pip/*

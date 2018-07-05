@@ -42,6 +42,9 @@ get_info("blas_mkl")
 import pandas as pd
 print("Pandas imported ok")
 
+import geopandas as gpd
+print('Geopandas imported ok')
+
 from sklearn import datasets
 print("sklearn imported ok")
 iris = datasets.load_iris()
