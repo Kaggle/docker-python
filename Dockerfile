@@ -303,6 +303,7 @@ RUN export CXXFLAGS="-std=c++11" && \
     git clone -b v0.2.1 --recursive https://github.com/pytorch/vision && \
     cd vision && \
     python setup.py install && \
+    python /tmp/patches/torchvision_downloads.py && \
     # PyTorch Audio
     apt-get install -y sox libsox-dev libsox-fmt-all && \
     pip install cffi && \
