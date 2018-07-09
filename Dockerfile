@@ -245,9 +245,7 @@ RUN pip install scipy && \
     apt-get install -y pandoc && \
     cd /usr/local/src && git clone git://github.com/scikit-learn-contrib/py-earth.git && \
     cd py-earth && python setup.py install && \
-    #cd /usr/local/src && git clone https://github.com/MTG/essentia.git && cd essentia && \
-    #./waf configure --mode=release --build-static --with-python --with-cpptests --with-examples --with-vamp && \
-    #./waf && ./waf install && mv /usr/local/lib/python3.6/site-packages/essentia /opt/conda/lib/python3.6 && \
+    pip install essentia && \
     # PyTorch
     export CXXFLAGS="-std=c++11" && \
     export CFLAGS="-std=c99" && \

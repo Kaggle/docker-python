@@ -152,5 +152,9 @@ from vowpalwabbit import pyvw
 vw = pyvw.vw(quiet=True)
 ex = vw.example('1 | a b c')
 vw.learn(ex)
-vw.predict(ex)
+print(vw.predict(ex))
 print('vowpalwabbit ok')
+
+import essentia
+print(essentia.__version__)
+print("Essentia ok")
