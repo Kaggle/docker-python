@@ -187,6 +187,8 @@ RUN cd /usr/local/src && git clone https://github.com/vitruvianscience/opendeep.
     cd cartopy && python setup.py install && \
     # MXNet
     pip install mxnet && \
+    # gluonbook
+    pip install gluonbook && \
     # h2o
     # Temporary sync of conda's numpy with pip's, needed to avoid an install error
     #conda upgrade -y numpy && \
