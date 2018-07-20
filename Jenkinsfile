@@ -1,7 +1,7 @@
 String cron_string = BRANCH_NAME == "master" ? "H 12 * * 1-5" : ""
 
 pipeline {
-  agent { label 'linux && !gpu' }
+  agent { label 'ephemeral-linux' }
   options {
     disableConcurrentBuilds()
   }
