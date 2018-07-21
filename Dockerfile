@@ -506,6 +506,7 @@ RUN pip install flashtext && \
     pip install conx && \
     pip install pandasql && \
     pip install trackml && \
+    pip install rgf_python && \
     cd /usr/local/src && git clone https://github.com/JohnLangford/vowpal_wabbit.git && ./vowpal_wabbit/python/conda_install.sh && \
     ##### ^^^^ Add new contributions above here ^^^^ #####
     # clean up pip cache
