@@ -399,6 +399,7 @@ RUN pip install flashtext && \
     pip install marisa-trie && \
     pip install pyemd && \
     pip install -e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper && \
+    pip install tfp-nightly && \
     ##### ^^^^ Add new contributions above here
     # clean up pip cache
     rm -rf /root/.cache/pip/*
