@@ -501,6 +501,7 @@ RUN pip install flashtext && \
     pip install git+https://github.com/Kaggle/learntools && \
     pip install kmapper && \
     pip install shap && \
+    pip install featuretools && \
     pip install ray && \
     pip install pyarabic && \
     pip install conx && \
