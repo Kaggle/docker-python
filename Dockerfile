@@ -536,9 +536,10 @@ ADD patches/sitecustomize.py /root/.local/lib/python3.6/site-packages/sitecustom
 ENV MPLBACKEND "agg"
 
 # Set up pip to enable pip install.
-ADD patches/kaggle_bashrc /root/.bashrc
+ADD patches/kaggle_bashrc /root
 # Patch the system-wide bashrc file for non-root users.
-RUN cat /root/.bashrc >> /etc/bash.bashrc
+RUN cat /root/kaggle_bashrc >> /etc/bash.bashrc
+RUN rm /root/kaggle_bashrc
 
 # Finally, apply any locally defined patches.
 RUN /bin/bash -c \
