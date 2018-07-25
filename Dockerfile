@@ -535,6 +535,11 @@ ADD patches/sitecustomize.py /root/.local/lib/python3.6/site-packages/sitecustom
 # Set backend for matplotlib
 ENV MPLBACKEND "agg"
 
+# Set up pip to enable pip install.
+ADD patches/kaggle_bashrc /root/.bashrc
+# Patch the system-wide bashrc file for non-root users.
+RUN cat /root/.bashrc >> /etc/bash.bashrc
+
 # Finally, apply any locally defined patches.
 RUN /bin/bash -c \
     "cd / && for p in $(ls /tmp/patches/*.patch); do echo '= Applying patch '\${p}; patch -p2 < \${p}; done"

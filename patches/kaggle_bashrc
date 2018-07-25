@@ -1,0 +1,31 @@
+
+# Kaggle-specific .bashrc script to be appended to /etc/bash.bashrc to apply it
+# when any user session starts.
+# This script sets up pip to enable a user to install and use python modules via
+# pip intall. $KAGGLE_WORKING_DIR should be available for it to work.
+
+if [[ ! -z "${KAGGLE_WORKING_DIR}" ]]; then
+    PIP_INSTALL_PREFIX_DIR="${KAGGLE_WORKING_DIR}/pip"
+    PIP_CONFIG_FILE_PATH="${KAGGLE_WORKING_DIR}/config/pip/pip.conf"
+
+    # Create a directory for pip to install modules.
+    mkdir -p ${PIP_INSTALL_PREFIX_DIR}
+
+    # Create pip config file to use the prefix directory created above for
+    # installation. Also, ignore-installed is set to true to prevent pip
+    # from trying to remove existing modules from the read-only filesystem.
+    mkdir -p `dirname ${PIP_CONFIG_FILE_PATH}`
+    echo "[install]\nprefix=${PIP_INSTALL_PREFIX_DIR}\nignore-installed=true" > ${PIP_CONFIG_FILE_PATH}
+    # Instruct pip to use this config file.
+    export PIP_CONFIG_FILE=${PIP_CONFIG_FILE_PATH}
+
+    # Set up PYTHONPATH correctly to include the user-installed library.
+    # Note that the pip prefix directory overrides the system default to enable
+    # a user to use his/her installed one.
+    # TODO(dsjang): Currently "lib/python3.6/site-packages" is hard-coded
+    # throughout Dockerfile. Parameterize it to avoid a version mismatch. 
+    export PYTHONPATH=${PIP_INSTALL_PREFIX_DIR}/lib/python3.6/site-packages:${PYTHONPATH}
+
+    # Include pip-installed binaries in PATH.
+    export PATH=${PATH}:${PIP_INSTALL_PREFIX_DIR}/bin
+fi
