@@ -10,27 +10,21 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     # https://stackoverflow.com/a/46498173
     conda update -y conda && conda update -y python && \
     pip install --upgrade pip && \
-    apt-get -y install cmake && \
-    # Vowpal Rabbit
-    #apt-get install -y libboost-program-options-dev zlib1g-dev libboost-python-dev && \
-    #cd /usr/lib/x86_64-linux-gnu/ && rm -f libboost_python.a && rm -f libboost_python.so && \
-    #ln -sf libboost_python-py34.so libboost_python.so && ln -sf libboost_python-py34.a libboost_python.a && \
-    #pip install vowpalwabbit && \
-    # Anaconda's scipy is currently behind the main release (1.0)
-    #pip install scipy --upgrade && \
-    pip install seaborn python-dateutil dask pytagcloud pyyaml joblib \
+    apt-get -y install cmake
+
+RUN pip install seaborn python-dateutil dask pytagcloud pyyaml joblib \
     husl geopy ml_metrics mne pyshp gensim && \
     conda install -y -c conda-forge spacy && python -m spacy download en && \
     python -m spacy download en_core_web_lg && \
     # The apt-get version of imagemagick is out of date and has compatibility issues, so we build from source
     apt-get -y install dbus fontconfig fontconfig-config fonts-dejavu-core fonts-droid ghostscript gsfonts hicolor-icon-theme \
-libavahi-client3 libavahi-common-data libavahi-common3 libcairo2 libcap-ng0 libcroco3 \
-libcups2 libcupsfilters1 libcupsimage2 libdatrie1 libdbus-1-3 libdjvulibre-text libdjvulibre21 libfftw3-double3 libfontconfig1 \
-libfreetype6 libgdk-pixbuf2.0-0 libgdk-pixbuf2.0-common libgomp1 libgraphite2-3 libgs9 libgs9-common libharfbuzz0b libijs-0.35 \
-libilmbase6 libjasper1 libjbig0 libjbig2dec0 libjpeg62-turbo liblcms2-2 liblqr-1-0 libltdl7 libmagickcore-6.q16-2 \
-libmagickcore-6.q16-2-extra libmagickwand-6.q16-2 libnetpbm10 libopenexr6 libpango-1.0-0 libpangocairo-1.0-0 libpangoft2-1.0-0 \
-libpaper-utils libpaper1 libpixman-1-0 libpng12-0 librsvg2-2 librsvg2-common libthai-data libthai0 libtiff5 libwmf0.2-7 \
-libxcb-render0 libxcb-shm0 netpbm poppler-data p7zip-full && \
+    libavahi-client3 libavahi-common-data libavahi-common3 libcairo2 libcap-ng0 libcroco3 \
+    libcups2 libcupsfilters1 libcupsimage2 libdatrie1 libdbus-1-3 libdjvulibre-text libdjvulibre21 libfftw3-double3 libfontconfig1 \
+    libfreetype6 libgdk-pixbuf2.0-0 libgdk-pixbuf2.0-common libgomp1 libgraphite2-3 libgs9 libgs9-common libharfbuzz0b libijs-0.35 \
+    libilmbase6 libjasper1 libjbig0 libjbig2dec0 libjpeg62-turbo liblcms2-2 liblqr-1-0 libltdl7 libmagickcore-6.q16-2 \
+    libmagickcore-6.q16-2-extra libmagickwand-6.q16-2 libnetpbm10 libopenexr6 libpango-1.0-0 libpangocairo-1.0-0 libpangoft2-1.0-0 \
+    libpaper-utils libpaper1 libpixman-1-0 libpng12-0 librsvg2-2 librsvg2-common libthai-data libthai0 libtiff5 libwmf0.2-7 \
+    libxcb-render0 libxcb-shm0 netpbm poppler-data p7zip-full && \
     cd /usr/local/src && \
     wget http://transloadit.imagemagick.org/download/ImageMagick.tar.gz && \
     tar xzf ImageMagick.tar.gz && cd `ls -d ImageMagick-*` && pwd && ls -al && ./configure && \
@@ -40,19 +34,6 @@ libxcb-render0 libxcb-shm0 netpbm poppler-data p7zip-full && \
 
 # OpenCV install (from pip or source)
 RUN pip install opencv-python
-    #apt-get -y install libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev && \
-    #apt-get -y install libtbb2 libtbb-dev libjpeg-dev libtiff-dev libjasper-dev && \
-    #cd /usr/local/src && git clone --depth 1 https://github.com/Itseez/opencv.git && \
-    #cd opencv && \
-    #mkdir build && cd build && \
-    #cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_TBB=ON -D WITH_FFMPEG=OFF -D WITH_V4L=ON -D WITH_QT=OFF -D WITH_OPENGL=ON -D PYTHON3_LIBRARY=/opt/conda/lib/libpython3.6m.so -D PYTHON3_INCLUDE_DIR=/opt/conda/include/python3.6m/ -D PYTHON_LIBRARY=/opt/conda/lib/libpython3.6m.so -D PYTHON_INCLUDE_DIR=/opt/conda/include/python3.6m/ -D BUILD_PNG=TRUE .. && \
-    #make -j $(nproc) && make install && \
-    #echo "/usr/local/lib/python3.6/site-packages" > /etc/ld.so.conf.d/opencv.conf && ldconfig && \
-    #cp /usr/local/lib/python3.6/site-packages/cv2.cpython-36m-x86_64-linux-gnu.so /opt/conda/lib/python3.6/site-packages/ && \
-    # Clean up install cruft
-    #rm -rf /usr/local/src/opencv && \
-    #rm -rf /root/.cache/pip/* && \
-    #apt-get autoremove -y && apt-get clean
 
 RUN apt-get update && apt-get install -y python-software-properties zip && \
     echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list && \
@@ -67,8 +48,11 @@ RUN apt-get update && apt-get install -y python-software-properties zip && \
     apt-get update && apt-get install -y bazel && \
     apt-get upgrade -y bazel
 
-# Tensorflow source build
-RUN cd /usr/local/src && \
+# Tensorflow
+# Temp fixes: Downgrade python 3.7->3.6.6 and downgrade Pandas 0.23.3->0.23.2
+RUN conda install -y python=3.6.6 && \
+    pip install pandas==0.23.2 && \
+    cd /usr/local/src && \
     git clone https://github.com/tensorflow/tensorflow && \
     cd tensorflow && \
     cat /dev/null | ./configure && \
@@ -132,18 +116,18 @@ RUN apt-get install -y libfreetype6-dev && \
     # the corpuses that work
     python -m nltk.downloader -d /usr/share/nltk_data abc alpino averaged_perceptron_tagger \
     basque_grammars biocreative_ppi bllip_wsj_no_aux \
-book_grammars brown brown_tei cess_cat cess_esp chat80 city_database cmudict \
-comtrans conll2000 conll2002 conll2007 crubadan dependency_treebank \
-europarl_raw floresta gazetteers genesis gutenberg \
-ieer inaugural indian jeita kimmo knbc large_grammars lin_thesaurus mac_morpho machado \
-masc_tagged maxent_ne_chunker maxent_treebank_pos_tagger moses_sample movie_reviews \
-mte_teip5 names nps_chat omw opinion_lexicon paradigms \
-pil pl196x porter_test ppattach problem_reports product_reviews_1 product_reviews_2 propbank \
-pros_cons ptb punkt qc reuters rslp rte sample_grammars semcor senseval sentence_polarity \
-sentiwordnet shakespeare sinica_treebank smultron snowball_data spanish_grammars \
-state_union stopwords subjectivity swadesh switchboard tagsets timit toolbox treebank \
-twitter_samples udhr2 udhr unicode_samples universal_tagset universal_treebanks_v20 \
-vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
+    book_grammars brown brown_tei cess_cat cess_esp chat80 city_database cmudict \
+    comtrans conll2000 conll2002 conll2007 crubadan dependency_treebank \
+    europarl_raw floresta gazetteers genesis gutenberg \
+    ieer inaugural indian jeita kimmo knbc large_grammars lin_thesaurus mac_morpho machado \
+    masc_tagged maxent_ne_chunker maxent_treebank_pos_tagger moses_sample movie_reviews \
+    mte_teip5 names nps_chat omw opinion_lexicon paradigms \
+    pil pl196x porter_test ppattach problem_reports product_reviews_1 product_reviews_2 propbank \
+    pros_cons ptb punkt qc reuters rslp rte sample_grammars semcor senseval sentence_polarity \
+    sentiwordnet shakespeare sinica_treebank smultron snowball_data spanish_grammars \
+    state_union stopwords subjectivity swadesh switchboard tagsets timit toolbox treebank \
+    twitter_samples udhr2 udhr unicode_samples universal_tagset universal_treebanks_v20 \
+    vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
     # Stop-words
     pip install stop-words && \
     # clean up
@@ -339,6 +323,8 @@ RUN cd /usr/local/src && git clone https://github.com/iskandr/fancyimpute && \
     pip install stemming && \
     conda install -y -c conda-forge fbprophet && \
     conda install -y -c conda-forge -c ioam holoviews geoviews && \
+# Temp fix : Fiona is already installed by pip and conda installs another version as a dependency for holoviews
+    conda uninstall -y fiona && \
     pip install hypertools && \
     # Nxviz has been causing an installation issue by trying unsuccessfully to remove setuptools.
     #pip install nxviz && \
@@ -488,6 +474,7 @@ RUN pip install bcolz && \
     # of all non-final lines. Thanks!
     #
     ###########
+
 RUN pip install flashtext && \
     pip install marisa-trie && \
     pip install pyemd && \
@@ -506,11 +493,12 @@ RUN pip install flashtext && \
     pip install conx && \
     pip install pandasql && \
     pip install trackml && \
-    cd /usr/local/src && git clone https://github.com/JohnLangford/vowpal_wabbit.git && ./vowpal_wabbit/python/conda_install.sh && \
     ##### ^^^^ Add new contributions above here ^^^^ #####
     # clean up pip cache
     rm -rf /root/.cache/pip/*
 
+# Pin Vowpal Wabbit v8.6.0 because 8.6.1 does not build or install successfully
+RUN cd /usr/local/src && git clone -b 8.6.0 https://github.com/JohnLangford/vowpal_wabbit.git && ./vowpal_wabbit/python/conda_install.sh
 
 # For Facets
 ENV PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/
