@@ -20,6 +20,7 @@ from learntools.core import binder; binder.bind(globals())
 from learntools.python.ex1 import *
 color="blue"
 q0.check()
+print("learntools ok")
 
 # PyTorch smoke test based on http://pytorch.org/tutorials/beginner/nlp/deep_learning_tutorial.html
 import torch
