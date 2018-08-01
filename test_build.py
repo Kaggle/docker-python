@@ -15,7 +15,11 @@ from keras.layers.convolutional import Convolution2D, MaxPooling2D
 from keras.optimizers import SGD
 print("Keras ok")
 
-# Test learntools
+# Test Kaggle learntools
+from learntools.core import binder; binder.bind(globals())
+from learntools.python.ex1 import *
+color="blue"
+q0.check()
 
 # PyTorch smoke test based on http://pytorch.org/tutorials/beginner/nlp/deep_learning_tutorial.html
 import torch
