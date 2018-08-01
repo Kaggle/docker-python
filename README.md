@@ -51,7 +51,7 @@ Next run the build:
 Finally run the tests:
 
 ```
-./tests
+./test
 ```
 
 Then submit your pull request, and you're all set!
