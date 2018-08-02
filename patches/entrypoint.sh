@@ -1,9 +1,11 @@
+#!/usr/bin/env bash
 
-# Kaggle-specific .bashrc script to be appended to /etc/bash.bashrc to apply it
-# when any user session starts.
+# This shell script is executed as an entrypoint file for the Kernels docker image.
+# It sets up the execution environment before starting the Jypyter Notebook Server.
+# Refer to https://docs.docker.com/engine/reference/builder/#entrypoint for details.
+
 # This script sets up pip to enable a user to install and use python modules via
 # pip intall. $KAGGLE_WORKING_DIR should be available for it to work.
-
 if [[ ! -z "${KAGGLE_WORKING_DIR}" ]]; then
     PIP_INSTALL_PREFIX_DIR="${KAGGLE_WORKING_DIR}/pip"
     PIP_CONFIG_FILE_PATH="${KAGGLE_WORKING_DIR}/config/pip/pip.conf"
@@ -29,3 +31,6 @@ if [[ ! -z "${KAGGLE_WORKING_DIR}" ]]; then
     # Include pip-installed binaries in PATH.
     export PATH=${PATH}:${PIP_INSTALL_PREFIX_DIR}/bin
 fi
+
+# Execute the command provided from "docker run" in the current process.
+exec "$@"

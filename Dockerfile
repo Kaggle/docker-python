@@ -523,11 +523,11 @@ ADD patches/sitecustomize.py /root/.local/lib/python3.6/site-packages/sitecustom
 # Set backend for matplotlib
 ENV MPLBACKEND "agg"
 
-# Set up pip to enable pip install.
-ADD patches/kaggle_bashrc /root
-# Patch the system-wide bashrc file for non-root users.
-RUN cat /root/kaggle_bashrc >> /etc/bash.bashrc
-RUN rm /root/kaggle_bashrc
+# Set up an initialization script to be executed before any other commands initiated by the user.
+ADD patches/entrypoint.sh /root/entrypoint.sh
+RUN chmod +x /root/entrypoint.sh
+# This script gets executed by "docker run <image> <command>" and it runs <command> at the end of its execution. 
+ENTRYPOINT ["/root/entrypoint.sh"]
 
 # Finally, apply any locally defined patches.
 RUN /bin/bash -c \
