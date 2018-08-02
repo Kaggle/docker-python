@@ -17,7 +17,7 @@ if [[ ! -z "${KAGGLE_WORKING_DIR}" ]]; then
     # installation. Also, ignore-installed is set to true to prevent pip
     # from trying to remove existing modules from the read-only filesystem.
     mkdir -p `dirname ${PIP_CONFIG_FILE_PATH}`
-    echo "[install]\nprefix=${PIP_INSTALL_PREFIX_DIR}\nignore-installed=true" > ${PIP_CONFIG_FILE_PATH}
+    echo -e "[install]\nprefix=${PIP_INSTALL_PREFIX_DIR}\nignore-installed=true" > ${PIP_CONFIG_FILE_PATH}
     # Instruct pip to use this config file.
     export PIP_CONFIG_FILE=${PIP_CONFIG_FILE_PATH}
 
