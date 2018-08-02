@@ -18,6 +18,8 @@ FROM gcr.io/kaggle-images/python:latest
 
 RUN pip install --upgrade git+https://github.com/Kaggle/learntools
 
+# TODO(dsjang): Remove these lines once the docker image build turns green since they are copied from Dockerfile
+# to apply on top of the last green.
 # Set up an initialization script to be executed before any other commands initiated by the user.
 ADD patches/entrypoint.sh /root/entrypoint.sh
 RUN chmod +x /root/entrypoint.sh
