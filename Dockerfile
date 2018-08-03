@@ -371,7 +371,8 @@ RUN pip install kmeans-smote --no-dependencies && \
     pip install cufflinks && \
     pip install glmnet_py && \
     pip install lime && \
-    pip install memory_profiler
+    pip install memory_profiler && \
+    pip install tensorflow-hub
 
 # install cython & cysignals before pyfasttext
 RUN pip install --upgrade cython && \
