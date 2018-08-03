@@ -523,11 +523,15 @@ ADD patches/sitecustomize.py /root/.local/lib/python3.6/site-packages/sitecustom
 # Set backend for matplotlib
 ENV MPLBACKEND "agg"
 
-# Set up pip to enable pip install.
-ADD patches/kaggle_bashrc /root
-# Patch the system-wide bashrc file for non-root users.
-RUN cat /root/kaggle_bashrc >> /etc/bash.bashrc
-RUN rm /root/kaggle_bashrc
+# Set up an initialization script to be executed before any other commands initiated by the user.
+ADD patches/entrypoint.sh /root/entrypoint.sh
+RUN chmod +x /root/entrypoint.sh
+# NOTE: ENTRYPOINT set by "FROM <image>" should preceed the our own custom entrypoint.
+# Currently tini is set as ENTRYPOINT for the base image, and it can be combined with our entrypoint (https://github.com/krallin/tini).
+# ENTRYPOINT gets executed by "docker run <image> <command>" and it runs <command> at the end of its execution.
+# Make sure tini exists.
+RUN /usr/bin/tini -h > /dev/null
+ENTRYPOINT ["/usr/bin/tini", "--", "/root/entrypoint.sh"]
 
 # Finally, apply any locally defined patches.
 RUN /bin/bash -c \
