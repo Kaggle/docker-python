@@ -8,6 +8,7 @@
 # pip intall. $KAGGLE_WORKING_DIR should be available for it to work.
 if [[ ! -z "${KAGGLE_WORKING_DIR}" ]]; then
     PIP_INSTALL_PREFIX_DIR="${KAGGLE_WORKING_DIR}/pip"
+    PIP_INSTALLED_MODULE_DIR="${PIP_INSTALL_PREFIX_DIR}/pip_installed"
     PIP_CONFIG_FILE_PATH="${KAGGLE_WORKING_DIR}/config/pip/pip.conf"
 
     # Create a directory for pip to install modules.
@@ -25,8 +26,15 @@ if [[ ! -z "${KAGGLE_WORKING_DIR}" ]]; then
     # Note that the pip prefix directory overrides the system default to enable
     # a user to use his/her installed one.
     # TODO(dsjang): Currently "lib/python3.6/site-packages" is hard-coded
-    # throughout Dockerfile. Parameterize it to avoid a version mismatch. 
-    export PYTHONPATH=${PIP_INSTALL_PREFIX_DIR}/lib/python3.6/site-packages:${PYTHONPATH}
+    # throughout Dockerfile. Parameterize it to avoid a version mismatch.
+    # TODO(dsjang): This is a hack to sidestep a problem of Python ignoring modules
+    # in .../site-packages other than the system-wide and user-specific site packages.
+    mkdir -p "${PIP_INSTALL_PREFIX_DIR}/lib/python3.6/site-packages"
+    ln -s "${PIP_INSTALL_PREFIX_DIR}/lib/python3.6/site-packages" ${PIP_INSTALLED_MODULE_DIR}
+    export PYTHONPATH=${PIP_INSTALLED_MODULE_DIR}:${PYTHONPATH}
+
+    # Create a symbolic link to site-packages.
+    # can't override conda installed package.
 
     # Include pip-installed binaries in PATH.
     export PATH=${PATH}:${PIP_INSTALL_PREFIX_DIR}/bin
