@@ -23,5 +23,7 @@ RUN pip install --upgrade git+https://github.com/Kaggle/learntools
 # Set up an initialization script to be executed before any other commands initiated by the user.
 ADD patches/entrypoint.sh /root/entrypoint.sh
 RUN chmod +x /root/entrypoint.sh
-# This script gets executed by "docker run <image> <command>" and it runs <command> at the end of its execution. 
-ENTRYPOINT ["/root/entrypoint.sh"]
+# This script gets executed by "docker run <image> <command>" and it runs <command> at the end of its execution.
+# NOTE: ENTRYPOINT set by "FROM <image>" should preceed the our own custom entrypoint.
+# Specifically, tini can be combined with another entrypoint (https://github.com/krallin/tini).   
+ENTRYPOINT ["/usr/bin/tini", "--", "/root/entrypoint.sh"]
