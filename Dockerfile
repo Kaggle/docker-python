@@ -532,7 +532,3 @@ RUN chmod +x /root/entrypoint.sh
 # Make sure tini exists.
 RUN /usr/bin/tini -h > /dev/null
 ENTRYPOINT ["/usr/bin/tini", "--", "/root/entrypoint.sh"]
-
-# Finally, apply any locally defined patches.
-RUN /bin/bash -c \
-    "cd / && for p in $(ls /tmp/patches/*.patch); do echo '= Applying patch '\${p}; patch -p2 < \${p}; done"
