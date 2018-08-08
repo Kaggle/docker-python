@@ -6,6 +6,5 @@ set -e
 if [[ "$1" ==  "--use-cache" ]]; then
     docker build --rm -t kaggle/python-build .
 else
-    docker pull continuumio/anaconda3:latest
-    docker build --rm --no-cache -t kaggle/python-build .
+    docker build --pull --rm --no-cache -t kaggle/python-build .
 fi
