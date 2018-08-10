@@ -153,7 +153,7 @@ RUN apt-get update && \
     conda install basemap && \
     # Pillow (PIL)
     apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev && \
-    pip install Pillow 
+    pip install Pillow
 
 RUN cd /usr/local/src && git clone https://github.com/vitruvianscience/opendeep.git && \
     cd opendeep && python setup.py develop  && \
@@ -493,6 +493,7 @@ RUN pip install flashtext && \
     pip install conx && \
     pip install pandasql && \
     pip install trackml && \
+    pip install torchbearer && \
     ##### ^^^^ Add new contributions above here ^^^^ #####
     # clean up pip cache
     rm -rf /root/.cache/pip/*
