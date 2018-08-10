@@ -298,9 +298,7 @@ RUN pip install --upgrade mpld3 && \
     conda install -y ecos && \
     conda install -y CVXcanon
 
-RUN cd /usr/local/src && git clone https://github.com/iskandr/fancyimpute && \
-    cd fancyimpute && \
-    python setup.py install && \
+RUN pip install fancyimpute && \
     pip install git+https://github.com/pymc-devs/pymc3 && \
     pip install tifffile && \
     pip install spectral && \
