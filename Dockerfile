@@ -48,11 +48,11 @@ RUN apt-get update && apt-get install -y python-software-properties zip && \
     apt-get update && apt-get install -y bazel && \
     apt-get upgrade -y bazel
 
-# Tensorflow
+# Tensorflow doesn't support python 3.7 yet. See https://github.com/tensorflow/tensorflow/issues/20517
 # Fix to install tf 1.10:: Downgrade python 3.7->3.6.6 and downgrade Pandas 0.23.3->0.23.2
 RUN conda install -y python=3.6.6 && \
     pip install pandas==0.23.2 && \
-# Another fix for TF 1.10 https://github.com/tensorflow/tensorflow/issues/21518
+    # Another fix for TF 1.10 https://github.com/tensorflow/tensorflow/issues/21518
     pip install keras_applications==1.0.4 --no-deps && \
     pip install keras_preprocessing==1.0.2 --no-deps && \
     cd /usr/local/src && \
