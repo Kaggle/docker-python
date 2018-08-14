@@ -227,7 +227,6 @@ RUN pip install scipy && \
     cd /usr/local/src && git clone git://github.com/nicolashennetier/pyeconometrics.git && \
     cd pyeconometrics && python setup.py install && \
     apt-get install -y graphviz && pip install graphviz && \
-    apt-get install -y libgdal1-dev && GDAL_CONFIG=/usr/bin/gdal-config pip install fiona && pip install geopandas && \
     # Pandoc is a dependency of deap
     apt-get install -y pandoc && \
     cd /usr/local/src && git clone git://github.com/scikit-learn-contrib/py-earth.git && \
@@ -324,8 +323,10 @@ RUN pip install fancyimpute && \
     pip install stemming && \
     conda install -y -c conda-forge fbprophet && \
     conda install -y -c conda-forge -c ioam holoviews geoviews && \
-# Temp fix : Fiona is already installed by pip and conda installs another version as a dependency for holoviews
-    conda uninstall -y fiona && \
+    #Temp fix: After installing holoviews and geoviews, deps for fiona and geopandas get really messed up. This is a very unelegant fix.
+    conda uninstall -y fiona geopandas && \
+    pip uninstall -y fiona geopandas && \
+    apt-get install -y libgdal1-dev && GDAL_CONFIG=/usr/bin/gdal-config pip install fiona && pip install geopandas && \
     pip install hypertools && \
     # Nxviz has been causing an installation issue by trying unsuccessfully to remove setuptools.
     #pip install nxviz && \
