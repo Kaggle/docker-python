@@ -525,13 +525,3 @@ ADD patches/sitecustomize.py /root/.local/lib/python3.6/site-packages/sitecustom
 
 # Set backend for matplotlib
 ENV MPLBACKEND "agg"
-
-# Set up an initialization script to be executed before any other commands initiated by the user.
-ADD patches/entrypoint.sh /root/entrypoint.sh
-RUN chmod +x /root/entrypoint.sh
-# NOTE: ENTRYPOINT set by "FROM <image>" should preceed the our own custom entrypoint.
-# Currently tini is set as ENTRYPOINT for the base image, and it can be combined with our entrypoint (https://github.com/krallin/tini).
-# ENTRYPOINT gets executed by "docker run <image> <command>" and it runs <command> at the end of its execution.
-# Make sure tini exists.
-RUN /usr/bin/tini -h > /dev/null
-ENTRYPOINT ["/usr/bin/tini", "--", "/root/entrypoint.sh"]
