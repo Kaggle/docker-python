@@ -496,6 +496,9 @@ RUN pip install flashtext && \
     pip install pandasql && \
     pip install trackml && \
     pip install tensorflow_hub && \
+    pip install pydot && \
+    pip install graphviz && \
+    pip install pydensecrf && \
     ##### ^^^^ Add new contributions above here ^^^^ #####
     # clean up pip cache
     rm -rf /root/.cache/pip/*
