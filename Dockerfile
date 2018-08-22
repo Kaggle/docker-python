@@ -360,8 +360,7 @@ RUN pip install kmeans-smote --no-dependencies && \
     cd /opt/ && git clone https://github.com/PAIR-code/facets && cd facets/ && jupyter nbextension install facets-dist/ --user && \
     export PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/ && \
     pip install --no-dependencies ethnicolr && \
-    # Update setuptools and add tensorpack
-    pip install --upgrade --ignore-installed setuptools && pip install --no-cache-dir git+git://github.com/ppwwyyxx/tensorpack && \
+    pip install tensorpack && \
     pip install pycountry && pip install iso3166 && \
     pip install pydash && \
     pip install kmodes --no-dependencies && \
