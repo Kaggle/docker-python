@@ -497,6 +497,9 @@ RUN pip install flashtext && \
     pip install trackml && \
     pip install tensorflow_hub && \
     ##### ^^^^ Add new contributions above here ^^^^ #####
+# My install
+    pip install gensim
+    pip install jieba
     # clean up pip cache
     rm -rf /root/.cache/pip/*
 
