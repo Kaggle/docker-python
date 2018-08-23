@@ -432,7 +432,7 @@ RUN pip install bcolz && \
     pip install mistune && \
     pip install nbconvert && \
     pip install nbformat && \
-    pip install notebook==0.5.5 && \
+    pip install notebook==5.5.0 && \
     pip install numpy && \
     pip install olefile && \
     pip install opencv-python && \
