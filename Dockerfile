@@ -247,6 +247,7 @@ RUN pip install scipy && \
     rm -rf /usr/local/src/*
 
 RUN pip install --upgrade mpld3 && \
+    pip install git+https://github.com/lucasb-eyer/pydensecrf.git
     pip install mplleaflet && \
     pip install gpxpy && \
     pip install arrow && \
