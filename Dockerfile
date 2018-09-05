@@ -197,29 +197,31 @@ RUN apt-get install -y libfreetype6-dev && \
     apt-get autoremove -y && apt-get clean && \
     rm -rf /usr/local/src/*
 
-# this pass
+# this pass. TODO: Remove
 RUN python -c "import tensorflow"
 
 # Make sure the dynamic linker finds the right libstdc++
-#ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/opt/conda/lib"
-# Install Basemap via conda temporarily
-RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev && \
+RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
+    # Pillow is an optional dependency of basemap
     pip install Pillow && \
+    pip install matplotlib && \
+    pip install pyshp && \
+    pip install pyproj && \
+    cd /usr/local/src && git clone https://github.com/matplotlib/basemap.git && \
+    cd basemap && \
+    git checkout v1.1.0 && \
+    # Install geos
+    cd geos-3.3.3 && \
+    export GEOS_DIR=/usr/local && \
+    ./configure --prefix=$GEOS_DIR && \
+    make && make install && \
+    # Install basemap
+    cd .. && python setup.py install
 
-    # NOTE(rosbo): installing basemap break tensorflow. but is required by other libraries. Investigate.
-    conda install basemap
-    #apt-get -y install libgeos-dev && \
-    #pip install matplotlib && \
-    #pip install pyshp && \
-    #pip install pyproj && \
-    #cd /usr/local/src && git clone https://github.com/matplotlib/basemap.git && \
-    #cd basemap/geos-3.3.3 && \
-    #export GEOS_DIR=/usr/local && \
-    #./configure --prefix=$GEOS_DIR && \
-    #make && make install && \
-    #cd .. && python setup.py install && \
+RUN pip install basemap --no-binary basemap
 
 # this fail, is it because the ld_library_path change? no it's not. likely to be basemap
+# TODO: remove
 RUN python -c "import tensorflow"
 
 RUN cd /usr/local/src && git clone https://github.com/vitruvianscience/opendeep.git && \
@@ -295,7 +297,7 @@ RUN pip install scipy && \
     # PyTorch
     export CXXFLAGS="-std=c++11" && \
     export CFLAGS="-std=c99" && \
-    conda install -y pytorch-cpu torchvision-cpu -c pytorch && \
+    conda install -y pytorch torchvision -c pytorch && \
     # PyTorch Audio
     apt-get install -y sox libsox-dev libsox-fmt-all && \
     pip install cffi && \
@@ -521,6 +523,7 @@ RUN pip install bcolz && \
     pip install wcwidth && \
     pip install webencodings && \
     pip install widgetsnbextension && \
+    pip install pycuda && \
     cd /usr/local/src && git clone --depth=1 https://github.com/fastai/fastai && \
     cd fastai && python setup.py install && \
     # clean up pip cache
