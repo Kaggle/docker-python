@@ -8,19 +8,26 @@ mkdir -p /tmp/python-build/tmp
 mkdir -p /tmp/python-build/devshm
 mkdir -p /tmp/python-build/working
 # Check that Jupyter server can run; if it dies on startup, the `docker kill` command will throw an error
-docker run -d --name=jupyter_test --read-only --net=none -e HOME=/tmp -v $PWD:/input:ro -v /tmp/python-build/working:/working -w=/working -v /tmp/python-build/tmp:/tmp -v /tmp/python-build/devshm:/dev/shm kaggle/python-build jupyter notebook --allow-root --ip="*"
+docker run -d --name=jupyter_test --read-only --net=none \
+    -e HOME=/tmp \
+    # Don't use the GPU (it may not exists)
+    -e CUDA_VERSION='' -e NVIDIA_VISIBLE_DEVICES='' \
+    -v $PWD:/input:ro -v /tmp/python-build/working:/working \
+    -v /tmp/python-build/tmp:/tmp -v /tmp/python-build/devshm:/dev/shm \
+    -w=/working \
+    kaggle/python-build jupyter notebook --allow-root --ip="*"
 sleep 3
 docker kill jupyter_test && docker rm jupyter_test
 
-if [[ $1 == "gpu"]]; then
+if [[ $1 == "gpu" ]]; then
     # Run all tests using a GPU
-    docker run --rm -t --read-only --net=none \ 
+    docker run --rm -t --read-only --net=none \
         -e HOME=/tmp \
         -e KAGGLE_DATA_PROXY_TOKEN=test-key \
         -e KAGGLE_DATA_PROXY_URL=http://127.0.0.1:8000 \
         -e KAGGLE_DATA_PROXY_PROJECT=test \
         # Exclude the cuda stubs to use the GPU
-        -v /tmp/empty:/usr/local/cuda/lib64/stubs:ro
+        -v /tmp/empty:/usr/local/cuda/lib64/stubs:ro \
         -v $PWD:/input:ro -v /tmp/python-build/working:/working \
         -v /tmp/python-build/tmp:/tmp -v /tmp/python-build/devshm:/dev/shm \
         -w=/working \
@@ -28,13 +35,13 @@ if [[ $1 == "gpu"]]; then
         /bin/bash -c 'python -m unittest discover -s /input/tests'
 else
     # Run the non-GPU tests using a CPU
-    docker run --rm -t --read-only --net=none \ 
+    docker run --rm -t --read-only --net=none \
         -e HOME=/tmp \
         -e KAGGLE_DATA_PROXY_TOKEN=test-key \
         -e KAGGLE_DATA_PROXY_URL=http://127.0.0.1:8000 \
         -e KAGGLE_DATA_PROXY_PROJECT=test \
         # Don't use the GPU (it may not exists)
-        -e CUDA_VERSION='' -e NVIDIA_VISIBLE_DEVICES=''
+        -e CUDA_VERSION='' -e NVIDIA_VISIBLE_DEVICES='' \
         -v $PWD:/input:ro -v /tmp/python-build/working:/working \
         -v /tmp/python-build/tmp:/tmp -v /tmp/python-build/devshm:/dev/shm \
         -w=/working \
