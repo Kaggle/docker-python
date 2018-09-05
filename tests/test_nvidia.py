@@ -6,7 +6,7 @@ import sys
 import unittest
 
 import common
-import pycuda
+import pycuda.driver
 
 from common import gpu_test
 
@@ -15,12 +15,12 @@ class TestNvidia(unittest.TestCase):
     @gpu_test
     def test_system_management_interface(self):
         smi = subprocess.Popen(['nvidia-smi'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        print(smi.communicate()[0].decode())
-        # TODO(rosbo): Add assertion
+        smi.communicate()
+        self.assertEqual(0, smi.returncode)
 
     @gpu_test
     def test_pycuda(self):       
-        result = pycuda.driver.Device(0).name() 
-        print(result)
-        # TODO(rosbo): Add assertion
+        pycuda.driver.init()
+        gpu_name = pycuda.driver.Device(0).name() 
+        self.assertNotEqual(0, len(gpu_name))
 

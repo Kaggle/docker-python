@@ -3,4 +3,4 @@
 import os
 import unittest
 
-gpu_test = unittest.skipIf(os.environ.get('HAS_GPU', False) == False, 'Not running GPU tests')
+gpu_test = unittest.skipIf(len(os.environ.get('CUDA_VERSION', '')) == 0, 'Not running GPU tests')

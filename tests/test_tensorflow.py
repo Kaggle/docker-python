@@ -1,7 +1,10 @@
 import unittest
 
-from common import gpu_test
+import numpy as np
 import tensorflow as tf
+
+from common import gpu_test
+
 
 class TestTensorflow(unittest.TestCase):
     def test_addition(self):        
@@ -15,13 +18,11 @@ class TestTensorflow(unittest.TestCase):
     @gpu_test
     def test_gpu(self):
         with tf.device('/gpu:0'):
-            m1 = tf.constant([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], shape=[2, 3], name='a')
-            m2 = tf.constant([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], shape=[3, 2], name='b')
+            m1 = tf.constant([2.0, 3.0], shape=[1, 2], name='a')
+            m2 = tf.constant([3.0, 4.0], shape=[2, 1], name='b')
             op = tf.matmul(m1, m2)
 
             sess = tf.Session()
             result = sess.run(op)
 
-            # TODO(rosbo): Adjust assertion
-            self.assertEqual(5, result)
-
+            self.assertEqual(np.array(18, dtype=np.float32, ndmin=2), result)
