@@ -4,6 +4,9 @@ import torch
 import torch.nn as tnn
 import torch.autograd as autograd
 
+from common import gpu_test
+
+
 class TestPyTorch(unittest.TestCase):
     # PyTorch smoke test based on http://pytorch.org/tutorials/beginner/nlp/deep_learning_tutorial.html
     def test_nn(self):
