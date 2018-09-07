@@ -4,6 +4,9 @@ import torch
 import torch.nn as tnn
 import torch.autograd as autograd
 
+from common import gpu_test
+
+
 class TestPyTorch(unittest.TestCase):
     # PyTorch smoke test based on http://pytorch.org/tutorials/beginner/nlp/deep_learning_tutorial.html
     def test_nn(self):
@@ -11,3 +14,13 @@ class TestPyTorch(unittest.TestCase):
         linear_torch = tnn.Linear(5,3)
         data_torch = autograd.Variable(torch.randn(2, 5))
         linear_torch(data_torch)
+
+    @gpu_test
+    def test_gpu(self):
+        cuda = torch.device('cuda')  
+        a = torch.tensor([1., 2.], device=cuda)
+        b = torch.tensor([3., 4.], device=cuda) 
+
+        result = a + b
+
+        self.assertEqual(torch.tensor([4., 6.], device=cuda), result)
