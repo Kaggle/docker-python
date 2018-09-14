@@ -496,6 +496,9 @@ RUN pip install flashtext && \
     pip install PDPbox && \
     pip install ggplot && \
     ##### ^^^^ Add new contributions above here ^^^^ #####
+# My install
+    pip install gensim
+    pip install jieba
     # clean up pip cache
     rm -rf /root/.cache/pip/*
 
