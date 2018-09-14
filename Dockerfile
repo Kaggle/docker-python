@@ -32,9 +32,6 @@ RUN pip install seaborn python-dateutil dask pytagcloud pyyaml joblib \
     # clean up ImageMagick source files
     cd ../ && rm -rf ImageMagick*
 
-# OpenCV install (from pip or source)
-RUN pip install opencv-python
-
 RUN apt-get update && apt-get install -y python-software-properties zip && \
     echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list && \
     echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list && \
