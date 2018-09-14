@@ -495,6 +495,7 @@ RUN pip install flashtext && \
     pip install tensorflow_hub && \
     pip install PDPbox && \
     pip install ggplot && \
+    pip install cesium && \
     ##### ^^^^ Add new contributions above here ^^^^ #####
     # clean up pip cache
     rm -rf /root/.cache/pip/*
