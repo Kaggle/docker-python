@@ -488,6 +488,8 @@ RUN pip install flashtext && \
     pip install kmapper && \
     pip install shap && \
     pip install ray && \
+    pip install gym && \
+    pip install tensorforce && \
     pip install pyarabic && \
     pip install conx && \
     pip install pandasql && \
