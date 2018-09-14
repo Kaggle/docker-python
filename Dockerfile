@@ -141,8 +141,6 @@ ENV LD_LIBRARY_PATH=/opt/conda/lib
 
 # Install Basemap via conda temporarily
 RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
-     # Pillow is an optional dependency of basemap
-    pip install Pillow && \
     pip install matplotlib && \
     pip install pyshp && \
     pip install pyproj && \
