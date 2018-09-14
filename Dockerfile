@@ -13,7 +13,7 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     apt-get -y install cmake
 
 RUN pip install seaborn python-dateutil dask pytagcloud pyyaml joblib \
-    husl geopy ml_metrics mne pyshp gensim && \
+    husl geopy ml_metrics mne pyshp && \
     conda install -y -c conda-forge spacy && python -m spacy download en && \
     python -m spacy download en_core_web_lg && \
     # The apt-get version of imagemagick is out of date and has compatibility issues, so we build from source
@@ -31,9 +31,6 @@ RUN pip install seaborn python-dateutil dask pytagcloud pyyaml joblib \
     make -j $(nproc) && make install && \
     # clean up ImageMagick source files
     cd ../ && rm -rf ImageMagick*
-
-# OpenCV install (from pip or source)
-RUN pip install opencv-python
 
 RUN apt-get update && apt-get install -y python-software-properties zip && \
     echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list && \
@@ -65,6 +62,7 @@ RUN conda install -y python=3.6.6 && \
 
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
+    pip install gensim && \
     # textblob
     pip install textblob && \
     #word cloud
@@ -142,21 +140,21 @@ RUN apt-get install -y libfreetype6-dev && \
 ENV LD_LIBRARY_PATH=/opt/conda/lib
 
 # Install Basemap via conda temporarily
-RUN apt-get update && \
-    #apt-get -y install libgeos-dev && \
-    #pip install matplotlib && \
-    #pip install pyshp && \
-    #pip install pyproj && \
-    #cd /usr/local/src && git clone https://github.com/matplotlib/basemap.git && \
-    #cd basemap/geos-3.3.3 && \
-    #export GEOS_DIR=/usr/local && \
-    #./configure --prefix=$GEOS_DIR && \
-    #make && make install && \
-    #cd .. && python setup.py install && \
-    conda install basemap && \
-    # Pillow (PIL)
-    apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev && \
-    pip install Pillow
+RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
+    pip install matplotlib && \
+    pip install pyshp && \
+    pip install pyproj && \
+    cd /usr/local/src && git clone https://github.com/matplotlib/basemap.git && \
+    cd basemap && \
+    git checkout v1.1.0 && \
+    # Install geos
+    cd geos-3.3.3 && \
+    export GEOS_DIR=/usr/local && \
+    ./configure --prefix=$GEOS_DIR && \
+    make && make install && \
+    # Install basemap
+    cd .. && python setup.py install && \
+    pip install basemap --no-binary basemap
 
 RUN cd /usr/local/src && git clone https://github.com/vitruvianscience/opendeep.git && \
     cd opendeep && python setup.py develop  && \
@@ -495,8 +493,9 @@ RUN pip install flashtext && \
     pip install pandasql && \
     pip install trackml && \
     pip install tensorflow_hub && \
-    pip install gensim && \
     pip install jieba  && \
+    pip install PDPbox && \
+    pip install ggplot && \
     ##### ^^^^ Add new contributions above here ^^^^ #####
     # clean up pip cache
     rm -rf /root/.cache/pip/*
