@@ -5,9 +5,6 @@ import subprocess
 import sys
 import unittest
 
-import common
-import pycuda.driver
-
 from common import gpu_test
 
 
@@ -19,7 +16,8 @@ class TestNvidia(unittest.TestCase):
         self.assertEqual(0, smi.returncode)
 
     @gpu_test
-    def test_pycuda(self):       
+    def test_pycuda(self):   
+        import pycuda.driver    
         pycuda.driver.init()
         gpu_name = pycuda.driver.Device(0).name() 
         self.assertNotEqual(0, len(gpu_name))
