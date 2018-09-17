@@ -1,6 +1,24 @@
 #!/bin/bash
+#
+# Run tests for a newly-built Python Docker image.
+# By default, it runs the tests for the CPU image.
+#
+# Usage:
+#   ./test [--gpu]
+#
+# Options:
+#   --gpu: Run tests for the GPU image
+# 
+
 set -e
-set +x
+set -x
+
+IMAGE_TAG="kaggle/python-build"
+
+if [[ "$1" == "--gpu" ]]; then
+    IMAGE_TAG="kaggle/python-gpu-build"
+    shift
+fi
 
 rm -rf /tmp/python-build
 docker rm jupyter_test || true
@@ -8,7 +26,7 @@ mkdir -p /tmp/python-build/tmp
 mkdir -p /tmp/python-build/devshm
 mkdir -p /tmp/python-build/working
 # Check that Jupyter server can run; if it dies on startup, the `docker kill` command will throw an error
-docker run -d --name=jupyter_test --read-only --net=none -e HOME=/tmp -v $PWD:/input:ro -v /tmp/python-build/working:/working -w=/working -v /tmp/python-build/tmp:/tmp -v /tmp/python-build/devshm:/dev/shm kaggle/python-build jupyter notebook --allow-root --ip="*"
+docker run -d --name=jupyter_test --read-only --net=none -e HOME=/tmp -v $PWD:/input:ro -v /tmp/python-build/working:/working -w=/working -v /tmp/python-build/tmp:/tmp -v /tmp/python-build/devshm:/dev/shm $IMAGE_TAG jupyter notebook --allow-root --ip="*"
 sleep 3
 docker kill jupyter_test && docker rm jupyter_test
 docker run --rm -t --read-only --net=none \
@@ -18,5 +36,5 @@ docker run --rm -t --read-only --net=none \
     -v $PWD:/input:ro -v /tmp/python-build/working:/working \
     -v /tmp/python-build/tmp:/tmp -v /tmp/python-build/devshm:/dev/shm \
     -w=/working \
-    kaggle/python-build \
+    $IMAGE_TAG \
     /bin/bash -c 'python -m unittest discover -s /input/tests'
