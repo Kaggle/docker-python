@@ -8,15 +8,43 @@ mkdir -p /tmp/python-build/tmp
 mkdir -p /tmp/python-build/devshm
 mkdir -p /tmp/python-build/working
 # Check that Jupyter server can run; if it dies on startup, the `docker kill` command will throw an error
-docker run -d --name=jupyter_test --read-only --net=none -e HOME=/tmp -v $PWD:/input:ro -v /tmp/python-build/working:/working -w=/working -v /tmp/python-build/tmp:/tmp -v /tmp/python-build/devshm:/dev/shm kaggle/python-build jupyter notebook --allow-root --ip="*"
-sleep 3
-docker kill jupyter_test && docker rm jupyter_test
-docker run --rm -t --read-only --net=none \
-    -e HOME=/tmp -e KAGGLE_DATA_PROXY_TOKEN=test-key \
-    -e KAGGLE_DATA_PROXY_URL=http://127.0.0.1:8000 \
-    -e KAGGLE_DATA_PROXY_PROJECT=test \
+docker run -d --name=jupyter_test --read-only --net=none \
+    -e HOME=/tmp \
+    -e CUDA_VERSION='' -e NVIDIA_VISIBLE_DEVICES='' \
     -v $PWD:/input:ro -v /tmp/python-build/working:/working \
     -v /tmp/python-build/tmp:/tmp -v /tmp/python-build/devshm:/dev/shm \
     -w=/working \
-    kaggle/python-build \
-    /bin/bash -c 'python -m unittest discover -s /input/tests'
+    kaggle/python-build jupyter notebook --allow-root --ip="*"
+sleep 3
+docker kill jupyter_test && docker rm jupyter_test
+
+if [[ $1 == "gpu" ]]; then
+    # Run all tests on a GPU
+    # excludes the cuda stubs to use the GPU
+    docker run --rm -t --read-only --net=none \
+        -e HOME=/tmp \
+        -e KAGGLE_DATA_PROXY_TOKEN=test-key \
+        -e KAGGLE_DATA_PROXY_URL=http://127.0.0.1:8000 \
+        -e KAGGLE_DATA_PROXY_PROJECT=test \
+        -v /tmp/empty:/usr/local/cuda/lib64/stubs:ro \
+        -v $PWD:/input:ro -v /tmp/python-build/working:/working \
+        -v /tmp/python-build/tmp:/tmp -v /tmp/python-build/devshm:/dev/shm \
+        -w=/working \
+        kaggle/python-build \
+        /bin/bash -c 'python -m unittest discover -s /input/tests'
+else
+    # Run the non-GPU tests on a CPU
+    # CUDA_VERSION & NVIDIA_VISIBLE_DEVICES has to be set to empty on CPU-only VMs, otherwise the
+    # container fails to start because it can't find a GPU to attach to. 
+    docker run --rm -t --read-only --net=none \
+        -e HOME=/tmp \
+        -e KAGGLE_DATA_PROXY_TOKEN=test-key \
+        -e KAGGLE_DATA_PROXY_URL=http://127.0.0.1:8000 \
+        -e KAGGLE_DATA_PROXY_PROJECT=test \
+        -e CUDA_VERSION='' -e NVIDIA_VISIBLE_DEVICES='' \
+        -v $PWD:/input:ro -v /tmp/python-build/working:/working \
+        -v /tmp/python-build/tmp:/tmp -v /tmp/python-build/devshm:/dev/shm \
+        -w=/working \
+        kaggle/python-build \
+        /bin/bash -c 'python -m unittest discover -s /input/tests'
+fi
