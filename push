@@ -3,10 +3,10 @@
 # Push a newly-built image with the given label to gcr.io and DockerHub.
 #
 # Usage:
-#   ./push [--gpu] [label]
+#   ./push [--gpu] [LABEL]
 #
 # Description:
-#   label: Docker image label. Defaults to "testing".
+#   LABEL: Docker image label. Defaults to "testing".
 #
 # Options:
 #   --gpu: Psuh the image with GPU support.
@@ -14,19 +14,22 @@
 set -e
 set -x
 
-IMAGE_TAG="kaggle/python-build:latest"
+SOURCE_IMAGE="kaggle/python-build"
+TARGET_IMAGE="gcr.io/kaggle-images/python"
 
 if [[ "$1" == "--gpu" ]]; then
-    IMAGE_TAG="kaggle/python-gpu-build:latest"
+    SOURCE_IMAGE="kaggle/python-gpu-build"
+    TARGET_IMAGE="gcr.io/kaggle-private-byod/python"
     shift
 fi
 
-label=${1:-testing}
+LABEL=${1:-testing}
 
-docker tag $IMAGE_TAG gcr.io/kaggle-images/python:${label}
-gcloud docker -- push gcr.io/kaggle-images/python:${label}
+docker tag $SOURCE_IMAGE:latest $TARGET_IMAGE:$LABEL
+gcloud docker -- push $TARGET_IMAGE:$LABEL
 
-if [[ "$label" == "latest" ]]; then
-  docker tag $IMAGE_TAG kaggle/python:${label}
-  docker push kaggle/python:${label}
+# Only CPU images are made public at this time.
+if [[ "$LABEL" == "latest" && SOURCE_IMAGE = "kaggle/python-build" ]]; then
+  docker tag $SOURCE_IMAGE:latest kaggle/python:$LABEL
+  docker push kaggle/python:$LABEL
 fi
