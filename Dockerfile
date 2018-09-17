@@ -1,4 +1,43 @@
+FROM nvidia/cuda:9.1-cudnn7-devel-ubuntu16.04 AS nvidia
 FROM continuumio/anaconda3:5.0.1
+
+# This is necessary to for apt to access HTTPS sources
+RUN apt-get update && \
+    apt-get install apt-transport-https
+
+# Cuda support
+COPY --from=nvidia /etc/apt/sources.list.d/cuda.list /etc/apt/sources.list.d/
+COPY --from=nvidia /etc/apt/sources.list.d/nvidia-ml.list /etc/apt/sources.list.d/
+COPY --from=nvidia /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d/cuda.gpg
+
+ENV CUDA_VERSION=9.1.85
+ENV CUDA_PKG_VERSION=9-1=$CUDA_VERSION-1
+LABEL com.nvidia.volumes.needed="nvidia_driver"
+LABEL com.nvidia.cuda.version="${CUDA_VERSION}"
+ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
+# The stub is useful to us both for built-time linking and run-time linking, on CPU-only systems.
+# When intended to be used with actual GPUs, make sure to (besides providing access to the host
+# CUDA user libraries, either manually or through the use of nvidia-docker) exclude them. One
+# convenient way to do so is to obscure its contents by a bind mount:
+#   docker run .... -v /non-existing-directory:/usr/local/cuda/lib64/stubs:ro ...
+ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/nvidia/lib64:/usr/local/cuda/lib64:/usr/local/cuda/lib64/stubs"
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
+ENV NVIDIA_REQUIRE_CUDA="cuda>=9.0"
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      cuda-cudart-$CUDA_PKG_VERSION \
+      cuda-libraries-$CUDA_PKG_VERSION \
+      cuda-libraries-dev-$CUDA_PKG_VERSION \
+      cuda-nvml-dev-$CUDA_PKG_VERSION \
+      cuda-minimal-build-$CUDA_PKG_VERSION \
+      cuda-command-line-tools-$CUDA_PKG_VERSION \
+      libcudnn7=7.0.5.15-1+cuda9.1 \
+      libcudnn7-dev=7.0.5.15-1+cuda9.1 \
+      libnccl2=2.2.12-1+cuda9.1 \
+      libnccl-dev=2.2.12-1+cuda9.1 && \
+    ln -s /usr/local/cuda-9.1 /usr/local/cuda && \
+    ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1 && \
+    rm -rf /var/lib/apt/lists/*
 
 ADD patches/ /tmp/patches/
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
@@ -11,6 +50,8 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     conda update -y conda && conda update -y python && \
     pip install --upgrade pip && \
     apt-get -y install cmake
+
+RUN pip install --upgrade numpy
 
 RUN pip install seaborn python-dateutil dask pytagcloud pyyaml joblib \
     husl geopy ml_metrics mne pyshp gensim && \
@@ -32,9 +73,6 @@ RUN pip install seaborn python-dateutil dask pytagcloud pyyaml joblib \
     # clean up ImageMagick source files
     cd ../ && rm -rf ImageMagick*
 
-# OpenCV install (from pip or source)
-RUN pip install opencv-python
-
 RUN apt-get update && apt-get install -y python-software-properties zip && \
     echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list && \
     echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list && \
@@ -54,14 +92,43 @@ RUN conda install -y python=3.6.6 && \
     pip install pandas==0.23.2 && \
     # Another fix for TF 1.10 https://github.com/tensorflow/tensorflow/issues/21518
     pip install keras_applications==1.0.4 --no-deps && \
-    pip install keras_preprocessing==1.0.2 --no-deps && \
-    cd /usr/local/src && \
-    git clone https://github.com/tensorflow/tensorflow && \
-    cd tensorflow && \
-    cat /dev/null | ./configure && \
-    bazel build --config=opt //tensorflow/tools/pip_package:build_pip_package && \
-    bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg && \
-    pip install /tmp/tensorflow_pkg/tensorflow*.whl
+    pip install keras_preprocessing==1.0.2 --no-deps
+
+ENV TF_NEED_CUDA=1
+ENV TF_CUDA_VERSION=9.1
+ENV TF_CUDA_COMPUTE_CAPABILITIES=3.7,6.0
+ENV TF_CUDNN_VERSION=7
+ENV TF_NCCL_VERSION=2
+ENV NCCL_INSTALL_PATH=/usr/
+
+ADD tensorflow_whl/*.whl /tmp/tensorflow_pkg
+
+RUN pip install /tmp/tensorflow_pkg/tensorflow-gpu-1.10.1-cp36-cp36m-linux_x86_64.whl
+RUN rm -Rf /tmp/tensorflow_pkg && \
+    mv 
+# RUN cd /usr/local/src && \
+#     mkdir -p /usr/local/multiversions/tensorflow && \
+#     git clone https://github.com/tensorflow/tensorflow && \
+#     cd tensorflow && \
+#     git checkout r1.10 && \
+#     # TF_NCCL_INSTALL_PATH is used for both libnccl.so.2 and libnccl.h. Make sure they are both accessible from the same directory.
+#     ln -s /usr/lib/x86_64-linux-gnu/libnccl.so.2 /usr/lib/ && \
+#     cat /dev/null | ./configure && \
+#     echo "/usr/local/cuda-${TF_CUDA_VERSION}/targets/x86_64-linux/lib/stubs" > /etc/ld.so.conf.d/cuda-stubs.conf && ldconfig && \
+#     bazel build --config=opt \
+#                 --config=cuda \
+#                 --cxxopt="-D_GLIBCXX_USE_CXX11_ABI=0" \
+#                 //tensorflow/tools/pip_package:build_pip_package && \
+#     rm /etc/ld.so.conf.d/cuda-stubs.conf && ldconfig && \
+#     bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg && \
+#     pip install /tmp/tensorflow_pkg/tensorflow*.whl
+    # removing temporarly to see what's hiding there
+    #rm -Rf /tmp/tensorflow_pkg && \
+    #rm -Rf /root/.cache/bazel
+
+
+# this pass. TODO: Remove
+RUN python -c "import tensorflow as tf; tf.Session()"
 
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
@@ -139,24 +206,26 @@ RUN apt-get install -y libfreetype6-dev && \
     rm -rf /usr/local/src/*
 
 # Make sure the dynamic linker finds the right libstdc++
-ENV LD_LIBRARY_PATH=/opt/conda/lib
+RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
+    pip install matplotlib && \
+    pip install pyshp && \
+    pip install pyproj && \
+    cd /usr/local/src && git clone https://github.com/matplotlib/basemap.git && \
+    cd basemap && \
+    git checkout v1.1.0 && \
+    # Install geos
+    cd geos-3.3.3 && \
+    export GEOS_DIR=/usr/local && \
+    ./configure --prefix=$GEOS_DIR && \
+    make && make install && \
+    # Install basemap
+    cd .. && python setup.py install
 
-# Install Basemap via conda temporarily
-RUN apt-get update && \
-    #apt-get -y install libgeos-dev && \
-    #pip install matplotlib && \
-    #pip install pyshp && \
-    #pip install pyproj && \
-    #cd /usr/local/src && git clone https://github.com/matplotlib/basemap.git && \
-    #cd basemap/geos-3.3.3 && \
-    #export GEOS_DIR=/usr/local && \
-    #./configure --prefix=$GEOS_DIR && \
-    #make && make install && \
-    #cd .. && python setup.py install && \
-    conda install basemap && \
-    # Pillow (PIL)
-    apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev && \
-    pip install Pillow 
+RUN pip install basemap --no-binary basemap
+
+# this fail, is it because the ld_library_path change? no it's not. likely to be basemap
+# TODO: remove
+RUN python -c "import tensorflow"
 
 RUN cd /usr/local/src && git clone https://github.com/vitruvianscience/opendeep.git && \
     cd opendeep && python setup.py develop  && \
@@ -175,10 +244,6 @@ RUN cd /usr/local/src && git clone https://github.com/vitruvianscience/opendeep.
     # MXNet
     pip install mxnet && \
     # h2o
-    # Temporary sync of conda's numpy with pip's, needed to avoid an install error
-    #conda upgrade -y numpy && \
-    # Upgrade numpy with pip to avoid install errors
-    pip install --upgrade numpy && \
     # This requires python-software-properties and Java, which were installed above.
     cd /usr/local/src && mkdir h2o && cd h2o && \
     wget http://h2o-release.s3.amazonaws.com/h2o/latest_stable -O latest && \
@@ -235,7 +300,7 @@ RUN pip install scipy && \
     # PyTorch
     export CXXFLAGS="-std=c++11" && \
     export CFLAGS="-std=c99" && \
-    conda install -y pytorch-cpu torchvision-cpu -c pytorch && \
+    conda install -y pytorch torchvision -c pytorch && \
     # PyTorch Audio
     apt-get install -y sox libsox-dev libsox-fmt-all && \
     pip install cffi && \
@@ -433,7 +498,6 @@ RUN pip install bcolz && \
     pip install nbconvert && \
     pip install nbformat && \
     pip install notebook==5.5.0 && \
-    pip install numpy && \
     pip install olefile && \
     pip install opencv-python && \
     pip install --upgrade pandas && \
@@ -462,6 +526,7 @@ RUN pip install bcolz && \
     pip install wcwidth && \
     pip install webencodings && \
     pip install widgetsnbextension && \
+    pip install pycuda && \
     cd /usr/local/src && git clone --depth=1 https://github.com/fastai/fastai && \
     cd fastai && python setup.py install && \
     # clean up pip cache
