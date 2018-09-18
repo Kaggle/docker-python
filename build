@@ -26,4 +26,4 @@ if [[ "$1" ==  "--use-cache" ]]; then
     CACHE_FLAG=""
 fi
 
-docker build --rm -t $CACHE_FLAG $IMAGE_TAG -f $DOCKERFILE .
+docker build --rm $CACHE_FLAG -t $IMAGE_TAG -f $DOCKERFILE .
