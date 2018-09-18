@@ -16,10 +16,20 @@ class TestPyTorch(unittest.TestCase):
         linear_torch(data_torch)
 
     @gpu_test
-    def test_gpu(self):
+    def test_gpu_computation(self):
         cuda = torch.device('cuda')  
         a = torch.tensor([1., 2.], device=cuda)
 
         result = a.sum()
 
         self.assertEqual(torch.tensor([3.], device=cuda), result)
+
+    @gpu_test
+    def test_cuda_nn(self):
+        # These throw if cuda is misconfigured
+        tnn.GRUCell(10,10).cuda()
+        tnn.RNNCell(10,10).cuda()
+        tnn.LSTMCell(10,10).cuda()
+        tnn.GRU(10,10).cuda()
+        tnn.LSTM(10,10).cuda()
+        tnn.RNN(10,10).cuda()
