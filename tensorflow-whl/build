@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+set -x
+
+# Default behavior is to do everything from scratch.
+# The --use-cache option is useful if you're iterating on a broken build.
+if [[ "$1" ==  "--use-cache" ]]; then
+    docker build --rm -t kaggle/python-tensorflow-whl .
+else
+    docker build --pull --rm --no-cache -t kaggle/python-tensorflow-whl .
+fi

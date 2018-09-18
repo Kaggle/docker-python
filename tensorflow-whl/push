@@ -1,0 +1,25 @@
+#!/bin/bash
+#
+# Push a newly-built image with the given label to gcr.io and DockerHub.
+#
+# Usage:
+#   ./push LABEL
+#
+# Description:
+#   LABEL: Image label. See CHANGELOG.md
+#
+set -e
+set -x
+
+SOURCE_IMAGE="kaggle/python-tensorflow-whl"
+TARGET_IMAGE="gcr.io/kaggle-images/python-tensorflow-whl"
+
+LABEL=$1
+
+if [[ -z "$LABEL" ]]; then
+    echo "You must provide a label for the image"
+    exit 1
+fi
+
+docker tag $SOURCE_IMAGE:latest $TARGET_IMAGE:$LABEL
+gcloud docker -- push $TARGET_IMAGE:$LABEL
