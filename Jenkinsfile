@@ -17,7 +17,7 @@ pipeline {
   }
 
   stages {
-    stage('Docker Build') {
+    stage('Docker CPU Build') {
       steps {
         slackSend color: 'none', message: "*<${env.BUILD_URL}console|${JOB_NAME} docker build>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
         sh '''#!/bin/bash
@@ -28,7 +28,7 @@ pipeline {
       }
     }
 
-    stage('Test Image') {
+    stage('Test CPU Image') {
       steps {
         slackSend color: 'none', message: "*<${env.BUILD_URL}console|${JOB_NAME} test image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
         sh '''#!/bin/bash
@@ -39,8 +39,32 @@ pipeline {
         '''
       }
     }
+    
+    stage('Docker GPU Build') {
+      steps {
+        slackSend color: 'none', message: "*<${env.BUILD_URL}console|${JOB_NAME} docker build>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
+        sh '''#!/bin/bash
+          set -exo pipefail
 
-    stage('Push Image') {
+          ./build --gpu | ts
+        '''
+      }
+    }
+
+    stage('Test GPU Image') {
+      agent { label 'ephemeral-linux-gpu' }
+      steps {
+        slackSend color: 'none', message: "*<${env.BUILD_URL}console|${JOB_NAME} test image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
+        sh '''#!/bin/bash
+          set -exo pipefail
+
+          date
+          ./test --gpu
+        '''
+      }
+    }
+
+    stage('Push Images') {
       steps {
         slackSend color: 'none', message: "*<${env.BUILD_URL}console|${JOB_NAME} pushing image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
         sh '''#!/bin/bash
@@ -48,6 +72,7 @@ pipeline {
 
           date
           ./push staging
+          ./push --gpu staging
         '''
       }
     }
