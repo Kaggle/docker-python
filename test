@@ -1,14 +1,4 @@
 #!/bin/bash
-#
-# 
-# 
-#
-# Usage:
-#   ./test [--gpu]
-#
-# Options:
-#   --gpu: Run tests for the GPU image
-# 
 set -e
 
 usage() {
