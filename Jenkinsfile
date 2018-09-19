@@ -3,6 +3,7 @@ String cron_string = BRANCH_NAME == "master" ? "H 12 * * 1-5" : ""
 pipeline {
   agent { label 'ephemeral-linux' }
   options {
+    // The Build GPU stage depends on the image from the Push CPU stage
     disableConcurrentBuilds()
   }
   triggers {
@@ -39,8 +40,27 @@ pipeline {
         '''
       }
     }
+
+    stage('Push CPU Image') {
+      steps {
+        slackSend color: 'none', message: "*<${env.BUILD_URL}console|${JOB_NAME} pushing image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
+        sh '''#!/bin/bash
+          set -exo pipefail
+
+          date
+          ./push staging
+        '''
+      }
+    }
     
     stage('Docker GPU Build') {
+      // A GPU is not required to build this image. However, in our current setup,
+      // the default runtime is set to nvidia (as opposed to runc) and there
+      // is no option to specify a runtime for the `docker build` command.
+      //
+      // TODO(rosbo) don't set `nvidia` as the default runtime and use the
+      // `--runtime=nvidia` flag for the `docker run` command when GPU support is needed.
+      agent { label 'ephemeral-linux-gpu' }
       steps {
         slackSend color: 'none', message: "*<${env.BUILD_URL}console|${JOB_NAME} docker build>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
         sh '''#!/bin/bash
@@ -64,14 +84,14 @@ pipeline {
       }
     }
 
-    stage('Push Images') {
+    stage('Push GPU Image') {
+      agent { label 'ephemeral-linux-gpu' }
       steps {
         slackSend color: 'none', message: "*<${env.BUILD_URL}console|${JOB_NAME} pushing image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
         sh '''#!/bin/bash
           set -exo pipefail
 
           date
-          ./push staging
           ./push --gpu staging
         '''
       }

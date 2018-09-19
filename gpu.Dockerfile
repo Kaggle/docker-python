@@ -1,6 +1,6 @@
 FROM nvidia/cuda:9.1-cudnn7-devel-ubuntu16.04 AS nvidia
 FROM gcr.io/kaggle-images/python-tensorflow-whl:1.11.0-py36 as tensorflow_whl
-FROM kaggle/python-build
+FROM gcr.io/kaggle-images/python:staging
 
 # Cuda support
 COPY --from=nvidia /etc/apt/sources.list.d/cuda.list /etc/apt/sources.list.d/
