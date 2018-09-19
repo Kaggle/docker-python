@@ -1,29 +1,49 @@
 #!/bin/bash
-#
-# Build a new Python Docker image.
-#
-# Usage:
-#   ./build [--gpu] [--use-cache]
-#
-# Options:
-#   --gpu: Build an image with GPU support.
-#   --use-cache: Use layer cache when building a new image.
-# 
 set -e
-set -x
+
+usage() {
+cat << EOF
+Usage: $0 [OPTIONS]
+Build a new Python Docker image.
+
+Options:
+    -g, --gpu       Build an image with GPU support.
+    -c, --use-cache Use layer cache when building a new image.
+EOF
+}
 
 CACHE_FLAG="--no-cache"
-IMAGE_TAG="kaggle/python-build"
 DOCKERFILE="Dockerfile"
+IMAGE_TAG="kaggle/python-build"
 
-if [[ "$1" == "--gpu" ]]; then
-    IMAGE_TAG="kaggle/python-gpu-build"
-    DOCKERFILE="gpu.Dockerfile"
+while :; do
+    case "$1" in 
+        -h|--help)
+            usage
+            exit
+            ;;
+        -g|--gpu)
+            IMAGE_TAG="kaggle/python-gpu-build"
+            DOCKERFILE="gpu.Dockerfile"
+            ;;
+        -c|--use-cache)
+            CACHE_FLAG=""
+            ;;
+        -?*)
+            usage
+            printf 'ERROR: Unknown option: %s\n' "$1" >&2
+            exit
+            ;;
+        *)            
+            break
+    esac
+
     shift
-fi
+done
 
-if [[ "$1" ==  "--use-cache" ]]; then
-    CACHE_FLAG=""
-fi
+readonly CACHE_FLAG
+readonly DOCKERFILE
+readonly IMAGE_TAG
 
-docker build --rm $CACHE_FLAG -t $IMAGE_TAG -f $DOCKERFILE .
+set -x
+docker build --rm $CACHE_FLAG -t "$IMAGE_TAG" -f "$DOCKERFILE" .

@@ -1,35 +1,53 @@
 #!/bin/bash
-#
-# Push a newly-built image with the given label to gcr.io and DockerHub.
-#
-# Usage:
-#   ./push [--gpu] [LABEL]
-#
-# Description:
-#   LABEL: Docker image label. Defaults to "testing".
-#
-# Options:
-#   --gpu: Psuh the image with GPU support.
-# 
 set -e
-set -x
+
+usage() {
+cat << EOF
+Usage: $0 [OPTIONS] [LABEL]
+Push a newly-built image with the given LABEL to gcr.io and DockerHub.
+
+Options:
+    -g, --gpu   Push the image with GPU support.
+EOF
+}
 
 SOURCE_IMAGE="kaggle/python-build"
 TARGET_IMAGE="gcr.io/kaggle-images/python"
 
-if [[ "$1" == "--gpu" ]]; then
-    SOURCE_IMAGE="kaggle/python-gpu-build"
-    TARGET_IMAGE="gcr.io/kaggle-private-byod/python"
+while :; do
+    case "$1" in 
+        -h|--help)
+            usage
+            exit
+            ;;
+        -g|--gpu)
+            SOURCE_IMAGE="kaggle/python-gpu-build"
+            TARGET_IMAGE="gcr.io/kaggle-private-byod/python"
+            ;;
+        -?*)
+            usage
+            printf 'ERROR: Unknown option: %s\n' "$1" >&2
+            exit
+            ;;
+        *)            
+            break
+    esac
+
     shift
-fi
+done
 
 LABEL=${1:-testing}
 
-docker tag $SOURCE_IMAGE:latest $TARGET_IMAGE:$LABEL
-gcloud docker -- push $TARGET_IMAGE:$LABEL
+readonly SOURCE_IMAGE
+readonly TARGET_IMAGE
+readonly LABEL
+
+set -x
+docker tag "${SOURCE_IMAGE}:latest" "${TARGET_IMAGE}:${LABEL}"
+gcloud docker -- push "${TARGET_IMAGE}:${LABEL}"
 
 # Only CPU images are made public at this time.
 if [[ "$LABEL" == "latest" && SOURCE_IMAGE = "kaggle/python-build" ]]; then
-  docker tag $SOURCE_IMAGE:latest kaggle/python:$LABEL
-  docker push kaggle/python:$LABEL
+  docker tag "${SOURCE_IMAGE}:latest" "kaggle/python:${LABEL}"
+  docker push "kaggle/python:${LABEL}"
 fi
