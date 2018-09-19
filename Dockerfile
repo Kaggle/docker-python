@@ -1,7 +1,7 @@
 FROM gcr.io/kaggle-images/python-tensorflow-whl:1.11.0-py36 as tensorflow_whl
 FROM continuumio/anaconda3:5.0.1
 
-# This is necessary to for apt to access HTTPS sources
+# This is necessary for apt to access HTTPS sources
 RUN apt-get update && \
     apt-get install apt-transport-https
 
