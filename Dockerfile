@@ -1,4 +1,9 @@
+FROM gcr.io/kaggle-images/python-tensorflow-whl:1.11.0-py36 as tensorflow_whl
 FROM continuumio/anaconda3:5.0.1
+
+# This is necessary for apt to access HTTPS sources
+RUN apt-get update && \
+    apt-get install apt-transport-https
 
 ADD patches/ /tmp/patches/
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
@@ -6,7 +11,7 @@ ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
     # Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
     # as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
 RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list && \
-    apt-get update && apt-get install -y build-essential && \
+    apt-get update && apt-get install -y build-essential unzip && \
     # https://stackoverflow.com/a/46498173
     conda update -y conda && conda update -y python && \
     pip install --upgrade pip && \
@@ -32,33 +37,18 @@ RUN pip install seaborn python-dateutil dask pytagcloud pyyaml joblib \
     # clean up ImageMagick source files
     cd ../ && rm -rf ImageMagick*
 
-RUN apt-get update && apt-get install -y python-software-properties zip && \
-    echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list && \
-    echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list && \
-    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886 C857C906 2B90D010 && \
-    apt-get update && \
-    echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
-    echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections && \
-    apt-get install -y oracle-java8-installer && \
-    echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list && \
-    curl https://bazel.build/bazel-release.pub.gpg | apt-key add - && \
-    apt-get update && apt-get install -y bazel && \
-    apt-get upgrade -y bazel
-
 # Tensorflow doesn't support python 3.7 yet. See https://github.com/tensorflow/tensorflow/issues/20517
 # Fix to install tf 1.10:: Downgrade python 3.7->3.6.6 and downgrade Pandas 0.23.3->0.23.2
 RUN conda install -y python=3.6.6 && \
     pip install pandas==0.23.2 && \
     # Another fix for TF 1.10 https://github.com/tensorflow/tensorflow/issues/21518
     pip install keras_applications==1.0.4 --no-deps && \
-    pip install keras_preprocessing==1.0.2 --no-deps && \
-    cd /usr/local/src && \
-    git clone https://github.com/tensorflow/tensorflow && \
-    cd tensorflow && \
-    cat /dev/null | ./configure && \
-    bazel build --config=opt //tensorflow/tools/pip_package:build_pip_package && \
-    bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg && \
-    pip install /tmp/tensorflow_pkg/tensorflow*.whl
+    pip install keras_preprocessing==1.0.2 --no-deps
+
+# Install tensorflow from a pre-built wheel
+COPY --from=tensorflow_whl /tmp/tensorflow_cpu/*.whl /tmp/tensorflow_cpu/
+RUN pip install /tmp/tensorflow_cpu/tensorflow*.whl && \
+    rm -rf /tmp/tensorflow_cpu
 
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \

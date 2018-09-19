@@ -1,10 +1,49 @@
 #!/bin/bash
 set -e
 
-# Default behavior is to do everything from scratch.
-# The --use-cache option is useful if you're iterating on a broken build.
-if [[ "$1" ==  "--use-cache" ]]; then
-    docker build --rm -t kaggle/python-build .
-else
-    docker build --pull --rm --no-cache -t kaggle/python-build .
-fi
+usage() {
+cat << EOF
+Usage: $0 [OPTIONS]
+Build a new Python Docker image.
+
+Options:
+    -g, --gpu       Build an image with GPU support.
+    -c, --use-cache Use layer cache when building a new image.
+EOF
+}
+
+CACHE_FLAG="--no-cache"
+DOCKERFILE="Dockerfile"
+IMAGE_TAG="kaggle/python-build"
+
+while :; do
+    case "$1" in 
+        -h|--help)
+            usage
+            exit
+            ;;
+        -g|--gpu)
+            IMAGE_TAG="kaggle/python-gpu-build"
+            DOCKERFILE="gpu.Dockerfile"
+            ;;
+        -c|--use-cache)
+            CACHE_FLAG=""
+            ;;
+        -?*)
+            usage
+            printf 'ERROR: Unknown option: %s\n' "$1" >&2
+            exit
+            ;;
+        *)            
+            break
+    esac
+
+    shift
+done
+
+readonly CACHE_FLAG
+readonly DOCKERFILE
+readonly IMAGE_TAG
+
+set -x
+docker build --rm $CACHE_FLAG -t "$IMAGE_TAG" -f "$DOCKERFILE" .
