@@ -439,7 +439,6 @@ RUN pip install bcolz && \
     pip install PyYAML && \
     pip install pyzmq && \
     pip install qtconsole && \
-    pip install seaborn && \
     pip install simplegeneric && \
     pip install six && \
     pip install terminado && \
