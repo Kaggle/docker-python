@@ -1,5 +1,5 @@
 FROM nvidia/cuda:9.2-cudnn7-devel-ubuntu16.04 AS nvidia
-FROM gcr.io/kaggle-images/python-tensorflow-whl:1.11.0-py36 as tensorflow_whl
+FROM gcr.io/kaggle-images/python-tensorflow-whl:1.11.0-py36-2 as tensorflow_whl
 FROM gcr.io/kaggle-images/python:staging
 
 # Cuda support

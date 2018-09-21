@@ -26,6 +26,7 @@ class TestKeras(unittest.TestCase):
 
         model.fit(x_train, y_train, epochs=1, batch_size=32)
     
+    # Uses convnet which depends on libcudnn when running on GPU
     def test_conv2d(self):
         # Generate dummy data
         x_train = np.random.random((100, 100, 100, 3))
