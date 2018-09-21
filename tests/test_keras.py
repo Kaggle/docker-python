@@ -25,7 +25,8 @@ class TestKeras(unittest.TestCase):
             metrics=['accuracy'])
 
         model.fit(x_train, y_train, epochs=1, batch_size=32)
-    
+
+    # Uses convnet which depends on libcudnn when running on GPU
     def test_conv2d(self):
         # Generate dummy data
         x_train = np.random.random((100, 100, 100, 3))
@@ -52,7 +53,8 @@ class TestKeras(unittest.TestCase):
         model.add(Dense(10, activation='softmax'))
 
         sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
-        model.compile(loss='categorical_crossentropy', optimizer=sgd)
 
+        # This throws if libcudnn is not properly installed with on a GPU
+        model.compile(loss='categorical_crossentropy', optimizer=sgd)
         model.fit(x_train, y_train, batch_size=32, epochs=1)
-        score = model.evaluate(x_test, y_test, batch_size=32)
+        model.evaluate(x_test, y_test, batch_size=32)
