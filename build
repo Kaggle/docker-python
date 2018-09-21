@@ -46,4 +46,4 @@ readonly DOCKERFILE
 readonly IMAGE_TAG
 
 set -x
-docker build --rm $CACHE_FLAG -t "$IMAGE_TAG" -f "$DOCKERFILE" .
+docker build --rm --pull $CACHE_FLAG -t "$IMAGE_TAG" -f "$DOCKERFILE" .
