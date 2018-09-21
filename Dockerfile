@@ -63,7 +63,10 @@ RUN apt-get install -y libfreetype6-dev && \
     cd /usr/local/src && mkdir xgboost && cd xgboost && \
     git clone --depth 1 --recursive https://github.com/dmlc/xgboost.git && cd xgboost && \
     make && cd python-package && python setup.py install && \
-    pip install lightgbm && \
+    # Pinning to an older version. The latest release (2.2.0) depends on an old GLIBC version.
+    # This cause the package to fail at import time with "version `GLIBC_2.23' not found"
+    # TODO: Unpin once the latest release is fixed.
+    pip install lightgbm==2.1.2 && \
     #lasagne
     cd /usr/local/src && mkdir Lasagne && cd Lasagne && \
     git clone --depth 1 https://github.com/Lasagne/Lasagne.git && cd Lasagne && \
