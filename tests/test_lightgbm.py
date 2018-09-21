@@ -28,6 +28,10 @@ class TestLightgbm(unittest.TestCase):
         }
 
         # Run only one round for faster test
-        gbm = lgb.train(params, lgb_train, num_boost_round=1, valid_sets=lgb_eval, early_stopping_rounds=1)
+        gbm = lgb.train(params,
+                        lgb_train,
+                        num_boost_round=1,
+                        valid_sets=lgb_eval,
+                        early_stopping_rounds=1)
 
         self.assertEqual(1, gbm.best_iteration)
