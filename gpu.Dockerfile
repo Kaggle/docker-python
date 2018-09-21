@@ -22,14 +22,15 @@ ENV NVIDIA_VISIBLE_DEVICES=all
 ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
 ENV NVIDIA_REQUIRE_CUDA="cuda>=9.0"
 RUN apt-get update && apt-get install -y --no-install-recommends \
+      cuda-cupti-$CUDA_PKG_VERSION \
       cuda-cudart-$CUDA_PKG_VERSION \
       cuda-libraries-$CUDA_PKG_VERSION \
       cuda-libraries-dev-$CUDA_PKG_VERSION \
       cuda-nvml-dev-$CUDA_PKG_VERSION \
       cuda-minimal-build-$CUDA_PKG_VERSION \
       cuda-command-line-tools-$CUDA_PKG_VERSION \
-      libcudnn7=7.0.5.15-1+cuda9.1 \
-      libcudnn7-dev=7.0.5.15-1+cuda9.1 \
+      libcudnn7=7.2.1.38-1+cuda9.0 \
+      libcudnn7-dev=7.2.1.38-1+cuda9.0 \
       libnccl2=2.2.12-1+cuda9.1 \
       libnccl-dev=2.2.12-1+cuda9.1 && \
     ln -s /usr/local/cuda-9.1 /usr/local/cuda && \
