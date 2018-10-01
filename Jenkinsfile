@@ -65,7 +65,7 @@ pipeline {
         slackSend color: 'none', message: "*<${env.BUILD_URL}console|${JOB_NAME} docker build>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
         sh '''#!/bin/bash
           set -exo pipefail
-          docker image prune # remove previously built image to prevent disk from filling up
+          docker image prune -a # remove previously built image to prevent disk from filling up
           ./build --gpu | ts
         '''
       }
