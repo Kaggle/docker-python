@@ -53,24 +53,15 @@ RUN pip install /tmp/tensorflow_cpu/tensorflow*.whl && \
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
     pip install gensim && \
-    # textblob
     pip install textblob && \
-    #word cloud
     pip install wordcloud && \
-    #igraph
     conda install -y -c conda-forge python-igraph && \
-    #xgboost
-    cd /usr/local/src && mkdir xgboost && cd xgboost && \
-    git clone --depth 1 --recursive https://github.com/dmlc/xgboost.git && cd xgboost && \
-    make && cd python-package && python setup.py install && \
+    pip install xgboost && \
     # Pinning to an older version. The latest release (2.2.0) depends on an old GLIBC version.
     # This cause the package to fail at import time with "version `GLIBC_2.23' not found"
     # TODO: Unpin once the latest release is fixed.
     pip install lightgbm==2.1.2 && \
-    #lasagne
-    cd /usr/local/src && mkdir Lasagne && cd Lasagne && \
-    git clone --depth 1 https://github.com/Lasagne/Lasagne.git && cd Lasagne && \
-    pip install -r requirements.txt && python setup.py install && \
+    pip install git+git://github.com/Lasagne/Lasagne.git && \
     #keras
     cd /usr/local/src && mkdir keras && cd keras && \
     git clone --depth 1 https://github.com/fchollet/keras.git && \
@@ -100,8 +91,7 @@ RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libatlas-base-dev && \
     cd /usr/local/src && git clone --depth 1 https://github.com/ztane/python-Levenshtein && \
     cd python-Levenshtein && python setup.py install && \
-    cd /usr/local/src && git clone --depth 1 https://github.com/arogozhnikov/hep_ml.git && \
-    cd hep_ml && pip install .  && \
+    pip install hep_ml && \
     # chainer
     pip install chainer && \
     # NLTK Project datasets
@@ -132,7 +122,6 @@ RUN apt-get install -y libfreetype6-dev && \
 # Make sure the dynamic linker finds the right libstdc++
 ENV LD_LIBRARY_PATH=/opt/conda/lib
 
-# Install Basemap via conda temporarily
 RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
     pip install matplotlib && \
     pip install pyshp && \
