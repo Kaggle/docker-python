@@ -490,6 +490,7 @@ RUN pip install flashtext && \
     pip install PDPbox && \
     pip install ggplot && \
     pip install cesium && \
+    pip install sentiment_classifier && \
     ##### ^^^^ Add new contributions above here ^^^^ #####
     # clean up pip cache
     rm -rf /root/.cache/pip/*
