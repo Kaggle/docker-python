@@ -487,6 +487,7 @@ RUN pip install flashtext && \
     pip install pandasql && \
     pip install trackml && \
     pip install tensorflow_hub && \
+    pip install jieba  && \
     pip install PDPbox && \
     pip install ggplot && \
     pip install cesium && \
