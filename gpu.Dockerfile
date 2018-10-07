@@ -42,8 +42,8 @@ COPY --from=tensorflow_whl /tmp/tensorflow_gpu/*.whl /tmp/tensorflow_gpu/
 RUN pip uninstall -y tensorflow && \
     pip install /tmp/tensorflow_gpu/tensorflow*.whl && \
     rm -rf /tmp/tensorflow_gpu && \
-    conda uninstall -y pytorch-cpu torchvision-cpu && \
-    conda install -y pytorch torchvision -c pytorch
+    conda uninstall -y pytorch-nightly-cpu torchvision-cpu && \
+    conda install -y pytorch-nightly torchvision -c pytorch
 
 # Install GPU-only packages
 RUN pip install pycuda
