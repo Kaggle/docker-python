@@ -480,6 +480,7 @@ RUN pip install flashtext && \
     pip install PDPbox && \
     pip install ggplot && \
     pip install cesium && \
+    pip install iterative-stratification && \
     ##### ^^^^ Add new contributions above here ^^^^ #####
     # clean up pip cache
     rm -rf /root/.cache/pip/*
