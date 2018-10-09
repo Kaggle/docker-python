@@ -57,10 +57,7 @@ RUN apt-get install -y libfreetype6-dev && \
     pip install wordcloud && \
     conda install -y -c conda-forge python-igraph && \
     pip install xgboost && \
-    # Pinning to an older version. The latest release (2.2.0) depends on an old GLIBC version.
-    # This cause the package to fail at import time with "version `GLIBC_2.23' not found"
-    # TODO: Unpin once the latest release is fixed.
-    pip install lightgbm==2.1.2 && \
+    pip install lightgbm && \
     pip install git+git://github.com/Lasagne/Lasagne.git && \
     #keras
     cd /usr/local/src && mkdir keras && cd keras && \
