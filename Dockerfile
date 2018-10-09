@@ -419,7 +419,6 @@ RUN pip install bcolz && \
     pip install pexpect && \
     pip install pickleshare && \
     pip install Pillow && \
-    pip install prompt-toolkit && \
     pip install ptyprocess && \
     pip install Pygments && \
     pip install pyparsing && \
