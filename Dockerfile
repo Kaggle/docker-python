@@ -291,6 +291,7 @@ RUN pip install fancyimpute && \
     pip install hmmlearn && \
     pip install bayespy && \
     pip install gplearn && \
+    pip install talos && \
     pip install PyAstronomy && \
     pip install squarify && \
     pip install fuzzywuzzy && \
