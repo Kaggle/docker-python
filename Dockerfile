@@ -134,6 +134,7 @@ RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
     # Install basemap
     cd .. && python setup.py install && \
     pip install basemap --no-binary basemap
+
 # sasl is apparently an ibis dependency
 RUN apt-get -y install libsasl2-dev && \
     # ...as is psycopg2
@@ -143,8 +144,7 @@ RUN apt-get -y install libsasl2-dev && \
     yes | conda install proj4 && \
     pip install packaging && \
     pip install shapely && \
-    cd /usr/local/src && git clone https://github.com/SciTools/cartopy.git && \
-    cd cartopy && python setup.py install && \
+    pip install cartopy && \
     # MXNet
     pip install mxnet && \
     # h2o
