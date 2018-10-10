@@ -120,12 +120,12 @@ RUN apt-get install -y libfreetype6-dev && \
 ENV LD_LIBRARY_PATH=/opt/conda/lib
 
 RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
-    pip install matplotlib && \
+    pip install matplotlib==2.2.3 && \
     pip install pyshp && \
     pip install pyproj && \
     cd /usr/local/src && git clone https://github.com/matplotlib/basemap.git && \
     cd basemap && \
-    git checkout v1.2.0rel && \
+    git checkout v1.1.0 && \
     # Install geos
     cd geos-3.3.3 && \
     export GEOS_DIR=/usr/local && \
@@ -405,7 +405,6 @@ RUN pip install bcolz && \
     pip install jupyter-console && \
     pip install jupyter-core && \
     pip install MarkupSafe && \
-    pip install matplotlib && \
     pip install mistune && \
     pip install nbconvert && \
     pip install nbformat && \
