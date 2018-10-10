@@ -172,12 +172,9 @@ RUN apt-get -y install libsasl2-dev && \
 
     # scikit-learn dependencies
 RUN pip install scipy && \
-    # Scikit-Learn pinned to 0.19.X until 0.20.0 (many packages break with scikitlearn 0.20.0dev)
-    cd /usr/local/src && git clone https://github.com/scikit-learn/scikit-learn.git && \
-    cd scikit-learn && python setup.py build && python setup.py install && \
+    pip install scikit-learn && \
     # HDF5 support
     conda install h5py && \
-    # https://github.com/biopython/biopython
     pip install biopython && \
     # PUDB, for local debugging convenience
     pip install pudb && \
