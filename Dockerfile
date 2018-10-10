@@ -13,7 +13,14 @@ ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list && \
     apt-get update && apt-get install -y build-essential unzip && \
     # https://stackoverflow.com/a/46498173
-    conda update -y conda && conda update -y python && \
+    conda update -y conda && \
+    # Tensorflow doesn't support python 3.7 yet. See https://github.com/tensorflow/tensorflow/issues/20517
+    # Fix to install tf :: Downgrade python 3.7->3.6.6 and downgrade Pandas 0.23.3->0.23.2
+    conda install -y python=3.6.6 && \
+    pip install pandas==0.23.2 && \
+    # Another fix for TF https://github.com/tensorflow/tensorflow/issues/21518
+    pip install keras_applications==1.0.4 --no-deps && \
+    pip install keras_preprocessing==1.0.2 --no-deps && \
     pip install --upgrade pip && \
     apt-get -y install cmake
 
@@ -36,14 +43,6 @@ RUN pip install seaborn python-dateutil dask pytagcloud pyyaml joblib \
     make -j $(nproc) && make install && \
     # clean up ImageMagick source files
     cd ../ && rm -rf ImageMagick*
-
-# Tensorflow doesn't support python 3.7 yet. See https://github.com/tensorflow/tensorflow/issues/20517
-# Fix to install tf 1.10:: Downgrade python 3.7->3.6.6 and downgrade Pandas 0.23.3->0.23.2
-RUN conda install -y python=3.6.6 && \
-    pip install pandas==0.23.2 && \
-    # Another fix for TF 1.10 https://github.com/tensorflow/tensorflow/issues/21518
-    pip install keras_applications==1.0.4 --no-deps && \
-    pip install keras_preprocessing==1.0.2 --no-deps
 
 # Install tensorflow from a pre-built wheel
 COPY --from=tensorflow_whl /tmp/tensorflow_cpu/*.whl /tmp/tensorflow_cpu/
