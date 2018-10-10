@@ -134,11 +134,8 @@ RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
     # Install basemap
     cd .. && python setup.py install && \
     pip install basemap --no-binary basemap
-
-RUN cd /usr/local/src && git clone https://github.com/vitruvianscience/opendeep.git && \
-    cd opendeep && python setup.py develop  && \
-    # sasl is apparently an ibis dependency
-    apt-get -y install libsasl2-dev && \
+# sasl is apparently an ibis dependency
+RUN apt-get -y install libsasl2-dev && \
     # ...as is psycopg2
     apt-get install -y libpq-dev && \
     pip install ibis-framework && \
