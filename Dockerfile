@@ -125,7 +125,7 @@ RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
     pip install pyproj && \
     cd /usr/local/src && git clone https://github.com/matplotlib/basemap.git && \
     cd basemap && \
-    git checkout v1.1.0 && \
+    git checkout v1.2.0rel && \
     # Install geos
     cd geos-3.3.3 && \
     export GEOS_DIR=/usr/local && \
