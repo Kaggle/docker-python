@@ -12,5 +12,5 @@ class TestFbProphet(unittest.TestCase):
             'y': np.array([38.23, 21.25])
         })
 
-        forecaster = Prophet()
+        forecaster = Prophet(mcmc_samples=1)
         forecaster.fit(train)
