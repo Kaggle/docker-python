@@ -274,7 +274,6 @@ RUN pip install fancyimpute && \
     pip install descartes && \
     pip install geojson && \
     pip install pysal && \
-    #conda install -y gdal && \
     pip install pyflux && \
     pip install terminalplot && \
     pip install raccoon && \
@@ -292,11 +291,8 @@ RUN pip install fancyimpute && \
     pip install sklearn-pandas && \
     pip install stemming && \
     pip install fbprophet && \
-    conda install -y -c conda-forge -c ioam holoviews geoviews && \
-    #Temp fix: After installing holoviews and geoviews, deps for fiona and geopandas get really messed up. This is a very unelegant fix.
-    conda uninstall -y fiona geopandas && \
-    pip uninstall -y fiona geopandas && \
-    apt-get install -y libgdal1-dev && GDAL_CONFIG=/usr/bin/gdal-config pip install fiona && pip install geopandas && \
+    pip install holoviews && \
+    pip install geoviews && \
     pip install hypertools && \
     # Nxviz has been causing an installation issue by trying unsuccessfully to remove setuptools.
     #pip install nxviz && \
