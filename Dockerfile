@@ -291,7 +291,7 @@ RUN pip install fancyimpute && \
     pip install pyexcel-ods && \
     pip install sklearn-pandas && \
     pip install stemming && \
-    conda install -y -c conda-forge fbprophet && \
+    pip install fbprophet && \
     conda install -y -c conda-forge -c ioam holoviews geoviews && \
     #Temp fix: After installing holoviews and geoviews, deps for fiona and geopandas get really messed up. This is a very unelegant fix.
     conda uninstall -y fiona geopandas && \
