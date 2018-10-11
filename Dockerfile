@@ -190,7 +190,7 @@ RUN pip install scipy && \
     pip install orderedmultidict && \
     pip install smhasher && \
     conda install -y -c bokeh bokeh && \
-    conda install -y -c bokeh datashader && \
+    pip install datashader && \
     # Boruta (python implementation)
     cd /usr/local/src && git clone https://github.com/danielhomola/boruta_py.git && \
     cd boruta_py && python setup.py install && \
