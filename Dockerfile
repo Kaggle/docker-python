@@ -429,8 +429,7 @@ RUN pip install bcolz && \
     # https://github.com/pandas-dev/pandas/issues/23053
     pip install pyarrow==0.10.0 && \
     pip install feather-format && \
-    cd /usr/local/src && git clone --depth=1 https://github.com/fastai/fastai && \
-    cd fastai && python setup.py install && \
+    pip install fastai=0.7.0 && \
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
     cd && rm -rf /usr/local/src/*
