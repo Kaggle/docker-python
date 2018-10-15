@@ -4,8 +4,7 @@ import fastai
 import pandas as pd
 import torch
 
-from fastai.docs import *
-from fastai.tabular import *
+from fastai.tabular import tabular_data_from_df, get_tabular_learner
 from fastai.core import partition
 from fastai.torch_core import tensor
 
