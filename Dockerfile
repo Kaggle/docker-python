@@ -429,7 +429,9 @@ RUN pip install bcolz && \
     # https://github.com/pandas-dev/pandas/issues/23053
     pip install pyarrow==0.10.0 && \
     pip install feather-format && \
-    pip install fastai==0.7.0 && \
+    # This version is not available in pypi
+    # Also, installing from source to prevent static TLS (thread local storage) issue
+    pip install git+git://github.com/fastai/fastai.git@v0.7.2 && \
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
     cd && rm -rf /usr/local/src/*
