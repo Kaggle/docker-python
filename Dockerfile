@@ -432,6 +432,7 @@ RUN pip install bcolz && \
     # Don't install dependencies for fastai because it requires pytorch<0.4.
     # which downgrades pytorch. fastai does work with pytorch 0.4.
     pip install fastai==0.7.0 --no-deps && \
+    pip install torchtext && \
     # clean up pip cache
     rm -rf /root/.cache/pip/* && \
     cd && rm -rf /usr/local/src/*
