@@ -43,7 +43,9 @@ RUN pip uninstall -y tensorflow && \
     pip install /tmp/tensorflow_gpu/tensorflow*.whl && \
     rm -rf /tmp/tensorflow_gpu && \
     conda uninstall -y pytorch-cpu torchvision-cpu && \
-    conda install -y pytorch torchvision -c pytorch
+    conda install -y pytorch torchvision -c pytorch && \
+    pip uninstall lightgbm && \
+    pip install lightgbm --install-option=--gpu
 
 # Install GPU-only packages
 RUN pip install pycuda
