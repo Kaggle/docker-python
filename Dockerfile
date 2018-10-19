@@ -311,7 +311,9 @@ RUN pip install fancyimpute && \
     pip install folium && \
     pip install scikit-plot && \
     pip install dipy && \
-    pip install plotnine && \
+    # plotnine 0.5 is depending on matplotlib >= 3.0 which is not compatible with basemap.
+    # once basemap support matplotlib, we can unpin this package.
+    pip install plotnine==0.4.0 && \
     pip install git+https://github.com/dvaida/hallucinate.git && \
     pip install scikit-surprise && \
     pip install pymongo && \
