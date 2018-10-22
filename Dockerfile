@@ -426,6 +426,7 @@ RUN pip install bcolz && \
     pip install traitlets && \
     pip install wcwidth && \
     pip install webencodings && \
+    pip install captcha && \
     pip install widgetsnbextension && \
     # Latest version of pyarrow conflicts with pandas
     # https://github.com/pandas-dev/pandas/issues/23053
