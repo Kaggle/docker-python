@@ -1,14 +1,53 @@
 #!/bin/bash
 set -e
-set +x
 
+usage() {
+cat << EOF
+Usage: $0 [OPTIONS]
+Run tests for a newly-built Python Docker image.
+By default, it runs the tests for the CPU image.
+
+Options:
+    -g, --gpu   Run tests for the GPU image.
+EOF
+}
+
+IMAGE_TAG="kaggle/python-build"
+ADDITONAL_OPTS=""
+
+while :; do
+    case "$1" in 
+        -h|--help)
+            usage
+            exit
+            ;;
+        -g|--gpu)
+            IMAGE_TAG="kaggle/python-gpu-build"
+            ADDITONAL_OPTS="-v /tmp/empty_dir:/usr/local/cuda/lib64/stubs:ro"
+            ;;
+        -?*)
+            usage
+            printf 'ERROR: Unknown option: %s\n' "$1" >&2
+            exit
+            ;;
+        *)            
+            break
+    esac
+
+    shift
+done
+
+readonly IMAGE_TAG
+readonly ADDITONAL_OPTS
+
+set -x
 rm -rf /tmp/python-build
 docker rm jupyter_test || true
 mkdir -p /tmp/python-build/tmp
 mkdir -p /tmp/python-build/devshm
 mkdir -p /tmp/python-build/working
 # Check that Jupyter server can run; if it dies on startup, the `docker kill` command will throw an error
-docker run -d --name=jupyter_test --read-only --net=none -e HOME=/tmp -v $PWD:/input:ro -v /tmp/python-build/working:/working -w=/working -v /tmp/python-build/tmp:/tmp -v /tmp/python-build/devshm:/dev/shm kaggle/python-build jupyter notebook --allow-root --ip="*"
+docker run -d --name=jupyter_test --read-only --net=none -e HOME=/tmp -v $PWD:/input:ro -v /tmp/python-build/working:/working -w=/working -v /tmp/python-build/tmp:/tmp -v /tmp/python-build/devshm:/dev/shm "$IMAGE_TAG" jupyter notebook --allow-root --ip="*"
 sleep 3
 docker kill jupyter_test && docker rm jupyter_test
 docker run --rm -t --read-only --net=none \
@@ -18,5 +57,6 @@ docker run --rm -t --read-only --net=none \
     -v $PWD:/input:ro -v /tmp/python-build/working:/working \
     -v /tmp/python-build/tmp:/tmp -v /tmp/python-build/devshm:/dev/shm \
     -w=/working \
-    kaggle/python-build \
+    $ADDITONAL_OPTS \
+    "$IMAGE_TAG" \
     /bin/bash -c 'python -m unittest discover -s /input/tests'

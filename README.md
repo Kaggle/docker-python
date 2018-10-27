@@ -2,7 +2,7 @@
 
 ![example script](http://i.imgur.com/yrWycNA.png)
 
-This is the Dockerfile (etc.) used for building the image that runs python scripts on Kaggle. [Here's](https://registry.hub.docker.com/u/kaggle/python/) the Docker image on Dockerhub.
+This is the Dockerfile (etc.) used for building the image that runs python scripts on Kaggle. [Here's](https://https://gcr.io/kaggle-images/python) the Docker image on Google Container Registry.
 
 ## Getting started
 
@@ -17,7 +17,7 @@ We can merge your request quickly if you check that it builds correctly. Here's 
 Start by running this image on your system:
 
 ```
-me@my-computer:/home$ docker run --rm -it kaggle/python
+me@my-computer:/home$ docker run --rm -it gcr.io/kaggle-images/python
 root@d72b81a003e1:/# 
 ```
 
