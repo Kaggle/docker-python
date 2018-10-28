@@ -210,11 +210,19 @@ RUN pip install scipy && \
     conda clean -i -l -t -y && \
     rm -rf /usr/local/src/*
 
+
+# vtk with dependencies
+RUN apt-get install -y libgl1-mesa-glx && \
+    pip install vtk && \
+    # ~~~~ CLEAN UP ~~~~
+    rm -rf /root/.cache/pip/* && \
+    apt-get autoremove -y && apt-get clean
+
+
 RUN pip install --upgrade mpld3 && \
     pip install mplleaflet && \
     pip install gpxpy && \
     pip install arrow && \
-    pip install vtk && \
     pip install nilearn && \
     pip install nibabel && \
     pip install pronouncing && \
