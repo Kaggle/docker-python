@@ -210,14 +210,15 @@ RUN pip install scipy && \
     conda clean -i -l -t -y && \
     rm -rf /usr/local/src/*
 
-
 # vtk with dependencies
 RUN apt-get install -y libgl1-mesa-glx && \
     pip install vtk && \
+    # xvfbwrapper with dependencies
+    apt-get install -y xvfb && \
+    pip install xvfbwrapper && \
     # ~~~~ CLEAN UP ~~~~
     rm -rf /root/.cache/pip/* && \
     apt-get autoremove -y && apt-get clean
-
 
 RUN pip install --upgrade mpld3 && \
     pip install mplleaflet && \
@@ -349,7 +350,7 @@ RUN pip install --upgrade cython && \
     pip install --upgrade cysignals && \
     pip install pyfasttext && \
     pip install ktext && \
-    cd /usr/local/src && git clone --depth=1 https://github.com/facebookresearch/fastText.git && cd fastText && pip install . && \
+    pip install git+git://github.com/facebookresearch/fastText.git && \
     apt-get install -y libhunspell-dev && pip install hunspell && \
     pip install annoy && \
     pip install category_encoders && \
