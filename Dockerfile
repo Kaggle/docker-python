@@ -210,6 +210,15 @@ RUN pip install scipy && \
     conda clean -i -l -t -y && \
     rm -rf /usr/local/src/*
 
+
+# xvfbwrapper with dependencies
+RUN apt-get install -y xvfb && \
+    pip install xvfbwrapper && \
+    # ~~~~ CLEAN UP ~~~~
+    rm -rf /root/.cache/pip/* && \
+    apt-get autoremove -y && apt-get clean
+
+
 RUN pip install --upgrade mpld3 && \
     pip install mplleaflet && \
     pip install gpxpy && \
