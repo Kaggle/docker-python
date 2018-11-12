@@ -25,7 +25,7 @@ RUN conda install -y python=3.6.6 && \
     pip install keras_applications==1.0.4 --no-deps && \
     pip install keras_preprocessing==1.0.2 --no-deps
 
-# The anaconda base images includes outdated versions of these packages. Update them to include the latest version.
+# The anaconda base image includes outdated versions of these packages. Update them to include the latest version.
 RUN pip install --upgrade seaborn python-dateutil dask && \
     pip install pyyaml joblib pytagcloud husl geopy ml_metrics mne pyshp && \
     conda install -y -c conda-forge spacy && python -m spacy download en && \
