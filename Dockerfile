@@ -142,12 +142,11 @@ RUN apt-get -y install libsasl2-dev && \
     pip install cartopy && \
     # MXNet
     pip install mxnet && \
-    # h2o
-    # Temporary sync of conda's numpy with pip's, needed to avoid an install error
-    #conda upgrade -y numpy && \
+    # h2o (requires java)
     # Upgrade numpy with pip to avoid install errors
     pip install --upgrade numpy && \
-    # This requires python-software-properties and Java, which were installed above.
+    # requires java
+    apt-get install -y default-jdk && \
     cd /usr/local/src && mkdir h2o && cd h2o && \
     wget http://h2o-release.s3.amazonaws.com/h2o/latest_stable -O latest && \
     wget --no-check-certificate -i latest -O h2o.zip && rm latest && \
