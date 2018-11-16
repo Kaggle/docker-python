@@ -2,7 +2,7 @@
 
 ![example script](http://i.imgur.com/yrWycNA.png)
 
-This is the Dockerfile (etc.) used for building the image that runs python scripts on Kaggle. [Here's](https://https://gcr.io/kaggle-images/python) the Docker image on Google Container Registry.
+This is the Dockerfile (etc.) used for building the image that runs python scripts on Kaggle. [Here's](https://gcr.io/kaggle-images/python) the Docker image on Google Container Registry.
 
 ## Getting started
 
