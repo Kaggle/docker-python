@@ -310,6 +310,7 @@ RUN pip install fancyimpute && \
     #cd /usr/local/src && git clone --depth=1 https://github.com/AxeldeRomblay/MLBox && cd MLBox/python-package && python setup.py install && \
     pip install fastFM && \
     pip install lightfm && \
+    pip install git+https://github.com/dmitryhd/lightfm.git
     pip install paramnb && \
     pip install folium && \
     pip install scikit-plot && \
