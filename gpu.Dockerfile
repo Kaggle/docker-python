@@ -44,6 +44,9 @@ RUN pip uninstall -y tensorflow && \
     rm -rf /tmp/tensorflow_gpu && \
     conda uninstall -y pytorch-cpu torchvision-cpu && \
     conda install -y pytorch torchvision -c pytorch
+# Chainer
+RUN pip uninstall -y chainer && \
+    pip install cupy-cuda91 chainer
 
 # Install GPU-only packages
 RUN pip install pycuda
