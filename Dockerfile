@@ -170,6 +170,7 @@ RUN pip install scipy && \
     # HDF5 support
     conda install h5py && \
     pip install biopython && \
+    pip install mahotas && \
     # PUDB, for local debugging convenience
     pip install pudb && \
     # Imbalanced-learn
