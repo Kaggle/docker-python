@@ -364,6 +364,7 @@ RUN pip install --upgrade cython && \
     pip install pyahocorasick && \
     pip install wordbatch && \
     pip install emoji && \
+    pip install mahotas && \
     # Add Japanese morphological analysis engine
     pip install janome && \
     pip install wfdb && \
