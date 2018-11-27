@@ -8,7 +8,7 @@ COPY --from=nvidia /etc/apt/sources.list.d/nvidia-ml.list /etc/apt/sources.list.
 COPY --from=nvidia /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d/cuda.gpg
 
 # Ensure the cuda libraries are compatible with the custom Tensorflow wheels.
-# TODO(b/120050292): Use templating to keep in sync.
+# TODO(b/120050292): Use templating to keep in sync or COPY installed binaries from it.
 ENV CUDA_VERSION=9.1.85
 ENV CUDA_PKG_VERSION=9-1=$CUDA_VERSION-1
 LABEL com.nvidia.volumes.needed="nvidia_driver"
