@@ -18,5 +18,5 @@
 Update the line below in the [CPU Dockerfile](../Dockerfile) and the [GPU Dockerfile](../gpu.Dockerfile) to use the new `LABEL`.
 
 ```
-FROM gcr.io/kaggle-images/python-tensorflow-whl:<NEW-LABEL> as tensorflow_whl
+FROM gcr.io/kaggle-images/python-tensorflow-whl:<LABEL> as tensorflow_whl
 ```
