@@ -1,11 +1,42 @@
 #!/bin/bash
 set -e
-set -x
 
-# Default behavior is to do everything from scratch.
-# The --use-cache option is useful if you're iterating on a broken build.
-if [[ "$1" ==  "--use-cache" ]]; then
-    docker build --rm -t kaggle/python-tensorflow-whl .
-else
-    docker build --pull --rm --no-cache -t kaggle/python-tensorflow-whl .
-fi
+usage() {
+cat << EOF
+Usage: $0 [OPTIONS]
+Build new Tensorflow wheels for use in the Kaggle Docker Python base images.
+
+Options:
+    -c, --use-cache Use layer cache when building a new image.
+EOF
+}
+
+CACHE_FLAG="--no-cache"
+IMAGE_TAG="kaggle/python-build"
+
+while :; do
+    case "$1" in 
+        -h|--help)
+            usage
+            exit
+            ;;
+        -c|--use-cache)
+            CACHE_FLAG=""
+            ;;
+        -?*)
+            usage
+            printf 'ERROR: Unknown option: %s\n' "$1" >&2
+            exit
+            ;;
+        *)            
+            break
+    esac
+
+    shift
+done
+
+readonly CACHE_FLAG
+readonly IMAGE_TAG
+
+set -x
+docker build --rm --pull $CACHE_FLAG -t "$IMAGE_TAG" .

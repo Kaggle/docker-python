@@ -1,18 +1,36 @@
 #!/bin/bash
-#
-# Push a newly-built image with the given label to gcr.io and DockerHub.
-#
-# Usage:
-#   ./push LABEL
-#
-# Description:
-#   LABEL: Image label. See CHANGELOG.md
-#
 set -e
+
+usage() {
+cat << EOF
+Usage: $0 [LABEL]
+Push a newly-built image with the given LABEL to gcr.io and DockerHub.
+See CHANGELOG.md file for LABEL naming convention.
+EOF
+}
+
 set -x
 
 SOURCE_IMAGE="kaggle/python-tensorflow-whl"
 TARGET_IMAGE="gcr.io/kaggle-images/python-tensorflow-whl"
+
+while :; do
+    case "$1" in 
+        -h|--help)
+            usage
+            exit
+            ;;
+        -?*)
+            usage
+            printf 'ERROR: Unknown option: %s\n' "$1" >&2
+            exit
+            ;;
+        *)            
+            break
+    esac
+
+    shift
+done
 
 LABEL=$1
 
@@ -21,5 +39,10 @@ if [[ -z "$LABEL" ]]; then
     exit 1
 fi
 
-docker tag $SOURCE_IMAGE:latest $TARGET_IMAGE:$LABEL
-gcloud docker -- push $TARGET_IMAGE:$LABEL
+readonly SOURCE_IMAGE
+readonly TARGET_IMAGE
+readonly LABEL
+
+set -x
+docker tag "$SOURCE_IMAGE:latest" "$TARGET_IMAGE:$LABEL"
+gcloud docker -- push "$TARGET_IMAGE:$LABEL"
