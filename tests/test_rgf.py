@@ -3,7 +3,6 @@ import unittest
 from sklearn import datasets
 from rgf.sklearn import RGFClassifier
 
-
 class TestRGF(unittest.TestCase):
     def test_classifier(self):
         iris = datasets.load_iris()
@@ -15,5 +14,4 @@ class TestRGF(unittest.TestCase):
             n_iter=1)
 
         rgf.fit(X,y)
-
         
