@@ -73,7 +73,7 @@ RUN apt-get install -y libfreetype6-dev && \
     #neon
     cd /usr/local/src && \
     git clone --depth 1 https://github.com/NervanaSystems/neon.git && \
-    cd neon && pip install -e . && \
+    cd neon && pip install . && \
     #nolearn
     cd /usr/local/src && mkdir nolearn && cd nolearn && \
     git clone --depth 1 https://github.com/dnouri/nolearn.git && cd nolearn && \
@@ -304,7 +304,7 @@ RUN pip install fancyimpute && \
     pip install nibabel && \
     pip install mlens && \
     pip install scikit-multilearn && \
-    pip install -e git+http://github.com/tensorflow/cleverhans.git#egg=cleverhans && \
+    pip install git+http://github.com/tensorflow/cleverhans.git#egg=cleverhans && \
     pip install leven && \
     pip install catboost && \
     #cd /usr/local/src && git clone --depth=1 https://github.com/AxeldeRomblay/MLBox && cd MLBox/python-package && python setup.py install && \
@@ -457,7 +457,7 @@ RUN pip install flashtext && \
     pip install pympler && \
     pip install s3fs && \
     pip install featuretools && \
-    pip install -e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper && \
+    pip install git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper && \
     pip install hpsklearn && \
     pip install keras-tqdm && \
     pip install git+https://github.com/Kaggle/learntools && \
@@ -481,7 +481,11 @@ RUN pip install flashtext && \
     rm -rf /root/.cache/pip/*
 
 # Pin Vowpal Wabbit v8.6.0 because 8.6.1 does not build or install successfully
-RUN cd /usr/local/src && git clone -b 8.6.0 https://github.com/JohnLangford/vowpal_wabbit.git && ./vowpal_wabbit/python/conda_install.sh
+RUN cd /usr/local/src && \
+    git clone -b 8.6.0 https://github.com/JohnLangford/vowpal_wabbit.git && \
+    ./vowpal_wabbit/python/conda_install.sh && \
+    # Reinstall in non-editable mode (without the -e flag)
+    pip install vowpal_wabbit/python
 
 # For Facets
 ENV PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/
