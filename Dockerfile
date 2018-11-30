@@ -304,7 +304,7 @@ RUN pip install fancyimpute && \
     pip install nibabel && \
     pip install mlens && \
     pip install scikit-multilearn && \
-    pip install git+http://github.com/tensorflow/cleverhans.git#egg=cleverhans && \
+    pip install cleverhans && \
     pip install leven && \
     pip install catboost && \
     #cd /usr/local/src && git clone --depth=1 https://github.com/AxeldeRomblay/MLBox && cd MLBox/python-package && python setup.py install && \
@@ -457,7 +457,7 @@ RUN pip install flashtext && \
     pip install pympler && \
     pip install s3fs && \
     pip install featuretools && \
-    pip install git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper && \
+    pip install -e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper && \
     pip install hpsklearn && \
     pip install keras-tqdm && \
     pip install git+https://github.com/Kaggle/learntools && \
