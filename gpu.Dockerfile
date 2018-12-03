@@ -2,6 +2,8 @@ FROM nvidia/cuda:9.1-cudnn7-devel-ubuntu16.04 AS nvidia
 FROM gcr.io/kaggle-images/python-tensorflow-whl:1.11.0-py36 as tensorflow_whl
 FROM gcr.io/kaggle-images/python:staging
 
+ADD clean-layer.sh  /tmp/clean-layer.sh
+
 # Cuda support
 COPY --from=nvidia /etc/apt/sources.list.d/cuda.list /etc/apt/sources.list.d/
 COPY --from=nvidia /etc/apt/sources.list.d/nvidia-ml.list /etc/apt/sources.list.d/
@@ -36,7 +38,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       libnccl2=2.2.12-1+cuda9.1 \
       libnccl-dev=2.2.12-1+cuda9.1 && \
     ln -s /usr/local/cuda-9.1 /usr/local/cuda && \
-    ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1
+    ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1 && \
+    /tmp/clean-layer.sh
 
 # Reinstall packages with a separate version for GPU support
 # Tensorflow
@@ -45,7 +48,9 @@ RUN pip uninstall -y tensorflow && \
     pip install /tmp/tensorflow_gpu/tensorflow*.whl && \
     rm -rf /tmp/tensorflow_gpu && \
     conda uninstall -y pytorch-cpu torchvision-cpu && \
-    conda install -y pytorch torchvision -c pytorch
+    conda install -y pytorch torchvision -c pytorch && \
+    /tmp/clean-layer.sh
 
 # Install GPU-only packages
-RUN pip install pycuda
+RUN pip install pycuda && \
+    /tmp/clean-layer.sh
