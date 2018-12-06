@@ -17,8 +17,8 @@ pipeline {
     SLACK_CHANNEL = sh(returnStdout: true, script: "if [[ \"${GIT_BRANCH}\" == \"master\" ]]; then echo \"#kernelops\"; else echo \"#builds\"; fi").trim()
   }
 
-  // TODO: Move at the end
   stages {
+    // TODO: Move at the end
     stage('Package Versions Diff') {
       parallel {
         stage('CPU') {
@@ -33,10 +33,6 @@ pipeline {
         // TODO: Add GPU stage
       }      
     }
-
-  }
-
-  stages {
     stage('Docker CPU Build') {
       steps {
         slackSend color: 'none', message: "*<${env.BUILD_URL}console|${JOB_NAME} docker build>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
