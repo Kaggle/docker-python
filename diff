@@ -4,7 +4,7 @@ set -e
 usage() {
 cat << EOF
 Usage: $0 [OPTIONS]
-Compare the package versions of the newly built Docker with the one in prod.
+Compare the locally built Docker image package versions against the prod image.
 
 Options:
     -g, --gpu       Compare GPU images.
