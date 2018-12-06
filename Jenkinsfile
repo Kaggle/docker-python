@@ -107,7 +107,7 @@ pipeline {
             ./diff || true
           '''
           }
-        },
+        }
         stage('GPU') {
           steps {
             sh '''#!/bin/bash
