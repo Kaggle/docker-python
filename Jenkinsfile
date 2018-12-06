@@ -18,21 +18,6 @@ pipeline {
   }
 
   stages {
-    // TODO: Move at the end
-    stage('Package Versions Diff') {
-      parallel {
-        stage('CPU') {
-          steps {
-            sh '''#!/bin/bash
-            set -exo pipefail
-
-            ./diff
-          '''
-          }
-        }
-        // TODO: Add GPU stage
-      }      
-    }
     stage('Docker CPU Build') {
       steps {
         slackSend color: 'none', message: "*<${env.BUILD_URL}console|${JOB_NAME} docker build>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
@@ -109,6 +94,29 @@ pipeline {
           date
           ./push --gpu staging
         '''
+      }
+    }
+
+    stage('Package Versions Diff') {
+      parallel {
+        stage('CPU') {
+          steps {
+            sh '''#!/bin/bash
+            set -exo pipefail
+
+            ./diff || true
+          '''
+          }
+        },
+        stage('GPU') {
+          steps {
+            sh '''#!/bin/bash
+            set -exo pipefail
+
+            ./diff --gpu || true
+          '''
+          }
+        }
       }
     }
   }
