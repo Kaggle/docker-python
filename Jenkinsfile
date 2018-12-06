@@ -17,6 +17,25 @@ pipeline {
     SLACK_CHANNEL = sh(returnStdout: true, script: "if [[ \"${GIT_BRANCH}\" == \"master\" ]]; then echo \"#kernelops\"; else echo \"#builds\"; fi").trim()
   }
 
+  // TODO: Move at the end
+  stages {
+    stage('Package Versions Diff') {
+      parallel {
+        stage('CPU') {
+          steps {
+            sh '''#!/bin/bash
+            set -exo pipefail
+
+            ./diff
+          '''
+          }
+        }
+        // TODO: Add GPU stage
+      }      
+    }
+
+  }
+
   stages {
     stage('Docker CPU Build') {
       steps {
