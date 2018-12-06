@@ -97,9 +97,10 @@ pipeline {
       }
     }
 
-    stage('Package Versions Diff') {
+    stage('Package Versions') {
       parallel {
-        stage('CPU') {
+        slackSend color: 'none', message: "*<${env.BUILD_URL}console|${JOB_NAME} diff CPU image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
+        stage('CPU Diff') {
           steps {
             sh '''#!/bin/bash
             set -exo pipefail
@@ -108,7 +109,9 @@ pipeline {
           '''
           }
         }
-        stage('GPU') {
+        stage('GPU Diff') {
+          slackSend color: 'none', message: "*<${env.BUILD_URL}console|${JOB_NAME} diff GPU image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
+          agent { label 'ephemeral-linux-gpu' }
           steps {
             sh '''#!/bin/bash
             set -exo pipefail
