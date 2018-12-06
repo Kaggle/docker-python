@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 usage() {
 cat << EOF
 Usage: $0 [OPTIONS]
@@ -46,7 +48,8 @@ docker pull "$BASE_IMAGE_TAG"
 CMDS=('dpkg-query --show -f "${Package}==${Version}\n"' 'pip freeze')
 for cmd in "${CMDS[@]}"; do
     echo "== Comparing $cmd =="
-    diff --report-identical-files --suppress-common-lines --side-by-side \
+    diff --suppress-common-lines --side-by-side \
         <(docker run --rm "$BASE_IMAGE_TAG" $cmd) \
-        <(docker run --rm "$TARGET_IMAGE_TAG" $cmd)
+        <(docker run --rm "$TARGET_IMAGE_TAG" $cmd) \
+        && echo "No diff" || true
 done
