@@ -12,9 +12,9 @@ Options:
 EOF
 }
 
-CACHE_FLAG="--no-cache"
-DOCKERFILE="Dockerfile"
-IMAGE_TAG="kaggle/python-build"
+CACHE_FLAG='--no-cache'
+DOCKERFILE='Dockerfile'
+IMAGE_TAG='kaggle/python-build'
 
 while :; do
     case "$1" in 
@@ -23,11 +23,11 @@ while :; do
             exit
             ;;
         -g|--gpu)
-            IMAGE_TAG="kaggle/python-gpu-build"
-            DOCKERFILE="gpu.Dockerfile"
+            IMAGE_TAG='kaggle/python-gpu-build'
+            DOCKERFILE='gpu.Dockerfile'
             ;;
         -c|--use-cache)
-            CACHE_FLAG=""
+            CACHE_FLAG=''
             ;;
         -?*)
             usage

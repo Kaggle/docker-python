@@ -12,8 +12,8 @@ Options:
 EOF
 }
 
-IMAGE_TAG="kaggle/python-build"
-ADDITONAL_OPTS=""
+IMAGE_TAG='kaggle/python-build'
+ADDITONAL_OPTS=''
 
 while :; do
     case "$1" in 
@@ -22,8 +22,8 @@ while :; do
             exit
             ;;
         -g|--gpu)
-            IMAGE_TAG="kaggle/python-gpu-build"
-            ADDITONAL_OPTS="-v /tmp/empty_dir:/usr/local/cuda/lib64/stubs:ro"
+            IMAGE_TAG='kaggle/python-gpu-build'
+            ADDITONAL_OPTS='-v /tmp/empty_dir:/usr/local/cuda/lib64/stubs:ro'
             ;;
         -?*)
             usage
