@@ -11,8 +11,8 @@ Options:
 EOF
 }
 
-SOURCE_IMAGE="kaggle/python-build"
-TARGET_IMAGE="gcr.io/kaggle-images/python"
+SOURCE_IMAGE='kaggle/python-build'
+TARGET_IMAGE='gcr.io/kaggle-images/python'
 
 while :; do
     case "$1" in 
@@ -21,8 +21,8 @@ while :; do
             exit
             ;;
         -g|--gpu)
-            SOURCE_IMAGE="kaggle/python-gpu-build"
-            TARGET_IMAGE="gcr.io/kaggle-private-byod/python"
+            SOURCE_IMAGE='kaggle/python-gpu-build'
+            TARGET_IMAGE='gcr.io/kaggle-private-byod/python'
             ;;
         -?*)
             usage

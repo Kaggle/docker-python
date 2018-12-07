@@ -12,8 +12,8 @@ EOF
 }
 
 
-BASE_IMAGE_TAG="gcr.io/kaggle-images/python:latest"
-TARGET_IMAGE_TAG="kaggle/python-build"
+BASE_IMAGE_TAG='gcr.io/kaggle-images/python:latest'
+TARGET_IMAGE_TAG='kaggle/python-build'
 
 while :; do
     case "$1" in 
@@ -22,8 +22,8 @@ while :; do
             exit
             ;;
         -g|--gpu)
-            BASE_IMAGE_TAG="gcr.io/kaggle-private-byod/python:latest"
-            TARGET_IMAGE_TAG="kaggle/python-gpu-build"
+            BASE_IMAGE_TAG='gcr.io/kaggle-private-byod/python:latest'
+            TARGET_IMAGE_TAG='kaggle/python-gpu-build'
             ;;
         -?*)
             usage
@@ -51,5 +51,5 @@ for cmd in "${CMDS[@]}"; do
     diff --suppress-common-lines --side-by-side \
         <(docker run --rm "$BASE_IMAGE_TAG" $cmd) \
         <(docker run --rm "$TARGET_IMAGE_TAG" $cmd) \
-        && echo "No diff" || true
+        && echo 'No diff' || true
 done
