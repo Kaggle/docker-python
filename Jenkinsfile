@@ -112,7 +112,7 @@ pipeline {
           steps {
             slackSend color: 'none', message: "*<${env.BUILD_URL}console|${JOB_NAME} diff GPU image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
             sh '''#!/bin/bash
-            ./diff
+            ./diff --gpu
           '''
           }
         }
