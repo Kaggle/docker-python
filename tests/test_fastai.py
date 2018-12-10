@@ -4,8 +4,9 @@ import fastai
 import pandas as pd
 import torch
 
+from fastai.tabular import *
 from fastai.core import partition
-from fastai.layer_optimizer import LayerOptimizer
+from fastai.torch_core import tensor
 
 class TestFastAI(unittest.TestCase):
     def test_partition(self):
@@ -13,31 +14,29 @@ class TestFastAI(unittest.TestCase):
 
         self.assertEqual(3, len(result))
 
-    # based on https://github.com/fastai/fastai/blob/0.7.0/tests/test_layer_optimizer.py
-    def test_layer_optimizer(self):
-        lo = LayerOptimizer(FakeOpt, fastai_params_('A', 'B', 'C'), 1e-2, 1e-4)
-        fast_check_optimizer_(lo.opt, [(nm, 1e-2, 1e-4) for nm in 'ABC'])
+    def test_has_version(self):
+        self.assertGreater(len(fastai.__version__), 1)
+    
+    # based on https://github.com/fastai/fastai/blob/master/tests/test_torch_core.py#L17
+    def test_torch_tensor(self):
+        a = tensor([1, 2, 3])
+        b = torch.tensor([1, 2, 3])
 
+        self.assertTrue(torch.all(a == b))
 
-class Par(object):
-    def __init__(self, x, grad=True):
-        self.x = x
-        self.requires_grad = grad
-    def parameters(self): return [self]
+    def test_tabular(self):
+        df = pd.read_csv("/input/tests/data/train.csv")
+        procs = [FillMissing, Categorify, Normalize]
 
+        valid_idx = range(len(df)-5, len(df))
+        dep_var = "label"
+        cont_names = []
+        for i in range(784):
+            cont_names.append("pixel" + str(i))
 
-class FakeOpt(object):
-    def __init__(self, params): self.param_groups = params
-
-
-def fastai_params_(*names): return [Par(nm) for nm in names]
-
-def fast_check_optimizer_(opt, expected):
-    actual = opt.param_groups
-    assert len(actual) == len(expected)
-    for (a, e) in zip(actual, expected): fastai_check_param_(a, *e)
-
-def fastai_check_param_(par, nm, lr, wd):
-    assert par['params'][0].x == nm
-    assert par['lr'] == lr
-    assert par['weight_decay'] == wd
+        data = (TabularList.from_df(df, path="", cont_names=cont_names, cat_names=[], procs=procs)
+            .split_by_idx(valid_idx)
+            .label_from_df(cols=dep_var)
+            .databunch())
+        learn = tabular_learner(data, layers=[200, 100])
+        learn.fit(epochs=1)
