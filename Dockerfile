@@ -431,9 +431,7 @@ RUN pip install bcolz && \
     # https://github.com/pandas-dev/pandas/issues/23053
     pip install pyarrow==0.10.0 && \
     pip install feather-format && \
-    # Don't install dependencies for fastai because it requires pytorch<0.4.
-    # which downgrades pytorch. fastai does work with pytorch 0.4.
-    pip install fastai==0.7.0 --no-deps && \
+    pip install fastai && \
     pip install torchtext && \
     /tmp/clean-layer.sh
 
