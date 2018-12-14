@@ -44,7 +44,7 @@ RUN pip install --upgrade seaborn python-dateutil dask && \
     libpaper-utils libpaper1 libpixman-1-0 libpng16-16 librsvg2-2 librsvg2-common libthai-data libthai0 libtiff5 libwmf0.2-7 \
     libxcb-render0 libxcb-shm0 netpbm poppler-data p7zip-full && \
     cd /usr/local/src && \
-    wget https://imagemagick.org/download/ImageMagick.tar.gz && \
+    wget --no-verbose https://imagemagick.org/download/ImageMagick.tar.gz && \
     tar xzf ImageMagick.tar.gz && cd `ls -d ImageMagick-*` && pwd && ls -al && ./configure && \
     make -j $(nproc) && make install && \
     /tmp/clean-layer.sh
@@ -148,8 +148,8 @@ RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
     # requires java
     apt-get install -y default-jdk && \
     cd /usr/local/src && mkdir h2o && cd h2o && \
-    wget http://h2o-release.s3.amazonaws.com/h2o/latest_stable -O latest && \
-    wget --no-check-certificate -i latest -O h2o.zip && rm latest && \
+    wget --no-verbose http://h2o-release.s3.amazonaws.com/h2o/latest_stable -O latest && \
+    wget --no-verbose --no-check-certificate -i latest -O h2o.zip && rm latest && \
     unzip h2o.zip && rm h2o.zip && cp h2o-*/h2o.jar . && \
     pip install `find . -name "*whl"` && \
     # Keras setup
