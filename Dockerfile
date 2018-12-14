@@ -309,7 +309,8 @@ RUN pip install fancyimpute && \
     pip install paramnb && \
     pip install folium && \
     pip install scikit-plot && \
-    pip install dipy && \
+    # 0.15.0 is still unstable.
+    pip install dipy==0.14.0 && \
     # plotnine 0.5 is depending on matplotlib >= 3.0 which is not compatible with basemap.
     # once basemap support matplotlib, we can unpin this package.
     pip install plotnine==0.4.0 && \
