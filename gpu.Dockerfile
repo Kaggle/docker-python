@@ -54,4 +54,6 @@ RUN pip uninstall -y tensorflow && \
 
 # Install GPU-only packages
 RUN pip install pycuda && \
+    pip install cupy-cuda91 && \
+    pip install pynvrtc && \
     /tmp/clean-layer.sh
