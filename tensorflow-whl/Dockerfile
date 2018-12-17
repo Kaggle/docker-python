@@ -47,6 +47,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     rm -rf /var/lib/apt/lists/*
 
 # Install bazel
+# Tensorflow 1.11 requires the Bazel 0.15: https://www.tensorflow.org/install/source
 ENV BAZEL_VERSION=0.15.0
 RUN apt-get update && apt-get install -y python-software-properties zip && \
     echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list && \
@@ -59,6 +60,7 @@ RUN apt-get update && apt-get install -y python-software-properties zip && \
     apt-get install -y --no-install-recommends \
       bash-completion \
       zlib1g-dev && \
+    # Install Bazel with apt-get once this issue is resolved: https://github.com/bazelbuild/continuous-integration/issues/128
     curl -LO "https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel_${BAZEL_VERSION}-linux-x86_64.deb" && \
     dpkg -i bazel_*.deb && \
     rm bazel_*.deb
