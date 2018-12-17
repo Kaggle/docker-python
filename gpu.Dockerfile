@@ -28,6 +28,7 @@ ENV NVIDIA_REQUIRE_CUDA="cuda>=9.2"
 RUN apt-get update && apt-get install -y --no-install-recommends \
       cuda-cupti-$CUDA_PKG_VERSION \
       cuda-cudart-$CUDA_PKG_VERSION \
+      cuda-cudart-dev-$CUDA_PKG_VERSION \
       cuda-libraries-$CUDA_PKG_VERSION \
       cuda-libraries-dev-$CUDA_PKG_VERSION \
       cuda-nvml-dev-$CUDA_PKG_VERSION \
