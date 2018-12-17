@@ -8,7 +8,9 @@ Run tests for a newly-built Python Docker image.
 By default, it runs the tests for the CPU image.
 
 Options:
-    -g, --gpu   Run tests for the GPU image.
+    -g, --gpu         Run tests for the GPU image.
+    -i, --image IMAGE Run tests against the specified image
+
 EOF
 }
 
@@ -25,6 +27,15 @@ while :; do
             IMAGE_TAG='kaggle/python-gpu-build'
             ADDITONAL_OPTS='-v /tmp/empty_dir:/usr/local/cuda/lib64/stubs:ro'
             ;;
+        -i|--image)
+            if [[ -z $2 ]]; then
+                usage
+                printf 'ERROR: No IMAGE specified after the %s flag.\n' "$1" >&2
+                exit
+            fi
+            IMAGE_TAG_OVERRIDE=$2
+            shift # skip the flag value
+            ;;
         -?*)
             usage
             printf 'ERROR: Unknown option: %s\n' "$1" >&2
@@ -36,6 +47,10 @@ while :; do
 
     shift
 done
+
+if [[ -n "$IMAGE_TAG_OVERRIDE" ]]; then
+    IMAGE_TAG="$IMAGE_TAG_OVERRIDE"
+fi
 
 readonly IMAGE_TAG
 readonly ADDITONAL_OPTS
