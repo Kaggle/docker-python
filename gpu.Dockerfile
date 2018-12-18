@@ -24,7 +24,7 @@ ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
 ENV LD_LIBRARY_PATH="/usr/local/nvidia/lib64:/usr/local/cuda/lib64:/usr/local/cuda/lib64/stubs"
 ENV NVIDIA_VISIBLE_DEVICES=all
 ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
-ENV NVIDIA_REQUIRE_CUDA="cuda>=9.0"
+ENV NVIDIA_REQUIRE_CUDA="cuda>=9.2"
 RUN apt-get update && apt-get install -y --no-install-recommends \
       cuda-cupti-$CUDA_PKG_VERSION \
       cuda-cudart-$CUDA_PKG_VERSION \
