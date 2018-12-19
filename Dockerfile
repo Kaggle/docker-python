@@ -404,6 +404,7 @@ RUN pip install bcolz && \
     pip install numpy && \
     pip install olefile && \
     pip install opencv-python && \
+    pip install optuna && \
     pip install --upgrade pandas && \
     pip install pandas_summary && \
     pip install pandocfilters && \
