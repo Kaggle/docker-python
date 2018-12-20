@@ -1,4 +1,4 @@
-FROM gcr.io/kaggle-images/python-tensorflow-whl:1.11.0-py36 as tensorflow_whl
+FROM gcr.io/kaggle-images/python-tensorflow-whl:1.12.0-py36 as tensorflow_whl
 FROM continuumio/anaconda3:5.2.0
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
