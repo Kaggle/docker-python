@@ -289,7 +289,9 @@ RUN pip install fancyimpute && \
     pip install pyexcel-ods && \
     pip install sklearn-pandas && \
     pip install stemming && \
-    pip install fbprophet && \
+    # Latest version of fbprophet fails with incompatibility with PyStan:
+    # pystan:Something went wrong while unpickling the StanModel. Consider recompiling 
+    pip install fbprophet==0.3.post2 && \
     pip install holoviews && \
     pip install geoviews && \
     pip install hypertools && \
