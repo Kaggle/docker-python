@@ -29,6 +29,18 @@ pipeline {
       }
     }
 
+    stage('Push CPU Untested Image') {
+      steps {
+        slackSend color: 'none', message: "*<${env.BUILD_URL}console|${JOB_NAME} pushing untested image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
+        sh '''#!/bin/bash
+          set -exo pipefail
+
+          date
+          ./push ci-untested
+        '''
+      }
+    }
+
     stage('Test CPU Image') {
       steps {
         slackSend color: 'none', message: "*<${env.BUILD_URL}console|${JOB_NAME} test image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
@@ -67,6 +79,19 @@ pipeline {
           set -exo pipefail
           docker image prune -a -f # remove previously built image to prevent disk from filling up
           ./build --gpu | ts
+        '''
+      }
+    }
+
+    stage('Push GPU Untested Image') {
+      agent { label 'ephemeral-linux-gpu' }
+      steps {
+        slackSend color: 'none', message: "*<${env.BUILD_URL}console|${JOB_NAME} pushing untested image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
+        sh '''#!/bin/bash
+          set -exo pipefail
+
+          date
+          ./push --gpu ci-untested
         '''
       }
     }
