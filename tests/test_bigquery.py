@@ -11,19 +11,26 @@ PORT = 8000
 URL = "http://%s:%s" % (HOSTNAME, PORT)
 
 class TestBigQuery(unittest.TestCase):
-    def test_proxy(self):
-        httpd = HTTPServer((HOSTNAME, PORT), HTTPHandler)
-        threading.Thread(target=httpd.serve_forever).start()
+    def _test_proxy(self, client):
+        with HTTPServer((HOSTNAME, PORT), HTTPHandler) as httpd:
+            threading.Thread(target=httpd.serve_forever).start()
+
+            try:
+                for ds in client.list_datasets(): pass
+            except:
+                pass
+
+            httpd.shutdown()
+            self.assertTrue(HTTPHandler.called, msg="Fake server did not recieve a request from the BQ client.")
+            self.assertTrue(HTTPHandler.header_found, msg="X-KAGGLE-PROXY-DATA header was missing from the BQ request.")
+    
+    def test_proxy_kaggle_project(self):
+        client = bigquery.Client(project='KAGGLE')
+        self._test_proxy(client)
+
+    def test_proxy_no_project(self):
         client = bigquery.Client()
-
-        try:
-            for ds in client.list_datasets(): pass
-        except:
-            pass
-
-        httpd.shutdown()
-        self.assertTrue(HTTPHandler.called, msg="Fake server did not recieve a request from the BQ client.")
-        self.assertTrue(HTTPHandler.header_found, msg="X-KAGGLE-PROXY-DATA header was missing from the BQ request.")
+        self._test_proxy(client)
 
 class HTTPHandler(BaseHTTPRequestHandler):
     called = False
