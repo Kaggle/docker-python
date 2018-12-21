@@ -72,6 +72,8 @@ docker run --runtime nvidia --rm -it kaggle/python-gpu-build /bin/bash
 # TODO: Our GPU images are not yet publicly available.
 ```
 
+To ensure your container can access the GPU, follow the instructions posted [here](https://github.com/Kaggle/docker-python/issues/361#issuecomment-448093930).
+
 ## Tensorflow custom pre-built wheel
 
 A Tensorflow custom pre-built wheel is used mainly for:
