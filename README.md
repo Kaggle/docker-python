@@ -52,6 +52,26 @@ Flags:
 
 * `--gpu` to test the GPU image.
 
+## Running the image
+
+For the CPU-only image:
+
+```sh
+# Run the image built locally:
+docker run --rm -it kaggle/python-build /bin/bash
+# Run the pre-built image from gcr.io
+docker run --rm -it gcr.io/kaggle-images/python /bin/bash
+```
+
+For the GPU image:
+
+```sh
+# Run the image built locally:
+docker run --runtime nvidia --rm -it kaggle/python-gpu-build /bin/bash
+# Run the image pre-built image from gcr.io
+# TODO: Our GPU images are not yet publicly available.
+```
+
 ## Tensorflow custom pre-built wheel
 
 A Tensorflow custom pre-built wheel is used mainly for:
