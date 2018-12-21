@@ -21,7 +21,7 @@ class TestBigQuery(unittest.TestCase):
                 pass
 
             httpd.shutdown()
-            self.assertTrue(HTTPHandler.called, msg="Fake server did not recieve a request from the BQ client.")
+            self.assertTrue(HTTPHandler.called, msg="Fake server did not receive a request from the BQ client.")
             self.assertTrue(HTTPHandler.header_found, msg="X-KAGGLE-PROXY-DATA header was missing from the BQ request.")
     
     def test_proxy_kaggle_project(self):
