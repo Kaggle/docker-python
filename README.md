@@ -22,12 +22,12 @@ If you the first step above doesn't work for your use case, [open an issue](http
 ## Opening a pull request
 
 1. Update the *Dockerfile*
-  1. For changes specific to the GPU image, update the [gpu.Dockerfile](gpu.Dockerfile).
-  2. Otherwise, update the [Dockerfile](Dockerfile).
-2. Follow the instructions below to build a new image.
-3. Add tests for your new package. See this [example](https://github.com/Kaggle/docker-python/blob/master/tests/test_fastai.py).
-4. Follow the instructions below to test the new image.
-5. Open a PR on this repo and you are all set!
+    1. For changes specific to the GPU image, update the [gpu.Dockerfile](gpu.Dockerfile).
+    1. Otherwise, update the [Dockerfile](Dockerfile).
+1. Follow the instructions below to build a new image.
+1. Add tests for your new package. See this [example](https://github.com/Kaggle/docker-python/blob/master/tests/test_fastai.py).
+1. Follow the instructions below to test the new image.
+1. Open a PR on this repo and you are all set!
 
 ## Building a new image
 
@@ -52,11 +52,15 @@ Flags:
 
 * `--gpu` to test the GPU image.
 
-## Tensorflow custom pre-built wheels
+## Tensorflow custom pre-built wheel
 
-We are building Tensorflow from sources mainly for:
+A Tensorflow custom pre-built wheel is used mainly for:
 
-* Better performance. When building from sources, we can leverage CPU specific optimizations
-* Tensorflow with GPU support must be built from sources
+* Faster build time: Building tensorflow from sources takes ~1h. Keeping this process outside the main build allows faster iterations when working on our Dockerfiles.
+
+Building Tensorflow from sources:
+
+* Increase performance: When building from sources, we can leverage CPU specific optimizations
+* Is required: Tensorflow with GPU support must be built from sources
 
 The [Dockerfile](tensorflow-whl/Dockerfile) and the [instructions](tensorflow-whl/README.md) can be found in the [tensorflow-whl folder/](tensorflow/).
