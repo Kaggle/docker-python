@@ -43,7 +43,7 @@ def monkeypatch_bq(bq_client, *args, **kwargs):
         if kwargs.get('credentials') is not None:
             # The user wants to use their own credentials scheme, don't try to interfere.
             return bq_client(*args, **kwargs)
-        print("Using connected BigQuery Account.")
+        print("Using enabled BigQuery integration.")
         kwargs['credentials'] = KaggleKernelCredentials()
         kwargs['project'] = kwargs.get('project')
         return bq_client(
