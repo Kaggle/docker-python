@@ -1,5 +1,3 @@
-# TODO(rosbo): Remove this once we fix the issue with fastai importing older libcudnn if imported prior to tensorflow
-import tensorflow
 import os
 
 # Monkey patches BigQuery client creation to use proxy.
