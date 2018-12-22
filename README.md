@@ -15,7 +15,7 @@ To get started with this image, read our [guide](http://blog.kaggle.com/2016/02/
 
 ## Requesting new packages
 
-First, evaluate whether installing the package yourself in your own Kernels suits your needs. See [guide](wiki/Missing-Packages).
+First, evaluate whether installing the package yourself in your own Kernels suits your needs. See [guide](https://github.com/Kaggle/docker-python/wiki/Missing-Packages).
 
 If you the first step above doesn't work for your use case, [open an issue](https://github.com/Kaggle/docker-python/issues/new) or a [pull request](https://github.com/Kaggle/docker-python/pulls).
 
