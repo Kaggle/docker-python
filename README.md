@@ -85,4 +85,4 @@ Building Tensorflow from sources:
 * Increase performance: When building from sources, we can leverage CPU specific optimizations
 * Is required: Tensorflow with GPU support must be built from sources
 
-The [Dockerfile](tensorflow-whl/Dockerfile) and the [instructions](tensorflow-whl/README.md) can be found in the [tensorflow-whl folder/](tensorflow/).
+The [Dockerfile](tensorflow-whl/Dockerfile) and the [instructions](tensorflow-whl/README.md) can be found in the [tensorflow-whl folder/](tensorflow-whl/).
