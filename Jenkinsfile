@@ -1,4 +1,4 @@
-String cron_string = BRANCH_NAME == "master" ? "H 12 * * 1-5" : ""
+String cron_string = BRANCH_NAME == "master" ? "H 12 * * 1,3" : ""
 
 pipeline {
   agent { label 'ephemeral-linux' }
@@ -29,14 +29,14 @@ pipeline {
       }
     }
 
-    stage('Push CPU Untested Image') {
+    stage('Push CPU Pretest Image') {
       steps {
-        slackSend color: 'none', message: "*<${env.BUILD_URL}console|${JOB_NAME} pushing untested image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
+        slackSend color: 'none', message: "*<${env.BUILD_URL}console|${JOB_NAME} pushing pretest image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
         sh '''#!/bin/bash
           set -exo pipefail
 
           date
-          ./push ci-untested
+          ./push ci-pretest
         '''
       }
     }
@@ -83,15 +83,15 @@ pipeline {
       }
     }
 
-    stage('Push GPU Untested Image') {
+    stage('Push GPU Pretest Image') {
       agent { label 'ephemeral-linux-gpu' }
       steps {
-        slackSend color: 'none', message: "*<${env.BUILD_URL}console|${JOB_NAME} pushing untested image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
+        slackSend color: 'none', message: "*<${env.BUILD_URL}console|${JOB_NAME} pushing pretest image>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
         sh '''#!/bin/bash
           set -exo pipefail
 
           date
-          ./push --gpu ci-untested
+          ./push --gpu ci-pretest
         '''
       }
     }
