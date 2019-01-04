@@ -473,6 +473,7 @@ RUN pip install flashtext && \
     pip install ggplot && \
     pip install cesium && \
     pip install rgf_python && \
+    pip install pytext-nlp && \
     pip install tsfresh && \
     /tmp/clean-layer.sh
 
