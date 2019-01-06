@@ -1,7 +1,8 @@
-import os
 from google.auth import credentials
 from google.cloud import bigquery
 from google.cloud.bigquery._http import Connection
+import os
+
 
 class KaggleKernelCredentials(credentials.Credentials):
     def refresh(self, request):
@@ -11,16 +12,18 @@ class KaggleKernelCredentials(credentials.Credentials):
 
 kaggle_proxy_token = os.getenv("KAGGLE_DATA_PROXY_TOKEN")
 CONNECTION_BASE_URL = Connection.API_BASE_URL
+
+
 def monkeypatch_bq(bq_client, *args, **kwargs):
     data_proxy_project = os.getenv("KAGGLE_DATA_PROXY_PROJECT")
     bq_user_jwt = os.getenv("KAGGLE_BQ_USER_JWT")
-    specified_project = kwargs.get('project').lower() if 'project' in kwargs else None
+    specified_project = kwargs['project'] if 'project' in kwargs else None
     # Use Data Proxy if user has specified to use the Kaggle project, or if
     # there are no connected GCP accounts (to maintain backwards compatibility).
-    if bq_user_jwt is None and specified_project and specified_project != 'kaggle':
+    if bq_user_jwt is None and specified_project and specified_project.lower() != 'kaggle':
         raise Exception("In order to query a private BigQuery project, please connect a GCP account. "
                         "Otherwise specify 'kaggle' as the project to use Kaggle's public dataset BigQuery integration.")
-    use_data_proxy = specified_project == 'kaggle' or bq_user_jwt is None
+    use_data_proxy = (specified_project and specified_project.lower() == 'kaggle') or bq_user_jwt is None
     if use_data_proxy:
         if data_proxy_project is None or kaggle_proxy_token is None:
             # We don't have the data proxy info so leave the bq client unmodified.
@@ -43,7 +46,6 @@ def monkeypatch_bq(bq_client, *args, **kwargs):
             return bq_client(*args, **kwargs)
         print("Using enabled BigQuery integration.")
         kwargs['credentials'] = KaggleKernelCredentials()
-        kwargs['project'] = kwargs.get('project')
         return bq_client(
             *args,
             **kwargs)

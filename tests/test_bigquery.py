@@ -36,18 +36,24 @@ class TestBigQuery(unittest.TestCase):
 
             httpd.shutdown()
             if should_use_proxy:
-                self.assertTrue(HTTPHandler.called, msg="Fake server did not recieve a request from the BQ client.")
+                self.assertTrue(HTTPHandler.called, msg="Fake server did not receive a request from the BQ client.")
                 self.assertTrue(HTTPHandler.header_found, msg="X-KAGGLE-PROXY-DATA header was missing from the BQ request.")
             else:
                 self.assertFalse(HTTPHandler.called, msg="Fake server was called from the BQ client, but should not have been.")
     
     def test_proxy_kaggle_project(self):
-        client = bigquery.Client(project='KAGGLE')
-        self._test_proxy(client, should_use_proxy=True)
+        env = EnvironmentVarGuard()
+        env.unset('KAGGLE_BQ_USER_JWT')
+        with env:
+            client = bigquery.Client(project='KAGGLE')
+            self._test_proxy(client, should_use_proxy=True)
 
     def test_proxy_no_project(self):
-        client = bigquery.Client()
-        self._test_proxy(client, should_use_proxy=True)
+        env = EnvironmentVarGuard()
+        env.unset('KAGGLE_BQ_USER_JWT')
+        with env:
+            client = bigquery.Client()
+            self._test_proxy(client, should_use_proxy=True)
 
     def test_project_with_connected_account(self):
         env = EnvironmentVarGuard()
