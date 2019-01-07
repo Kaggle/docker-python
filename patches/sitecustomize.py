@@ -5,6 +5,8 @@ import os
 
 
 class KaggleKernelCredentials(credentials.Credentials):
+    """Custom Credentials used to authenticate using the Kernel's connected OAuth account."""
+
     def refresh(self, request):
         print("Calling Kaggle.UserSecrets to refresh token.")
         # Set self.token and self.expiry here.
@@ -17,7 +19,7 @@ CONNECTION_BASE_URL = Connection.API_BASE_URL
 def monkeypatch_bq(bq_client, *args, **kwargs):
     data_proxy_project = os.getenv("KAGGLE_DATA_PROXY_PROJECT")
     bq_user_jwt = os.getenv("KAGGLE_BQ_USER_JWT")
-    specified_project = kwargs['project'] if 'project' in kwargs else None
+    specified_project = kwargs.get('project')
     # Use Data Proxy if user has specified to use the Kaggle project, or if
     # there are no connected GCP accounts (to maintain backwards compatibility).
     if bq_user_jwt is None and specified_project and specified_project.lower() != 'kaggle':

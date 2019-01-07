@@ -13,6 +13,7 @@ PORT = 8000
 URL = "http://%s:%s" % (HOSTNAME, PORT)
 
 class TestBigQuery(unittest.TestCase):
+    
     def _test_proxy(self, client, should_use_proxy):
         class HTTPHandler(BaseHTTPRequestHandler):
             called = False
