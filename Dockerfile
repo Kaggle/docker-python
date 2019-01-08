@@ -475,6 +475,7 @@ RUN pip install flashtext && \
     pip install rgf_python && \
     pip install pytext-nlp && \
     pip install tsfresh && \
+    pip install pymagnitude && \
     /tmp/clean-layer.sh
 
 # Pin Vowpal Wabbit v8.6.0 because 8.6.1 does not build or install successfully
