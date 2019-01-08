@@ -87,4 +87,4 @@ docker run --rm -t --read-only --net=none \
     -w=/working \
     $ADDITONAL_OPTS \
     "$IMAGE_TAG" \
-    /bin/bash -c "python -m unittest discover -s /input/tests -p $PATTERN"
+    /bin/bash -c "python -m unittest discover -s /input/tests -p $PATTERN -v"
