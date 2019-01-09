@@ -28,6 +28,7 @@ class TestTensorflow(unittest.TestCase):
     @gpu_test
     def test_cudnn_gru(self):
         input = tf.random_normal([1,2,2])
+        init = tf.global_variables_initializer()
 
         gru = CudnnGRU(
             num_layers=1,
@@ -39,6 +40,7 @@ class TestTensorflow(unittest.TestCase):
         op = gru(input)
 
         with tf.Session() as sess:
+            sess.run(init)
             # Will fail if Cudnn is not properly installed
             sess.run(op)
     
