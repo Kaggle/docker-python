@@ -2,6 +2,7 @@ import unittest
 
 import numpy as np
 import tensorflow as tf
+from tensorflow.contrib.cudnn_rnn import CudnnGRU
 
 from common import gpu_test
 
@@ -23,6 +24,23 @@ class TestTensorflow(unittest.TestCase):
         with tf.Session() as sess:
             result = sess.run(op)
             self.assertEqual(4, len(result.shape))
+
+    @gpu_test
+    def test_cudnn_gru(self):
+        input = tf.random_normal([1,2,2])
+
+        gru = CudnnGRU(
+            num_layers=1,
+            num_units=1,
+            input_mode='skip_input',
+            direction='unidirectional'
+        )
+
+        op = gru(input)
+
+        with tf.Session() as sess:
+            # Will fail if Cudnn is not properly installed
+            sess.run(op)
     
     @gpu_test
     def test_gpu(self):
@@ -31,7 +49,7 @@ class TestTensorflow(unittest.TestCase):
             m2 = tf.constant([3.0, 4.0], shape=[2, 1], name='b')
             op = tf.matmul(m1, m2)
 
-            sess = tf.Session()
-            result = sess.run(op)
+            with tf.Session() as sess:
+                result = sess.run(op)
 
-            self.assertEqual(np.array(18, dtype=np.float32, ndmin=2), result)
+                self.assertEqual(np.array(18, dtype=np.float32, ndmin=2), result)
