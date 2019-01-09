@@ -27,24 +27,33 @@ class TestTensorflow(unittest.TestCase):
 
     @gpu_test
     def test_cudnn_gru(self):
-        input = tf.random_normal([1,2,1])
+        num_layers = 4
+        num_units = 2
+        batch_size = 8
+        dir_count = 1
+
+        inputs = tf.random_uniform([num_layers * dir_count, batch_size, num_units], dtype=dtypes.float32)
         init = tf.global_variables_initializer()
 
         gru = CudnnGRU(
-            num_layers=1,
-            num_units=1,
+            num_layers=num_layers,
+            num_units=num_units,
             input_mode='skip_input',
             direction='unidirectional',
             kernel_initializer=tf.random_normal_initializer(stddev=0.1)
+            bias_initializer=tf.random_normal_initializer(stddev=0.1),
+            name='test_gru'
         )
 
-        gru.build([None, None, 100])
-        op = gru(input)
+        #gru.build([None, None, 100])
+        outputs, _ = gru(input)
+        sum = tf.reduce_sum(outputs)
 
         with tf.Session() as sess:
             sess.run(init)
             # Will fail if Cudnn is not properly installed
-            sess.run(op)
+            result = sess.run(sum)
+            self.assertEqual(0, result)
     
     @gpu_test
     def test_gpu(self):
