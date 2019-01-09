@@ -27,7 +27,7 @@ class TestTensorflow(unittest.TestCase):
 
     @gpu_test
     def test_cudnn_gru(self):
-        input = tf.random_normal([1,2,2])
+        input = tf.random_normal([1,2,1])
         init = tf.global_variables_initializer()
 
         gru = CudnnGRU(
@@ -38,6 +38,7 @@ class TestTensorflow(unittest.TestCase):
             kernel_initializer=tf.random_normal_initializer(stddev=0.1)
         )
 
+        gru.build([None, None, 100])
         op = gru(input)
 
         with tf.Session() as sess:
