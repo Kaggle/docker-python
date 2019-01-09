@@ -34,7 +34,8 @@ class TestTensorflow(unittest.TestCase):
             num_layers=1,
             num_units=1,
             input_mode='skip_input',
-            direction='unidirectional'
+            direction='unidirectional',
+            kernel_initializer=tf.random_normal_initializer(stddev=0.1)
         )
 
         op = gru(input)
