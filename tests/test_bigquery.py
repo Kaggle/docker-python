@@ -2,6 +2,7 @@ import unittest
 import os
 import threading
 from test.support import EnvironmentVarGuard
+from urllib.parse import urlparse
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
@@ -9,9 +10,6 @@ from google.cloud import bigquery
 from google.auth.exceptions import DefaultCredentialsError
 from kaggle import KaggleKernelCredentials, kaggle_bq_client
 
-HOSTNAME = "127.0.0.1"
-PORT = 8000
-URL = "http://%s:%s" % (HOSTNAME, PORT)
 
 class TestBigQuery(unittest.TestCase):
     
@@ -28,7 +26,8 @@ class TestBigQuery(unittest.TestCase):
                 HTTPHandler.header_found = any(k for k in s.headers if k == "X-KAGGLE-PROXY-DATA" and s.headers[k] == "test-key")
                 s.send_response(200)
 
-        with HTTPServer((HOSTNAME, PORT), HTTPHandler) as httpd:
+        server_address = urlparse(os.getenv('KAGGLE_DATA_PROXY_URL'))
+        with HTTPServer((server_address.hostname, server_address.port), HTTPHandler) as httpd:
             threading.Thread(target=httpd.serve_forever).start()
 
             try:
