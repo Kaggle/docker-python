@@ -7,6 +7,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 
 from google.cloud import bigquery
 from google.auth.exceptions import DefaultCredentialsError
+from kaggle import KaggleKernelCredentials, kaggle_bq_client
 
 HOSTNAME = "127.0.0.1"
 PORT = 8000
@@ -41,12 +42,12 @@ class TestBigQuery(unittest.TestCase):
                 self.assertTrue(HTTPHandler.header_found, msg="X-KAGGLE-PROXY-DATA header was missing from the BQ request.")
             else:
                 self.assertFalse(HTTPHandler.called, msg="Fake server was called from the BQ client, but should not have been.")
-    
-    def test_proxy_kaggle_project(self):
+
+    def test_proxy_using_library(self):
         env = EnvironmentVarGuard()
         env.unset('KAGGLE_BQ_USER_JWT')
         with env:
-            client = bigquery.Client(project='KAGGLE')
+            client = kaggle_bq_client()
             self._test_proxy(client, should_use_proxy=True)
 
     def test_proxy_no_project(self):
@@ -60,8 +61,20 @@ class TestBigQuery(unittest.TestCase):
         env = EnvironmentVarGuard()
         env.set('KAGGLE_BQ_USER_JWT', 'foobar')
         with env:
-            client = bigquery.Client(project='ANOTHER_PROJECT')
+            client = bigquery.Client(project='ANOTHER_PROJECT', credentials=KaggleKernelCredentials())
             self._test_proxy(client, should_use_proxy=False)
+    
+    def test_simultaneous_clients(self):
+        env = EnvironmentVarGuard()
+        env.set('KAGGLE_BQ_USER_JWT', 'foobar')
+        with env:
+            proxy_client = bigquery.Client()
+            self._test_proxy(proxy_client, should_use_proxy=True)
+            bq_client = bigquery.Client(project='ANOTHER_PROJECT', credentials=KaggleKernelCredentials())
+            self._test_proxy(bq_client, should_use_proxy=False)
+            # Verify that proxy client is still going to proxy to ensure global Connection
+            # isn't being modified.
+            self._test_proxy(proxy_client, should_use_proxy=True)
 
     def test_no_project_with_connected_account(self):
         env = EnvironmentVarGuard()
@@ -70,5 +83,5 @@ class TestBigQuery(unittest.TestCase):
             with self.assertRaises(DefaultCredentialsError):
                 # TODO(vimota): Handle this case, either default to Kaggle Proxy or use some default project
                 # by the user or throw a custom exception.
-                client = bigquery.Client()
+                client = bigquery.Client(credentials=KaggleKernelCredentials())
                 self._test_proxy(client, should_use_proxy=False)
