@@ -2,7 +2,9 @@ import unittest
 
 import numpy as np
 import tensorflow as tf
-from tensorflow.contrib.cudnn_rnn import CudnnGRU
+from tensorflow.contrib import cudnn_rnn
+from tensorflow.python.framework import dtypes
+from tensorflow.python.ops import variables
 
 from common import gpu_test
 
@@ -26,33 +28,29 @@ class TestTensorflow(unittest.TestCase):
             self.assertEqual(4, len(result.shape))
 
     @gpu_test
-    def test_cudnn_gru(self):
+    def test_cudnn_lstm(self):
         num_layers = 4
         num_units = 2
         batch_size = 8
         dir_count = 1
 
         inputs = tf.random_uniform([num_layers * dir_count, batch_size, num_units], dtype=dtypes.float32)
-        init = tf.global_variables_initializer()
 
-        gru = CudnnGRU(
+        lstm = cudnn_rnn.CudnnLSTM(
             num_layers=num_layers,
             num_units=num_units,
-            input_mode='skip_input',
             direction='unidirectional',
-            kernel_initializer=tf.random_normal_initializer(stddev=0.1)
-            bias_initializer=tf.random_normal_initializer(stddev=0.1),
+            kernel_initializer=tf.constant_initializer(0.),
+            bias_initializer=tf.constant_initializer(0.),
             name='test_gru'
         )
 
-        #gru.build([None, None, 100])
-        outputs, _ = gru(input)
-        sum = tf.reduce_sum(outputs)
+        outputs, _ = lstm(inputs)
+        total_sum = tf.reduce_sum(outputs)
 
         with tf.Session() as sess:
-            sess.run(init)
-            # Will fail if Cudnn is not properly installed
-            result = sess.run(sum)
+            sess.run(variables.global_variables_initializer())
+            result = sess.run(total_sum)
             self.assertEqual(0, result)
     
     @gpu_test
