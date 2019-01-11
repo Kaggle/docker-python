@@ -8,7 +8,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 
 from google.cloud import bigquery
 from google.auth.exceptions import DefaultCredentialsError
-from kaggle import KaggleKernelCredentials, kaggle_bq_client
+from kaggle import KaggleKernelCredentials, PublicBigqueryClient
 
 
 class TestBigQuery(unittest.TestCase):
@@ -46,7 +46,7 @@ class TestBigQuery(unittest.TestCase):
         env = EnvironmentVarGuard()
         env.unset('KAGGLE_BQ_USER_JWT')
         with env:
-            client = kaggle_bq_client()
+            client = PublicBigqueryClient()
             self._test_proxy(client, should_use_proxy=True)
 
     def test_proxy_no_project(self):

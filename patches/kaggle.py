@@ -5,26 +5,39 @@ from google.cloud.bigquery._http import Connection
 
 
 class KaggleKernelCredentials(credentials.Credentials):
-        """Custom Credentials used to authenticate using the Kernel's connected OAuth account."""
+    """Custom Credentials used to authenticate using the Kernel's connected OAuth account.
 
-        def refresh(self, request):
-            print("Calling Kaggle.UserSecrets to refresh token.")
-            # Set self.token and self.expiry here.
-            raise NotImplementedError(
-                "Private BigQuery integration is not yet implemented.")
+    Example usage:
+    client = bigquery.Client(project='ANOTHER_PROJECT',
+                                credentials=KaggleKernelCredentials())
+    """
 
-
-class DataProxyConnection(Connection):
-        """Custom Connection class used to proxy the BigQuery client ho Kaggle's data proxy."""
-
-        API_BASE_URL = os.getenv("KAGGLE_DATA_PROXY_URL")
-
-        def __init__(self, client):
-            super().__init__(client)
-            self._EXTRA_HEADERS["X-KAGGLE-PROXY-DATA"] = os.getenv("KAGGLE_DATA_PROXY_TOKEN")
+    def refresh(self, request):
+        print("Calling Kaggle.UserSecrets to refresh token.")
+        # Set self.token and self.expiry here.
+        raise NotImplementedError(
+            "Private BigQuery integration is not yet implemented.")
 
 
-class DataProxyClient(bigquery.client.Client):
+class _DataProxyConnection(Connection):
+    """Custom Connection class used to proxy the BigQuery client to Kaggle's data proxy."""
+
+    API_BASE_URL = os.getenv("KAGGLE_DATA_PROXY_URL")
+
+    def __init__(self, client):
+        super().__init__(client)
+        self._EXTRA_HEADERS["X-KAGGLE-PROXY-DATA"] = os.getenv(
+            "KAGGLE_DATA_PROXY_TOKEN")
+
+
+class PublicBigqueryClient(bigquery.client.Client):
+    """A modified BigQuery client that routes requests using Kaggle's Data Proxy to provide free access to Public Datasets.
+
+    Example usage:
+    from kaggle import PublicBigqueryClient
+    client = PublicBigqueryClient()
+    """
+
     def __init__(self, project=None):
         if project:
             raise Exception("In order to query a private BigQuery project, please connect a GCP account. "
@@ -35,6 +48,4 @@ class DataProxyClient(bigquery.client.Client):
         super().__init__(
             project=data_proxy_project, credentials=anon_credentials
         )
-        self._connection = DataProxyConnection(self)
-
-kaggle_bq_client = lambda *args, **kwargs:  DataProxyClient(*args, **kwargs)
+        self._connection = _DataProxyConnection(self)
