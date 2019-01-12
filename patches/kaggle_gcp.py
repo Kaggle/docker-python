@@ -45,4 +45,5 @@ class PublicBigqueryClient(bigquery.client.Client):
         super().__init__(
             project=data_proxy_project, credentials=anon_credentials
         )
+        # TODO: Remove this once https://github.com/googleapis/google-cloud-python/issues/7122 is implemented.
         self._connection = _DataProxyConnection(self)
