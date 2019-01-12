@@ -8,7 +8,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 
 from google.cloud import bigquery
 from google.auth.exceptions import DefaultCredentialsError
-from kaggle import KaggleKernelCredentials, PublicBigqueryClient
+from kaggle_gcp import KaggleKernelCredentials, PublicBigqueryClient
 
 
 class TestBigQuery(unittest.TestCase):

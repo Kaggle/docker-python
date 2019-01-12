@@ -6,7 +6,7 @@ if kaggle_proxy_token or bq_user_jwt:
     from google.auth import credentials
     from google.cloud import bigquery
     from google.cloud.bigquery._http import Connection
-    from kaggle import PublicBigqueryClient
+    from kaggle_gcp import PublicBigqueryClient
 
     def monkeypatch_bq(bq_client, *args, **kwargs):
         data_proxy_project = os.getenv("KAGGLE_DATA_PROXY_PROJECT")

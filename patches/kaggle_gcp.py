@@ -38,10 +38,7 @@ class PublicBigqueryClient(bigquery.client.Client):
     client = PublicBigqueryClient()
     """
 
-    def __init__(self, project=None):
-        if project:
-            raise Exception("In order to query a private BigQuery project, please connect a GCP account. "
-                            "Otherwise do not specify a project to use Kaggle's public dataset BigQuery integration.")
+    def __init__(self):
         data_proxy_project = os.getenv("KAGGLE_DATA_PROXY_PROJECT")
         anon_credentials = credentials.AnonymousCredentials()
         anon_credentials.refresh = lambda *args: None

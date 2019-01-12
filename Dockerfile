@@ -505,7 +505,7 @@ RUN pip install --upgrade dask && \
 
 # Add BigQuery client proxy settings
 ENV PYTHONUSERBASE "/root/.local"
-ADD patches/kaggle.py /root/.local/lib/python3.6/site-packages/kaggle.py
+ADD patches/kaggle_gcp.py /root/.local/lib/python3.6/site-packages/kaggle_gcp.py
 ADD patches/sitecustomize.py /root/.local/lib/python3.6/site-packages/sitecustomize.py
 
 # Set backend for matplotlib
