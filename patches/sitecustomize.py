@@ -6,6 +6,8 @@ if kaggle_proxy_token or bq_user_jwt:
     from google.auth import credentials
     from google.cloud import bigquery
     from google.cloud.bigquery._http import Connection
+    # TODO: Update this to the correct kaggle.gcp path once we no longer inject modules
+    # from the worker.
     from kaggle_gcp import PublicBigqueryClient
 
     def monkeypatch_bq(bq_client, *args, **kwargs):
