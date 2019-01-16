@@ -24,6 +24,7 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
 # Fix to install tf 1.10:: Downgrade python 3.7->3.6.6 and downgrade Pandas 0.23.3->0.23.2
 RUN conda install -y python=3.6.6 && \
     pip install pandas==0.23.2 && \
+    pip install --upgrade numpy && \
     # Another fix for TF 1.10 https://github.com/tensorflow/tensorflow/issues/21518
     pip install keras_applications==1.0.4 --no-deps && \
     pip install keras_preprocessing==1.0.2 --no-deps && \
@@ -116,6 +117,9 @@ RUN apt-get install -y libfreetype6-dev && \
     vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
     # Stop-words
     pip install stop-words && \
+    # latest scikit-image is not compatible with numpy 1.16.0.
+    # remove the pin once a new version is released (>0.14.1)
+    pip install git+git://github.com/scikit-image/scikit-image@31d9ecc2f0d8dd3373af3e80b2dcc7887ff2ca24 && \
     /tmp/clean-layer.sh
 
 # Make sure the dynamic linker finds the right libstdc++
