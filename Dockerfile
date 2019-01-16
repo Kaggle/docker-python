@@ -143,9 +143,6 @@ RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
     # MXNet
     pip install mxnet && \
     # h2o (requires java)
-    # Some packages such as sk_image are not compatible with the 1.16 version yet.
-    # See: https://github.com/scikit-image/scikit-image/issues/3551
-    pip install numpy==1.15.4 && \
     # requires java
     apt-get install -y default-jdk && \
     cd /usr/local/src && mkdir h2o && cd h2o && \
