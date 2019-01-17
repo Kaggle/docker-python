@@ -116,6 +116,9 @@ RUN apt-get install -y libfreetype6-dev && \
     vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
     # Stop-words
     pip install stop-words && \
+    # latest scikit-image is not compatible with numpy 1.16.0.
+    # remove the pin once a new version is released (>0.14.1)
+    pip install git+git://github.com/scikit-image/scikit-image@31d9ecc2f0d8dd3373af3e80b2dcc7887ff2ca24 && \
     /tmp/clean-layer.sh
 
 # Make sure the dynamic linker finds the right libstdc++
@@ -142,9 +145,8 @@ RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
     pip install cartopy && \
     # MXNet
     pip install mxnet && \
-    # h2o (requires java)
-    # Upgrade numpy with pip to avoid install errors
     pip install --upgrade numpy && \
+    # h2o (requires java)
     # requires java
     apt-get install -y default-jdk && \
     cd /usr/local/src && mkdir h2o && cd h2o && \
@@ -404,7 +406,6 @@ RUN pip install bcolz && \
     pip install nbconvert && \
     pip install nbformat && \
     pip install notebook==5.5.0 && \
-    pip install numpy && \
     pip install olefile && \
     pip install opencv-python && \
     pip install --upgrade pandas && \
@@ -476,7 +477,9 @@ RUN pip install flashtext && \
     pip install pytext-nlp && \
     pip install tsfresh && \
     pip install pymagnitude && \
+    pip install pykalman && \
     pip install arch &&\
+
     /tmp/clean-layer.sh
 
 # Pin Vowpal Wabbit v8.6.0 because 8.6.1 does not build or install successfully
@@ -506,6 +509,7 @@ RUN pip install --upgrade dask && \
 
 # Add BigQuery client proxy settings
 ENV PYTHONUSERBASE "/root/.local"
+ADD patches/kaggle_gcp.py /root/.local/lib/python3.6/site-packages/kaggle_gcp.py
 ADD patches/sitecustomize.py /root/.local/lib/python3.6/site-packages/sitecustomize.py
 
 # Set backend for matplotlib
