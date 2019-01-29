@@ -116,9 +116,7 @@ RUN apt-get install -y libfreetype6-dev && \
     vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
     # Stop-words
     pip install stop-words && \
-    # latest scikit-image is not compatible with numpy 1.16.0.
-    # remove the pin once a new version is released (>0.14.1)
-    pip install git+git://github.com/scikit-image/scikit-image@31d9ecc2f0d8dd3373af3e80b2dcc7887ff2ca24 && \
+    pip install scikit-image && \
     /tmp/clean-layer.sh
 
 # Make sure the dynamic linker finds the right libstdc++
