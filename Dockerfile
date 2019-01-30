@@ -67,14 +67,8 @@ RUN apt-get install -y libfreetype6-dev && \
     pip install xgboost && \
     pip install lightgbm && \
     pip install git+git://github.com/Lasagne/Lasagne.git && \
-    #keras
-    cd /usr/local/src && mkdir keras && cd keras && \
-    git clone --depth 1 https://github.com/fchollet/keras.git && \
-    cd keras && python setup.py install && \
-    #keras-rl
-    cd /usr/local/src && mkdir keras-rl && cd keras-rl && \
-    git clone --depth 1 https://github.com/matthiasplappert/keras-rl.git && \
-    cd keras-rl && python setup.py install && \
+    pip install keras && \
+    pip install keras-rl && \
     #keras-rcnn
     pip install git+https://github.com/broadinstitute/keras-rcnn && \
     #neon
