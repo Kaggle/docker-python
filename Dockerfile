@@ -294,7 +294,9 @@ RUN pip install fancyimpute && \
     # See: https://github.com/facebook/prophet/issues/775
     pip install fbprophet==0.3.post2 && \
     pip install holoviews && \
-    pip install geoviews && \
+    # 1.6.2 is not currently supported by the version of matplotlib we are using.
+    # See other comments about why matplotlib is pinned.
+    pip install geoviews==1.6.1 && \
     pip install hypertools && \
     # Nxviz has been causing an installation issue by trying unsuccessfully to remove setuptools.
     #pip install nxviz && \
