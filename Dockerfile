@@ -239,7 +239,10 @@ RUN pip install --upgrade mpld3 && \
     pip install git+https://github.com/hyperopt/hyperopt.git && \
     # tflean. Deep learning library featuring a higher-level API for TensorFlow. http://tflearn.org
     pip install git+https://github.com/tflearn/tflearn.git && \
-    pip install fitter && \
+    # fitter 1.1.10 is broken. Fails at setup with:
+    # install_requires = open("requirements.txt").read(),
+    # FileNotFoundError: [Errno 2] No such file or directory: 'requirements.txt'
+    pip install fitter==1.0.9 && \
     pip install langid && \
     # Delorean. Useful for dealing with datetime
     pip install delorean && \
