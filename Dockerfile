@@ -113,7 +113,7 @@ RUN apt-get install -y libfreetype6-dev && \
     vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
     # Stop-words
     pip install stop-words && \
-    pip install scikit-image && \
+    pip install --upgrade scikit-image && \
     /tmp/clean-layer.sh
 
 # Make sure the dynamic linker finds the right libstdc++
@@ -294,7 +294,9 @@ RUN pip install fancyimpute && \
     # See: https://github.com/facebook/prophet/issues/775
     pip install fbprophet==0.3.post2 && \
     pip install holoviews && \
-    pip install geoviews && \
+    # 1.6.2 is not currently supported by the version of matplotlib we are using.
+    # See other comments about why matplotlib is pinned.
+    pip install geoviews==1.6.1 && \
     pip install hypertools && \
     # Nxviz has been causing an installation issue by trying unsuccessfully to remove setuptools.
     #pip install nxviz && \
@@ -406,7 +408,8 @@ RUN pip install bcolz && \
     pip install notebook==5.5.0 && \
     pip install olefile && \
     pip install opencv-python && \
-    pip install --upgrade pandas && \
+    # tsfresh is not yet compatible with pandas 0.24.0
+    pip install pandas==0.23.4 && \
     pip install pandas_summary && \
     pip install pandocfilters && \
     pip install pexpect && \
