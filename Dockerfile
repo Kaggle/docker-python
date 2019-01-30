@@ -16,7 +16,10 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     apt-get update && apt-get install -y build-essential unzip && \
     # https://stackoverflow.com/a/46498173
     conda update -y conda && conda update -y python && \
-    pip install --upgrade pip && \
+    # cartopy package fails to install with the latest version of pip (19.0.1) with:
+    # "ModuleNotFoundError: No module named 'versioneer'"
+    # `versioneer` is checked in the cartopy package, the sys path seems to differ with the new version of pip.
+    pip install pip==18.1 && \
     apt-get -y install cmake && \
     /tmp/clean-layer.sh
 
