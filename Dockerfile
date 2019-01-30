@@ -113,7 +113,7 @@ RUN apt-get install -y libfreetype6-dev && \
     vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
     # Stop-words
     pip install stop-words && \
-    pip install scikit-image && \
+    pip install --upgrade scikit-image && \
     /tmp/clean-layer.sh
 
 # Make sure the dynamic linker finds the right libstdc++
