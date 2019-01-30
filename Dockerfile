@@ -406,7 +406,8 @@ RUN pip install bcolz && \
     pip install notebook==5.5.0 && \
     pip install olefile && \
     pip install opencv-python && \
-    pip install --upgrade pandas && \
+    # tsfresh is not yet compatible with pandas 0.24.0
+    pip install pandas==0.23.4 && \
     pip install pandas_summary && \
     pip install pandocfilters && \
     pip install pexpect && \
