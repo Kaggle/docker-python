@@ -86,14 +86,4 @@ class TestUserSecrets(unittest.TestCase):
             secret_response = client.get_bigquery_access_token()
             self.assertEqual(secret_response, secret)
         self._test_client(call_get_access_token,
-                          '/requests/GetUserSecretRequest?Purpose=1', secret)
-
-    def test_get_user_secret_succeeds(self):
-        secret = '5678'
-
-        def call_get_access_token():
-            client = UserSecretsClient()
-            secret_response = client.get_user_secret('MY_SECRET')
-            self.assertEqual(secret_response, secret)
-        self._test_client(
-            call_get_access_token, '/requests/GetUserSecretRequest?SecretLabel=MY_SECRET', secret)
+                          '/requests/GetUserSecretRequest?Target=1', secret)

@@ -1,3 +1,11 @@
+"""UserSecret client classes.
+
+This library adds support for communicating with the UserSecrets service,
+currently used for retrieving an access token for supported integrations
+(ie. BigQuery).
+
+"""
+
 import json
 import os
 import urllib.request
@@ -17,7 +25,7 @@ class BackendError(Exception):
 
 class UserSecretsClient():
     GET_USER_SECRET_ENDPOINT = '/requests/GetUserSecretRequest'
-    BIGQUERY_PURPOSE_VALUE = 1
+    BIGQUERY_TARGET_VALUE = 1
 
     def __init__(self):
         url_base_override = os.getenv(_KAGGLE_URL_BASE_ENV_VAR_NAME)
@@ -39,22 +47,12 @@ class UserSecretsClient():
             response_json = json.loads(response.read())
             return response_json
 
-    def get_user_secret(self, secret_label: str):
+    def get_bigquery_access_token(self):
         request_body = {
-            'SecretLabel': secret_label
+            'Target': self.BIGQUERY_TARGET_VALUE
         }
         response_json = self._make_get_request(request_body)
         if 'Secret' not in response_json:
             raise BackendError(
                 'Unexpected response from the service.')
-        return response_json['Secret']
-
-    def get_bigquery_access_token(self):
-        request_body = {
-            'Purpose': self.BIGQUERY_PURPOSE_VALUE
-        }
-        response_json = self._make_get_request(request_body)
-        if 'Secret' not in response_json:
-            raise BackendError(
-                'Unexpected response from UserSecrets service.')
         return response_json['Secret']
