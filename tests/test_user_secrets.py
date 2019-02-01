@@ -19,7 +19,7 @@ class UserSecretsHTTPHandler(BaseHTTPRequestHandler):
 
     def set_request(self):
         raise NotImplementedError()
-    
+
     def get_response(self):
         raise NotImplementedError()
 
@@ -35,22 +35,24 @@ class UserSecretsHTTPHandler(BaseHTTPRequestHandler):
 
 
 class TestUserSecrets(unittest.TestCase):
-    server_address = urlparse(os.getenv(_KAGGLE_URL_BASE_ENV_VAR_NAME))
+    SERVER_ADDRESS = urlparse(os.getenv(_KAGGLE_URL_BASE_ENV_VAR_NAME))
 
     def _test_client(self, client_func, expected_path, secret):
         _request = {}
 
         class AccessTokenHandler(UserSecretsHTTPHandler):
+
             def set_request(self):
                 _request['path'] = self.path
                 _request['headers'] = self.headers
+
             def get_response(self):
                 return {"Secret": secret}
 
         env = EnvironmentVarGuard()
         env.set(_KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME, _TEST_JWT)
         with env:
-            with HTTPServer((self.server_address.hostname, self.server_address.port), AccessTokenHandler) as httpd:
+            with HTTPServer((self.SERVER_ADDRESS.hostname, self.SERVER_ADDRESS.port), AccessTokenHandler) as httpd:
                 threading.Thread(target=httpd.serve_forever).start()
 
                 try:
@@ -58,11 +60,16 @@ class TestUserSecrets(unittest.TestCase):
                 finally:
                     httpd.shutdown()
 
+                path, headers = _request['path'], _request['headers']
                 self.assertEqual(
-                    _request['path'], expected_path, msg="Fake server did not receive the right request from the UserSecrets client.")
+                    path,
+                    expected_path,
+                    msg="Fake server did not receive the right request from the UserSecrets client.")
                 self.assertTrue(
                     any(
-                        k for k in _request['headers'] if k == "Authorization" and _request['headers'][k] == f'Bearer {_TEST_JWT}'), msg="Authorization header was missing from the UserSecrets request.")
+                        k for k in headers
+                        if k == "Authorization" and headers[k] == f'Bearer {_TEST_JWT}'),
+                    msg="Authorization header was missing from the UserSecrets request.")
 
     def test_no_token_fails(self):
         env = EnvironmentVarGuard()
@@ -73,16 +80,20 @@ class TestUserSecrets(unittest.TestCase):
 
     def test_get_access_token_succeeds(self):
         secret = '12345'
+
         def call_get_access_token():
             client = UserSecretsClient()
-            secret_response = client.getBigQueryAccessToken()
+            secret_response = client.get_bigquery_access_token()
             self.assertEqual(secret_response, secret)
-        self._test_client(call_get_access_token, '/requests/GetUserSecretRequest?Purpose=1', secret)
+        self._test_client(call_get_access_token,
+                          '/requests/GetUserSecretRequest?Purpose=1', secret)
 
     def test_get_user_secret_succeeds(self):
         secret = '5678'
+
         def call_get_access_token():
             client = UserSecretsClient()
-            secret_response = client.getUserSecret('MY_SECRET')
+            secret_response = client.get_user_secret('MY_SECRET')
             self.assertEqual(secret_response, secret)
-        self._test_client(call_get_access_token, '/requests/GetUserSecretRequest?SecretLabel=MY_SECRET', secret)
+        self._test_client(
+            call_get_access_token, '/requests/GetUserSecretRequest?SecretLabel=MY_SECRET', secret)

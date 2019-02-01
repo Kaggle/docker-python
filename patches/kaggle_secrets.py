@@ -21,12 +21,13 @@ class UserSecretsClient():
 
     def __init__(self):
         url_base_override = os.getenv(_KAGGLE_URL_BASE_ENV_VAR_NAME)
-        self.url_base = (url_base_override or _KAGGLE_DEFAULT_URL_BASE)
+        self.url_base = url_base_override or _KAGGLE_DEFAULT_URL_BASE
         # Follow the OAuth 2.0 Authorization standard (https://tools.ietf.org/html/rfc6750)
         jwt_token = os.getenv(_KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME)
         if jwt_token is None:
             raise CredentialError(
-                f'A JWT Token is required to use the UserSecretsClient, but none found in environment variable {_KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME}')
+                'A JWT Token is required to use the UserSecretsClient, '
+                f'but none found in environment variable {_KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME}')
         self.headers = {'Content-type': 'application/json',
                         'Authorization': 'Bearer {}'.format(jwt_token)}
 
@@ -38,17 +39,17 @@ class UserSecretsClient():
             response_json = json.loads(response.read())
             return response_json
 
-    def getUserSecret(self, secret_label: str):
+    def get_user_secret(self, secret_label: str):
         request_body = {
             'SecretLabel': secret_label
         }
         response_json = self._make_get_request(request_body)
         if 'Secret' not in response_json:
             raise BackendError(
-                'Unexpected response from UserSecrets service.')
+                'Unexpected response from the service.')
         return response_json['Secret']
 
-    def getBigQueryAccessToken(self):
+    def get_bigquery_access_token(self):
         request_body = {
             'Purpose': self.BIGQUERY_PURPOSE_VALUE
         }
