@@ -16,7 +16,10 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     apt-get update && apt-get install -y build-essential unzip && \
     # https://stackoverflow.com/a/46498173
     conda update -y conda && conda update -y python && \
-    pip install --upgrade pip && \
+    # cartopy package fails to install with the latest version of pip (19.0.1) with:
+    # "ModuleNotFoundError: No module named 'versioneer'"
+    # `versioneer` is checked in the cartopy package, the sys path seems to differ with the new version of pip.
+    pip install pip==18.1 && \
     apt-get -y install cmake && \
     /tmp/clean-layer.sh
 
@@ -64,16 +67,14 @@ RUN apt-get install -y libfreetype6-dev && \
     pip install xgboost && \
     pip install lightgbm && \
     pip install git+git://github.com/Lasagne/Lasagne.git && \
-    #keras
-    cd /usr/local/src && mkdir keras && cd keras && \
-    git clone --depth 1 https://github.com/fchollet/keras.git && \
-    cd keras && python setup.py install && \
-    #keras-rl
-    cd /usr/local/src && mkdir keras-rl && cd keras-rl && \
-    git clone --depth 1 https://github.com/matthiasplappert/keras-rl.git && \
-    cd keras-rl && python setup.py install && \
+    pip install keras && \
+    pip install keras-rl && \
     #keras-rcnn
     pip install git+https://github.com/broadinstitute/keras-rcnn && \
+    # version 3.7.1 adds a dependency on entrypoints > 3. This causes a reinstall but fails because
+    # it is a distutils package and can't be uninstalled. Once the anaconda image in updated, this
+    # pin should be removed.
+    pip install flake8==3.6.0 && \
     #neon
     cd /usr/local/src && \
     git clone --depth 1 https://github.com/NervanaSystems/neon.git && \
@@ -116,6 +117,7 @@ RUN apt-get install -y libfreetype6-dev && \
     vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
     # Stop-words
     pip install stop-words && \
+    pip install --upgrade scikit-image && \
     /tmp/clean-layer.sh
 
 # Make sure the dynamic linker finds the right libstdc++
@@ -142,9 +144,8 @@ RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
     pip install cartopy && \
     # MXNet
     pip install mxnet && \
-    # h2o (requires java)
-    # Upgrade numpy with pip to avoid install errors
     pip install --upgrade numpy && \
+    # h2o (requires java)
     # requires java
     apt-get install -y default-jdk && \
     cd /usr/local/src && mkdir h2o && cd h2o && \
@@ -242,7 +243,10 @@ RUN pip install --upgrade mpld3 && \
     pip install git+https://github.com/hyperopt/hyperopt.git && \
     # tflean. Deep learning library featuring a higher-level API for TensorFlow. http://tflearn.org
     pip install git+https://github.com/tflearn/tflearn.git && \
-    pip install fitter && \
+    # fitter 1.1.10 is broken. Fails at setup with:
+    # install_requires = open("requirements.txt").read(),
+    # FileNotFoundError: [Errno 2] No such file or directory: 'requirements.txt'
+    pip install fitter==1.0.9 && \
     pip install langid && \
     # Delorean. Useful for dealing with datetime
     pip install delorean && \
@@ -294,7 +298,9 @@ RUN pip install fancyimpute && \
     # See: https://github.com/facebook/prophet/issues/775
     pip install fbprophet==0.3.post2 && \
     pip install holoviews && \
-    pip install geoviews && \
+    # 1.6.2 is not currently supported by the version of matplotlib we are using.
+    # See other comments about why matplotlib is pinned.
+    pip install geoviews==1.6.1 && \
     pip install hypertools && \
     # Nxviz has been causing an installation issue by trying unsuccessfully to remove setuptools.
     #pip install nxviz && \
@@ -404,10 +410,10 @@ RUN pip install bcolz && \
     pip install nbconvert && \
     pip install nbformat && \
     pip install notebook==5.5.0 && \
-    pip install numpy && \
     pip install olefile && \
     pip install opencv-python && \
-    pip install --upgrade pandas && \
+    # tsfresh is not yet compatible with pandas 0.24.0
+    pip install pandas==0.23.4 && \
     pip install pandas_summary && \
     pip install pandocfilters && \
     pip install pexpect && \
@@ -476,6 +482,7 @@ RUN pip install flashtext && \
     pip install pytext-nlp && \
     pip install tsfresh && \
     pip install pymagnitude && \
+    pip install pykalman && \
     /tmp/clean-layer.sh
 
 # Pin Vowpal Wabbit v8.6.0 because 8.6.1 does not build or install successfully
@@ -505,6 +512,8 @@ RUN pip install --upgrade dask && \
 
 # Add BigQuery client proxy settings
 ENV PYTHONUSERBASE "/root/.local"
+ADD patches/kaggle_gcp.py /root/.local/lib/python3.6/site-packages/kaggle_gcp.py
+ADD patches/kaggle_secrets.py /root/.local/lib/python3.6/site-packages/kaggle_secrets.py
 ADD patches/sitecustomize.py /root/.local/lib/python3.6/site-packages/sitecustomize.py
 
 # Set backend for matplotlib
