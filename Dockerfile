@@ -16,7 +16,10 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     apt-get update && apt-get install -y build-essential unzip && \
     # https://stackoverflow.com/a/46498173
     conda update -y conda && conda update -y python && \
-    pip install --upgrade pip && \
+    # cartopy package fails to install with the latest version of pip (19.0.1) with:
+    # "ModuleNotFoundError: No module named 'versioneer'"
+    # `versioneer` is checked in the cartopy package, the sys path seems to differ with the new version of pip.
+    pip install pip==18.1 && \
     apt-get -y install cmake && \
     /tmp/clean-layer.sh
 
@@ -24,9 +27,6 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
 # Fix to install tf 1.10:: Downgrade python 3.7->3.6.6 and downgrade Pandas 0.23.3->0.23.2
 RUN conda install -y python=3.6.6 && \
     pip install pandas==0.23.2 && \
-    # Another fix for TF 1.10 https://github.com/tensorflow/tensorflow/issues/21518
-    pip install keras_applications==1.0.4 --no-deps && \
-    pip install keras_preprocessing==1.0.2 --no-deps && \
     /tmp/clean-layer.sh
 
 # The anaconda base image includes outdated versions of these packages. Update them to include the latest version.
@@ -64,16 +64,14 @@ RUN apt-get install -y libfreetype6-dev && \
     pip install xgboost && \
     pip install lightgbm && \
     pip install git+git://github.com/Lasagne/Lasagne.git && \
-    #keras
-    cd /usr/local/src && mkdir keras && cd keras && \
-    git clone --depth 1 https://github.com/fchollet/keras.git && \
-    cd keras && python setup.py install && \
-    #keras-rl
-    cd /usr/local/src && mkdir keras-rl && cd keras-rl && \
-    git clone --depth 1 https://github.com/matthiasplappert/keras-rl.git && \
-    cd keras-rl && python setup.py install && \
+    pip install keras && \
+    pip install keras-rl && \
     #keras-rcnn
     pip install git+https://github.com/broadinstitute/keras-rcnn && \
+    # version 3.7.1 adds a dependency on entrypoints > 3. This causes a reinstall but fails because
+    # it is a distutils package and can't be uninstalled. Once the anaconda image in updated, this
+    # pin should be removed.
+    pip install flake8==3.6.0 && \
     #neon
     cd /usr/local/src && \
     git clone --depth 1 https://github.com/NervanaSystems/neon.git && \
@@ -116,9 +114,7 @@ RUN apt-get install -y libfreetype6-dev && \
     vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
     # Stop-words
     pip install stop-words && \
-    # latest scikit-image is not compatible with numpy 1.16.0.
-    # remove the pin once a new version is released (>0.14.1)
-    pip install git+git://github.com/scikit-image/scikit-image@31d9ecc2f0d8dd3373af3e80b2dcc7887ff2ca24 && \
+    pip install --upgrade scikit-image && \
     /tmp/clean-layer.sh
 
 # Make sure the dynamic linker finds the right libstdc++
@@ -244,7 +240,10 @@ RUN pip install --upgrade mpld3 && \
     pip install git+https://github.com/hyperopt/hyperopt.git && \
     # tflean. Deep learning library featuring a higher-level API for TensorFlow. http://tflearn.org
     pip install git+https://github.com/tflearn/tflearn.git && \
-    pip install fitter && \
+    # fitter 1.1.10 is broken. Fails at setup with:
+    # install_requires = open("requirements.txt").read(),
+    # FileNotFoundError: [Errno 2] No such file or directory: 'requirements.txt'
+    pip install fitter==1.0.9 && \
     pip install langid && \
     # Delorean. Useful for dealing with datetime
     pip install delorean && \
@@ -296,7 +295,9 @@ RUN pip install fancyimpute && \
     # See: https://github.com/facebook/prophet/issues/775
     pip install fbprophet==0.3.post2 && \
     pip install holoviews && \
-    pip install geoviews && \
+    # 1.6.2 is not currently supported by the version of matplotlib we are using.
+    # See other comments about why matplotlib is pinned.
+    pip install geoviews==1.6.1 && \
     pip install hypertools && \
     # Nxviz has been causing an installation issue by trying unsuccessfully to remove setuptools.
     #pip install nxviz && \
@@ -408,7 +409,8 @@ RUN pip install bcolz && \
     pip install notebook==5.5.0 && \
     pip install olefile && \
     pip install opencv-python && \
-    pip install --upgrade pandas && \
+    # tsfresh is not yet compatible with pandas 0.24.0
+    pip install pandas==0.23.4 && \
     pip install pandas_summary && \
     pip install pandocfilters && \
     pip install pexpect && \
@@ -508,6 +510,7 @@ RUN pip install --upgrade dask && \
 # Add BigQuery client proxy settings
 ENV PYTHONUSERBASE "/root/.local"
 ADD patches/kaggle_gcp.py /root/.local/lib/python3.6/site-packages/kaggle_gcp.py
+ADD patches/kaggle_secrets.py /root/.local/lib/python3.6/site-packages/kaggle_secrets.py
 ADD patches/sitecustomize.py /root/.local/lib/python3.6/site-packages/sitecustomize.py
 
 # Set backend for matplotlib

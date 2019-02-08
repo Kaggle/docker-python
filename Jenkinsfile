@@ -1,4 +1,4 @@
-String cron_string = BRANCH_NAME == "master" ? "H 12 * * 1,3" : ""
+String cron_string = BRANCH_NAME == "master" ? "H 12 * * 1,3,5" : ""
 
 pipeline {
   agent { label 'ephemeral-linux' }
@@ -77,7 +77,7 @@ pipeline {
         slackSend color: 'none', message: "*<${env.BUILD_URL}console|${JOB_NAME} docker build>* ${GIT_COMMIT_SUMMARY}", channel: env.SLACK_CHANNEL
         sh '''#!/bin/bash
           set -exo pipefail
-          docker image prune -a -f # remove previously built image to prevent disk from filling up
+          docker image prune -f # remove previously built image to prevent disk from filling up
           ./build --gpu | ts
         '''
       }
