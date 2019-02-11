@@ -26,7 +26,7 @@ class UserSecretsHTTPHandler(BaseHTTPRequestHandler):
     def do_HEAD(s):
         s.send_response(200)
 
-    def do_GET(s):
+    def do_POST(s):
         s.set_request()
         s.send_response(200)
         s.send_header("Content-type", "application/json")
@@ -37,13 +37,15 @@ class UserSecretsHTTPHandler(BaseHTTPRequestHandler):
 class TestUserSecrets(unittest.TestCase):
     SERVER_ADDRESS = urlparse(os.getenv(_KAGGLE_URL_BASE_ENV_VAR_NAME))
 
-    def _test_client(self, client_func, expected_path, secret):
+    def _test_client(self, client_func, expected_path, expected_body, secret):
         _request = {}
 
         class AccessTokenHandler(UserSecretsHTTPHandler):
 
             def set_request(self):
                 _request['path'] = self.path
+                content_len = int(self.headers.get('Content-Length'))
+                _request['body'] = json.loads(self.rfile.read(content_len))
                 _request['headers'] = self.headers
 
             def get_response(self):
@@ -60,11 +62,15 @@ class TestUserSecrets(unittest.TestCase):
                 finally:
                     httpd.shutdown()
 
-                path, headers = _request['path'], _request['headers']
+                path, headers, body = _request['path'], _request['headers'], _request['body']
                 self.assertEqual(
                     path,
                     expected_path,
                     msg="Fake server did not receive the right request from the UserSecrets client.")
+                self.assertEqual(
+                    body,
+                    expected_body,
+                    msg="Fake server did not receive the right body from the UserSecrets client.")
                 self.assertTrue(
                     any(
                         k for k in headers
@@ -86,4 +92,4 @@ class TestUserSecrets(unittest.TestCase):
             secret_response = client.get_bigquery_access_token()
             self.assertEqual(secret_response, secret)
         self._test_client(call_get_access_token,
-                          '/requests/GetUserSecretRequest?Target=1', secret)
+                          '/requests/GetUserSecretRequest', {'Target': 1}, secret)
