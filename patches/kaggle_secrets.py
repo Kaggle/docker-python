@@ -1,9 +1,7 @@
 """UserSecret client classes.
-
 This library adds support for communicating with the UserSecrets service,
 currently used for retrieving an access token for supported integrations
 (ie. BigQuery).
-
 """
 
 import json
@@ -12,7 +10,7 @@ import urllib.request
 
 _KAGGLE_DEFAULT_URL_BASE = "https://www.kaggle.com"
 _KAGGLE_URL_BASE_ENV_VAR_NAME = "KAGGLE_URL_BASE"
-_KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME = "KAGGLE_USER_SECRETS_TOKEN_KEY"
+_KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME = "KAGGLE_USER_SECRETS_TOKEN"
 
 
 class CredentialError(Exception):
@@ -39,19 +37,25 @@ class UserSecretsClient():
         self.headers = {'Content-type': 'application/json',
                         'Authorization': 'Bearer {}'.format(jwt_token)}
 
-    def _make_get_request(self, request_body):
-        request_params = urllib.parse.urlencode(request_body)
-        url = f'{self.url_base}{self.GET_USER_SECRET_ENDPOINT}?{request_params}'
-        req = urllib.request.Request(url, headers=self.headers)
-        with urllib.request.urlopen(req) as response:
-            response_json = json.loads(response.read())
-            return response_json
+    def _make_post_request(self, request_body):
+        url = f'{self.url_base}{self.GET_USER_SECRET_ENDPOINT}'
+        req = urllib.request.Request(url, headers=self.headers, data=bytes(
+            json.dumps(request_body), encoding="utf-8"))
+        try:
+            with urllib.request.urlopen(req) as response:
+                response_json = json.loads(response.read())
+                return response_json
+        except urllib.error.HTTPError as e:
+            if e.code == 401 or e.code == 403:
+                raise CredentialError(f'Service responded with error code {e.code}.'
+                                      ' Please ensure you have access to the resource.') from e
+            raise BackendError('Unexpected response from the service.') from e
 
     def get_bigquery_access_token(self):
         request_body = {
             'Target': self.BIGQUERY_TARGET_VALUE
         }
-        response_json = self._make_get_request(request_body)
+        response_json = self._make_post_request(request_body)
         if 'Secret' not in response_json:
             raise BackendError(
                 'Unexpected response from the service.')
