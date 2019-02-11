@@ -24,9 +24,8 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     /tmp/clean-layer.sh
 
 # Tensorflow doesn't support python 3.7 yet. See https://github.com/tensorflow/tensorflow/issues/20517
-# Fix to install tf 1.10:: Downgrade python 3.7->3.6.6 and downgrade Pandas 0.23.3->0.23.2
+# Fix to install Tensorflow: Downgrade python 3.7->3.6.6.
 RUN conda install -y python=3.6.6 && \
-    pip install pandas==0.23.2 && \
     /tmp/clean-layer.sh
 
 # The anaconda base image includes outdated versions of these packages. Update them to include the latest version.
@@ -409,7 +408,7 @@ RUN pip install bcolz && \
     pip install notebook==5.5.0 && \
     pip install olefile && \
     pip install opencv-python && \
-    # tsfresh is not yet compatible with pandas 0.24.0
+    # b/124184516: tsfresh is not yet compatible with pandas 0.24.0
     pip install pandas==0.23.4 && \
     pip install pandas_summary && \
     pip install pandocfilters && \
@@ -476,7 +475,8 @@ RUN pip install flashtext && \
     pip install ggplot && \
     pip install cesium && \
     pip install rgf_python && \
-    pip install pytext-nlp && \
+    # b/124184516: latest version forces the use of incompatible pandas>0.24
+    pip install pytext-nlp==0.1.2 && \
     pip install tsfresh && \
     pip install pymagnitude && \
     pip install pykalman && \
