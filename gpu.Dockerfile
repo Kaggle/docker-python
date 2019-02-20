@@ -49,7 +49,7 @@ RUN pip uninstall -y tensorflow && \
     pip install /tmp/tensorflow_gpu/tensorflow*.whl && \
     rm -rf /tmp/tensorflow_gpu && \
     conda uninstall -y pytorch-cpu torchvision-cpu && \
-    conda install -y pytorch torchvision cudatoolkit=9.0 -c pytorch && \
+    conda install -y pytorch torchvision cudatoolkit=9.2 -c pytorch && \
     /tmp/clean-layer.sh
 
 # Install GPU-only packages
