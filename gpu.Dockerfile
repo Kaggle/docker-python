@@ -52,6 +52,9 @@ RUN pip uninstall -y tensorflow && \
     conda install -y pytorch torchvision -c pytorch && \
     /tmp/clean-layer.sh
 
+RUN pip uninstall -y mxnet &&
+    pip install mxnet-cu92mkl
+
 # Install GPU-only packages
 RUN pip install pycuda && \
     pip install cupy-cuda92 && \

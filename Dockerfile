@@ -141,6 +141,8 @@ RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
     # MXNet
     pip install mxnet && \
     pip install --upgrade numpy && \
+    pip install gluonnlp && \
+    pip install gluoncv && \
     # h2o (requires java)
     # requires java
     apt-get install -y default-jdk && \
