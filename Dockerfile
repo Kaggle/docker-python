@@ -2,7 +2,6 @@ FROM gcr.io/kaggle-images/python-tensorflow-whl:1.12.0-py36 as tensorflow_whl
 FROM continuumio/anaconda3:5.2.0
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
-ADD patches/ /tmp/patches/
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 
 # This is necessary for apt to access HTTPS sources

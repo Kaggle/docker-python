@@ -29,16 +29,17 @@ class UserSecretsClient():
         url_base_override = os.getenv(_KAGGLE_URL_BASE_ENV_VAR_NAME)
         self.url_base = url_base_override or _KAGGLE_DEFAULT_URL_BASE
         # Follow the OAuth 2.0 Authorization standard (https://tools.ietf.org/html/rfc6750)
-        jwt_token = os.getenv(_KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME)
-        if jwt_token is None:
+        self.jwt_token = os.getenv(_KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME)
+        if self.jwt_token is None:
             raise CredentialError(
                 'A JWT Token is required to use the UserSecretsClient, '
                 f'but none found in environment variable {_KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME}')
-        self.headers = {'Content-type': 'application/json',
-                        'Authorization': 'Bearer {}'.format(jwt_token)}
+        self.headers = {'Content-type': 'application/json'}
 
-    def _make_post_request(self, request_body):
+    def _make_post_request(self, data):
         url = f'{self.url_base}{self.GET_USER_SECRET_ENDPOINT}'
+        request_body = dict(data)
+        request_body['JWE'] = self.jwt_token
         req = urllib.request.Request(url, headers=self.headers, data=bytes(
             json.dumps(request_body), encoding="utf-8"))
         try:
