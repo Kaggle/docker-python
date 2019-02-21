@@ -71,11 +71,6 @@ class TestUserSecrets(unittest.TestCase):
                     body,
                     expected_body,
                     msg="Fake server did not receive the right body from the UserSecrets client.")
-                self.assertTrue(
-                    any(
-                        k for k in headers
-                        if k == "Authorization" and headers[k] == f'Bearer {_TEST_JWT}'),
-                    msg="Authorization header was missing from the UserSecrets request.")
 
     def test_no_token_fails(self):
         env = EnvironmentVarGuard()
@@ -92,4 +87,4 @@ class TestUserSecrets(unittest.TestCase):
             secret_response = client.get_bigquery_access_token()
             self.assertEqual(secret_response, secret)
         self._test_client(call_get_access_token,
-                          '/requests/GetUserSecretRequest', {'Target': 1}, secret)
+                          '/requests/GetUserSecretRequest', {'Target': 1, 'JWE': _TEST_JWT}, secret)
