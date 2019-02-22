@@ -481,6 +481,11 @@ RUN pip install flashtext && \
     pip install pykalman && \
     /tmp/clean-layer.sh
 
+# Tesseract and pytesseract
+RUN apt-get install tesseract-ocr -y && \
+    pip install pytesseract
+ENV TESSERACT_PATH=/usr/bin/tesseract
+
 # Pin Vowpal Wabbit v8.6.0 because 8.6.1 does not build or install successfully
 RUN cd /usr/local/src && \
     git clone -b 8.6.0 https://github.com/JohnLangford/vowpal_wabbit.git && \
