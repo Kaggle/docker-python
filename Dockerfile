@@ -483,7 +483,8 @@ RUN pip install flashtext && \
 
 # Tesseract and pytesseract
 RUN apt-get install tesseract-ocr -y && \
-    pip install pytesseract
+    pip install pytesseract && \
+    /tmp/clean-layer.sh
 ENV TESSERACT_PATH=/usr/bin/tesseract
 
 # Pin Vowpal Wabbit v8.6.0 because 8.6.1 does not build or install successfully
