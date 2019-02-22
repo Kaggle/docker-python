@@ -481,9 +481,13 @@ RUN pip install flashtext && \
     pip install pykalman && \
     /tmp/clean-layer.sh
 
-# Tesseract and pytesseract
+# Tesseract and some associated wrappers
 RUN apt-get install tesseract-ocr -y && \
     pip install pytesseract && \
+    pip install wand && \
+    pip install pdf2image && \
+    pip install PyPDF && \
+    pip install pyocr && \
     /tmp/clean-layer.sh
 ENV TESSERACT_PATH=/usr/bin/tesseract
 
