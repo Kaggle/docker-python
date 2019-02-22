@@ -481,7 +481,7 @@ RUN pip install flashtext && \
     pip install pykalman && \
     /tmp/clean-layer.sh
 
-# Tesseract and some associated wrappers
+# Tesseract and some associated utility packages
 RUN apt-get install tesseract-ocr -y && \
     pip install pytesseract && \
     pip install wand && \
