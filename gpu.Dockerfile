@@ -50,10 +50,10 @@ RUN pip uninstall -y tensorflow && \
     rm -rf /tmp/tensorflow_gpu && \
     conda uninstall -y pytorch-cpu torchvision-cpu && \
     conda install -y pytorch torchvision cudatoolkit=9.2 -c pytorch && \
+    pip uninstall -y mxnet && \
+    # b/126259508 --no-deps prevents numpy from being downgraded.
+    pip install --no-deps mxnet-cu92 && \
     /tmp/clean-layer.sh
-
-RUN pip uninstall -y mxnet && \
-    pip install mxnet-cu92
 
 # Install GPU-only packages
 RUN pip install pycuda && \
