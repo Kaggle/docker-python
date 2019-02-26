@@ -10,7 +10,7 @@ from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import bigquery
 from kaggle_secrets import (_KAGGLE_URL_BASE_ENV_VAR_NAME,
                             _KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME,
-                            CredentialError, UserSecretsClient)
+                            CredentialError, UserSecretsClient, BackendError)
 
 _TEST_JWT = 'test-secrets-key'
 
@@ -37,7 +37,7 @@ class UserSecretsHTTPHandler(BaseHTTPRequestHandler):
 class TestUserSecrets(unittest.TestCase):
     SERVER_ADDRESS = urlparse(os.getenv(_KAGGLE_URL_BASE_ENV_VAR_NAME))
 
-    def _test_client(self, client_func, expected_path, expected_body, secret):
+    def _test_client(self, client_func, expected_path, expected_body, secret=None, success=True):
         _request = {}
 
         class AccessTokenHandler(UserSecretsHTTPHandler):
@@ -49,7 +49,10 @@ class TestUserSecrets(unittest.TestCase):
                 _request['headers'] = self.headers
 
             def get_response(self):
-                return {'result': {'secret': secret, 'secretType': 'refreshToken', 'secretProvider': 'google'}, 'wasSuccessful': True}
+                if success:
+                    return {'result': {'secret': secret, 'secretType': 'refreshToken', 'secretProvider': 'google'}, 'wasSuccessful': "true"}
+                else:
+                    return {'wasSuccessful': "false"}
 
         env = EnvironmentVarGuard()
         env.set(_KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME, _TEST_JWT)
@@ -87,4 +90,12 @@ class TestUserSecrets(unittest.TestCase):
             secret_response = client.get_bigquery_access_token()
             self.assertEqual(secret_response, secret)
         self._test_client(call_get_access_token,
-                          '/requests/GetUserSecretRequest', {'Target': 1, 'JWE': _TEST_JWT}, secret)
+                          '/requests/GetUserSecretRequest', {'Target': 1, 'JWE': _TEST_JWT}, secret=secret)
+    
+    def test_get_access_token_handles_unsuccessful(self):
+        def call_get_access_token():
+            client = UserSecretsClient()
+            with self.assertRaises(BackendError):
+                client.get_bigquery_access_token()
+        self._test_client(call_get_access_token,
+                          '/requests/GetUserSecretRequest', {'Target': 1, 'JWE': _TEST_JWT}, success=False)
