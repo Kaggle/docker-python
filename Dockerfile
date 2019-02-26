@@ -2,7 +2,6 @@ FROM gcr.io/kaggle-images/python-tensorflow-whl:1.12.0-py36 as tensorflow_whl
 FROM continuumio/anaconda3:5.2.0
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
-ADD patches/ /tmp/patches/
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 
 # This is necessary for apt to access HTTPS sources
@@ -141,6 +140,8 @@ RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
     # MXNet
     pip install mxnet && \
     pip install --upgrade numpy && \
+    pip install gluonnlp && \
+    pip install gluoncv && \
     # h2o (requires java)
     # requires java
     apt-get install -y default-jdk && \
