@@ -11,7 +11,7 @@ import urllib.request
 _KAGGLE_DEFAULT_URL_BASE = "https://www.kaggle.com"
 _KAGGLE_URL_BASE_ENV_VAR_NAME = "KAGGLE_URL_BASE"
 _KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME = "KAGGLE_USER_SECRETS_TOKEN"
-TIMEOUT_SECS = 10
+TIMEOUT_SECS = 40
 
 
 class CredentialError(Exception):
