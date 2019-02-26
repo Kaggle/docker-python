@@ -49,7 +49,7 @@ class TestUserSecrets(unittest.TestCase):
                 _request['headers'] = self.headers
 
             def get_response(self):
-                return {"Secret": secret}
+                return {'result': {'secret': secret, 'secretType': 'refreshToken', 'secretProvider': 'google'}, 'wasSuccessful': True}
 
         env = EnvironmentVarGuard()
         env.set(_KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME, _TEST_JWT)

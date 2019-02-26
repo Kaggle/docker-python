@@ -45,7 +45,10 @@ class UserSecretsClient():
         try:
             with urllib.request.urlopen(req) as response:
                 response_json = json.loads(response.read())
-                return response_json
+                if not response_json.get('wasSuccessful') or 'result' not in response_json:
+                    raise BackendError(
+                        'Unexpected response from the service.')
+                return response_json['result']
         except urllib.error.HTTPError as e:
             if e.code == 401 or e.code == 403:
                 raise CredentialError(f'Service responded with error code {e.code}.'
@@ -57,7 +60,7 @@ class UserSecretsClient():
             'Target': self.BIGQUERY_TARGET_VALUE
         }
         response_json = self._make_post_request(request_body)
-        if 'Secret' not in response_json:
+        if 'secret' not in response_json:
             raise BackendError(
                 'Unexpected response from the service.')
-        return response_json['Secret']
+        return response_json['secret']
