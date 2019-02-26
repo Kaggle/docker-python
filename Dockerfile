@@ -512,5 +512,12 @@ ADD patches/kaggle_gcp.py /root/.local/lib/python3.6/site-packages/kaggle_gcp.py
 ADD patches/kaggle_secrets.py /root/.local/lib/python3.6/site-packages/kaggle_secrets.py
 ADD patches/sitecustomize.py /root/.local/lib/python3.6/site-packages/sitecustomize.py
 
+# TensorBoard Jupyter extension
+ENV JUPYTER_CONFIG_DIR "/root/.jupyter/"
+RUN pip install jupyter_tensorboard && \
+    jupyter serverextension enable jupyter_tensorboard && \
+    jupyter tensorboard enable
+ADD patches/tensorboard/notebook.py /opt/conda/lib/python3.6/site-packages/tensorboard/notebook.py
+
 # Set backend for matplotlib
 ENV MPLBACKEND "agg"
