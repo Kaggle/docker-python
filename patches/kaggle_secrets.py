@@ -11,6 +11,7 @@ import urllib.request
 _KAGGLE_DEFAULT_URL_BASE = "https://www.kaggle.com"
 _KAGGLE_URL_BASE_ENV_VAR_NAME = "KAGGLE_URL_BASE"
 _KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME = "KAGGLE_USER_SECRETS_TOKEN"
+TIMEOUT_SECS = 10
 
 
 class CredentialError(Exception):
@@ -43,7 +44,7 @@ class UserSecretsClient():
         req = urllib.request.Request(url, headers=self.headers, data=bytes(
             json.dumps(request_body), encoding="utf-8"))
         try:
-            with urllib.request.urlopen(req) as response:
+            with urllib.request.urlopen(req, timeout=TIMEOUT_SECS) as response:
                 response_json = json.loads(response.read())
                 if not response_json.get('wasSuccessful') or 'result' not in response_json:
                     raise BackendError(
