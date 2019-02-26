@@ -1,5 +1,7 @@
+ARG BASE_TAG=5.2.0
+
 FROM gcr.io/kaggle-images/python-tensorflow-whl:1.12.0-py36 as tensorflow_whl
-FROM continuumio/anaconda3:5.2.0
+FROM continuumio/anaconda3:${BASE_TAG}
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
