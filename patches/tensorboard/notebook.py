@@ -1,5 +1,5 @@
 """%tensorboard line magic that patches TensorBoard's implementation to make use of Jupyter 
-TensorBoard server extention providing built-in proxying.
+TensorBoard server extension providing built-in proxying.
 
 Use:
     %load_ext tensorboard.notebook
@@ -12,7 +12,11 @@ import uuid
 from IPython.display import display, HTML, Javascript
 
 def _tensorboard_magic(line):
-    """Line magic function."""
+    """Line magic function.
+
+    Makes an AJAX call to the Jupyter TensorBoard server extension and outputs
+    an IFrame displaying the TensorBoard instance.
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument('--logdir', default='/kaggle/working')
     args = parser.parse_args(line.split())
@@ -20,6 +24,7 @@ def _tensorboard_magic(line):
     iframe_id = 'tensorboard-' + str(uuid.uuid4())
         
     html = """
+<!-- JUPYTER_TENSORBOARD_TEST_MARKER -->
 <script>
     const req = {
         method: 'POST',
@@ -41,7 +46,7 @@ def _tensorboard_magic(line):
     display(HTML(html))
     
 def load_ipython_extension(ipython):
-    """IPython extention entry point."""
+    """IPython extension entry point."""
     ipython.register_magic_function(
         _tensorboard_magic,
         magic_kind='line',
