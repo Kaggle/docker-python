@@ -483,6 +483,7 @@ RUN pip install flashtext && \
     pip install tsfresh && \
     pip install pymagnitude && \
     pip install pykalman && \
+    pip install optuna && \
     /tmp/clean-layer.sh
 
 # Pin Vowpal Wabbit v8.6.0 because 8.6.1 does not build or install successfully
