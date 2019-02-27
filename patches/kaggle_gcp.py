@@ -1,12 +1,13 @@
 import os
 from google.auth import credentials
+from google.auth.exceptions import RefreshError 
 from google.cloud import bigquery
 from google.cloud.bigquery._http import Connection
+from kaggle_secrets import UserSecretsClient
 
 
 class KaggleKernelCredentials(credentials.Credentials):
     """Custom Credentials used to authenticate using the Kernel's connected OAuth account.
-
     Example usage:
     client = bigquery.Client(project='ANOTHER_PROJECT',
                                 credentials=KaggleKernelCredentials())
@@ -14,9 +15,11 @@ class KaggleKernelCredentials(credentials.Credentials):
 
     def refresh(self, request):
         print("Calling Kaggle.UserSecrets to refresh token.")
-        # Set self.token and self.expiry here.
-        raise NotImplementedError(
-            "Private BigQuery integration is not yet implemented.")
+        try:
+            client = UserSecretsClient()
+            fresh_token = client.get_bigquery_access_token()
+        except Exception as e:
+            raise RefreshError('Unable to refresh access token.') from e
 
 
 class _DataProxyConnection(Connection):
@@ -32,7 +35,6 @@ class _DataProxyConnection(Connection):
 
 class PublicBigqueryClient(bigquery.client.Client):
     """A modified BigQuery client that routes requests using Kaggle's Data Proxy to provide free access to Public Datasets.
-
     Example usage:
     from kaggle import PublicBigqueryClient
     client = PublicBigqueryClient()

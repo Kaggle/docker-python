@@ -1,6 +1,8 @@
+ARG BASE_TAG=staging
+
 FROM nvidia/cuda:9.2-cudnn7-devel-ubuntu16.04 AS nvidia
 FROM gcr.io/kaggle-images/python-tensorflow-whl:1.12.0-py36 as tensorflow_whl
-FROM gcr.io/kaggle-images/python:staging
+FROM gcr.io/kaggle-images/python:${BASE_TAG}
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
 
@@ -49,7 +51,10 @@ RUN pip uninstall -y tensorflow && \
     pip install /tmp/tensorflow_gpu/tensorflow*.whl && \
     rm -rf /tmp/tensorflow_gpu && \
     conda uninstall -y pytorch-cpu torchvision-cpu && \
-    conda install -y pytorch torchvision -c pytorch && \
+    conda install -y pytorch torchvision cudatoolkit=9.2 -c pytorch && \
+    pip uninstall -y mxnet && \
+    # b/126259508 --no-deps prevents numpy from being downgraded.
+    pip install --no-deps mxnet-cu92 && \
     /tmp/clean-layer.sh
 
 # Install GPU-only packages
