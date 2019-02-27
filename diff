@@ -4,16 +4,19 @@ set -e
 usage() {
 cat << EOF
 Usage: $0 [OPTIONS]
-Compare the locally built Docker image package versions against the prod image.
+Compare a given Docker image package versions against the prod image.
 
 Options:
     -g, --gpu       Compare GPU images.
+    -t, --target    The image to diff against the prod image.
+                    Default is the locally built image.
 EOF
 }
 
 
 BASE_IMAGE_TAG='gcr.io/kaggle-images/python:latest'
 TARGET_IMAGE_TAG='kaggle/python-build'
+TARGET_IMAGE_TAG_OVERRIDE=''
 
 while :; do
     case "$1" in 
@@ -24,6 +27,15 @@ while :; do
         -g|--gpu)
             BASE_IMAGE_TAG='gcr.io/kaggle-private-byod/python:latest'
             TARGET_IMAGE_TAG='kaggle/python-gpu-build'
+            ;;
+        -t|--target)
+            if [[ -z "$2" ]]; then
+                usage
+                printf 'ERROR: No IMAGE specified after the %s flag.\n' "$1" >&2
+                exit
+            fi
+            TARGET_IMAGE_TAG_OVERRIDE="$2"
+            shift # skip the flag value
             ;;
         -?*)
             usage
@@ -36,6 +48,10 @@ while :; do
 
     shift
 done
+
+if [[ -n "$TARGET_IMAGE_TAG_OVERRIDE" ]]; then
+    TARGET_IMAGE_TAG="$TARGET_IMAGE_TAG_OVERRIDE"
+fi
 
 readonly BASE_IMAGE_TAG
 readonly TARGET_IMAGE_TAG
