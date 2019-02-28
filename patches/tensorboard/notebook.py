@@ -37,10 +37,18 @@ def _tensorboard_magic(line):
 
     fetch(baseUrl + 'api/tensorboard', req)
         .then(res => res.json())
-        .then(res => document.getElementById('%s').src = baseUrl + 'tensorboard/' + res.name);
+        .then(res => {
+            const iframe = document.getElementById('%s');
+            iframe.src = baseUrl + 'tensorboard/' + res.name;
+            iframe.style.display = 'block';
+        });
 </script>
 
-<iframe id="%s" style="width: 100%%; height: 620px" frameBorder="0"></iframe>
+<iframe
+    id="%s"
+    style="width: 100%%; height: 620px; display: none;"
+    frameBorder="0">
+</iframe>
 """ % (args.logdir, iframe_id, iframe_id)
     
     display(HTML(html))
