@@ -87,6 +87,7 @@ RUN cd /usr/local/src/tensorflow && \
 # Create a tensorflow wheel for GPU/cuda
 ENV TF_NEED_CUDA=1
 ENV TF_CUDA_VERSION=9.2
+# 3.7 is for the K80 and 6.0 is for the P100: https://developer.nvidia.com/cuda-gpus
 ENV TF_CUDA_COMPUTE_CAPABILITIES=3.7,6.0
 ENV TF_CUDNN_VERSION=7
 ENV TF_NCCL_VERSION=2
