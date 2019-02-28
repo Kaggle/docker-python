@@ -62,3 +62,6 @@ RUN pip install pycuda && \
     pip install cupy-cuda92 && \
     pip install pynvrtc && \
     /tmp/clean-layer.sh
+
+# Re-add TensorBoard Jupyter extension patch
+ADD patches/tensorboard/notebook.py /opt/conda/lib/python3.6/site-packages/tensorboard/notebook.py
