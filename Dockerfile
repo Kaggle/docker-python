@@ -512,7 +512,8 @@ ADD patches/kaggle_gcp.py /root/.local/lib/python3.6/site-packages/kaggle_gcp.py
 ADD patches/kaggle_secrets.py /root/.local/lib/python3.6/site-packages/kaggle_secrets.py
 ADD patches/sitecustomize.py /root/.local/lib/python3.6/site-packages/sitecustomize.py
 
-# TensorBoard Jupyter extension
+# TensorBoard Jupyter extension. Should be replaced with TensorBoard's provided magic once we have
+# worker tunneling support in place.
 ENV JUPYTER_CONFIG_DIR "/root/.jupyter/"
 RUN pip install jupyter_tensorboard && \
     jupyter serverextension enable jupyter_tensorboard && \
