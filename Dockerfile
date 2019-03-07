@@ -483,6 +483,16 @@ RUN pip install flashtext && \
     pip install optuna && \
     /tmp/clean-layer.sh
 
+# Tesseract and some associated utility packages
+RUN apt-get install tesseract-ocr -y && \
+    pip install pytesseract && \
+    pip install wand && \
+    pip install pdf2image && \
+    pip install PyPDF && \
+    pip install pyocr && \
+    /tmp/clean-layer.sh
+ENV TESSERACT_PATH=/usr/bin/tesseract
+
 # Pin Vowpal Wabbit v8.6.0 because 8.6.1 does not build or install successfully
 RUN cd /usr/local/src && \
     git clone -b 8.6.0 https://github.com/JohnLangford/vowpal_wabbit.git && \
