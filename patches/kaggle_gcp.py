@@ -16,7 +16,7 @@ class KaggleKernelCredentials(credentials.Credentials):
     def refresh(self, request):
         try:
             client = UserSecretsClient()
-            self.token = client.get_bigquery_access_token()
+            self.token, self.expiry = client.get_bigquery_access_token()
         except Exception as e:
             raise RefreshError('Unable to refresh access token.') from e
 

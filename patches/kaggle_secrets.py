@@ -57,6 +57,13 @@ class UserSecretsClient():
             raise BackendError('Unexpected response from the service.') from e
 
     def get_bigquery_access_token(self):
+        """
+        Calls UserSecrets service to retrieve the BigQuery access token for the current Kernel,
+        and the expiry if it is present.
+        Example usage:
+            client = UserSecretsClient()
+            self.token, self.expiry = client.get_bigquery_access_token()
+        """
         request_body = {
             'Target': self.BIGQUERY_TARGET_VALUE
         }
@@ -64,4 +71,5 @@ class UserSecretsClient():
         if 'secret' not in response_json:
             raise BackendError(
                 'Unexpected response from the service.')
-        return response_json['secret']
+        # Optionally return expiry if it is set.
+        return response_json['secret'], response_json.get('expiresInSeconds')
