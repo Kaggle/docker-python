@@ -50,7 +50,7 @@ class TestUserSecrets(unittest.TestCase):
 
             def get_response(self):
                 if success:
-                    return {'result': {'secret': secret, 'secretType': 'refreshToken', 'secretProvider': 'google'}, 'wasSuccessful': "true"}
+                    return {'result': {'secret': secret, 'secretType': 'refreshToken', 'secretProvider': 'google', 'expiresInSeconds': 3600}, 'wasSuccessful': "true"}
                 else:
                     return {'wasSuccessful': "false"}
 
@@ -88,7 +88,7 @@ class TestUserSecrets(unittest.TestCase):
         def call_get_access_token():
             client = UserSecretsClient()
             secret_response = client.get_bigquery_access_token()
-            self.assertEqual(secret_response, secret)
+            self.assertEqual(secret_response, (secret, 3600)) 
         self._test_client(call_get_access_token,
                           '/requests/GetUserSecretRequest', {'Target': 1, 'JWE': _TEST_JWT}, secret=secret)
     
