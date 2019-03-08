@@ -5,6 +5,8 @@ import unittest
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from test.support import EnvironmentVarGuard
 from urllib.parse import urlparse
+from datetime import datetime, timedelta
+import mock
 
 from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import bigquery
@@ -50,7 +52,7 @@ class TestUserSecrets(unittest.TestCase):
 
             def get_response(self):
                 if success:
-                    return {'result': {'secret': secret, 'secretType': 'refreshToken', 'secretProvider': 'google'}, 'wasSuccessful': "true"}
+                    return {'result': {'secret': secret, 'secretType': 'refreshToken', 'secretProvider': 'google', 'expiresInSeconds': 3600}, 'wasSuccessful': "true"}
                 else:
                     return {'wasSuccessful': "false"}
 
@@ -82,13 +84,16 @@ class TestUserSecrets(unittest.TestCase):
             with self.assertRaises(CredentialError):
                 client = UserSecretsClient()
 
-    def test_get_access_token_succeeds(self):
+    @mock.patch('kaggle_secrets.datetime')
+    def test_get_access_token_succeeds(self, mock_dt):
         secret = '12345'
+        now = datetime(1993, 4, 24)
+        mock_dt.utcnow = mock.Mock(return_value=now)
 
         def call_get_access_token():
             client = UserSecretsClient()
             secret_response = client.get_bigquery_access_token()
-            self.assertEqual(secret_response, secret)
+            self.assertEqual(secret_response, (secret, now + timedelta(seconds=3600))) 
         self._test_client(call_get_access_token,
                           '/requests/GetUserSecretRequest', {'Target': 1, 'JWE': _TEST_JWT}, secret=secret)
     
