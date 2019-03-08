@@ -7,6 +7,7 @@ currently used for retrieving an access token for supported integrations
 import json
 import os
 import urllib.request
+from datetime import datetime, timedelta
 
 _KAGGLE_DEFAULT_URL_BASE = "https://www.kaggle.com"
 _KAGGLE_URL_BASE_ENV_VAR_NAME = "KAGGLE_URL_BASE"
@@ -72,4 +73,6 @@ class UserSecretsClient():
             raise BackendError(
                 'Unexpected response from the service.')
         # Optionally return expiry if it is set.
-        return response_json['secret'], response_json.get('expiresInSeconds')
+        expiresInSeconds = response_json.get('expiresInSeconds')
+        expiry = datetime.utcnow() + timedelta(seconds=expiresInSeconds) if expiresInSeconds else None
+        return response_json['secret'], expiry
