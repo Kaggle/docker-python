@@ -118,14 +118,10 @@ RUN apt-get install -y libfreetype6-dev && \
 ENV LD_LIBRARY_PATH=/opt/conda/lib
 
 RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
-    pip install matplotlib==2.2.3 && \
+    pip install matplotlib && \
     pip install pyshp && \
     pip install pyproj && \
-    cd /usr/local/src && git clone https://github.com/matplotlib/basemap.git && \
-    cd basemap && \
-    git checkout v1.1.0 && \
-    python setup.py install && \
-    pip install basemap --no-binary basemap && \
+    conda install basemap && \
     # sasl is apparently an ibis dependency
     apt-get -y install libsasl2-dev && \
     # ...as is psycopg2
