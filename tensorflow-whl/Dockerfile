@@ -66,10 +66,7 @@ RUN apt-get update && apt-get install -y gnupg zip && \
     rm bazel_*.deb
 
 # Tensorflow doesn't support python 3.7 yet. See https://github.com/tensorflow/tensorflow/issues/20517
-RUN conda install -y python=3.6.6 && \
-    # Another fix for TF 1.10 https://github.com/tensorflow/tensorflow/issues/21518
-    pip install keras_applications==1.0.4 --no-deps && \
-    pip install keras_preprocessing==1.0.2 --no-deps
+RUN conda install -y python=3.6.6
 
 # Fetch tensorflow
 RUN cd /usr/local/src && \
