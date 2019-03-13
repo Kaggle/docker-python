@@ -1,4 +1,4 @@
-FROM nvidia/cuda:9.2-cudnn7-devel-ubuntu16.04 AS nvidia
+FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu16.04 AS nvidia
 FROM continuumio/anaconda3:5.2.0
 
 # Avoid interactive configuration prompts/dialogs during apt-get.
@@ -15,8 +15,8 @@ COPY --from=nvidia /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d/cuda.gpg
 
 # Ensure the cuda libraries are compatible with the GPU image.
 # TODO(b/120050292): Use templating to keep in sync.
-ENV CUDA_VERSION=9.2.148
-ENV CUDA_PKG_VERSION=9-2=$CUDA_VERSION-1
+ENV CUDA_VERSION=10.1.105
+ENV CUDA_PKG_VERSION=10-1=$CUDA_VERSION-1
 LABEL com.nvidia.volumes.needed="nvidia_driver"
 LABEL com.nvidia.cuda.version="${CUDA_VERSION}"
 ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
@@ -38,17 +38,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       cuda-nvml-dev-$CUDA_PKG_VERSION \
       cuda-minimal-build-$CUDA_PKG_VERSION \
       cuda-command-line-tools-$CUDA_PKG_VERSION \
-      libcudnn7=7.4.1.5-1+cuda9.2 \
-      libcudnn7-dev=7.4.1.5-1+cuda9.2 \
-      libnccl2=2.3.7-1+cuda9.2 \
-      libnccl-dev=2.3.7-1+cuda9.2 && \
-    ln -s /usr/local/cuda-9.2 /usr/local/cuda && \
+      libcudnn7=7.5.0.56-1+cuda10.1 \
+      libcudnn7-dev=7.5.0.56-1+cuda10.1 \
+      libnccl2=2.4.2-1+cuda10.1 \
+      libnccl-dev=2.4.2-1+cuda10.1 && \
+    ln -s /usr/local/cuda-10.1 /usr/local/cuda && \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1 && \
     rm -rf /var/lib/apt/lists/*
 
 # Install bazel
-# Tensorflow 1.11 requires the Bazel 0.15: https://www.tensorflow.org/install/source
-ENV BAZEL_VERSION=0.15.0
+# Tensorflow 1.13 requires the Bazel 0.19.2: https://www.tensorflow.org/install/source
+ENV BAZEL_VERSION=0.19.2
 RUN apt-get update && apt-get install -y gnupg zip && \
     echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list && \
     echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list && \
@@ -72,7 +72,7 @@ RUN conda install -y python=3.6.6
 RUN cd /usr/local/src && \
     git clone https://github.com/tensorflow/tensorflow && \
     cd tensorflow && \
-    git checkout r1.12
+    git checkout r1.13
 
 # Create a tensorflow wheel for CPU
 RUN cd /usr/local/src/tensorflow && \
@@ -83,9 +83,9 @@ RUN cd /usr/local/src/tensorflow && \
 
 # Create a tensorflow wheel for GPU/cuda
 ENV TF_NEED_CUDA=1
-ENV TF_CUDA_VERSION=9.2
-# 3.7 is for the K80 and 6.0 is for the P100: https://developer.nvidia.com/cuda-gpus
-ENV TF_CUDA_COMPUTE_CAPABILITIES=3.7,6.0
+ENV TF_CUDA_VERSION=10.1
+# 3.7 is for the K80 and 6.0 is for the P100, 7.5 is for the T4: https://developer.nvidia.com/cuda-gpus
+ENV TF_CUDA_COMPUTE_CAPABILITIES=3.7,6.0,7.5
 ENV TF_CUDNN_VERSION=7
 ENV TF_NCCL_VERSION=2
 ENV NCCL_INSTALL_PATH=/usr/
