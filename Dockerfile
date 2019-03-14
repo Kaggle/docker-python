@@ -1,6 +1,6 @@
 ARG BASE_TAG=5.2.0
 
-FROM gcr.io/kaggle-images/python-tensorflow-whl:1.12.0-py36 as tensorflow_whl
+FROM gcr.io/kaggle-images/python-tensorflow-whl:1.13.1-py36 as tensorflow_whl
 FROM continuumio/anaconda3:${BASE_TAG}
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
@@ -19,6 +19,11 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     conda update -y conda && conda update -y python && \
     pip install pip==19.0.3 && \
     apt-get -y install cmake && \
+    /tmp/clean-layer.sh
+
+# Tensorflow doesn't support python 3.7 yet. See https://github.com/tensorflow/tensorflow/issues/20517	
+# Fix to install Tensorflow: Downgrade python 3.7->3.6.6.
+RUN conda install -y python=3.6.6 && \
     /tmp/clean-layer.sh
 
 # The anaconda base image includes outdated versions of these packages. Update them to include the latest version.
