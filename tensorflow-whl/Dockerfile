@@ -28,7 +28,7 @@ ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
 ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/nvidia/lib64:/usr/local/cuda/lib64:/usr/local/cuda/lib64/stubs"
 ENV NVIDIA_VISIBLE_DEVICES=all
 ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
-ENV NVIDIA_REQUIRE_CUDA="cuda>=9.0"
+ENV NVIDIA_REQUIRE_CUDA="cuda>=10.1"
 RUN apt-get update && apt-get install -y --no-install-recommends \
       cuda-cupti-$CUDA_PKG_VERSION \
       cuda-cudart-$CUDA_PKG_VERSION \
@@ -49,7 +49,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install bazel
 # Tensorflow 1.13 requires the Bazel 0.19.2: https://www.tensorflow.org/install/source
 ENV BAZEL_VERSION=0.19.2
-RUN apt-get update && apt-get install -y gnupg zip && \
+RUN apt-get install -y gnupg zip && \
     echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list && \
     echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list && \
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys --no-tty EEA14886 C857C906 2B90D010 && \
@@ -65,14 +65,13 @@ RUN apt-get update && apt-get install -y gnupg zip && \
     dpkg -i bazel_*.deb && \
     rm bazel_*.deb
 
-# Tensorflow doesn't support python 3.7 yet. See https://github.com/tensorflow/tensorflow/issues/20517
-RUN conda install -y python=3.6.6
-
-# Fetch tensorflow
+# Fetch tensorflow & install dependencies.
 RUN cd /usr/local/src && \
     git clone https://github.com/tensorflow/tensorflow && \
     cd tensorflow && \
-    git checkout r1.13
+    git checkout r1.13 && \
+    pip install keras_applications --no-deps && \
+    pip install keras_preprocessing --no-deps
 
 # Create a tensorflow wheel for CPU
 RUN cd /usr/local/src/tensorflow && \

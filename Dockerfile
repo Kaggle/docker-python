@@ -21,11 +21,6 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     apt-get -y install cmake && \
     /tmp/clean-layer.sh
 
-# Tensorflow doesn't support python 3.7 yet. See https://github.com/tensorflow/tensorflow/issues/20517
-# Fix to install Tensorflow: Downgrade python 3.7->3.6.6.
-RUN conda install -y python=3.6.6 && \
-    /tmp/clean-layer.sh
-
 # The anaconda base image includes outdated versions of these packages. Update them to include the latest version.
 RUN pip install --upgrade seaborn python-dateutil dask && \
     pip install pyyaml joblib pytagcloud husl geopy ml_metrics mne pyshp && \
