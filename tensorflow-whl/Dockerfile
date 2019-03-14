@@ -43,8 +43,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       libnccl2=2.4.2-1+cuda10.0 \
       libnccl-dev=2.4.2-1+cuda10.0 && \
     ln -s /usr/local/cuda-10.0 /usr/local/cuda && \
-    ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1 && \
-    rm -rf /var/lib/apt/lists/*
+    ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1
 
 # Install bazel
 # Tensorflow 1.13 requires the Bazel 0.19.2: https://www.tensorflow.org/install/source
