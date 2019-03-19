@@ -158,7 +158,10 @@ RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
     mkdir -p /tmp/.keras && cp /root/.keras/keras.json /tmp/.keras && \
     /tmp/clean-layer.sh
 
-    # scikit-learn dependencies
+# b/128333086: Set PROJ_LIB to points to the proj4 cartographic library.
+ENV PROJ_LIB=/opt/conda/share/proj
+
+# scikit-learn dependencies
 RUN pip install scipy && \
     pip install scikit-learn && \
     # HDF5 support
