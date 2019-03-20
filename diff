@@ -1,0 +1,71 @@
+#!/bin/bash
+set -e
+
+usage() {
+cat << EOF
+Usage: $0 [OPTIONS]
+Compare a given Docker image package versions against the prod image.
+
+Options:
+    -g, --gpu       Compare GPU images.
+    -t, --target    The image to diff against the prod image.
+                    Default is the locally built image.
+EOF
+}
+
+
+BASE_IMAGE_TAG='gcr.io/kaggle-images/python:latest'
+TARGET_IMAGE_TAG='kaggle/python-build'
+TARGET_IMAGE_TAG_OVERRIDE=''
+
+while :; do
+    case "$1" in 
+        -h|--help)
+            usage
+            exit
+            ;;
+        -g|--gpu)
+            BASE_IMAGE_TAG='gcr.io/kaggle-private-byod/python:latest'
+            TARGET_IMAGE_TAG='kaggle/python-gpu-build'
+            ;;
+        -t|--target)
+            if [[ -z "$2" ]]; then
+                usage
+                printf 'ERROR: No IMAGE specified after the %s flag.\n' "$1" >&2
+                exit
+            fi
+            TARGET_IMAGE_TAG_OVERRIDE="$2"
+            shift # skip the flag value
+            ;;
+        -?*)
+            usage
+            printf 'ERROR: Unknown option: %s\n' "$1" >&2
+            exit
+            ;;
+        *)            
+            break
+    esac
+
+    shift
+done
+
+if [[ -n "$TARGET_IMAGE_TAG_OVERRIDE" ]]; then
+    TARGET_IMAGE_TAG="$TARGET_IMAGE_TAG_OVERRIDE"
+fi
+
+readonly BASE_IMAGE_TAG
+readonly TARGET_IMAGE_TAG
+
+echo "Base: $BASE_IMAGE_TAG"
+echo "Target: $TARGET_IMAGE_TAG"
+
+docker pull "$BASE_IMAGE_TAG"
+
+CMDS=('dpkg-query --show -f "${Package}==${Version}\n"' 'pip freeze')
+for cmd in "${CMDS[@]}"; do
+    echo "== Comparing $cmd =="
+    diff --suppress-common-lines --side-by-side \
+        <(docker run --rm "$BASE_IMAGE_TAG" $cmd) \
+        <(docker run --rm "$TARGET_IMAGE_TAG" $cmd) \
+        && echo 'No diff' || true
+done

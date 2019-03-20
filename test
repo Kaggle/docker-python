@@ -1,17 +1,92 @@
 #!/bin/bash
 set -e
-set +x
 
+IMAGE_TAG='kaggle/python-build'
+IMAGE_TAG_OVERRIDE=''
+ADDITONAL_OPTS=''
+PATTERN='test*.py'
+
+usage() {
+cat << EOF
+Usage: $0 [OPTIONS]
+Run tests for a newly-built Python Docker image.
+By default, it runs the tests for the CPU image.
+
+Options:
+    -g, --gpu             Run tests for the GPU image.
+    -i, --image IMAGE     Run tests against the specified image
+    -p, --pattern PATTERN Pattern to match test files ($PATTERN default)
+
+EOF
+}
+
+while :; do
+    case "$1" in 
+        -h|--help)
+            usage
+            exit
+            ;;
+        -g|--gpu)
+            IMAGE_TAG='kaggle/python-gpu-build'
+            ADDITONAL_OPTS='-v /tmp/empty_dir:/usr/local/cuda/lib64/stubs:ro'
+            ;;
+        -i|--image)
+            if [[ -z $2 ]]; then
+                usage
+                printf 'ERROR: No IMAGE specified after the %s flag.\n' "$1" >&2
+                exit
+            fi
+            IMAGE_TAG_OVERRIDE=$2
+            shift # skip the flag value
+            ;;
+        -p|--pattern)
+            if [[ -z $2 ]]; then
+                usage
+                printf 'ERROR: No PATTERN specified after the %s flag.\n' "$1" >&2
+                exit
+            fi
+            PATTERN="$2"
+            shift # skip the flag value
+            ;;
+        -?*)
+            usage
+            printf 'ERROR: Unknown option: %s\n' "$1" >&2
+            exit
+            ;;
+        *)            
+            break
+    esac
+
+    shift
+done
+
+if [[ -n "$IMAGE_TAG_OVERRIDE" ]]; then
+    IMAGE_TAG="$IMAGE_TAG_OVERRIDE"
+fi
+
+readonly IMAGE_TAG
+readonly ADDITONAL_OPTS
+readonly PATTERN
+
+set -x
 rm -rf /tmp/python-build
 docker rm jupyter_test || true
 mkdir -p /tmp/python-build/tmp
 mkdir -p /tmp/python-build/devshm
 mkdir -p /tmp/python-build/working
 # Check that Jupyter server can run; if it dies on startup, the `docker kill` command will throw an error
-docker run -d --name=jupyter_test --read-only --net=none -e HOME=/tmp -v $PWD:/input:ro -v /tmp/python-build/working:/working -w=/working -v /tmp/python-build/tmp:/tmp -v /tmp/python-build/devshm:/dev/shm kaggle/python-build jupyter notebook --allow-root --ip="*"
+docker run -d --name=jupyter_test --read-only --net=none -e HOME=/tmp -v $PWD:/input:ro -v /tmp/python-build/working:/working -w=/working -v /tmp/python-build/tmp:/tmp -v /tmp/python-build/devshm:/dev/shm "$IMAGE_TAG" jupyter notebook --allow-root --ip="*"
 sleep 3
 docker kill jupyter_test && docker rm jupyter_test
-docker run --rm -t --read-only --net=none -e HOME=/tmp -e KAGGLE_DATA_PROXY_TOKEN=test-key -e KAGGLE_DATA_PROXY_URL=http://127.0.0.1:8000 -e KAGGLE_DATA_PROXY_PROJECT=test -v $PWD:/input:ro -v /tmp/python-build/working:/working -w=/working -v /tmp/python-build/tmp:/tmp -v /tmp/python-build/devshm:/dev/shm kaggle/python-build /bin/bash -c 'python /input/test_build.py'
-
-# The test_build.py script creates a plot called plot1.png; check that it exists
-[ -s /tmp/python-build/working/plot1.png ] || exit 1
+docker run --rm -t --read-only --net=none \
+    -e HOME=/tmp -e KAGGLE_DATA_PROXY_TOKEN=test-key \
+    -e KAGGLE_USER_SECRETS_TOKEN_KEY=test-secrets-key \
+    -e KAGGLE_URL_BASE=http://127.0.0.1:8001 \
+    -e KAGGLE_DATA_PROXY_URL=http://127.0.0.1:8000 \
+    -e KAGGLE_DATA_PROXY_PROJECT=test \
+    -v $PWD:/input:ro -v /tmp/python-build/working:/working \
+    -v /tmp/python-build/tmp:/tmp -v /tmp/python-build/devshm:/dev/shm \
+    -w=/working \
+    $ADDITONAL_OPTS \
+    "$IMAGE_TAG" \
+    /bin/bash -c "python -m unittest discover -s /input/tests -p $PATTERN -v"
