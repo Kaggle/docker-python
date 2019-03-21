@@ -480,6 +480,7 @@ RUN pip install flashtext && \
     pip install pymagnitude && \
     pip install pykalman && \
     pip install optuna && \
+    pip install chainercv && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
