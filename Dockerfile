@@ -1,6 +1,6 @@
 ARG BASE_TAG=5.2.0
 
-FROM gcr.io/kaggle-images/python-tensorflow-whl:1.12.0-py36 as tensorflow_whl
+FROM gcr.io/kaggle-images/python-tensorflow-whl:1.13.1-py36 as tensorflow_whl
 FROM continuumio/anaconda3:${BASE_TAG}
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
@@ -17,14 +17,11 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     apt-get update && apt-get install -y build-essential unzip && \
     # https://stackoverflow.com/a/46498173
     conda update -y conda && conda update -y python && \
-    # cartopy package fails to install with the latest version of pip (19.0.1) with:
-    # "ModuleNotFoundError: No module named 'versioneer'"
-    # `versioneer` is checked in the cartopy package, the sys path seems to differ with the new version of pip.
-    pip install pip==18.1 && \
+    pip install pip==19.0.3 && \
     apt-get -y install cmake && \
     /tmp/clean-layer.sh
 
-# Tensorflow doesn't support python 3.7 yet. See https://github.com/tensorflow/tensorflow/issues/20517
+# Tensorflow doesn't support python 3.7 yet. See https://github.com/tensorflow/tensorflow/issues/20517	
 # Fix to install Tensorflow: Downgrade python 3.7->3.6.6.
 RUN conda install -y python=3.6.6 && \
     /tmp/clean-layer.sh
@@ -121,14 +118,10 @@ RUN apt-get install -y libfreetype6-dev && \
 ENV LD_LIBRARY_PATH=/opt/conda/lib
 
 RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
-    pip install matplotlib==2.2.3 && \
+    pip install matplotlib && \
     pip install pyshp && \
     pip install pyproj && \
-    cd /usr/local/src && git clone https://github.com/matplotlib/basemap.git && \
-    cd basemap && \
-    git checkout v1.1.0 && \
-    python setup.py install && \
-    pip install basemap --no-binary basemap && \
+    conda install basemap && \
     # sasl is apparently an ibis dependency
     apt-get -y install libsasl2-dev && \
     # ...as is psycopg2
@@ -165,7 +158,10 @@ RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
     mkdir -p /tmp/.keras && cp /root/.keras/keras.json /tmp/.keras && \
     /tmp/clean-layer.sh
 
-    # scikit-learn dependencies
+# b/128333086: Set PROJ_LIB to points to the proj4 cartographic library.
+ENV PROJ_LIB=/opt/conda/share/proj
+
+# scikit-learn dependencies
 RUN pip install scipy && \
     pip install scikit-learn && \
     # HDF5 support
@@ -484,8 +480,19 @@ RUN pip install flashtext && \
     pip install pymagnitude && \
     pip install pykalman && \
     pip install optuna && \
+    pip install chainercv && \
     pip install chainer-chemistry && \
     /tmp/clean-layer.sh
+
+# Tesseract and some associated utility packages
+RUN apt-get install tesseract-ocr -y && \
+    pip install pytesseract && \
+    pip install wand && \
+    pip install pdf2image && \
+    pip install PyPDF && \
+    pip install pyocr && \
+    /tmp/clean-layer.sh
+ENV TESSERACT_PATH=/usr/bin/tesseract
 
 # Pin Vowpal Wabbit v8.6.0 because 8.6.1 does not build or install successfully
 RUN cd /usr/local/src && \
@@ -517,6 +524,14 @@ ENV PYTHONUSERBASE "/root/.local"
 ADD patches/kaggle_gcp.py /root/.local/lib/python3.6/site-packages/kaggle_gcp.py
 ADD patches/kaggle_secrets.py /root/.local/lib/python3.6/site-packages/kaggle_secrets.py
 ADD patches/sitecustomize.py /root/.local/lib/python3.6/site-packages/sitecustomize.py
+
+# TensorBoard Jupyter extension. Should be replaced with TensorBoard's provided magic once we have
+# worker tunneling support in place.
+ENV JUPYTER_CONFIG_DIR "/root/.jupyter/"
+RUN pip install jupyter_tensorboard && \
+    jupyter serverextension enable jupyter_tensorboard && \
+    jupyter tensorboard enable
+ADD patches/tensorboard/notebook.py /opt/conda/lib/python3.6/site-packages/tensorboard/notebook.py
 
 # Set backend for matplotlib
 ENV MPLBACKEND "agg"

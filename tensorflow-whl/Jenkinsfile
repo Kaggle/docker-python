@@ -28,7 +28,7 @@ pipeline {
                 set -exo pipefail
 
                 cd tensorflow-whl/
-                ./push staging
+                ./push ${GIT_BRANCH}-staging
                 '''
             }
         }
