@@ -5,6 +5,24 @@ from google.cloud import bigquery
 from google.cloud.bigquery._http import Connection
 from kaggle_secrets import UserSecretsClient
 
+def get_integrations():
+    kernel_integrations_var = os.getenv("KAGGLE_KERNEL_INTEGRATIONS")
+    kernel_integrations = KernelIntegrations()
+    if kernel_integrations_var is None:
+        return kernel_integrations
+    map(lambda x: kernel_integrations.add_integration(x.lower()), kernel_integrations_var.split(':')) 
+    return kernel_integrations
+
+class KernelIntegrations():
+    def __init__(self):
+        self.integrations = {}
+
+    def add_integration(self, integration_name):
+        self.integrations[integration_name] = True
+
+    def has_bigquery(self):
+        return 'bigquery' in self.integrations.keys()
+
 
 class KaggleKernelCredentials(credentials.Credentials):
     """Custom Credentials used to authenticate using the Kernel's connected OAuth account.
