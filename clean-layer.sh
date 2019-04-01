@@ -16,6 +16,8 @@ rm -rf /root/.cache/pip/*
 apt-get autoremove -y
 # Delete downloaded archive files
 apt-get clean
+# Ensures the current working directory won't be deleted
+cd /usr/local/src/
 # Delete source files used for building binaries
 rm -rf /usr/local/src/*
 # Delete conda downloaded tarballs
