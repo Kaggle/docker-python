@@ -482,6 +482,7 @@ RUN pip install flashtext && \
     pip install optuna && \
     pip install chainercv && \
     pip install chainer-chemistry && \
+    pip install plotly_express && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages

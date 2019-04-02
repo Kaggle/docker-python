@@ -62,7 +62,31 @@ class TestBigQuery(unittest.TestCase):
         with env:
             client = bigquery.Client(project='ANOTHER_PROJECT', credentials=KaggleKernelCredentials())
             self._test_proxy(client, should_use_proxy=False)
-    
+
+    def test_project_with_empty_integrations(self):
+        env = EnvironmentVarGuard()
+        env.set('KAGGLE_BQ_USER_JWT', 'foobar')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', '')
+        with env:
+            client = bigquery.Client(project='ANOTHER_PROJECT', credentials=KaggleKernelCredentials())
+            self._test_proxy(client, should_use_proxy=False)
+
+    def test_project_with_connected_account_default_credentials(self):
+        env = EnvironmentVarGuard()
+        env.set('KAGGLE_BQ_USER_JWT', 'foobar')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'GCS:ANOTHER_ONE')
+        with env:
+            client = bigquery.Client(project='ANOTHER_PROJECT', credentials=KaggleKernelCredentials())
+            self._test_proxy(client, should_use_proxy=False)
+
+    def test_project_with_connected_account_unrelated_integrations(self):
+        env = EnvironmentVarGuard()
+        env.set('KAGGLE_BQ_USER_JWT', 'foobar')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'BIGQUERY')
+        with env:
+            client = bigquery.Client(project='ANOTHER_PROJECT') 
+            self._test_proxy(client, should_use_proxy=False)
+
     def test_simultaneous_clients(self):
         env = EnvironmentVarGuard()
         env.set('KAGGLE_BQ_USER_JWT', 'foobar')
