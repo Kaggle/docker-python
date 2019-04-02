@@ -44,8 +44,6 @@ RUN pip install --upgrade seaborn python-dateutil dask && \
     wget --no-verbose https://imagemagick.org/download/ImageMagick.tar.gz && \
     tar xzf ImageMagick.tar.gz && cd `ls -d ImageMagick-*` && pwd && ls -al && ./configure && \
     make -j $(nproc) && make install && \
-    # move out of the ImageMagick-* directory before it is removed by the clean-layer.sh script.
-    cd /usr/local/src && \
     /tmp/clean-layer.sh
 
 # Install tensorflow from a pre-built wheel
