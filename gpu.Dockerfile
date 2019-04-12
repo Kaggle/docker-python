@@ -63,6 +63,10 @@ RUN pip install pycuda && \
     pip install pynvrtc && \
     /tmp/clean-layer.sh
 
-RUN conda install -c nvidia -c rapidsai -c numba -c conda-forge -c defaults cudf=0.5 python=3.6
+
+RUN conda install -c nvidia -c rapidsai -c pytorch -c numba -c conda-forge cudf=0.6 cuml=0.6 python=3.6 && \
+    pip install pytest && \
+    /tmp/clean-layer.sh
+RUN cd opt/conda/lib/python3.6/site-packages/cudf/tests && pytest -v
 # Re-add TensorBoard Jupyter extension patch
 ADD patches/tensorboard/notebook.py /opt/conda/lib/python3.6/site-packages/tensorboard/notebook.py
