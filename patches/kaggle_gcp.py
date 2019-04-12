@@ -57,12 +57,12 @@ class PublicBigqueryClient(bigquery.client.Client):
     client = PublicBigqueryClient()
     """
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         data_proxy_project = os.getenv("KAGGLE_DATA_PROXY_PROJECT")
         anon_credentials = credentials.AnonymousCredentials()
         anon_credentials.refresh = lambda *args: None
         super().__init__(
-            project=data_proxy_project, credentials=anon_credentials
+            project=data_proxy_project, credentials=anon_credentials, *args, **kwargs
         )
         # TODO: Remove this once https://github.com/googleapis/google-cloud-python/issues/7122 is implemented.
         self._connection = _DataProxyConnection(self)
