@@ -56,6 +56,13 @@ class TestBigQuery(unittest.TestCase):
             client = bigquery.Client()
             self._test_proxy(client, should_use_proxy=True)
 
+    def test_proxy_with_kwargs(self):
+        env = EnvironmentVarGuard()
+        env.unset('KAGGLE_BQ_USER_JWT')
+        with env:
+            client = bigquery.Client(default_query_job_config=bigquery.QueryJobConfig(maximum_bytes_billed=1e9))
+            self._test_proxy(client, should_use_proxy=True)
+
     def test_project_with_connected_account(self):
         env = EnvironmentVarGuard()
         env.set('KAGGLE_BQ_USER_JWT', 'foobar')
