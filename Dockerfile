@@ -467,7 +467,7 @@ RUN pip install flashtext && \
     pip install trackml && \
     pip install tensorflow_hub && \
     pip install jieba  && \
-    pip install PDPbox && \
+    pip install git+https://github.com/SauceCat/PDPbox && \
     pip install ggplot && \
     pip install cesium && \
     pip install rgf_python && \
