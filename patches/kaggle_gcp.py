@@ -2,6 +2,7 @@ import os
 from google.auth import credentials
 from google.auth.exceptions import RefreshError
 from google.cloud import bigquery
+from google.cloud.exceptions import Forbidden
 from google.cloud.bigquery._http import Connection
 from kaggle_secrets import UserSecretsClient
 
@@ -39,6 +40,9 @@ class KaggleKernelCredentials(credentials.Credentials):
             client = UserSecretsClient()
             self.token, self.expiry = client.get_bigquery_access_token()
         except Exception as e:
+            if (not get_integrations().has_bigquery()):
+                print(
+                    'Please ensure you have enabled a BigQuery account in the Kernels Settings sidebar.')
             raise RefreshError('Unable to refresh access token.') from e
 
 
@@ -51,6 +55,16 @@ class _DataProxyConnection(Connection):
         super().__init__(client)
         self._EXTRA_HEADERS["X-KAGGLE-PROXY-DATA"] = os.getenv(
             "KAGGLE_DATA_PROXY_TOKEN")
+
+    def api_request(self, *args, **kwargs):
+        """Wrap Connection.api_request in order to handle errors gracefully.
+        """
+        try:
+            super().api_request(*args, **kwargs)
+        except Forbidden as e:
+            print("Got a Permission Denied using Kaggle's Public Tier. "
+                  "Did you mean to enable a BigQuery account in the Kernels Settings sidebar.")
+            raise e
 
 
 class PublicBigqueryClient(bigquery.client.Client):
