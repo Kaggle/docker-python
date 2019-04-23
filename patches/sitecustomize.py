@@ -24,7 +24,7 @@ if kaggle_proxy_token or bq_user_jwt:
             if specified_credentials is None:
                 kwargs['credentials'] = KaggleKernelCredentials()
                 if (not has_bigquery):
-                    print('Please ensure you have enabled a BigQuery '
+                    print('Please ensure you have selected a BigQuery '
                           'account in the Kernels Settings sidebar.')
             return bq_client(*args, **kwargs)
 

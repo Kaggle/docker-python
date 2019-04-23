@@ -42,7 +42,7 @@ class KaggleKernelCredentials(credentials.Credentials):
         except Exception as e:
             if (not get_integrations().has_bigquery()):
                 print(
-                    'Please ensure you have enabled a BigQuery account in the Kernels Settings sidebar.')
+                    'Please ensure you have selected a BigQuery account in the Kernels Settings sidebar.')
             raise RefreshError('Unable to refresh access token.') from e
 
 
@@ -62,8 +62,8 @@ class _DataProxyConnection(Connection):
         try:
             super().api_request(*args, **kwargs)
         except Forbidden as e:
-            print("Got a Permission Denied using Kaggle's Public Tier. "
-                  "Did you mean to enable a BigQuery account in the Kernels Settings sidebar.")
+            print("Permission denied using Kaggle's public BigQuery integration. "
+                  "Did you mean to select a BigQuery account in the Kernels Settings sidebar?")
             raise e
 
 
