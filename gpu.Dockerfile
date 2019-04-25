@@ -66,15 +66,5 @@ RUN pip install pycuda && \
 RUN conda install --override-channels -c nvidia/label/cuda10.0 -c rapidsai/label/cuda10.0 -c numba -c conda-forge cudf=0.6 cuml=0.6 python=3.6 &&\
     /tmp/clean-layer.sh
 
-# For unit tests of rapids, run the following commands after building the docker.
-# docker run --runtime nvidia --rm -it kaggle/python-gpu-build /bin/bash
-# export LD_LIBRARY_PATH=/usr/local/cuda/lib64 
-# python -c "import cudf as gd"
-# conda uninstall --yes pytest && pip install -U pytest
-# cd /opt/conda/lib/python3.6/site-packages/cudf/tests
-# pytest -v --ignore=test_sparse_df.py --ignore=test_orc.py 
-# cd /opt/conda/lib/python3.6/site-packages/cuml/test
-# pytest -v
-
 # Re-add TensorBoard Jupyter extension patch
 ADD patches/tensorboard/notebook.py /opt/conda/lib/python3.6/site-packages/tensorboard/notebook.py
