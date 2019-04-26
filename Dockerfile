@@ -288,10 +288,7 @@ RUN pip install fancyimpute && \
     pip install pyexcel-ods && \
     pip install sklearn-pandas && \
     pip install stemming && \
-    # Latest version of fbprophet fails with incompatibility with PyStan. From the logs:
-    # pystan:Something went wrong while unpickling the StanModel. Consider recompiling 
-    # See: https://github.com/facebook/prophet/issues/775
-    pip install fbprophet==0.3.post2 && \
+    pip install fbprophet && \
     pip install holoviews && \
     # 1.6.2 is not currently supported by the version of matplotlib we are using.
     # See other comments about why matplotlib is pinned.
@@ -483,6 +480,7 @@ RUN pip install flashtext && \
     pip install chainercv && \
     pip install chainer-chemistry && \
     pip install plotly_express && \
+    pip install albumentations && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
