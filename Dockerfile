@@ -499,6 +499,10 @@ RUN cd /usr/local/src && \
     # Reinstall in non-editable mode (without the -e flag)
     pip install vowpal_wabbit/python && \
     /tmp/clean-layer.sh
+    
+# ffmpeg
+RUN apt-get install ffmpeg -y && \
+    /tmp/clean-layer.sh
 
 # For Facets
 ENV PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/
