@@ -1,4 +1,4 @@
-ARG BASE_TAG=5.2.0
+ARG BASE_TAG=5.3.0
 
 FROM gcr.io/kaggle-images/python-tensorflow-whl:1.13.1-py36 as tensorflow_whl
 FROM continuumio/anaconda3:${BASE_TAG}
@@ -479,8 +479,8 @@ RUN pip install flashtext && \
     pip install optuna && \
     pip install chainercv && \
     pip install plotly_express && \
-    pip install allennlp && \
     pip install albumentations && \
+    pip install allennlp && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
