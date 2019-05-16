@@ -51,7 +51,7 @@ class UserSecretsClient():
                 response_json = json.loads(response.read())
                 if not response_json.get('wasSuccessful') or 'result' not in response_json:
                     raise BackendError(
-                        'Unexpected response from the service.')
+                        f'Unexpected response from the service. Response: {response_json}.')
                 return response_json['result']
         except HTTPError as e:
             if e.code == 401 or e.code == 403:
@@ -74,7 +74,7 @@ class UserSecretsClient():
         response_json = self._make_post_request(request_body)
         if 'secret' not in response_json:
             raise BackendError(
-                'Unexpected response from the service.')
+                f'Unexpected response from the service. Response: {response_json}')
         # Optionally return expiry if it is set.
         expiresInSeconds = response_json.get('expiresInSeconds')
         expiry = datetime.utcnow() + timedelta(seconds=expiresInSeconds) if expiresInSeconds else None
