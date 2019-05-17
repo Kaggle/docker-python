@@ -480,7 +480,6 @@ RUN pip install flashtext && \
     pip install chainercv && \
     pip install plotly_express && \
     pip install albumentations && \
-    pip install allennlp && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
