@@ -437,6 +437,15 @@ RUN pip install bcolz && \
     pip install torchtext && \
     /tmp/clean-layer.sh
 
+# allennlp and dependencies
+# TODO: install deps when underlying dependency is fixed. https://github.com/Kaggle/docker-python/issues/548
+RUN pip install jsonnet overrides tensorboardX && \
+    pip install flask>=1.0.2 flask-cors>=3.0.7 gevent>=1.3.6 && \
+    pip install unidecode parsimonious>=0.8.0 sqlparse>=0.2.4 word2number>=1.1 && \
+    pip install pytorch-pretrained-bert>=0.6.0 jsonpickle && \
+    pip install requests>=2.18 editdistance conllu==0.11 && \
+    pip install --no-dependencies allennlp && \
+
     ###########
     #
     #      NEW CONTRIBUTORS:
@@ -480,8 +489,6 @@ RUN pip install flashtext && \
     pip install chainercv && \
     pip install plotly_express && \
     pip install albumentations && \
-    # TODO: install deps when underlying dependency is fixed. https://github.com/Kaggle/docker-python/issues/548
-    pip install --no-dependencies allennlp && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
