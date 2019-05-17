@@ -480,7 +480,8 @@ RUN pip install flashtext && \
     pip install chainercv && \
     pip install plotly_express && \
     pip install albumentations && \
-    pip install allennlp && \
+    # TODO: install deps when underlying dependency is fixed. https://github.com/Kaggle/docker-python/issues/548
+    pip install --no-dependencies allennlp && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
