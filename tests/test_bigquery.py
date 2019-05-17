@@ -23,6 +23,7 @@ class TestBigQuery(unittest.TestCase):
 
             def do_GET(self):
                 HTTPHandler.called = True
+                print(f"headers: {self.headers}")
                 HTTPHandler.header_found = any(
                     k for k in self.headers if k == "X-KAGGLE-PROXY-DATA" and self.headers[k] == "test-key")
                 self.send_response(200)
