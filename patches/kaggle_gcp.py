@@ -53,7 +53,7 @@ class _DataProxyConnection(Connection):
 
     def __init__(self, client):
         super().__init__(client)
-        self._EXTRA_HEADERS["X-KAGGLE-PROXY-DATA"] = os.getenv(
+        self.extra_headers["X-KAGGLE-PROXY-DATA"] = os.getenv(
             "KAGGLE_DATA_PROXY_TOKEN")
 
     def api_request(self, *args, **kwargs):
