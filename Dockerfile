@@ -1,4 +1,4 @@
-ARG BASE_TAG=5.2.0
+ARG BASE_TAG=5.3.0
 
 FROM gcr.io/kaggle-images/python-tensorflow-whl:1.13.1-py36 as tensorflow_whl
 FROM continuumio/anaconda3:${BASE_TAG}
