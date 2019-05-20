@@ -39,6 +39,10 @@ class KaggleKernelCredentials(credentials.Credentials):
         try:
             client = UserSecretsClient()
             self.token, self.expiry = client.get_bigquery_access_token()
+        except ConnectionError as e:
+            print("There was a connection error trying to fetch the access token. "
+                  "Please ensure internet is on in order to use the BigQuery Integration.")
+            raise RefreshError('Unable to refresh access token due to connection error.') from e
         except Exception as e:
             if (not get_integrations().has_bigquery()):
                 print(
@@ -53,7 +57,7 @@ class _DataProxyConnection(Connection):
 
     def __init__(self, client):
         super().__init__(client)
-        self._EXTRA_HEADERS["X-KAGGLE-PROXY-DATA"] = os.getenv(
+        self.extra_headers["X-KAGGLE-PROXY-DATA"] = os.getenv(
             "KAGGLE_DATA_PROXY_TOKEN")
 
     def api_request(self, *args, **kwargs):
