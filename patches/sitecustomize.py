@@ -33,10 +33,6 @@ if kaggle_proxy_token or bq_user_jwt:
                 if (not has_bigquery):
                     print('Please ensure you have selected a BigQuery '
                           'account in the Kernels Settings sidebar.')
-            print(kwargs)
-            print(os.environ.get(
-        environment_vars.PROJECT,
-        os.environ.get(environment_vars.LEGACY_PROJECT)))
             return bq_client(*args, **kwargs)
 
     # Monkey patches BigQuery client creation to use proxy or user-connected GCP account.
