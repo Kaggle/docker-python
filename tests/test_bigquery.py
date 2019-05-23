@@ -66,7 +66,7 @@ class TestBigQuery(unittest.TestCase):
         env.unset('KAGGLE_USER_SECRETS_TOKEN')
         with env:
             client = bigquery.Client(
-                default_query_job_config=bigquery.QueryJobConfig(maximum_bytes_billed=1e9))
+                default_query_job_config=bigquery.QueryJobConfig(maximum_bytes_billed=int(1e9)))
             self._test_proxy(client, should_use_proxy=True)
 
     def test_project_with_connected_account(self):
@@ -101,6 +101,15 @@ class TestBigQuery(unittest.TestCase):
         env.set('KAGGLE_KERNEL_INTEGRATIONS', 'BIGQUERY')
         with env:
             client = bigquery.Client(project='ANOTHER_PROJECT')
+            self._test_proxy(client, should_use_proxy=False)
+
+    def test_project_with_env_var_project_default_credentials(self):
+        env = EnvironmentVarGuard()
+        env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'BIGQUERY')
+        env.set('GOOGLE_CLOUD_PROJECT', 'ANOTHER_PROJECT')
+        with env:
+            client = bigquery.Client()
             self._test_proxy(client, should_use_proxy=False)
 
     def test_simultaneous_clients(self):
