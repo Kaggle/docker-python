@@ -135,3 +135,23 @@ class TestBigQuery(unittest.TestCase):
                 # by the user or throw a custom exception.
                 client = bigquery.Client()
                 self._test_proxy(client, should_use_proxy=False)
+
+    def test_magics_with_connected_account_default_credentials(self):
+        env = EnvironmentVarGuard()
+        env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'BIGQUERY')
+        with env:
+            import sitecustomize
+            sitecustomize.init()
+            from google.cloud.bigquery import magics
+            self.assertEqual(type(magics.context._credentials), KaggleKernelCredentials)
+            magics.context.credentials = None
+
+    def test_magics_without_connected_account(self):
+        env = EnvironmentVarGuard()
+        env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
+        with env:
+            import sitecustomize
+            sitecustomize.init()
+            from google.cloud.bigquery import magics
+            self.assertIsNone(magics.context._credentials)
