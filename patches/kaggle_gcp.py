@@ -6,6 +6,8 @@ from google.cloud.exceptions import Forbidden
 from google.cloud.bigquery._http import Connection
 from kaggle_secrets import UserSecretsClient
 
+from log import Log
+
 
 def get_integrations():
     kernel_integrations_var = os.getenv("KAGGLE_KERNEL_INTEGRATIONS")
@@ -40,11 +42,14 @@ class KaggleKernelCredentials(credentials.Credentials):
             client = UserSecretsClient()
             self.token, self.expiry = client.get_bigquery_access_token()
         except ConnectionError as e:
+            Log.error(f"Connection error trying to refresh access token: {e}")
             print("There was a connection error trying to fetch the access token. "
                   "Please ensure internet is on in order to use the BigQuery Integration.")
             raise RefreshError('Unable to refresh access token due to connection error.') from e
         except Exception as e:
+            Log.error(f"Error trying to refresh access token: {e}")
             if (not get_integrations().has_bigquery()):
+                Log.error(f"No bigquery integration found.")
                 print(
                     'Please ensure you have selected a BigQuery account in the Kernels Settings sidebar.')
             raise RefreshError('Unable to refresh access token.') from e
@@ -66,8 +71,10 @@ class _DataProxyConnection(Connection):
         try:
             super().api_request(*args, **kwargs)
         except Forbidden as e:
-            print("Permission denied using Kaggle's public BigQuery integration. "
-                  "Did you mean to select a BigQuery account in the Kernels Settings sidebar?")
+            msg = ("Permission denied using Kaggle's public BigQuery integration. "
+                   "Did you mean to select a BigQuery account in the Kernels Settings sidebar?")
+            print(msg)
+            Log.info(msg)
             raise e
 
 
