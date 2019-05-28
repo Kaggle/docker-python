@@ -1,6 +1,6 @@
 ARG BASE_TAG=staging
 
-FROM nvidia/cuda:9.2-cudnn7-devel-ubuntu16.04 AS nvidia
+FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04 AS nvidia
 FROM gcr.io/kaggle-images/python-tensorflow-whl:1.13.1-py36 as tensorflow_whl
 FROM gcr.io/kaggle-images/python:${BASE_TAG}
 

@@ -6,10 +6,11 @@ currently used for retrieving an access token for supported integrations
 
 import json
 import os
+import socket
 import urllib.request
-from urllib.error import HTTPError
-from typing import Tuple, Optional
 from datetime import datetime, timedelta
+from typing import Optional, Tuple
+from urllib.error import HTTPError, URLError
 
 _KAGGLE_DEFAULT_URL_BASE = "https://www.kaggle.com"
 _KAGGLE_URL_BASE_ENV_VAR_NAME = "KAGGLE_URL_BASE"
@@ -51,17 +52,26 @@ class UserSecretsClient():
                 response_json = json.loads(response.read())
                 if not response_json.get('wasSuccessful') or 'result' not in response_json:
                     raise BackendError(
-                        'Unexpected response from the service.')
+                        f'Unexpected response from the service. Response: {response_json}.')
                 return response_json['result']
+        except (URLError, socket.timeout) as e:
+            if isinstance(
+                    e, socket.timeout) or isinstance(
+                    e.reason, socket.timeout):
+                raise ConnectionError(
+                    'Timeout error trying to communicate with service. Please ensure internet is on.') from e
+            raise ConnectionError(
+                'Connection error trying to communicate with service.') from e
         except HTTPError as e:
             if e.code == 401 or e.code == 403:
-                raise CredentialError(f'Service responded with error code {e.code}.'
-                                      ' Please ensure you have access to the resource.') from e
+                raise CredentialError(
+                    f'Service responded with error code {e.code}.'
+                    ' Please ensure you have access to the resource.') from e
             raise BackendError('Unexpected response from the service.') from e
 
     def get_bigquery_access_token(self) -> Tuple[str, Optional[datetime]]:
         """Retrieves BigQuery access token information from the UserSecrets service.
-        
+
         This returns the token for the current kernel as well as its expiry (abs time) if it
         is present.
         Example usage:
@@ -74,7 +84,7 @@ class UserSecretsClient():
         response_json = self._make_post_request(request_body)
         if 'secret' not in response_json:
             raise BackendError(
-                'Unexpected response from the service.')
+                f'Unexpected response from the service. Response: {response_json}')
         # Optionally return expiry if it is set.
         expiresInSeconds = response_json.get('expiresInSeconds')
         expiry = datetime.utcnow() + timedelta(seconds=expiresInSeconds) if expiresInSeconds else None
