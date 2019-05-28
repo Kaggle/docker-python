@@ -1,6 +1,6 @@
-ARG BASE_TAG=5.2.0
+ARG BASE_TAG=5.3.0
 
-FROM gcr.io/kaggle-images/python-tensorflow-whl:1.12.0-py36 as tensorflow_whl
+FROM gcr.io/kaggle-images/python-tensorflow-whl:1.13.1-py36 as tensorflow_whl
 FROM continuumio/anaconda3:${BASE_TAG}
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
@@ -21,7 +21,7 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     apt-get -y install cmake && \
     /tmp/clean-layer.sh
 
-# Tensorflow doesn't support python 3.7 yet. See https://github.com/tensorflow/tensorflow/issues/20517
+# Tensorflow doesn't support python 3.7 yet. See https://github.com/tensorflow/tensorflow/issues/20517	
 # Fix to install Tensorflow: Downgrade python 3.7->3.6.6.
 RUN conda install -y python=3.6.6 && \
     /tmp/clean-layer.sh
@@ -158,7 +158,10 @@ RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
     mkdir -p /tmp/.keras && cp /root/.keras/keras.json /tmp/.keras && \
     /tmp/clean-layer.sh
 
-    # scikit-learn dependencies
+# b/128333086: Set PROJ_LIB to points to the proj4 cartographic library.
+ENV PROJ_LIB=/opt/conda/share/proj
+
+# scikit-learn dependencies
 RUN pip install scipy && \
     pip install scikit-learn && \
     # HDF5 support
@@ -285,10 +288,7 @@ RUN pip install fancyimpute && \
     pip install pyexcel-ods && \
     pip install sklearn-pandas && \
     pip install stemming && \
-    # Latest version of fbprophet fails with incompatibility with PyStan. From the logs:
-    # pystan:Something went wrong while unpickling the StanModel. Consider recompiling 
-    # See: https://github.com/facebook/prophet/issues/775
-    pip install fbprophet==0.3.post2 && \
+    pip install fbprophet && \
     pip install holoviews && \
     # 1.6.2 is not currently supported by the version of matplotlib we are using.
     # See other comments about why matplotlib is pinned.
@@ -437,6 +437,16 @@ RUN pip install bcolz && \
     pip install torchtext && \
     /tmp/clean-layer.sh
 
+# allennlp and dependencies
+# TODO: install deps when underlying dependency is fixed. https://github.com/Kaggle/docker-python/issues/548
+RUN pip install jsonnet overrides tensorboardX && \
+    pip install flask>=1.0.2 flask-cors>=3.0.7 gevent>=1.3.6 && \
+    pip install unidecode parsimonious>=0.8.0 sqlparse>=0.2.4 word2number>=1.1 && \
+    pip install pytorch-pretrained-bert>=0.6.0 jsonpickle && \
+    pip install requests>=2.18 editdistance conllu==0.11 && \
+    pip install --no-dependencies allennlp && \
+    /tmp/clean-layer.sh
+
     ###########
     #
     #      NEW CONTRIBUTORS:
@@ -467,7 +477,7 @@ RUN pip install flashtext && \
     pip install trackml && \
     pip install tensorflow_hub && \
     pip install jieba  && \
-    pip install PDPbox && \
+    pip install git+https://github.com/SauceCat/PDPbox && \
     pip install ggplot && \
     pip install cesium && \
     pip install rgf_python && \
@@ -477,6 +487,10 @@ RUN pip install flashtext && \
     pip install pymagnitude && \
     pip install pykalman && \
     pip install optuna && \
+    pip install chainercv && \
+    pip install plotly_express && \
+    pip install albumentations && \
+    pip install pytorch-ignite && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
