@@ -135,6 +135,8 @@ RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
     pip install cartopy && \
     # MXNet
     pip install mxnet && \
+    # Uninstall any old numpy
+    pip uninstall numpy; \
     pip install --upgrade numpy && \
     pip install gluonnlp && \
     pip install gluoncv && \
