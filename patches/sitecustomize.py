@@ -1,5 +1,8 @@
 import os
+
 from kaggle_gcp import get_integrations
+from log import Log
+
 kaggle_proxy_token = os.getenv("KAGGLE_DATA_PROXY_TOKEN")
 kernel_integrations_var = os.getenv("KAGGLE_KERNEL_INTEGRATIONS")
 
@@ -29,15 +32,20 @@ def init():
             # Remove these two lines once this is resolved:
             # https://github.com/googleapis/google-cloud-python/issues/8108
             if explicit_project_id:
+                Log.info(f"Explicit project set to {explicit_project_id}")
                 kwargs['project'] = explicit_project_id
             if explicit_project_id is None and specified_credentials is None and not has_bigquery:
-                print("Using Kaggle's public dataset BigQuery integration.")
+                msg = "Using Kaggle's public dataset BigQuery integration."
+                Log.info(msg)
+                print(msg)
                 return PublicBigqueryClient(*args, **kwargs)
 
             else:
                 if specified_credentials is None:
+                    Log.info("No credentials specified, using KaggleKernelCredentials.")
                     kwargs['credentials'] = KaggleKernelCredentials()
                     if (not has_bigquery):
+                        Log.info("No bigquery integration found, creating client anyways.")
                         print('Please ensure you have selected a BigQuery '
                             'account in the Kernels Settings sidebar.')
                 return bq_client(*args, **kwargs)
