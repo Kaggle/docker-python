@@ -182,7 +182,9 @@ RUN pip install scipy && \
     pip install orderedmultidict && \
     pip install smhasher && \
     conda install -y -c bokeh bokeh && \
-    pip install datashader && \
+    # b/134599839 remove once datashader > 0.7.0 is released. We need an unreleased change ]
+    # removing the pinning on testpath.
+    pip install git+git://github.com/pyviz/datashader.git@e2a17725343f0ede20e5df4e2d1d72d33d00d1ff && \
     # Boruta (python implementation)
     cd /usr/local/src && git clone https://github.com/danielhomola/boruta_py.git && \
     cd boruta_py && python setup.py install && \
