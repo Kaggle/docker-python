@@ -1,5 +1,5 @@
 FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04 AS nvidia
-FROM continuumio/anaconda3:5.2.0
+FROM continuumio/anaconda3:5.3.0
 
 # Avoid interactive configuration prompts/dialogs during apt-get.
 ENV DEBIAN_FRONTEND=noninteractive
