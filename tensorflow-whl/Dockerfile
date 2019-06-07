@@ -45,13 +45,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ln -s /usr/local/cuda-10.0 /usr/local/cuda && \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1
 
-
+# Tensorflow 1.13 requires bazel >= 0.19.2 & <= 0.21.0
+ENV BAZEL_VERSION=0.21.0
 RUN apt-get install -y gnupg zip openjdk-8-jdk && \
-    echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list && \
-    curl https://bazel.build/bazel-release.pub.gpg | apt-key add - && \
-    apt-get update && \
-    apt-get install bazel && \
-    apt-get install -y --no-install-recommends bash-completion zlib1g-dev
+    apt-get install -y --no-install-recommends \
+      bash-completion \
+      zlib1g-dev && \
+    wget --no-verbose "https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel_${BAZEL_VERSION}-linux-x86_64.deb" && \
+    dpkg -i bazel_*.deb && \
+    rm bazel_*.deb
 
 # Tensorflow doesn't support python 3.7 yet. See https://github.com/tensorflow/tensorflow/issues/20517
 RUN conda install -y python=3.6.6
