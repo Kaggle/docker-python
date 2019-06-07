@@ -50,7 +50,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ENV BAZEL_VERSION=0.19.2
 RUN apt-get install -y gnupg zip openjdk-8-jdk && \
     echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list && \
-    curl https://bazel.build/bazel-release.pub.gpg | sudo apt-key add - && \
+    curl https://bazel.build/bazel-release.pub.gpg | apt-key add - && \
     apt-get update && \
     apt-get install install bazel="${BAZEL_VERSION}" && \
     apt-get install -y --no-install-recommends bash-completion zlib1g-dev
