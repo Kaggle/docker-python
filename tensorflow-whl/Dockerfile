@@ -48,21 +48,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install bazel
 # Tensorflow 1.13 requires the Bazel 0.19.2: https://www.tensorflow.org/install/source
 ENV BAZEL_VERSION=0.19.2
-RUN apt-get install -y gnupg zip && \
-    echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list && \
-    echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list && \
-    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys --no-tty EEA14886 C857C906 2B90D010 && \
+RUN apt-get install -y gnupg zip openjdk-8-jdk && \
+    echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list && \
+    curl https://bazel.build/bazel-release.pub.gpg | sudo apt-key add - && \
     apt-get update && \
-    echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
-    echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections && \
-    apt-get install -y oracle-java8-installer && \
-    apt-get install -y --no-install-recommends \
-      bash-completion \
-      zlib1g-dev && \
-    # Install Bazel with apt-get once this issue is resolved: https://github.com/bazelbuild/continuous-integration/issues/128
-    wget --no-verbose "https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel_${BAZEL_VERSION}-linux-x86_64.deb" && \
-    dpkg -i bazel_*.deb && \
-    rm bazel_*.deb
+    apt-get install install bazel="${BAZEL_VERSION}"
+    apt-get install -y --no-install-recommends bash-completion zlib1g-dev
 
 # Tensorflow doesn't support python 3.7 yet. See https://github.com/tensorflow/tensorflow/issues/20517
 RUN conda install -y python=3.6.6
