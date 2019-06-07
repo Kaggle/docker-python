@@ -182,7 +182,10 @@ RUN pip install scipy && \
     pip install orderedmultidict && \
     pip install smhasher && \
     conda install -y -c bokeh bokeh && \
-    # b/134599839 remove once datashader > 0.7.0 is released. We need an unreleased change ]
+    # b/134599839: latest version requires llvmlite >= 0.39.0. Base image comes with 0.38.0.
+    # It fails to reinstall it because it is a distutil package. Remove pin once base image include newer verson of llvmlite.
+    pip install numba==0.38.0 && \
+    # b/134599839: remove once datashader > 0.7.0 is released. We need an unreleased change
     # removing the pinning on testpath.
     pip install git+git://github.com/pyviz/datashader.git@e2a17725343f0ede20e5df4e2d1d72d33d00d1ff && \
     # Boruta (python implementation)
