@@ -533,6 +533,7 @@ RUN pip install --upgrade dask && \
 ENV PYTHONUSERBASE "/root/.local"
 ADD patches/kaggle_gcp.py /root/.local/lib/python3.6/site-packages/kaggle_gcp.py
 ADD patches/kaggle_secrets.py /root/.local/lib/python3.6/site-packages/kaggle_secrets.py
+ADD patches/log.py /root/.local/lib/python3.6/site-packages/log.py
 ADD patches/sitecustomize.py /root/.local/lib/python3.6/site-packages/sitecustomize.py
 
 # TensorBoard Jupyter extension. Should be replaced with TensorBoard's provided magic once we have
