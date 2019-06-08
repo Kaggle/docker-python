@@ -55,9 +55,6 @@ RUN apt-get install -y gnupg zip openjdk-8-jdk && \
     dpkg -i bazel_*.deb && \
     rm bazel_*.deb
 
-# Tensorflow doesn't support python 3.7 yet. See https://github.com/tensorflow/tensorflow/issues/20517
-RUN conda install -y python=3.6.6
-
 # Fetch tensorflow & install dependencies.
 RUN cd /usr/local/src && \
     git clone https://github.com/tensorflow/tensorflow && \
