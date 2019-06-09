@@ -1,5 +1,5 @@
 FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04 AS nvidia
-FROM continuumio/anaconda3:5.2.0
+FROM continuumio/anaconda3:5.3.0
 
 # Avoid interactive configuration prompts/dialogs during apt-get.
 ENV DEBIAN_FRONTEND=noninteractive
@@ -45,27 +45,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ln -s /usr/local/cuda-10.0 /usr/local/cuda && \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1
 
-# Install bazel
-# Tensorflow 1.13 requires the Bazel 0.19.2: https://www.tensorflow.org/install/source
-ENV BAZEL_VERSION=0.19.2
-RUN apt-get install -y gnupg zip && \
-    echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list && \
-    echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list && \
-    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys --no-tty EEA14886 C857C906 2B90D010 && \
-    apt-get update && \
-    echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
-    echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections && \
-    apt-get install -y oracle-java8-installer && \
+# Tensorflow 1.13 requires bazel >= 0.19.2 & <= 0.21.0
+ENV BAZEL_VERSION=0.21.0
+RUN apt-get install -y gnupg zip openjdk-8-jdk && \
     apt-get install -y --no-install-recommends \
       bash-completion \
       zlib1g-dev && \
-    # Install Bazel with apt-get once this issue is resolved: https://github.com/bazelbuild/continuous-integration/issues/128
     wget --no-verbose "https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel_${BAZEL_VERSION}-linux-x86_64.deb" && \
     dpkg -i bazel_*.deb && \
     rm bazel_*.deb
-
-# Tensorflow doesn't support python 3.7 yet. See https://github.com/tensorflow/tensorflow/issues/20517
-RUN conda install -y python=3.6.6
 
 # Fetch tensorflow & install dependencies.
 RUN cd /usr/local/src && \
