@@ -45,6 +45,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ln -s /usr/local/cuda-10.0 /usr/local/cuda && \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1
 
+# Install latest version of Python and conda.
+RUN conda update -y conda && conda update -y python
+
 # Tensorflow 1.13 requires bazel >= 0.19.2 & <= 0.21.0
 ENV BAZEL_VERSION=0.21.0
 RUN apt-get install -y gnupg zip openjdk-8-jdk && \
