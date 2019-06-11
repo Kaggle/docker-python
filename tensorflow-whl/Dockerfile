@@ -14,8 +14,8 @@ COPY --from=nvidia /etc/apt/sources.list.d/nvidia-ml.list /etc/apt/sources.list.
 COPY --from=nvidia /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d/cuda.gpg
 
 # TODO(rosbo): Don't merge the changes to this file. Only the CHANGELOG.md
-# Install Python 3.6.6 and conda.
-RUN conda update -y conda && conda install -y python=3.6.6 && pip install --upgrade pip
+# Install Python 3.6.6 and upgrade pip.
+RUN conda install -y python=3.6.6 && pip install --upgrade pip && pip install numpy
 
 # Ensure the cuda libraries are compatible with the GPU image.
 # TODO(b/120050292): Use templating to keep in sync.
