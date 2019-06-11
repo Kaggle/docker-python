@@ -1,5 +1,6 @@
 ARG BASE_TAG=5.3.0
 
+# TODO(rosbo): Use the py36-2 version to have the same base image.
 FROM gcr.io/kaggle-images/python-tensorflow-whl:1.13.1-py36 as tensorflow_whl
 FROM continuumio/anaconda3:${BASE_TAG}
 
@@ -14,23 +15,16 @@ RUN apt-get update && \
     # Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
     # as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
 RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list && \
-    apt-get update && apt-get install -y build-essential unzip && \
-    # https://stackoverflow.com/a/46498173
-    conda update -y conda && conda update -y python && \
-    pip install pip==19.0.3 && \
-    apt-get -y install cmake && \
-    /tmp/clean-layer.sh
-
-# Tensorflow doesn't support python 3.7 yet. See https://github.com/tensorflow/tensorflow/issues/20517	
-# Fix to install Tensorflow: Downgrade python 3.7->3.6.6.
-RUN conda install -y python=3.6.6 && \
+    apt-get update && apt-get install -y build-essential unzip cmake && \
+    # Work to upgrade to Python 3.7 can be found on this branch: https://github.com/Kaggle/docker-python/blob/upgrade-py37/Dockerfile
+    conda update -y conda && conda install -y python=3.6.6 && \
+    pip install --upgrade pip && \
     /tmp/clean-layer.sh
 
 # The anaconda base image includes outdated versions of these packages. Update them to include the latest version.
-RUN pip install --upgrade seaborn python-dateutil dask && \
+RUN pip install seaborn python-dateutil dask && \
     pip install pyyaml joblib pytagcloud husl geopy ml_metrics mne pyshp && \
-    conda install -y -c conda-forge spacy && python -m spacy download en && \
-    python -m spacy download en_core_web_lg && \
+    pip install spacy && python -m spacy download en && python -m spacy download en_core_web_lg && \
     # The apt-get version of imagemagick is out of date and has compatibility issues, so we build from source
     apt-get -y install dbus fontconfig fontconfig-config fonts-dejavu-core fonts-droid-fallback ghostscript gsfonts hicolor-icon-theme \
     libavahi-client3 libavahi-common-data libavahi-common3 libcairo2 libcap-ng0 libcroco3 \
@@ -41,9 +35,11 @@ RUN pip install --upgrade seaborn python-dateutil dask && \
     libpaper-utils libpaper1 libpixman-1-0 libpng16-16 librsvg2-2 librsvg2-common libthai-data libthai0 libtiff5 libwmf0.2-7 \
     libxcb-render0 libxcb-shm0 netpbm poppler-data p7zip-full && \
     cd /usr/local/src && \
-    wget --no-verbose https://imagemagick.org/download/ImageMagick.tar.gz && \
-    tar xzf ImageMagick.tar.gz && cd `ls -d ImageMagick-*` && pwd && ls -al && ./configure && \
-    make -j $(nproc) && make install && \
+    # imagemagick.org is down.
+    # TODO(rosbo): Is is still being used or is the libmagick* above are sufficient for the packages (if any) that depends on it?
+    # wget --no-verbose https://imagemagick.org/download/ImageMagick.tar.gz && \
+    # tar xzf ImageMagick.tar.gz && cd `ls -d ImageMagick-*` && pwd && ls -al && ./configure && \
+    # make -j $(nproc) && make install && \
     /tmp/clean-layer.sh
 
 # Install tensorflow from a pre-built wheel
@@ -166,13 +162,11 @@ ENV PROJ_LIB=/opt/conda/share/proj
 RUN pip install scipy && \
     pip install scikit-learn && \
     # HDF5 support
-    conda install h5py && \
+    pip install h5py && \
     pip install biopython && \
     # PUDB, for local debugging convenience
     pip install pudb && \
-    # Imbalanced-learn
-    cd /usr/local/src && git clone https://github.com/scikit-learn-contrib/imbalanced-learn.git && \
-    cd imbalanced-learn && python setup.py install && \
+    pip install imbalanced-learn && \
     # Convex Optimization library
     # Latest version fails to install, see https://github.com/cvxopt/cvxopt/issues/77
     #    and https://github.com/cvxopt/cvxopt/issues/80
@@ -181,30 +175,28 @@ RUN pip install scipy && \
     pip install line_profiler && \
     pip install orderedmultidict && \
     pip install smhasher && \
-    conda install -y -c bokeh bokeh && \
+    pip install bokeh && \
     # b/134599839: latest version requires llvmlite >= 0.39.0. Base image comes with 0.38.0.
     # It fails to reinstall it because it is a distutil package. Remove pin once base image include newer verson of llvmlite.
     pip install numba==0.38.0 && \
     pip install datashader && \
     # Boruta (python implementation)
-    cd /usr/local/src && git clone https://github.com/danielhomola/boruta_py.git && \
-    cd boruta_py && python setup.py install && \
+    pip install Boruta && \
     cd /usr/local/src && git clone git://github.com/nicolashennetier/pyeconometrics.git && \
     cd pyeconometrics && python setup.py install && \
     apt-get install -y graphviz && pip install graphviz && \
     # Pandoc is a dependency of deap
     apt-get install -y pandoc && \
-    cd /usr/local/src && git clone git://github.com/scikit-learn-contrib/py-earth.git && \
-    cd py-earth && python setup.py install && \
+    pip install git+git://github.com/scikit-learn-contrib/py-earth.git@issue191 && \
     pip install essentia && \
     # PyTorch
     export CXXFLAGS="-std=c++11" && \
     export CFLAGS="-std=c99" && \
-    conda install -y pytorch-cpu torchvision-cpu -c pytorch && \
+    conda install -y pytorch-cpu=1.0.1 torchvision-cpu=0.2.2 -c pytorch && \
     # PyTorch Audio
     apt-get install -y sox libsox-dev libsox-fmt-all && \
     pip install cffi && \
-    cd /usr/local/src && git clone https://github.com/pytorch/audio && cd audio && python setup.py install && \
+    pip install git+git://github.com/pytorch/audio.git && \
     /tmp/clean-layer.sh
 
 # vtk with dependencies
@@ -215,7 +207,7 @@ RUN apt-get install -y libgl1-mesa-glx && \
     pip install xvfbwrapper && \
     /tmp/clean-layer.sh
 
-RUN pip install --upgrade mpld3 && \
+RUN pip install mpld3 && \
     pip install mplleaflet && \
     pip install gpxpy && \
     pip install arrow && \
@@ -242,10 +234,7 @@ RUN pip install --upgrade mpld3 && \
     pip install git+https://github.com/hyperopt/hyperopt.git && \
     # tflean. Deep learning library featuring a higher-level API for TensorFlow. http://tflearn.org
     pip install git+https://github.com/tflearn/tflearn.git && \
-    # fitter 1.1.10 is broken. Fails at setup with:
-    # install_requires = open("requirements.txt").read(),
-    # FileNotFoundError: [Errno 2] No such file or directory: 'requirements.txt'
-    pip install fitter==1.0.9 && \
+    pip install fitter && \
     pip install langid && \
     # Delorean. Useful for dealing with datetime
     pip install delorean && \
@@ -259,17 +248,13 @@ RUN pip install --upgrade mpld3 && \
     pip install git+https://github.com/fmfn/BayesianOptimization.git && \
     pip install matplotlib-venn && \
     pip install pyldavis && \
-    # Pattern not yet Py3 compatible...
-    # pip install pattern && \
-    pip install git+git://github.com/rasbt/mlxtend.git#egg=mlxtend && \
+    pip install mlxtend && \
     pip install altair && \
     pip install pystan && \
     pip install ImageHash && \
-    conda install -y ecos && \
-    conda install -y CVXcanon && \
-    /tmp/clean-layer.sh
-
-RUN pip install fancyimpute && \
+    pip install ecos && \
+    pip install CVXcanon && \
+    pip install fancyimpute && \
     pip install git+https://github.com/pymc-devs/pymc3 && \
     pip install tifffile && \
     pip install spectral && \
@@ -298,8 +283,6 @@ RUN pip install fancyimpute && \
     # See other comments about why matplotlib is pinned.
     pip install geoviews==1.6.1 && \
     pip install hypertools && \
-    # Nxviz has been causing an installation issue by trying unsuccessfully to remove setuptools.
-    #pip install nxviz && \
     pip install py_stringsimjoin && \
     pip install speedml && \
     pip install nibabel && \
@@ -350,15 +333,12 @@ RUN pip install kmeans-smote --no-dependencies && \
     /tmp/clean-layer.sh
 
 # install cython & cysignals before pyfasttext
-RUN pip install --upgrade cython && \
-    pip install --upgrade cysignals && \
-    pip install pyfasttext && \
-    pip install ktext && \
+RUN pip install ktext && \
     pip install git+git://github.com/facebookresearch/fastText.git && \
     apt-get install -y libhunspell-dev && pip install hunspell && \
     pip install annoy && \
     pip install category_encoders && \
-    pip install google-cloud-bigquery && \
+    pip install google-cloud-bigquery==1.12.1 && \
     pip install ortools && \
     pip install scattertext && \
     # Pandas data reader
@@ -500,7 +480,7 @@ RUN pip install flashtext && \
 # Tesseract and some associated utility packages
 RUN apt-get install tesseract-ocr -y && \
     pip install pytesseract && \
-    pip install wand && \
+    pip install wand==0.5.3 && \
     pip install pdf2image && \
     pip install PyPDF && \
     pip install pyocr && \

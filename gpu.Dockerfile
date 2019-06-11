@@ -1,6 +1,7 @@
 ARG BASE_TAG=staging
 
 FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04 AS nvidia
+# TODO(rosbo): Use the py36-2 version to have the same base image.
 FROM gcr.io/kaggle-images/python-tensorflow-whl:1.13.1-py36 as tensorflow_whl
 FROM gcr.io/kaggle-images/python:${BASE_TAG}
 
