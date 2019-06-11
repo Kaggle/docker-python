@@ -17,7 +17,7 @@ RUN apt-get update && \
 RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list && \
     apt-get update && apt-get install -y build-essential unzip cmake && \
     # Work to upgrade to Python 3.7 can be found on this branch: https://github.com/Kaggle/docker-python/blob/upgrade-py37/Dockerfile
-    conda update -y conda && conda install -y python=3.6.6 && \
+    conda install -y python=3.6.6 && \
     pip install --upgrade pip && \
     /tmp/clean-layer.sh
 
