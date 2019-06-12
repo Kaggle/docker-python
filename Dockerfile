@@ -1,7 +1,7 @@
 ARG BASE_TAG=5.3.0
 
 # TODO(rosbo): Use the py36-2 version to have the same base image.
-FROM gcr.io/kaggle-images/python-tensorflow-whl:1.13.1-py36 as tensorflow_whl
+FROM gcr.io/kaggle-images/python-tensorflow-whl:1.13.1-py36-2 as tensorflow_whl
 FROM continuumio/anaconda3:${BASE_TAG}
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
