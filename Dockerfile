@@ -1,6 +1,5 @@
 ARG BASE_TAG=5.3.0
 
-# TODO(rosbo): Use the py36-2 version to have the same base image.
 FROM gcr.io/kaggle-images/python-tensorflow-whl:1.13.1-py36-2 as tensorflow_whl
 FROM continuumio/anaconda3:${BASE_TAG}
 
@@ -35,11 +34,9 @@ RUN pip install seaborn python-dateutil dask && \
     libpaper-utils libpaper1 libpixman-1-0 libpng16-16 librsvg2-2 librsvg2-common libthai-data libthai0 libtiff5 libwmf0.2-7 \
     libxcb-render0 libxcb-shm0 netpbm poppler-data p7zip-full && \
     cd /usr/local/src && \
-    # imagemagick.org is down.
-    # TODO(rosbo): Is is still being used or is the libmagick* above are sufficient for the packages (if any) that depends on it?
-    # wget --no-verbose https://imagemagick.org/download/ImageMagick.tar.gz && \
-    # tar xzf ImageMagick.tar.gz && cd `ls -d ImageMagick-*` && pwd && ls -al && ./configure && \
-    # make -j $(nproc) && make install && \
+    wget --no-verbose https://imagemagick.org/download/ImageMagick.tar.gz && \
+    tar xzf ImageMagick.tar.gz && cd `ls -d ImageMagick-*` && pwd && ls -al && ./configure && \
+    make -j $(nproc) && make install && \
     /tmp/clean-layer.sh
 
 # Install tensorflow from a pre-built wheel
@@ -333,7 +330,10 @@ RUN pip install kmeans-smote --no-dependencies && \
     /tmp/clean-layer.sh
 
 # install cython & cysignals before pyfasttext
-RUN pip install ktext && \
+RUN pip install --upgrade cython && \
+    pip install --upgrade cysignals && \
+    pip install pyfasttext && \
+    pip install ktext && \
     pip install git+git://github.com/facebookresearch/fastText.git && \
     apt-get install -y libhunspell-dev && pip install hunspell && \
     pip install annoy && \
