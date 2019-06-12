@@ -294,8 +294,8 @@ RUN pip install mpld3 && \
     pip install paramnb && \
     pip install folium && \
     pip install scikit-plot && \
-    # 0.15.0 is still unstable.
-    pip install dipy==0.14.0 && \
+    # dipy requires the optional fury dependency for visualizations.
+    pip install fury dipy && \
     # plotnine 0.5 is depending on matplotlib >= 3.0 which is not compatible with basemap.
     # once basemap support matplotlib, we can unpin this package.
     pip install plotnine==0.4.0 && \
