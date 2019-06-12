@@ -187,7 +187,8 @@ RUN pip install scipy && \
     pip install numba==0.38.0 && \
     pip install datashader && \
     # Boruta (python implementation)
-    pip install boruta && \
+    cd /usr/local/src && git clone https://github.com/danielhomola/boruta_py.git && \
+    cd boruta_py && python setup.py install && \
     cd /usr/local/src && git clone git://github.com/nicolashennetier/pyeconometrics.git && \
     cd pyeconometrics && python setup.py install && \
     apt-get install -y graphviz && pip install graphviz && \
