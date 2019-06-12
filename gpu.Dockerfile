@@ -51,7 +51,7 @@ RUN pip uninstall -y tensorflow && \
     pip install /tmp/tensorflow_gpu/tensorflow*.whl && \
     rm -rf /tmp/tensorflow_gpu && \
     conda uninstall -y pytorch-cpu torchvision-cpu && \
-    conda install -y pytorch torchvision cudatoolkit=10.0 -c pytorch && \
+    conda install -y pytorch=1.0.1 torchvision=0.2.2 cudatoolkit=10.0 -c pytorch && \
     pip uninstall -y mxnet && \
     # b/126259508 --no-deps prevents numpy from being downgraded.
     pip install --no-deps mxnet-cu100 && \
