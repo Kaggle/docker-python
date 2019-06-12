@@ -13,10 +13,6 @@ COPY --from=nvidia /etc/apt/sources.list.d/cuda.list /etc/apt/sources.list.d/
 COPY --from=nvidia /etc/apt/sources.list.d/nvidia-ml.list /etc/apt/sources.list.d/
 COPY --from=nvidia /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d/cuda.gpg
 
-# TODO(rosbo): Don't merge the changes to this file. Only the CHANGELOG.md
-# Install Python 3.6.6 and upgrade pip.
-RUN conda install -y python=3.6.6 && pip install --upgrade pip && pip install numpy
-
 # Ensure the cuda libraries are compatible with the GPU image.
 # TODO(b/120050292): Use templating to keep in sync.
 ENV CUDA_VERSION=10.0.130
@@ -48,6 +44,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       libnccl-dev=2.4.2-1+cuda10.0 && \
     ln -s /usr/local/cuda-10.0 /usr/local/cuda && \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1
+
+# Install latest version of Python and conda.
+RUN conda update -y conda && conda update -y python
 
 # Tensorflow 1.13 requires bazel >= 0.19.2 & <= 0.21.0
 ENV BAZEL_VERSION=0.21.0
