@@ -189,7 +189,7 @@ RUN pip install scipy && \
     # PyTorch
     export CXXFLAGS="-std=c++11" && \
     export CFLAGS="-std=c99" && \
-    conda install -y pytorch-cpu=1.0.1 torchvision-cpu=0.2.2 -c pytorch && \
+    conda install -y pytorch-cpu torchvision-cpu -c pytorch && \
     # PyTorch Audio
     apt-get install -y sox libsox-dev libsox-fmt-all && \
     pip install cffi && \
