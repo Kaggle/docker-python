@@ -1,0 +1,47 @@
+#!/bin/bash
+set -e
+
+usage() {
+cat << EOF
+Usage: $0 [OPTIONS] [LABEL]
+Push a newly-built image with the given LABEL to gcr.io and DockerHub.
+
+Options:
+    -g, --gpu   Push the image with GPU support.
+EOF
+}
+
+SOURCE_IMAGE='myelintek/python-gpu-build'
+TARGET_IMAGE='myelintek/python-gpu'
+
+while :; do
+    case "$1" in 
+        -h|--help)
+            usage
+            exit
+            ;;
+        -g|--gpu)
+            SOURCE_IMAGE='kaggle/python-gpu-build'
+            TARGET_IMAGE='gcr.io/kaggle-private-byod/python'
+            ;;
+        -?*)
+            usage
+            printf 'ERROR: Unknown option: %s\n' "$1" >&2
+            exit
+            ;;
+        *)            
+            break
+    esac
+
+    shift
+done
+
+LABEL=${1:v1}
+
+readonly SOURCE_IMAGE
+readonly TARGET_IMAGE
+readonly LABEL
+
+set -x
+docker tag "${SOURCE_IMAGE}:latest" "${TARGET_IMAGE}:${LABEL}"
+docker push "${TARGET_IMAGE}:${LABEL}"
