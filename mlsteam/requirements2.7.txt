@@ -4,11 +4,4 @@ imgaug
 numpy
 pandas
 seaborn
-scipy
-scikit-learn
-scikit-image
-keras
-keras-rl
-sklearn-pandas
-mlxtend
 opencv-python
