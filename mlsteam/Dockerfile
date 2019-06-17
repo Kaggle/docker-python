@@ -10,4 +10,6 @@ RUN apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 -
     rm /tmp/requirements.txt && \
     /tmp/clean-layer.sh
 
+RUN pip install --upgrade https://github.com/myelintek/lib-mlsteam/releases/download/v0.2/mlsteam-0.2.0-py3-none-any.whl
+
 WORKDIR /job_dir
