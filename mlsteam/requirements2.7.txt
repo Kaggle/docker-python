@@ -4,7 +4,6 @@ imgaug
 numpy
 pandas
 seaborn
-matplotlib
 scipy
 scikit-learn
 scikit-image
