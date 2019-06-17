@@ -1,7 +1,5 @@
 Pillow
 h5py
-imgaug
 numpy
 pandas
-seaborn
 opencv-python
