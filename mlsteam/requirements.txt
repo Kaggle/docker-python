@@ -1,0 +1,15 @@
+Pillow
+h5py
+imgaug
+numpy
+pandas==0.23.4
+seaborn
+matplotlib
+scipy
+scikit-learn
+scikit-image
+keras
+keras-rl
+sklearn-pandas
+mlxtend
+opencv-python
