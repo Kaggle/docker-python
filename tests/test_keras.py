@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
+from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, CuDNNLSTM
 from keras.optimizers import RMSprop, SGD
 from keras.utils.np_utils import to_categorical
 
@@ -58,3 +58,22 @@ class TestKeras(unittest.TestCase):
         model.compile(loss='categorical_crossentropy', optimizer=sgd)
         model.fit(x_train, y_train, batch_size=32, epochs=1)
         model.evaluate(x_test, y_test, batch_size=32)
+
+    def test_cudnn_lstm(self):
+        x_train = np.random.random((100, 100, 100))
+        y_train = keras.utils.to_categorical(np.random.randint(10, size=(100, 1)), num_classes=10)
+        x_test = np.random.random((20, 100, 100))
+        y_test = keras.utils.to_categorical(np.random.randint(10, size=(20, 1)), num_classes=10)
+
+        sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+
+        model = Sequential()
+        model.add(CuDNNLSTM(32, return_sequences=True, input_shape=(100, 100)))
+        model.add(Flatten())
+        model.add(Dense(10, activation='softmax'))
+
+
+        model.compile(loss='categorical_crossentropy', optimizer=sgd)
+        model.fit(x_train, y_train, batch_size=32, epochs=1)
+        model.evaluate(x_test, y_test, batch_size=32)
+
