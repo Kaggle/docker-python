@@ -45,8 +45,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ln -s /usr/local/cuda-10.0 /usr/local/cuda && \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1
 
-# Install latest version of Python and conda.
-RUN conda update -y conda && conda update -y python
+# Work to upgrade to Python 3.7 can be found on this branch: https://github.com/Kaggle/docker-python/blob/upgrade-py37/Dockerfile
+RUN conda install -y python=3.6.6 && pip install --upgrade pip
 
 # Tensorflow 1.13 requires bazel >= 0.19.2 & <= 0.21.0
 ENV BAZEL_VERSION=0.21.0
