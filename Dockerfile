@@ -342,6 +342,7 @@ RUN pip install --upgrade cython && \
     # python -c "from google.cloud import bigquery; import tensorflow". This flow is common because bigquery is imported in kaggle_gcp.py
     # which is loaded at startup.
     pip install google-cloud-bigquery==1.12.1 && \
+    pip install google-cloud-storage && \
     pip install ortools && \
     pip install scattertext && \
     # Pandas data reader
