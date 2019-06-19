@@ -64,3 +64,11 @@ class TestTensorflow(unittest.TestCase):
                 result = sess.run(op)
 
                 self.assertEqual(np.array(18, dtype=np.float32, ndmin=2), result)
+
+    @gpu_test
+    def test_is_built_with_cuda(self):
+        self.assertTrue(tf.test.is_built_with_cuda())
+
+    @gpu_test
+    def test_is_gpu_available(self):
+        self.assertTrue(tf.test.is_gpu_available(cuda_only=True))
