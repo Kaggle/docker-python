@@ -9,6 +9,8 @@ from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, CuDNNLST
 from keras.optimizers import RMSprop, SGD
 from keras.utils.np_utils import to_categorical
 
+from common import gpu_test
+
 class TestKeras(unittest.TestCase):
     def test_train(self):
         train = pd.read_csv("/input/tests/data/train.csv")
@@ -59,6 +61,7 @@ class TestKeras(unittest.TestCase):
         model.fit(x_train, y_train, batch_size=32, epochs=1)
         model.evaluate(x_test, y_test, batch_size=32)
 
+    @gpu_test
     def test_cudnn_lstm(self):
         x_train = np.random.random((100, 100, 100))
         y_train = keras.utils.to_categorical(np.random.randint(10, size=(100, 1)), num_classes=10)
