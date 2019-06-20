@@ -1,6 +1,7 @@
-
 # CUDA 10, Cudnn 7.4.1
 FROM tensorflow/tensorflow:1.13.1-gpu-py3-jupyter
+
+ENV SHELL /bin/bash
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD requirements.txt requirements2.7.txt requirements.system /tmp/
