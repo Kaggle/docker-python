@@ -6,6 +6,9 @@ libxext6
 libsm6
 libxrender1
 libfontconfig1
-python2.7-dev
-vim-tiny
 python-pip
+python2.7-dev
+unzip
+vim-tiny
+wget
+zip
