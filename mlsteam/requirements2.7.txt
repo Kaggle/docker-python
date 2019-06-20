@@ -1,5 +1,5 @@
-Pillow
 h5py
 numpy
-pandas
 opencv-python
+pandas
+Pillow
