@@ -2,68 +2,71 @@ import unittest
 
 import numpy as np
 import tensorflow as tf
-from tensorflow.contrib import cudnn_rnn
-from tensorflow.python.framework import dtypes
-from tensorflow.python.ops import variables
 
 from common import gpu_test
 
 
 class TestTensorflow(unittest.TestCase):
     def test_addition(self):        
-        op = tf.add(2, 3)        
-        sess = tf.Session()
-
-        result = sess.run(op)
-
-        self.assertEqual(5, result)
+        result = tf.add(2, 3)        
+        self.assertEqual(5, result.numpy())
 
     def test_conv2d(self):
-        input = tf.random_normal([1,2,2,1])
-        filter = tf.random_normal([1,1,1,1])
+        input = tf.random.normal([1,2,2,1])
+        filter = tf.random.normal([1,1,1,1])
 
-        op = tf.nn.conv2d(input, filter, strides=[1, 1, 1, 1], padding='SAME')
-        with tf.Session() as sess:
-            result = sess.run(op)
-            self.assertEqual(4, len(result.shape))
+        result = tf.nn.conv2d(input, filter, strides=[1, 1, 1, 1], padding='SAME')
+        self.assertEqual(4, len(result.shape))
+    
+    def test_tf_keras(self):
+        x_train = np.random.random((100, 28, 28))
+        y_train = np.random.randint(10, size=(100, 1))
+        x_test = np.random.random((20, 28, 28))
+        y_test = np.random.randint(10, size=(20, 1))
 
-    @gpu_test
-    def test_cudnn_lstm(self):
-        num_layers = 4
-        num_units = 2
-        batch_size = 8
-        dir_count = 1
+        model = tf.keras.models.Sequential([
+            tf.keras.layers.Flatten(input_shape=(28, 28)),
+            tf.keras.layers.Dense(128, activation='relu'),
+            tf.keras.layers.Dropout(0.2),
+            tf.keras.layers.Dense(10, activation='softmax')
+        ])
 
-        inputs = tf.random_uniform([num_layers * dir_count, batch_size, num_units], dtype=dtypes.float32)
+        model.compile(
+            optimizer='adam',
+            loss='sparse_categorical_crossentropy',
+            metrics=['accuracy'])
 
-        lstm = cudnn_rnn.CudnnLSTM(
-            num_layers=num_layers,
-            num_units=num_units,
-            direction='unidirectional',
-            kernel_initializer=tf.constant_initializer(0.),
-            bias_initializer=tf.constant_initializer(0.),
-            name='test_gru'
-        )
+        model.fit(x_train, y_train, epochs=1)
+        model.evaluate(x_test, y_test)
+        
 
-        outputs, _ = lstm(inputs)
-        total_sum = tf.reduce_sum(outputs)
+    def test_lstm(self):
+        x_train = np.random.random((100, 28, 28))
+        y_train = np.random.randint(10, size=(100, 1))
+        x_test = np.random.random((20, 28, 28))
+        y_test = np.random.randint(10, size=(20, 1))
 
-        with tf.Session() as sess:
-            sess.run(variables.global_variables_initializer())
-            result = sess.run(total_sum)
-            self.assertEqual(0, result)
+        model = tf.keras.Sequential([
+            tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(64, input_shape=(28, 28))),
+            tf.keras.layers.Dense(64, activation='relu'),
+            tf.keras.layers.Dense(1, activation='sigmoid')
+        ])
+
+        model.compile(
+            loss='binary_crossentropy',
+            optimizer='adam',
+            metrics=['accuracy'])
+
+        model.fit(x_train, y_train, epochs=1)
+        model.evaluate(x_test, y_test)
     
     @gpu_test
     def test_gpu(self):
         with tf.device('/gpu:0'):
             m1 = tf.constant([2.0, 3.0], shape=[1, 2], name='a')
             m2 = tf.constant([3.0, 4.0], shape=[2, 1], name='b')
-            op = tf.matmul(m1, m2)
-
-            with tf.Session() as sess:
-                result = sess.run(op)
-
-                self.assertEqual(np.array(18, dtype=np.float32, ndmin=2), result)
+            result = tf.matmul(m1, m2)
+            self.assertEqual(np.array(18, dtype=np.float32, ndmin=2), result.numpy())
 
     @gpu_test
     def test_is_built_with_cuda(self):
