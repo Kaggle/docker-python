@@ -7,7 +7,7 @@ keras
 keras-rl
 matplotlib
 mlxtend
-numpy
+numpy==1.16.2
 opencv-python
 pandas==0.23.4
 Pillow
