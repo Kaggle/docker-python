@@ -1,3 +1,5 @@
+easydict
+joblib
 h5py
 numpy
 opencv-python
