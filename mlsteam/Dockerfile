@@ -10,8 +10,7 @@ RUN apt-get update && \
     xargs apt-get install -y < /tmp/requirements.system && \
     pip install -r /tmp/requirements.txt && \
     pip2 install -r /tmp/requirements2.7.txt && \
-    pip2 install tensorflow-gpu && \
-    rm /tmp/requirements.txt /tmp/requirements2.7.txt && \
+    rm /tmp/requirements.txt /tmp/requirements2.7.txt /tmp/requirements.system && \
     /tmp/clean-layer.sh
 
 RUN pip install --upgrade https://github.com/myelintek/lib-mlsteam/releases/download/v0.2/mlsteam-0.2.0-py3-none-any.whl && \

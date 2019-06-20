@@ -3,3 +3,4 @@ numpy
 opencv-python
 pandas
 Pillow
+tensorflow-gpu==1.13.1
