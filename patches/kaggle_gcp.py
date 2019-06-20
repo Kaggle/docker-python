@@ -69,7 +69,7 @@ class _DataProxyConnection(Connection):
         """Wrap Connection.api_request in order to handle errors gracefully.
         """
         try:
-            super().api_request(*args, **kwargs)
+            return super().api_request(*args, **kwargs)
         except Forbidden as e:
             msg = ("Permission denied using Kaggle's public BigQuery integration. "
                    "Did you mean to select a BigQuery account in the Kernels Settings sidebar?")
