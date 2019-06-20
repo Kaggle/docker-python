@@ -3,9 +3,10 @@
 FROM tensorflow/tensorflow:1.13.1-gpu-py3-jupyter
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
-ADD requirements.txt requirements2.7.txt /tmp/
+ADD requirements.txt requirements2.7.txt requirements.system /tmp/
 
-RUN apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 python2.7-dev python-pip --fix-missing && \
+RUN apt-get update && \
+    xargs apt-get install -y < /tmp/requirements.system && \
     pip install -r /tmp/requirements.txt && \
     pip2 install -r /tmp/requirements2.7.txt && \
     pip2 install tensorflow-gpu && \

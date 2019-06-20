@@ -1,0 +1,11 @@
+cuda-libraries-dev-10-0
+git
+libcudnn7-dev
+libglib2.0-0
+libxext6
+libsm6
+libxrender1
+libfontconfig1
+python2.7-dev
+vim-tiny
+ython-pip
