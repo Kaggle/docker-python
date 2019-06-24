@@ -7,6 +7,7 @@ keras
 keras-rl
 matplotlib
 mlxtend
+mne
 numpy==1.16.2
 opencv-python
 pandas==0.23.4

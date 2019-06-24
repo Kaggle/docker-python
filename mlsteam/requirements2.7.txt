@@ -1,8 +1,10 @@
 easydict
 joblib
 h5py
+mne==0.17.2
 numpy
 opencv-python
 pandas
 Pillow
+scipy==1.2.2
 tensorflow-gpu==1.13.1
