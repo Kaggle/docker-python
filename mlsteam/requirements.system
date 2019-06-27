@@ -1,6 +1,10 @@
+cuda-curand-10-0
+cuda-curand-dev-10-0
 cuda-libraries-dev-10-0
 git
-libcudnn7-dev
+libcudnn7-dev=7.4.1.5-1+cuda10.0
+libnccl2=2.4.7-1+cuda10.0
+libnccl-dev=2.4.7-1+cuda10.0
 libglib2.0-0
 libxext6
 libsm6
