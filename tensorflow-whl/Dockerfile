@@ -48,8 +48,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Work to upgrade to Python 3.7 can be found on this branch: https://github.com/Kaggle/docker-python/blob/upgrade-py37/Dockerfile
 RUN conda install -y python=3.6.6 && pip install --upgrade pip
 
-# Tensorflow 1.13 requires bazel >= 0.19.2 & <= 0.21.0
-ENV BAZEL_VERSION=0.21.0
+# The tested build configurations for Tensorflow 1.14 uses Bazel 0.24.1: https://www.tensorflow.org/install/source#tested_build_configurations
+ENV BAZEL_VERSION=0.24.1
 RUN apt-get install -y gnupg zip openjdk-8-jdk && \
     apt-get install -y --no-install-recommends \
       bash-completion \
@@ -62,7 +62,7 @@ RUN apt-get install -y gnupg zip openjdk-8-jdk && \
 RUN cd /usr/local/src && \
     git clone https://github.com/tensorflow/tensorflow && \
     cd tensorflow && \
-    git checkout r1.13 && \
+    git checkout r1.14 && \
     pip install keras_applications --no-deps && \
     pip install keras_preprocessing --no-deps
 
