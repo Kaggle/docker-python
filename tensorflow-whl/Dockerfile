@@ -46,7 +46,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1
 
 # Work to upgrade to Python 3.7 can be found on this branch: https://github.com/Kaggle/docker-python/blob/upgrade-py37/Dockerfile
-RUN conda install -y python=3.6.6 && pip install --upgrade pip
+RUN conda install -y python=3.6.6 && pip install --upgrade pip && pip install numpy
 
 # The tested build configurations for Tensorflow 1.14 uses Bazel 0.24.1: https://www.tensorflow.org/install/source#tested_build_configurations
 ENV BAZEL_VERSION=0.24.1
