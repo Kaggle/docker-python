@@ -131,6 +131,9 @@ RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
     pip install --upgrade numpy && \
     pip install gluonnlp && \
     pip install gluoncv && \
+    # zarr with numcodecs library
+    pip install zarr && \
+    pip install numcodecs && \
     # h2o (requires java)
     # requires java
     apt-get install -y default-jdk && \
