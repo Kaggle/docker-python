@@ -9,6 +9,7 @@ import os
 import socket
 import urllib.request
 from datetime import datetime, timedelta
+from enum import Enum, unique
 from typing import Optional, Tuple
 from urllib.error import HTTPError, URLError
 
@@ -24,6 +25,11 @@ class CredentialError(Exception):
 
 class BackendError(Exception):
     pass
+
+@unique
+class GcpTarget(Enum):
+    BIGQUERY = 1
+    GCS = 2
 
 
 class UserSecretsClient():
@@ -78,8 +84,14 @@ class UserSecretsClient():
             client = UserSecretsClient()
             token, expiry = client.get_bigquery_access_token()
         """
+        return self._get_access_token(GcpTarget.BIGQUERY)
+
+    def _get_gcs_access_token(self) -> Tuple[str, Optional[datetime]]:
+        return self._get_access_token(GcpTarget.GCS)
+
+    def _get_access_token(self, target: GcpTarget) -> Tuple[str, Optional[datetime]]:
         request_body = {
-            'Target': self.BIGQUERY_TARGET_VALUE
+            'Target': target.value
         }
         response_json = self._make_post_request(request_body)
         if 'secret' not in response_json:

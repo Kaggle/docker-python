@@ -12,7 +12,7 @@ from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import bigquery
 from kaggle_secrets import (_KAGGLE_URL_BASE_ENV_VAR_NAME,
                             _KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME,
-                            CredentialError, UserSecretsClient, BackendError)
+                            CredentialError, GcpTarget, UserSecretsClient, BackendError)
 
 _TEST_JWT = 'test-secrets-key'
 
@@ -90,17 +90,25 @@ class TestUserSecrets(unittest.TestCase):
         now = datetime(1993, 4, 24)
         mock_dt.utcnow = mock.Mock(return_value=now)
 
-        def call_get_access_token():
+        def call_get_bigquery_access_token():
             client = UserSecretsClient()
             secret_response = client.get_bigquery_access_token()
-            self.assertEqual(secret_response, (secret, now + timedelta(seconds=3600))) 
-        self._test_client(call_get_access_token,
-                          '/requests/GetUserSecretRequest', {'Target': 1, 'JWE': _TEST_JWT}, secret=secret)
-    
+            self.assertEqual(secret_response, (secret, now + timedelta(seconds=3600)))
+        def call_get_gcs_access_token():
+            client = UserSecretsClient()
+            secret_response = client._get_gcs_access_token()
+            self.assertEqual(secret_response, (secret, now + timedelta(seconds=3600)))
+        self._test_client(call_get_bigquery_access_token,
+                          '/requests/GetUserSecretRequest', {'Target': GcpTarget.BIGQUERY.value, 'JWE': _TEST_JWT},
+                          secret=secret)
+        self._test_client(call_get_gcs_access_token,
+                          '/requests/GetUserSecretRequest', {'Target': GcpTarget.GCS.value, 'JWE': _TEST_JWT},
+                          secret=secret)
+
     def test_get_access_token_handles_unsuccessful(self):
         def call_get_access_token():
             client = UserSecretsClient()
             with self.assertRaises(BackendError):
                 client.get_bigquery_access_token()
         self._test_client(call_get_access_token,
-                          '/requests/GetUserSecretRequest', {'Target': 1, 'JWE': _TEST_JWT}, success=False)
+                          '/requests/GetUserSecretRequest', {'Target': GcpTarget.BIGQUERY.value, 'JWE': _TEST_JWT}, success=False)
