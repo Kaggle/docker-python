@@ -57,10 +57,9 @@ class KaggleKernelCredentials(credentials.Credentials):
             raise RefreshError('Unable to refresh access token due to connection error.') from e
         except Exception as e:
             Log.error(f"Error trying to refresh access token: {e}")
-            if (not get_integrations().has_bigquery() and self.target == GcpTarget.BIGQUERY):
-                Log.error(f"No bigquery integration found.")
-                print(
-                    'Please ensure you have selected a BigQuery account in the Kernels Settings sidebar.')
+            Log.error(f"No {self.target.service} integration found.")
+            print(
+                f"Please ensure you have selected a {self.target.service} account in the Kernels Settings sidebar.")
             raise RefreshError('Unable to refresh access token.') from e
 
 
