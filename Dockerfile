@@ -1,4 +1,4 @@
-ARG BASE_TAG=5.3.0
+ARG BASE_TAG=2019.03
 
 FROM gcr.io/kaggle-images/python-tensorflow-whl:1.13.1-py36-2 as tensorflow_whl
 FROM continuumio/anaconda3:${BASE_TAG}
@@ -334,7 +334,7 @@ RUN pip install --upgrade cython && \
     pip install --upgrade cysignals && \
     pip install pyfasttext && \
     pip install ktext && \
-    pip install git+git://github.com/facebookresearch/fastText.git && \
+    pip install fasttext && \
     apt-get install -y libhunspell-dev && pip install hunspell && \
     pip install annoy && \
     pip install category_encoders && \
