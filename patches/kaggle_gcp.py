@@ -4,7 +4,7 @@ from google.auth.exceptions import RefreshError
 from google.cloud import bigquery
 from google.cloud.exceptions import Forbidden
 from google.cloud.bigquery._http import Connection
-from kaggle_secrets import UserSecretsClient
+from kaggle_secrets import GcpTarget, UserSecretsClient
 
 from log import Log
 
@@ -29,6 +29,9 @@ class KernelIntegrations():
     def has_bigquery(self):
         return 'bigquery' in self.integrations.keys()
 
+    def has_gcs(self):
+        return 'gcs' in self.integrations.keys()
+
 
 class KaggleKernelCredentials(credentials.Credentials):
     """Custom Credentials used to authenticate using the Kernel's connected OAuth account.
@@ -36,19 +39,25 @@ class KaggleKernelCredentials(credentials.Credentials):
     client = bigquery.Client(project='ANOTHER_PROJECT',
                                 credentials=KaggleKernelCredentials())
     """
+    def __init__(self, target=GcpTarget.BIGQUERY):
+        super().__init__()
+        self.target = target
 
     def refresh(self, request):
         try:
             client = UserSecretsClient()
-            self.token, self.expiry = client.get_bigquery_access_token()
+            if self.target == GcpTarget.BIGQUERY:
+                self.token, self.expiry = client.get_bigquery_access_token()
+            elif self.target == GcpTarget.GCS:
+                self.token, self.expiry = client._get_gcs_access_token()
         except ConnectionError as e:
             Log.error(f"Connection error trying to refresh access token: {e}")
             print("There was a connection error trying to fetch the access token. "
-                  "Please ensure internet is on in order to use the BigQuery Integration.")
+                  f"Please ensure internet is on in order to use the {self.target.service} Integration.")
             raise RefreshError('Unable to refresh access token due to connection error.') from e
         except Exception as e:
             Log.error(f"Error trying to refresh access token: {e}")
-            if (not get_integrations().has_bigquery()):
+            if (not get_integrations().has_bigquery() and self.target == GcpTarget.BIGQUERY):
                 Log.error(f"No bigquery integration found.")
                 print(
                     'Please ensure you have selected a BigQuery account in the Kernels Settings sidebar.')

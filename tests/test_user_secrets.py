@@ -99,10 +99,10 @@ class TestUserSecrets(unittest.TestCase):
             secret_response = client._get_gcs_access_token()
             self.assertEqual(secret_response, (secret, now + timedelta(seconds=3600)))
         self._test_client(call_get_bigquery_access_token,
-                          '/requests/GetUserSecretRequest', {'Target': GcpTarget.BIGQUERY.value, 'JWE': _TEST_JWT},
+                          '/requests/GetUserSecretRequest', {'Target': GcpTarget.BIGQUERY.target, 'JWE': _TEST_JWT},
                           secret=secret)
         self._test_client(call_get_gcs_access_token,
-                          '/requests/GetUserSecretRequest', {'Target': GcpTarget.GCS.value, 'JWE': _TEST_JWT},
+                          '/requests/GetUserSecretRequest', {'Target': GcpTarget.GCS.target, 'JWE': _TEST_JWT},
                           secret=secret)
 
     def test_get_access_token_handles_unsuccessful(self):
@@ -111,4 +111,4 @@ class TestUserSecrets(unittest.TestCase):
             with self.assertRaises(BackendError):
                 client.get_bigquery_access_token()
         self._test_client(call_get_access_token,
-                          '/requests/GetUserSecretRequest', {'Target': GcpTarget.BIGQUERY.value, 'JWE': _TEST_JWT}, success=False)
+                          '/requests/GetUserSecretRequest', {'Target': GcpTarget.BIGQUERY.target, 'JWE': _TEST_JWT}, success=False)
