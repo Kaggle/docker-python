@@ -15,7 +15,11 @@ def get_integrations():
     if kernel_integrations_var is None:
         return kernel_integrations
     for integration in kernel_integrations_var.split(':'):
-        kernel_integrations.add_integration(integration.lower())
+        try:
+            target = GcpTarget[integration.upper()]
+            kernel_integrations.add_integration(target)
+        except KeyError as e:
+            Log.error(f"Unknown integration target: {e}")
     return kernel_integrations
 
 
@@ -23,14 +27,17 @@ class KernelIntegrations():
     def __init__(self):
         self.integrations = {}
 
-    def add_integration(self, integration_name):
-        self.integrations[integration_name] = True
+    def add_integration(self, target):
+        self.integrations[target] = True
+
+    def has_integration(self, target):
+        return target in self.integrations
 
     def has_bigquery(self):
-        return 'bigquery' in self.integrations.keys()
+        return GcpTarget.BIGQUERY in self.integrations
 
     def has_gcs(self):
-        return 'gcs' in self.integrations.keys()
+        return GcpTarget.GCS in self.integrations
 
 
 class KaggleKernelCredentials(credentials.Credentials):
@@ -57,9 +64,10 @@ class KaggleKernelCredentials(credentials.Credentials):
             raise RefreshError('Unable to refresh access token due to connection error.') from e
         except Exception as e:
             Log.error(f"Error trying to refresh access token: {e}")
-            Log.error(f"No {self.target.service} integration found.")
-            print(
-                f"Please ensure you have selected a {self.target.service} account in the Kernels Settings sidebar.")
+            if (not get_integrations().has_integration(self.target)):
+                Log.error(f"No {self.target.service} integration found.")
+                print(
+                   f"Please ensure you have selected a {self.target.service} account in the Kernels Settings sidebar.")
             raise RefreshError('Unable to refresh access token.') from e
 
 
