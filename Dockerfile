@@ -7,12 +7,8 @@ ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 
 # Emacs
-RUN sudo apt-get emacs
-    tar zvxf emacs-26.2.tar.gz
-    cd emacs-26.2.tar.gz
-    ./configure
-    make
-    make install
+RUN apt-get update
+    apt-get -y install emacs26.2
 
 # This is necessary for apt to access HTTPS sources
 RUN apt-get update && \
