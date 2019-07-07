@@ -6,6 +6,14 @@ FROM continuumio/anaconda3:${BASE_TAG}
 ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 
+# Emacs
+RUN sudo apt-get emacs
+    tar zvxf emacs-26.2.tar.gz
+    cd emacs-26.2.tar.gz
+    ./configure
+    make
+    make install
+
 # This is necessary for apt to access HTTPS sources
 RUN apt-get update && \
     apt-get install apt-transport-https && \
