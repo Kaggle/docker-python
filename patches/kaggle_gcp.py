@@ -4,7 +4,7 @@ from google.auth.exceptions import RefreshError
 from google.cloud import bigquery
 from google.cloud.exceptions import Forbidden
 from google.cloud.bigquery._http import Connection
-from kaggle_secrets import UserSecretsClient
+from kaggle_secrets import GcpTarget, UserSecretsClient
 
 from log import Log
 
@@ -15,7 +15,11 @@ def get_integrations():
     if kernel_integrations_var is None:
         return kernel_integrations
     for integration in kernel_integrations_var.split(':'):
-        kernel_integrations.add_integration(integration.lower())
+        try:
+            target = GcpTarget[integration.upper()]
+            kernel_integrations.add_integration(target)
+        except KeyError as e:
+            Log.error(f"Unknown integration target: {e}")
     return kernel_integrations
 
 
@@ -23,11 +27,17 @@ class KernelIntegrations():
     def __init__(self):
         self.integrations = {}
 
-    def add_integration(self, integration_name):
-        self.integrations[integration_name] = True
+    def add_integration(self, target):
+        self.integrations[target] = True
+
+    def has_integration(self, target):
+        return target in self.integrations
 
     def has_bigquery(self):
-        return 'bigquery' in self.integrations.keys()
+        return GcpTarget.BIGQUERY in self.integrations
+
+    def has_gcs(self):
+        return GcpTarget.GCS in self.integrations
 
 
 class KaggleKernelCredentials(credentials.Credentials):
@@ -36,22 +46,28 @@ class KaggleKernelCredentials(credentials.Credentials):
     client = bigquery.Client(project='ANOTHER_PROJECT',
                                 credentials=KaggleKernelCredentials())
     """
+    def __init__(self, target=GcpTarget.BIGQUERY):
+        super().__init__()
+        self.target = target
 
     def refresh(self, request):
         try:
             client = UserSecretsClient()
-            self.token, self.expiry = client.get_bigquery_access_token()
+            if self.target == GcpTarget.BIGQUERY:
+                self.token, self.expiry = client.get_bigquery_access_token()
+            elif self.target == GcpTarget.GCS:
+                self.token, self.expiry = client._get_gcs_access_token()
         except ConnectionError as e:
             Log.error(f"Connection error trying to refresh access token: {e}")
             print("There was a connection error trying to fetch the access token. "
-                  "Please ensure internet is on in order to use the BigQuery Integration.")
+                  f"Please ensure internet is on in order to use the {self.target.service} Integration.")
             raise RefreshError('Unable to refresh access token due to connection error.') from e
         except Exception as e:
             Log.error(f"Error trying to refresh access token: {e}")
-            if (not get_integrations().has_bigquery()):
-                Log.error(f"No bigquery integration found.")
+            if (not get_integrations().has_integration(self.target)):
+                Log.error(f"No {self.target.service} integration found.")
                 print(
-                    'Please ensure you have selected a BigQuery account in the Kernels Settings sidebar.')
+                   f"Please ensure you have selected a {self.target.service} account in the Kernels Settings sidebar.")
             raise RefreshError('Unable to refresh access token.') from e
 
 

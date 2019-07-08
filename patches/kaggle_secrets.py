@@ -28,8 +28,21 @@ class BackendError(Exception):
 
 @unique
 class GcpTarget(Enum):
-    BIGQUERY = 1
-    GCS = 2
+    """Enum class to store GCP targets."""
+    BIGQUERY = (1, "BigQuery")
+    GCS = (2, "Google Cloud Storage")
+
+    def __init__(self, target, service):
+        self._target = target
+        self._service = service
+
+    @property
+    def target(self):
+        return self._target
+
+    @property
+    def service(self):
+        return self._service
 
 
 class UserSecretsClient():
@@ -91,7 +104,7 @@ class UserSecretsClient():
 
     def _get_access_token(self, target: GcpTarget) -> Tuple[str, Optional[datetime]]:
         request_body = {
-            'Target': target.value
+            'Target': target.target
         }
         response_json = self._make_post_request(request_body)
         if 'secret' not in response_json:
