@@ -52,6 +52,9 @@ while :; do
     shift
 done
 
+BUILD_ARGS+=" --build-arg GIT_COMMIT=$(git rev-parse HEAD)"
+BUILD_ARGS+=" --build-arg BUILD_DATE=$(date '+%Y%m%d-%H%M%S')"
+
 readonly CACHE_FLAG
 readonly DOCKERFILE
 readonly IMAGE_TAG

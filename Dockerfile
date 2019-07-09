@@ -3,6 +3,15 @@ ARG BASE_TAG=2019.03
 FROM gcr.io/kaggle-images/python-tensorflow-whl:1.14.0-py36 as tensorflow_whl
 FROM continuumio/anaconda3:${BASE_TAG}
 
+ARG GIT_COMMIT=unknown
+ARG BUILD_DATE=unknown
+
+LABEL git-commit=$GIT_COMMIT
+LABEL build-date=$BUILD_DATE
+
+# Correlate current release with the git hash inside the kernel editor by running `!cat /etc/git_commit`.
+RUN echo "$GIT_COMMIT" > /etc/git_commit && echo "$BUILD_DATE" > /etc/build_date
+
 ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 
