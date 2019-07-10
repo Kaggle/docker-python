@@ -24,7 +24,7 @@ class TestStorage(unittest.TestCase):
         anonymous = storage.Client.create_anonymous_client()
         self.assertIsNotNone(anonymous)
 
-    def test_deftault_credentials_gcs_enabled(self):
+    def test_default_credentials_gcs_enabled(self):
         env = EnvironmentVarGuard()
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
         env.set('KAGGLE_KERNEL_INTEGRATIONS', 'GCS')
