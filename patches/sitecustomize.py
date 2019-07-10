@@ -10,6 +10,7 @@ def init():
     if kaggle_proxy_token or is_jwe_set:
         init_bigquery()
     if is_jwe_set:
+        from kaggle_gcp import get_integrations
         if get_integrations().has_gcs():
             init_gcs()
 
@@ -65,20 +66,18 @@ def init_bigquery():
 
 
 def init_gcs():
-   from kaggle_gcp import get_integrations
-   if get_integrations().has_gcs():
-       from kaggle_secrets import GcpTarget
-       from kaggle_gcp import KaggleKernelCredentials
-       from google.cloud import storage
-       def monkeypatch_gcs(gcs_client, *args, **kwargs):
-           specified_credentials = kwargs.get('credentials')
-           if specified_credentials is None:
-               Log.info("No credentials specified, using KaggleKernelCredentials.")
-               kwargs['credentials'] = KaggleKernelCredentials(target=GcpTarget.GCS)
-               return gcs_client(*args, **kwargs)
+   from kaggle_secrets import GcpTarget
+   from kaggle_gcp import KaggleKernelCredentials
+   from google.cloud import storage
+   def monkeypatch_gcs(gcs_client, *args, **kwargs):
+       specified_credentials = kwargs.get('credentials')
+       if specified_credentials is None:
+           Log.info("No credentials specified, using KaggleKernelCredentials.")
+           kwargs['credentials'] = KaggleKernelCredentials(target=GcpTarget.GCS)
+           return gcs_client(*args, **kwargs)
 
-       gcs_client = storage.Client
-       storage.Client = lambda *args, **kwargs:  monkeypatch_gcs(gcs_client, *args, **kwargs)
+   gcs_client = storage.Client
+   storage.Client = lambda *args, **kwargs:  monkeypatch_gcs(gcs_client, *args, **kwargs)
 
 
 init()
