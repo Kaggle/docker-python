@@ -11,6 +11,7 @@ libxext6
 libsm6
 libxrender1
 libfontconfig1
+net-tools
 python-opencv
 python-pip
 python2.7-dev
