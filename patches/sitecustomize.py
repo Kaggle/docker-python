@@ -16,9 +16,8 @@ def init():
 
 
 def init_bigquery():
-    from google.auth import credentials, environment_vars
+    from google.auth import environment_vars
     from google.cloud import bigquery
-    from google.cloud.bigquery._http import Connection
     # TODO: Update this to the correct kaggle.gcp path once we no longer inject modules
     # from the worker.
     from kaggle_gcp import get_integrations, PublicBigqueryClient, KaggleKernelCredentials
