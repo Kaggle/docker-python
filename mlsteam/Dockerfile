@@ -2,6 +2,7 @@
 FROM tensorflow/tensorflow:1.13.1-gpu-py3-jupyter
 
 ENV SHELL /bin/bash
+ENV HOME /workspace
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD requirements.txt requirements2.7.txt requirements.system /tmp/
@@ -18,4 +19,4 @@ RUN pip install --upgrade https://github.com/myelintek/lib-mlsteam/releases/down
 
 RUN rm -f /usr/lib/x86_64-linux-gnu/libcuda.so /usr/lib/x86_64-linux-gnu/libcuda.so.1
 
-WORKDIR /job_dir
+WORKDIR /workspace
