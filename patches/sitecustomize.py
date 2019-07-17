@@ -73,7 +73,7 @@ def init_gcs():
        if specified_credentials is None:
            Log.info("No credentials specified, using KaggleKernelCredentials.")
            kwargs['credentials'] = KaggleKernelCredentials(target=GcpTarget.GCS)
-           return gcs_client(*args, **kwargs)
+       return gcs_client(*args, **kwargs)
 
    gcs_client = storage.Client
    storage.Client = lambda *args, **kwargs:  monkeypatch_gcs(gcs_client, *args, **kwargs)
