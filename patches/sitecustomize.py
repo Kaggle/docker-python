@@ -25,8 +25,7 @@ class GcpModuleFinder(importlib.abc.MetaPathFinder):
             # since we call kaggle_gcp to load the module.
             if self._is_called_from_kaggle_gcp():
                 return None
-            spec = importlib.machinery.ModuleSpec(fullname, GcpModuleLoader())
-            return spec
+            return importlib.machinery.ModuleSpec(fullname, GcpModuleLoader())
 
 
 class GcpModuleLoader(importlib.abc.Loader):
@@ -48,5 +47,5 @@ class GcpModuleLoader(importlib.abc.Loader):
         pass
 
 
-if not hasattr(sys,'frozen'):
+if not hasattr(sys, 'frozen'):
     sys.meta_path.insert(0, GcpModuleFinder())
