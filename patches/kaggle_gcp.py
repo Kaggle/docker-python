@@ -178,13 +178,13 @@ def init_gcs():
     from kaggle_gcp import KaggleKernelCredentials
     gcs_client_init = storage.Client.__init__
     def monkeypatch_gcs(self, *args, **kwargs):
-        specified_credentials = kwargs.get('credentials')
-        if specified_credentials is None:
-            Log.info("No credentials specified, using KaggleKernelCredentials.")
-            kwargs['credentials'] = KaggleKernelCredentials(target=GcpTarget.GCS)
-        return gcs_client_init(self, *args, **kwargs)
+        specified_credentials = kwargs.get('credentials')
+        if specified_credentials is None:
+            Log.info("No credentials specified, using KaggleKernelCredentials.")
+            kwargs['credentials'] = KaggleKernelCredentials(target=GcpTarget.GCS)
+        return gcs_client_init(self, *args, **kwargs)
 
-    storage.Client.__init__ = monkeypatch_gcs
+    storage.Client.__init__ = monkeypatch_gcs
     return storage
 
 def init():
