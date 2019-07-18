@@ -2,7 +2,7 @@ import unittest
 
 from unittest.mock import Mock
 
-from kaggle_gcp import KaggleKernelCredentials
+from kaggle_gcp import KaggleKernelCredentials, init_gcs
 from test.support import EnvironmentVarGuard
 from google.cloud import storage
 
@@ -29,7 +29,6 @@ class TestStorage(unittest.TestCase):
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
         env.set('KAGGLE_KERNEL_INTEGRATIONS', 'GCS')
         with env:
-            from sitecustomize import init
-            init()
+            init_gcs()
             client = storage.Client(project="xyz")
             self.assertIsInstance(client._credentials, KaggleKernelCredentials)
