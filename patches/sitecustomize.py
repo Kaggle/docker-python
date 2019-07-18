@@ -8,13 +8,14 @@ import importlib.machinery
 
 class GcpModuleFinder(importlib.abc.MetaPathFinder):
     _MODULES = ['google.cloud.bigquery', 'google.cloud.storage']
+    _KAGGLE_GCP_PATH = 'kaggle_gcp.py'
     def __init__(self):
         pass
     
     def _is_called_from_kaggle_gcp(self):
         import inspect
         for frame in inspect.stack():
-            if frame.filename.endswith('kaggle_gcp.py'):
+            if os.path.basename(frame.filename) == self._KAGGLE_GCP_PATH:
                 return True
         return False
 
