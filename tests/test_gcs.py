@@ -17,10 +17,19 @@ class TestStorage(unittest.TestCase):
 
     def test_ctr(self):
         credentials = _make_credentials()
-        client = storage.Client(project="xyz", credentials=credentials)
-        self.assertEqual(client.project, "xyz")
+        env = EnvironmentVarGuard()
+        env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'GCS')
+        with env:
+            from sitecustomize import init
+            init()
+            client = storage.Client(project="xyz", credentials=credentials)
+            self.assertEqual(client.project, "xyz")
+            self.assertNotIsInstance(client._credentials, KaggleKernelCredentials)
+            self.assertIsNotNone(client._credentials)
 
     def test_annonymous_client(self):
+        # TODO: the following will not work with current monkey patching.
         anonymous = storage.Client.create_anonymous_client()
         self.assertIsNotNone(anonymous)
 
