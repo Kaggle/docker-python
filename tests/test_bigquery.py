@@ -11,7 +11,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from google.cloud import bigquery
 from google.auth.exceptions import DefaultCredentialsError
 from google.cloud.bigquery._http import Connection
-from kaggle_gcp import KaggleKernelCredentials, PublicBigqueryClient, _DataProxyConnection
+from kaggle_gcp import KaggleKernelCredentials, PublicBigqueryClient, _DataProxyConnection, init_bigquery
 import kaggle_secrets
 
 
@@ -149,8 +149,7 @@ class TestBigQuery(unittest.TestCase):
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
         env.set('KAGGLE_KERNEL_INTEGRATIONS', 'BIGQUERY')
         with env:
-            import sitecustomize
-            sitecustomize.init()
+            init_bigquery()
             from google.cloud.bigquery import magics
             self.assertEqual(type(magics.context._credentials), KaggleKernelCredentials)
             magics.context.credentials = None
@@ -159,7 +158,6 @@ class TestBigQuery(unittest.TestCase):
         env = EnvironmentVarGuard()
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
         with env:
-            import sitecustomize
-            sitecustomize.init()
+            init_bigquery()
             from google.cloud.bigquery import magics
             self.assertIsNone(magics.context._credentials)

@@ -110,3 +110,90 @@ class PublicBigqueryClient(bigquery.client.Client):
         )
         # TODO: Remove this once https://github.com/googleapis/google-cloud-python/issues/7122 is implemented.
         self._connection = _DataProxyConnection(self)
+
+
+def init_bigquery():
+    from google.auth import environment_vars
+    from google.cloud import bigquery
+
+    is_proxy_token_set = "KAGGLE_DATA_PROXY_TOKEN" in os.environ
+    is_user_secrets_token_set = "KAGGLE_USER_SECRETS_TOKEN" in os.environ
+    if not (is_proxy_token_set or is_user_secrets_token_set):
+        return bigquery
+
+    # If this Kernel has bigquery integration on startup, preload the Kaggle Credentials
+    # object for magics to work. 
+    if get_integrations().has_bigquery():
+        from google.cloud.bigquery import magics
+        magics.context.credentials = KaggleKernelCredentials()
+
+    def monkeypatch_bq(bq_client, *args, **kwargs):
+        from kaggle_gcp import get_integrations, PublicBigqueryClient, KaggleKernelCredentials
+        specified_credentials = kwargs.get('credentials')
+        has_bigquery = get_integrations().has_bigquery()
+        # Prioritize passed in project id, but if it is missing look for env var. 
+        arg_project = kwargs.get('project')
+        explicit_project_id = arg_project or os.environ.get(environment_vars.PROJECT)
+        # This is a hack to get around the bug in google-cloud library.
+        # Remove these two lines once this is resolved:
+        # https://github.com/googleapis/google-cloud-python/issues/8108
+        if explicit_project_id:
+            Log.info(f"Explicit project set to {explicit_project_id}")
+            kwargs['project'] = explicit_project_id
+        if explicit_project_id is None and specified_credentials is None and not has_bigquery:
+            msg = "Using Kaggle's public dataset BigQuery integration."
+            Log.info(msg)
+            print(msg)
+            return PublicBigqueryClient(*args, **kwargs)
+
+        else:
+            if specified_credentials is None:
+                Log.info("No credentials specified, using KaggleKernelCredentials.")
+                kwargs['credentials'] = KaggleKernelCredentials()
+                if (not has_bigquery):
+                    Log.info("No bigquery integration found, creating client anyways.")
+                    print('Please ensure you have selected a BigQuery '
+                        'account in the Kernels Settings sidebar.')
+            return bq_client(*args, **kwargs)
+
+    # Monkey patches BigQuery client creation to use proxy or user-connected GCP account.
+    # Deprecated in favor of Kaggle.DataProxyClient().
+    # TODO: Remove this once uses have migrated to that new interface.
+    bq_client = bigquery.Client
+    bigquery.Client = lambda *args, **kwargs:  monkeypatch_bq(
+        bq_client, *args, **kwargs)
+    return bigquery
+
+def init_gcs():
+    is_user_secrets_token_set = "KAGGLE_USER_SECRETS_TOKEN" in os.environ
+    from google.cloud import storage
+    if not is_user_secrets_token_set:
+        return storage
+
+    from kaggle_gcp import get_integrations
+    if not get_integrations().has_gcs():
+        return storage
+
+    from kaggle_secrets import GcpTarget
+    from kaggle_gcp import KaggleKernelCredentials
+    gcs_client_init = storage.Client.__init__
+    def monkeypatch_gcs(self, *args, **kwargs):
+        specified_credentials = kwargs.get('credentials')
+        if specified_credentials is None:
+            Log.info("No credentials specified, using KaggleKernelCredentials.")
+            kwargs['credentials'] = KaggleKernelCredentials(target=GcpTarget.GCS)
+        return gcs_client_init(self, *args, **kwargs)
+
+    storage.Client.__init__ = monkeypatch_gcs
+    return storage
+
+def init():
+    init_bigquery()
+    init_gcs()
+
+# We need to initialize the monkeypatching of the client libraries
+# here since there is a circular dependency between our import hook version
+# google.cloud.* and kaggle_gcp. By calling init here, we guarantee
+# that regardless of the original import that caused google.cloud.* to be
+# loaded, the monkeypatching will be done.
+init()
