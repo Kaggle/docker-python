@@ -29,7 +29,9 @@ class TestStorage(unittest.TestCase):
             self.assertIsNotNone(client._credentials)
 
     def test_annonymous_client(self):
-        # TODO: the following will not work with current monkey patching.
+        env = EnvironmentVarGuard()
+        env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'GCS')
         anonymous = storage.Client.create_anonymous_client()
         self.assertIsNotNone(anonymous)
 
