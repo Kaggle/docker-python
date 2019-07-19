@@ -32,8 +32,7 @@ class TestStorage(unittest.TestCase):
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
         env.set('KAGGLE_KERNEL_INTEGRATIONS', 'GCS')
         with env:
-            from sitecustomize import init
-            init()
+            init_gcs()
             anonymous = storage.Client.create_anonymous_client()
             self.assertIsNotNone(anonymous)
 
