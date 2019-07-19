@@ -11,7 +11,7 @@ class GcpModuleFinder(importlib.abc.MetaPathFinder):
     _KAGGLE_GCP_PATH = 'kaggle_gcp.py'
     def __init__(self):
         pass
-    
+
     def _is_called_from_kaggle_gcp(self):
         import inspect
         for frame in inspect.stack():

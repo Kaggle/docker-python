@@ -169,22 +169,22 @@ def init_gcs():
     from google.cloud import storage
     if not is_user_secrets_token_set:
         return storage
-    
+
     from kaggle_gcp import get_integrations
     if not get_integrations().has_gcs():
         return storage
-    
+
     from kaggle_secrets import GcpTarget
     from kaggle_gcp import KaggleKernelCredentials
-    def monkeypatch_gcs(gcs_client, *args, **kwargs):
+    gcs_client_init = storage.Client.__init__
+    def monkeypatch_gcs(self, *args, **kwargs):
         specified_credentials = kwargs.get('credentials')
         if specified_credentials is None:
             Log.info("No credentials specified, using KaggleKernelCredentials.")
             kwargs['credentials'] = KaggleKernelCredentials(target=GcpTarget.GCS)
-        return gcs_client(*args, **kwargs)
+        return gcs_client_init(self, *args, **kwargs)
 
-    gcs_client = storage.Client
-    storage.Client = lambda *args, **kwargs:  monkeypatch_gcs(gcs_client, *args, **kwargs)
+    storage.Client.__init__ = monkeypatch_gcs
     return storage
 
 def init():
