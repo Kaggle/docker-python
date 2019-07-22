@@ -3,7 +3,8 @@ joblib
 h5py
 matplotlib==2.2.4
 mne==0.17.2
-numpy
+# minimal for deepsleepnet data converter
+numpy==1.12.0
 opencv-python
 pandas
 Pillow
