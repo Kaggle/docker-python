@@ -7,7 +7,8 @@ ENV HOME /workspace
 ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD requirements.txt requirements2.7.txt requirements.system /tmp/
 
-RUN apt-get update && \
+RUN sed -i 's/archive.ubuntu.com/tw.archive.ubuntu.com/g' /etc/apt/sources.list && \
+    apt-get update && \
     xargs apt-get install -y < /tmp/requirements.system && \
     pip install -r /tmp/requirements.txt && \
     pip2 install -r /tmp/requirements2.7.txt && \
