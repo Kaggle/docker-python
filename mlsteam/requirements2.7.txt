@@ -6,7 +6,7 @@ mne==0.17.2
 # minimal for deepsleepnet data converter
 numpy==1.12.0
 opencv-python
-pandas
+pandas==0.24.2
 Pillow
 scikit-learn==0.20.3
 scipy==1.2.2
