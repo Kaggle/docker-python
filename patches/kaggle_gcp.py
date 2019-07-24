@@ -145,7 +145,6 @@ def init_bigquery():
             Log.info(msg)
             print(msg)
             return PublicBigqueryClient(*args, **kwargs)
-
         else:
             if specified_credentials is None:
                 Log.info("No credentials specified, using KaggleKernelCredentials.")
@@ -154,6 +153,10 @@ def init_bigquery():
                     Log.info("No bigquery integration found, creating client anyways.")
                     print('Please ensure you have selected a BigQuery '
                         'account in the Kernels Settings sidebar.')
+            if explicit_project_id is None:
+                Log.info("No project specified while using the unmodified client.")
+                print('Please ensure you specify a project id when creating the client'
+                    'in order to use your BigQuery account.')
             return bq_client(*args, **kwargs)
 
     # Monkey patches BigQuery client creation to use proxy or user-connected GCP account.
