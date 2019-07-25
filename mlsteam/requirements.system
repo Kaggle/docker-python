@@ -6,13 +6,11 @@ libcudnn7-dev=7.4.1.5-1+cuda10.0
 libnccl2=2.4.7-1+cuda10.0
 libnccl-dev=2.4.7-1+cuda10.0
 libglib2.0-0
-libopencv-dev
 libxext6
 libsm6
 libxrender1
 libfontconfig1
 net-tools
-python-opencv
 python-pip
 python2.7-dev
 unzip

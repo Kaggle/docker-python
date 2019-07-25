@@ -1,0 +1,9 @@
+libxine2-dev
+libv4l-dev
+libgstreamer0.10-dev
+libgstreamer-plugins-base0.10-dev
+libatlas-base-dev
+libopencore-amrnb-dev
+libopencore-amrwb-dev
+x264
+v4l-utils

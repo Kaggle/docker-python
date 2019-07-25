@@ -5,7 +5,7 @@ ENV SHELL /bin/bash
 ENV HOME /workspace
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
-ADD requirements.txt requirements2.7.txt requirements.system install-trt.sh install-ros.sh /tmp/
+ADD requirements.txt requirements2.7.txt requirements.system install-trt.sh install-ros.sh requirements.opencv3 /tmp/
 
 RUN sed -i 's/archive.ubuntu.com/tw.archive.ubuntu.com/g' /etc/apt/sources.list && \
     apt-get update && \
