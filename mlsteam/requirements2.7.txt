@@ -11,3 +11,4 @@ Pillow
 scikit-learn==0.20.3
 scipy==1.2.2
 tensorflow-gpu==1.13.1
+torch

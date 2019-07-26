@@ -12,6 +12,7 @@ numpy==1.16.2
 opencv-python
 pandas==0.24.2
 Pillow
+PyYAML
 seaborn
 scipy
 scikit-learn

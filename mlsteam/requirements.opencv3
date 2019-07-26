@@ -1,3 +1,7 @@
+ffmpeg
+libavcodec-dev
+libavformat-dev
+libavdevice-dev
 libxine2-dev
 libv4l-dev
 libgstreamer0.10-dev
