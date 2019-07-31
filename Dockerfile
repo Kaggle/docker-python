@@ -41,7 +41,7 @@ RUN pip install seaborn python-dateutil dask && \
     libilmbase12 libjbig0 libjbig2dec0 libjpeg62-turbo liblcms2-2 liblqr-1-0 libltdl7 libmagickcore-6.q16-3 \
     libmagickcore-6.q16-3-extra libmagickwand-6.q16-3 libnetpbm10 libopenexr22 libpango-1.0-0 libpangocairo-1.0-0 libpangoft2-1.0-0 \
     libpaper-utils libpaper1 libpixman-1-0 libpng16-16 librsvg2-2 librsvg2-common libthai-data libthai0 libtiff5 libwmf0.2-7 \
-    libxcb-render0 libxcb-shm0 netpbm poppler-data p7zip-full && \
+    libxcb-render0 libxcb-shm0 netpbm poppler-data p7zip-full python3-rtree && \
     cd /usr/local/src && \
     wget --no-verbose https://imagemagick.org/download/ImageMagick.tar.gz && \
     tar xzf ImageMagick.tar.gz && cd `ls -d ImageMagick-*` && pwd && ls -al && ./configure && \
@@ -345,7 +345,8 @@ RUN pip install --upgrade cython && \
     pip install ktext && \
     pip install fasttext && \
     apt-get install -y libhunspell-dev && pip install hunspell && \
-    pip install annoy && \
+    # b/138723119: annoy's latest version 1.16 was failing
+    pip install annoy==1.15.2 && \
     # Need to use CountEncoder from category_encoders before it's officially released
     pip install git+https://github.com/scikit-learn-contrib/categorical-encoding.git && \
     pip install google-cloud-automl && \
