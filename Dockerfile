@@ -529,6 +529,14 @@ RUN pip install --upgrade dask && \
     mkdir -p /etc/ipython/ && echo "c = get_config(); c.IPKernelApp.matplotlib = 'inline'" > /etc/ipython/ipython_config.py && \
     /tmp/clean-layer.sh
 
+# gcloud SDK https://cloud.google.com/sdk/docs/quickstart-debian-ubuntu
+RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" \
+    | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
+    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
+    apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - && \
+    apt-get update -y && apt-get install google-cloud-sdk -y && \
+    /tmp/clean-layer.sh
+
 # Add BigQuery client proxy settings
 ENV PYTHONUSERBASE "/root/.local"
 ADD patches/kaggle_gcp.py /root/.local/lib/python3.6/site-packages/kaggle_gcp.py
