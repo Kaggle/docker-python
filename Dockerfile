@@ -345,6 +345,7 @@ RUN pip install --upgrade cython && \
     pip install ktext && \
     pip install fasttext && \
     apt-get install -y libhunspell-dev && pip install hunspell && \
+    # b/138723119: annoy's latest version 1.16 was failing
     pip install annoy==1.15.2 && \
     # Need to use CountEncoder from category_encoders before it's officially released
     pip install git+https://github.com/scikit-learn-contrib/categorical-encoding.git && \
