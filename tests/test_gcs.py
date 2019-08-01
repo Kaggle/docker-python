@@ -44,3 +44,13 @@ class TestStorage(unittest.TestCase):
             init_gcs()
             client = storage.Client(project="xyz")
             self.assertIsInstance(client._credentials, KaggleKernelCredentials)
+    
+    def test_monkeypatching_idempotent(self):
+        env = EnvironmentVarGuard()
+        env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'GCS')
+        with env:
+            client1 = storage.Client.__init__
+            init_gcs()
+            client2 = storage.Client.__init__
+            self.assertEqual(client1, client2)

@@ -1,4 +1,5 @@
 import os
+import inspect
 from google.auth import credentials
 from google.auth.exceptions import RefreshError
 from google.cloud import bigquery
@@ -111,6 +112,8 @@ class PublicBigqueryClient(bigquery.client.Client):
         # TODO: Remove this once https://github.com/googleapis/google-cloud-python/issues/7122 is implemented.
         self._connection = _DataProxyConnection(self)
 
+def has_been_monkeypatched(method):
+    return "kaggle_gcp" in inspect.getsourcefile(method)
 
 def init_bigquery():
     from google.auth import environment_vars
@@ -145,7 +148,6 @@ def init_bigquery():
             Log.info(msg)
             print(msg)
             return PublicBigqueryClient(*args, **kwargs)
-
         else:
             if specified_credentials is None:
                 Log.info("No credentials specified, using KaggleKernelCredentials.")
@@ -154,14 +156,19 @@ def init_bigquery():
                     Log.info("No bigquery integration found, creating client anyways.")
                     print('Please ensure you have selected a BigQuery '
                         'account in the Kernels Settings sidebar.')
+            if explicit_project_id is None:
+                Log.info("No project specified while using the unmodified client.")
+                print('Please ensure you specify a project id when creating the client'
+                    ' in order to use your BigQuery account.')
             return bq_client(*args, **kwargs)
 
     # Monkey patches BigQuery client creation to use proxy or user-connected GCP account.
     # Deprecated in favor of Kaggle.DataProxyClient().
     # TODO: Remove this once uses have migrated to that new interface.
     bq_client = bigquery.Client
-    bigquery.Client = lambda *args, **kwargs:  monkeypatch_bq(
-        bq_client, *args, **kwargs)
+    if (not has_been_monkeypatched(bigquery.Client)):
+        bigquery.Client = lambda *args, **kwargs:  monkeypatch_bq(
+            bq_client, *args, **kwargs)
     return bigquery
 
 def init_gcs():
@@ -184,7 +191,8 @@ def init_gcs():
             kwargs['credentials'] = KaggleKernelCredentials(target=GcpTarget.GCS)
         return gcs_client_init(self, *args, **kwargs)
 
-    storage.Client.__init__ = monkeypatch_gcs
+    if (not has_been_monkeypatched(storage.Client.__init__)):
+        storage.Client.__init__ = monkeypatch_gcs
     return storage
 
 def init():

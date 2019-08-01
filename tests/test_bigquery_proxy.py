@@ -11,7 +11,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from google.cloud import bigquery
 from google.auth.exceptions import DefaultCredentialsError
 from google.cloud.bigquery._http import Connection
-from kaggle_gcp import KaggleKernelCredentials, PublicBigqueryClient
+from kaggle_gcp import KaggleKernelCredentials, PublicBigqueryClient, init_bigquery
 import kaggle_secrets
 
 
@@ -67,6 +67,15 @@ class TestBigQuery(unittest.TestCase):
         with env:
             client = bigquery.Client()
             self._test_proxy(client)
+    
+    def test_monkeypatching_idempotent(self):
+        env = EnvironmentVarGuard()
+        env.unset('KAGGLE_USER_SECRETS_TOKEN')
+        with env:
+            client1 = bigquery.Client
+            init_bigquery()
+            client2 = bigquery.Client
+            self.assertEqual(client1, client2)
 
     def test_proxy_with_kwargs(self):
         env = EnvironmentVarGuard()
