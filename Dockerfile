@@ -554,3 +554,8 @@ ADD patches/tensorboard/notebook.py /opt/conda/lib/python3.6/site-packages/tenso
 
 # Set backend for matplotlib
 ENV MPLBACKEND "agg"
+
+# geospatial learn course
+RUN pip install rtree && \
+    pip install osmnx && \
+    apt-get -y install libspatialindex-dev
