@@ -457,6 +457,7 @@ RUN pip install jsonnet overrides tensorboardX && \
     ###########
 
 RUN pip install flashtext && \
+    pip install wandb && \
     pip install marisa-trie && \
     pip install pyemd && \
     pip install pyupset && \
