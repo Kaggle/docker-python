@@ -492,6 +492,8 @@ RUN pip install flashtext && \
     pip install plotly_express && \
     pip install albumentations && \
     pip install pytorch-ignite && \
+    pip install qgrid && \
+    pip install bqplot &&
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
