@@ -491,6 +491,9 @@ RUN pip install flashtext && \
     pip install chainercv && \
     pip install plotly_express && \
     pip install albumentations && \
+    pip install rtree && \
+    pip install osmnx && \
+    apt-get -y install libspatialindex-dev && \
     pip install pytorch-ignite && \
     /tmp/clean-layer.sh
 
