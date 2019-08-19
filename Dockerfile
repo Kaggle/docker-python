@@ -491,6 +491,7 @@ RUN pip install flashtext && \
     pip install chainercv && \
     pip install plotly_express && \
     pip install albumentations && \
+    pip install rtree && \
     pip install pytorch-ignite && \
     /tmp/clean-layer.sh
 
@@ -556,6 +557,5 @@ ADD patches/tensorboard/notebook.py /opt/conda/lib/python3.6/site-packages/tenso
 ENV MPLBACKEND "agg"
 
 # geospatial learn course
-RUN pip install rtree && \
-    pip install osmnx && \
+RUN pip install osmnx && \
     apt-get -y install libspatialindex-dev
