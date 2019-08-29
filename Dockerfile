@@ -148,17 +148,6 @@ RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
     wget --no-verbose --no-check-certificate -i latest -O h2o.zip && rm latest && \
     unzip h2o.zip && rm h2o.zip && cp h2o-*/h2o.jar . && \
     pip install `find . -name "*whl"` && \
-    # Keras setup
-    # Keras likes to add a config file in a custom directory when it's
-    # first imported. This doesn't work with our read-only filesystem, so we
-    # have it done now
-    python -c "from keras.models import Sequential"  && \
-    # Switch to TF backend
-    sed -i 's/theano/tensorflow/' /root/.keras/keras.json  && \
-    # Re-run it to flush any more disk writes
-    python -c "from keras.models import Sequential; from keras import backend; print(backend._BACKEND)" && \
-    # Keras reverts to /tmp from ~ when it detects a read-only file system
-    mkdir -p /tmp/.keras && cp /root/.keras/keras.json /tmp/.keras && \
     /tmp/clean-layer.sh
 
 # b/128333086: Set PROJ_LIB to points to the proj4 cartographic library.
