@@ -489,6 +489,7 @@ RUN pip install flashtext && \
     pip install pykalman && \
     pip install optuna && \
     pip install chainercv && \
+    pip install chainer-chemistry && \
     pip install plotly_express && \
     pip install albumentations && \
     pip install rtree && \
