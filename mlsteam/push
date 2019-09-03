@@ -36,7 +36,7 @@ while :; do
     shift
 done
 
-LABEL=${1:-v5}
+LABEL=${1:-v6}
 
 readonly SOURCE_IMAGE
 readonly TARGET_IMAGE
