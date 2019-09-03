@@ -189,9 +189,10 @@ RUN pip install scipy && \
     export CFLAGS="-std=c99" && \
     conda install -y pytorch-cpu torchvision-cpu -c pytorch && \
     # PyTorch Audio
+    # TODO: remove pinning to a git commit hash when issue https://github.com/pytorch/audio/issues/262 is resolved.
     apt-get install -y sox libsox-dev libsox-fmt-all && \
     pip install cffi && \
-    pip install git+git://github.com/pytorch/audio.git && \
+    pip install git+git://github.com/pytorch/audio.git@8528ac78cd0522c37216b18ef7ec1822d126d633 && \
     /tmp/clean-layer.sh
 
 # vtk with dependencies
