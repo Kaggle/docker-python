@@ -47,6 +47,7 @@ class GcpTarget(Enum):
 
 class UserSecretsClient():
     GET_USER_SECRET_ENDPOINT = '/requests/GetUserSecretRequest'
+    GET_USER_SECRET_BY_LABEL_ENDPOINT = '/requests/GetUserSecretByLabelRequest'
     BIGQUERY_TARGET_VALUE = 1
 
     def __init__(self):
@@ -60,8 +61,8 @@ class UserSecretsClient():
                 f'but none found in environment variable {_KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME}')
         self.headers = {'Content-type': 'application/json'}
 
-    def _make_post_request(self, data: dict) -> dict:
-        url = f'{self.url_base}{self.GET_USER_SECRET_ENDPOINT}'
+    def _make_post_request(self, data: dict, endpoint: str = GET_USER_SECRET_ENDPOINT) -> dict:
+        url = f'{self.url_base}{endpoint}'
         request_body = dict(data)
         request_body['JWE'] = self.jwt_token
         req = urllib.request.Request(url, headers=self.headers, data=bytes(
@@ -87,6 +88,24 @@ class UserSecretsClient():
                     f'Service responded with error code {e.code}.'
                     ' Please ensure you have access to the resource.') from e
             raise BackendError('Unexpected response from the service.') from e
+
+    def get_secret(self, label) -> str:
+        """Retrieves a user secret value by its label.
+
+        This returns the value of the secret with the given label,
+        if it attached to the current kernel.
+        Example usage:
+            client = UserSecretsClient()
+            secret = client.get_secret('my_db_password')
+        """
+        request_body = {
+            'Label': label,
+        }
+        response_json = self._make_post_request(request_body, self.GET_USER_SECRET_BY_LABEL_ENDPOINT)
+        if 'secret' not in response_json:
+            raise BackendError(
+                f'Unexpected response from the service. Response: {response_json}')
+        return response_json['secret']
 
     def get_bigquery_access_token(self) -> Tuple[str, Optional[datetime]]:
         """Retrieves BigQuery access token information from the UserSecrets service.
