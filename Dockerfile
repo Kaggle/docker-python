@@ -435,6 +435,7 @@ RUN pip install jsonnet overrides tensorboardX && \
     pip install unidecode parsimonious>=0.8.0 sqlparse>=0.2.4 word2number>=1.1 && \
     pip install pytorch-pretrained-bert>=0.6.0 pytorch-transformers==1.1.0 jsonpickle && \
     pip install requests>=2.18 editdistance conllu==0.11 && \
+    pip install conllu==1.3.1 && \
     pip install --no-dependencies allennlp && \
     /tmp/clean-layer.sh
 
