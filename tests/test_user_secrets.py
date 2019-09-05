@@ -12,7 +12,8 @@ from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import bigquery
 from kaggle_secrets import (_KAGGLE_URL_BASE_ENV_VAR_NAME,
                             _KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME,
-                            CredentialError, GcpTarget, UserSecretsClient, BackendError)
+                            CredentialError, GcpTarget, UserSecretsClient,
+                            BackendError, ValidationError)
 
 _TEST_JWT = 'test-secrets-key'
 
@@ -103,6 +104,14 @@ class TestUserSecrets(unittest.TestCase):
         self._test_client(call_get_secret,
                           '/requests/GetUserSecretByLabelRequest', {'Label': "secret_label", 'JWE': _TEST_JWT},
                           success=False)
+
+    def test_get_secret_validates_label(self):
+        env = EnvironmentVarGuard()
+        env.set(_KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME, _TEST_JWT)
+        with env:
+            client = UserSecretsClient()
+            with self.assertRaises(ValidationError):
+                secret_response = client.get_secret("")
                           
     @mock.patch('kaggle_secrets.datetime')
     def test_get_access_token_succeeds(self, mock_dt):

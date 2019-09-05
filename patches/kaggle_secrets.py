@@ -26,6 +26,10 @@ class CredentialError(Exception):
 class BackendError(Exception):
     pass
 
+
+class ValidationError(Exception):
+    pass
+
 @unique
 class GcpTarget(Enum):
     """Enum class to store GCP targets."""
@@ -98,6 +102,8 @@ class UserSecretsClient():
             client = UserSecretsClient()
             secret = client.get_secret('my_db_password')
         """
+        if label is None or len(label) == 0:
+            raise ValidationError("Label must be non-empty.")
         request_body = {
             'Label': label,
         }
