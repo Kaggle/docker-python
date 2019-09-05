@@ -12,7 +12,8 @@ from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import bigquery
 from kaggle_secrets import (_KAGGLE_URL_BASE_ENV_VAR_NAME,
                             _KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME,
-                            CredentialError, GcpTarget, UserSecretsClient, BackendError)
+                            CredentialError, GcpTarget, UserSecretsClient,
+                            BackendError, ValidationError)
 
 _TEST_JWT = 'test-secrets-key'
 
@@ -37,7 +38,7 @@ class UserSecretsHTTPHandler(BaseHTTPRequestHandler):
 
 
 class TestUserSecrets(unittest.TestCase):
-    SERVER_ADDRESS = urlparse(os.getenv(_KAGGLE_URL_BASE_ENV_VAR_NAME))
+    SERVER_ADDRESS = urlparse(os.getenv(_KAGGLE_URL_BASE_ENV_VAR_NAME, default="http://127.0.0.1:8001"))
 
     def _test_client(self, client_func, expected_path, expected_body, secret=None, success=True):
         _request = {}
@@ -84,6 +85,34 @@ class TestUserSecrets(unittest.TestCase):
             with self.assertRaises(CredentialError):
                 client = UserSecretsClient()
 
+    def test_get_secret_succeeds(self):
+        secret = '12345'
+
+        def call_get_secret():
+            client = UserSecretsClient()
+            secret_response = client.get_secret("secret_label")
+            self.assertEqual(secret_response, secret)
+        self._test_client(call_get_secret,
+                          '/requests/GetUserSecretByLabelRequest', {'Label': "secret_label", 'JWE': _TEST_JWT},
+                          secret=secret)
+    
+    def test_get_secret_handles_unsuccessful(self):
+        def call_get_secret():
+            client = UserSecretsClient()
+            with self.assertRaises(BackendError):
+                secret_response = client.get_secret("secret_label")
+        self._test_client(call_get_secret,
+                          '/requests/GetUserSecretByLabelRequest', {'Label': "secret_label", 'JWE': _TEST_JWT},
+                          success=False)
+
+    def test_get_secret_validates_label(self):
+        env = EnvironmentVarGuard()
+        env.set(_KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME, _TEST_JWT)
+        with env:
+            client = UserSecretsClient()
+            with self.assertRaises(ValidationError):
+                secret_response = client.get_secret("")
+                          
     @mock.patch('kaggle_secrets.datetime')
     def test_get_access_token_succeeds(self, mock_dt):
         secret = '12345'
