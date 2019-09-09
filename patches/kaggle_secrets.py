@@ -35,6 +35,7 @@ class GcpTarget(Enum):
     """Enum class to store GCP targets."""
     BIGQUERY = (1, "BigQuery")
     GCS = (2, "Google Cloud Storage")
+    AUTOML = (3, "Cloud AutoML")
 
     def __init__(self, target, service):
         self._target = target
@@ -126,6 +127,9 @@ class UserSecretsClient():
 
     def _get_gcs_access_token(self) -> Tuple[str, Optional[datetime]]:
         return self._get_access_token(GcpTarget.GCS)
+
+    def _get_automl_access_token(self) -> Tuple[str, Optional[datetime]]:
+        return self._get_access_token(GcpTarget.AUTOML)
 
     def _get_access_token(self, target: GcpTarget) -> Tuple[str, Optional[datetime]]:
         request_body = {

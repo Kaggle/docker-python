@@ -40,6 +40,9 @@ class KernelIntegrations():
     def has_gcs(self):
         return GcpTarget.GCS in self.integrations
 
+    def has_automl(self):
+        return GcpTarget.AUTOML in self.integrations
+
 
 class KaggleKernelCredentials(credentials.Credentials):
     """Custom Credentials used to authenticate using the Kernel's connected OAuth account.
@@ -58,6 +61,8 @@ class KaggleKernelCredentials(credentials.Credentials):
                 self.token, self.expiry = client.get_bigquery_access_token()
             elif self.target == GcpTarget.GCS:
                 self.token, self.expiry = client._get_gcs_access_token()
+            elif self.target == GcpTarget.AUTOML:
+                self.token, self.expiry = client._get_automl_access_token()
         except ConnectionError as e:
             Log.error(f"Connection error trying to refresh access token: {e}")
             print("There was a connection error trying to fetch the access token. "
