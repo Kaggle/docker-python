@@ -62,14 +62,14 @@ RUN apt-get install -y gnupg zip openjdk-8-jdk && \
 RUN cd /usr/local/src && \
     git clone https://github.com/tensorflow/tensorflow && \
     cd tensorflow && \
-    git checkout r1.14 && \
+    git checkout r2.0 && \
     pip install keras_applications --no-deps && \
     pip install keras_preprocessing --no-deps
 
 # Create a tensorflow wheel for CPU
 RUN cd /usr/local/src/tensorflow && \
     cat /dev/null | ./configure && \
-    bazel build --config=opt //tensorflow/tools/pip_package:build_pip_package && \
+    bazel build --config=opt --config=v2 //tensorflow/tools/pip_package:build_pip_package && \
     bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_cpu && \
     bazel clean
 
@@ -88,6 +88,7 @@ RUN cd /usr/local/src/tensorflow && \
     cat /dev/null | ./configure && \
     echo "/usr/local/cuda-${TF_CUDA_VERSION}/targets/x86_64-linux/lib/stubs" > /etc/ld.so.conf.d/cuda-stubs.conf && ldconfig && \
     bazel build --config=opt \
+                --config=v2 \
                 --config=cuda \
                 --cxxopt="-D_GLIBCXX_USE_CXX11_ABI=0" \
                 //tensorflow/tools/pip_package:build_pip_package && \
