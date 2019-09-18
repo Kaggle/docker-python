@@ -51,7 +51,7 @@ RUN pip install seaborn python-dateutil dask && \
     make -j $(nproc) && make install && \
     /tmp/clean-layer.sh
 
-RUN pip install tensorflow==2.0.0-beta1 && \
+RUN pip install tensorflow==2.0.0rc1 && \
     /tmp/clean-layer.sh
 
 RUN apt-get install -y libfreetype6-dev && \

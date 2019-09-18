@@ -45,7 +45,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Reinstall packages with a separate version for GPU support.
 RUN pip uninstall -y tensorflow && \
-    pip install tensorflow-gpu==2.0.0-beta1 && \
+    pip install tensorflow-gpu==2.0.0rc1 && \
     rm -rf /tmp/tensorflow_gpu && \
     conda remove --force -y pytorch-cpu torchvision-cpu && \
     conda install -y pytorch torchvision cudatoolkit=10.0 -c pytorch && \
