@@ -54,6 +54,10 @@ RUN pip install seaborn python-dateutil dask && \
 RUN pip install tensorflow==2.0.0rc1 && \
     /tmp/clean-layer.sh
 
+# keras.io is not yet compatible with TensorFlow 2.0.
+# tf.keras should be used instead to use TensorFlow + Keras.
+ENV KERAS_BACKEND=theano
+
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
     pip install gensim && \
