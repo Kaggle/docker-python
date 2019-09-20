@@ -1,6 +1,7 @@
 ARG BASE_TAG=staging
 
 FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04 AS nvidia
+FROM gcr.io/kaggle-images/python-tensorflow-whl:2.0.0-rc1-py36 as tensorflow_whl
 FROM gcr.io/kaggle-images/python:${BASE_TAG}
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
@@ -44,8 +45,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     /tmp/clean-layer.sh
 
 # Reinstall packages with a separate version for GPU support.
+COPY --from=tensorflow_whl /tmp/tensorflow_gpu/*.whl /tmp/tensorflow_gpu/
 RUN pip uninstall -y tensorflow && \
-    pip install tensorflow-gpu==2.0.0rc1 && \
+    pip install /tmp/tensorflow_gpu/tensorflow*.whl && \
     rm -rf /tmp/tensorflow_gpu && \
     conda remove --force -y pytorch-cpu torchvision-cpu && \
     conda install -y pytorch torchvision cudatoolkit=10.0 -c pytorch && \

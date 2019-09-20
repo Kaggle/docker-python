@@ -8,7 +8,7 @@ from common import gpu_test
 
 class TestTensorflow(unittest.TestCase):
     def test_addition(self):        
-        result = tf.add(2, 3)        
+        result = tf.add(2, 3)
         self.assertEqual(5, result.numpy())
 
     def test_conv2d(self):
