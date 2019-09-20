@@ -130,7 +130,7 @@ def init_bigquery():
         return bigquery
 
     # If this Kernel has bigquery integration on startup, preload the Kaggle Credentials
-    # object for magics to work. 
+    # object for magics to work.
     if get_integrations().has_bigquery():
         from google.cloud.bigquery import magics
         magics.context.credentials = KaggleKernelCredentials()
@@ -139,7 +139,7 @@ def init_bigquery():
         from kaggle_gcp import get_integrations, PublicBigqueryClient, KaggleKernelCredentials
         specified_credentials = kwargs.get('credentials')
         has_bigquery = get_integrations().has_bigquery()
-        # Prioritize passed in project id, but if it is missing look for env var. 
+        # Prioritize passed in project id, but if it is missing look for env var.
         arg_project = kwargs.get('project')
         explicit_project_id = arg_project or os.environ.get(environment_vars.PROJECT)
         # This is a hack to get around the bug in google-cloud library.
@@ -200,9 +200,70 @@ def init_gcs():
         storage.Client.__init__ = monkeypatch_gcs
     return storage
 
+def init_automl():
+    is_user_secrets_token_set = "KAGGLE_USER_SECRETS_TOKEN" in os.environ
+    from google.cloud import automl_v1beta1 as automl
+    if not is_user_secrets_token_set:
+        return automl
+
+    from kaggle_gcp import get_integrations
+    if not get_integrations().has_automl():
+        return automl
+
+    from kaggle_secrets import GcpTarget
+    from kaggle_gcp import KaggleKernelCredentials
+    kaggle_kernel_credentials = KaggleKernelCredentials(target=GcpTarget.AUTOML)
+
+    # The AutoML client library exposes 4 different client classes (AutoMlClient,
+    # TablesClient, PredictionServiceClient and GcsClient), so patch each of them.
+    # The same KaggleKernelCredentials are passed to all of them.
+
+    automl_client_init = automl.AutoMlClient.__init__
+    def monkeypatch_automl(self, *args, **kwargs):
+        specified_credentials = kwargs.get('credentials')
+        if specified_credentials is None:
+            Log.info("No credentials specified, using KaggleKernelCredentials.")
+            kwargs['credentials'] = kaggle_kernel_credentials
+        # Note: This is only here so that unit tests can check whether
+        # credentials were set properly.
+        self._kaggle_credentials = kwargs['credentials']
+        return automl_client_init(self, *args, **kwargs)
+
+    if (not has_been_monkeypatched(automl.AutoMlClient.__init__)):
+        automl.AutoMlClient.__init__ = monkeypatch_automl
+
+
+    automl_tablesclient_init = automl.TablesClient.__init__
+    def monkeypatch_tablesclient(self, *args, **kwargs):
+        specified_credentials = kwargs.get('credentials')
+        if specified_credentials is None:
+            Log.info("No credentials specified, using KaggleKernelCredentials.")
+            kwargs['credentials'] = kaggle_kernel_credentials
+        self._kaggle_credentials = kwargs['credentials']
+        return automl_tablesclient_init(self, *args, **kwargs)
+
+    if (not has_been_monkeypatched(automl.TablesClient.__init__)):
+        automl.TablesClient.__init__ = monkeypatch_tablesclient
+
+
+    automl_predictionclient_init = automl.PredictionServiceClient.__init__
+    def monkeypatch_predictionclient(self, *args, **kwargs):
+        specified_credentials = kwargs.get('credentials')
+        if specified_credentials is None:
+            Log.info("No credentials specified, using KaggleKernelCredentials.")
+            kwargs['credentials'] = kaggle_kernel_credentials
+        self._kaggle_credentials = kwargs['credentials']
+        return automl_predictionclient_init(self, *args, **kwargs)
+
+    if (not has_been_monkeypatched(automl.PredictionServiceClient.__init__)):
+        automl.PredictionServiceClient.__init__ = monkeypatch_predictionclient
+
+    return automl
+
 def init():
     init_bigquery()
     init_gcs()
+    init_automl()
 
 # We need to initialize the monkeypatching of the client libraries
 # here since there is a circular dependency between our import hook version
