@@ -41,9 +41,10 @@ RUN pip install seaborn python-dateutil dask && \
     libilmbase12 libjbig0 libjbig2dec0 libjpeg62-turbo liblcms2-2 liblqr-1-0 libltdl7 libmagickcore-6.q16-3 \
     libmagickcore-6.q16-3-extra libmagickwand-6.q16-3 libnetpbm10 libopenexr22 libpango-1.0-0 libpangocairo-1.0-0 libpangoft2-1.0-0 \
     libpaper-utils libpaper1 libpixman-1-0 libpng16-16 librsvg2-2 librsvg2-common libthai-data libthai0 libtiff5 libwmf0.2-7 \
-    libxcb-render0 libxcb-shm0 netpbm poppler-data p7zip-full python3-rtree libltdl7 && \
+    libxcb-render0 libxcb-shm0 netpbm poppler-data p7zip-full python3-rtree && \
     cd /usr/local/src && \
-    wget --no-verbose https://imagemagick.org/download/ImageMagick.tar.gz && \
+    # b/141476846 latest ImageMagick version fails to build.
+    wget --no-verbose https://github.com/ImageMagick/ImageMagick/archive/7.0.8-65.tar.gz && \
     tar xzf ImageMagick.tar.gz && cd `ls -d ImageMagick-*` && pwd && ls -al && ./configure && \
     make -j $(nproc) && make install && \
     /tmp/clean-layer.sh
