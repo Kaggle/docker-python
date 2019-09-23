@@ -45,7 +45,7 @@ RUN pip install seaborn python-dateutil dask && \
     cd /usr/local/src && \
     # b/141476846 latest ImageMagick version fails to build.
     wget --no-verbose https://github.com/ImageMagick/ImageMagick/archive/7.0.8-65.tar.gz && \
-    tar xzf ImageMagick.tar.gz && cd `ls -d ImageMagick-*` && pwd && ls -al && ./configure && \
+    tar xzf 7.0.8-65.tar.gz && cd `ls -d ImageMagick-*` && pwd && ls -al && ./configure && \
     make -j $(nproc) && make install && \
     /tmp/clean-layer.sh
 
