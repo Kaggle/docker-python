@@ -333,7 +333,10 @@ RUN pip install kmeans-smote --no-dependencies && \
 RUN pip install --upgrade cython && \
     pip install --upgrade cysignals && \
     pip install pyfasttext && \
-    pip install ktext && \
+    # ktext has an explicit dependency on Keras 2.2.4 which is not
+    # compatible with TensorFlow 2.0 (support was added in Keras 2.3.0).
+    # Add the package back once it is fixed upstream.
+    # pip install ktext && \
     pip install fasttext && \
     apt-get install -y libhunspell-dev && pip install hunspell && \
     # b/138723119: annoy's latest version 1.16 was failing
