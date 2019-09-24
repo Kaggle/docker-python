@@ -313,7 +313,6 @@ RUN pip install kmeans-smote --no-dependencies && \
     # Add google PAIR-code Facets
     cd /opt/ && git clone https://github.com/PAIR-code/facets && cd facets/ && jupyter nbextension install facets-dist/ --user && \
     export PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/ && \
-    pip install --no-dependencies ethnicolr && \
     pip install tensorpack && \
     pip install pycountry && pip install iso3166 && \
     pip install pydash && \
