@@ -484,6 +484,7 @@ RUN pip install flashtext && \
     pip install chainer-chemistry && \
     pip install plotly_express && \
     pip install albumentations && \
+    pip install catalyst && \
     pip install rtree && \
     pip install osmnx && \
     apt-get -y install libspatialindex-dev && \
