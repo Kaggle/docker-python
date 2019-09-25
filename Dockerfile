@@ -43,8 +43,9 @@ RUN pip install seaborn python-dateutil dask && \
     libpaper-utils libpaper1 libpixman-1-0 libpng16-16 librsvg2-2 librsvg2-common libthai-data libthai0 libtiff5 libwmf0.2-7 \
     libxcb-render0 libxcb-shm0 netpbm poppler-data p7zip-full python3-rtree && \
     cd /usr/local/src && \
-    wget --no-verbose https://imagemagick.org/download/ImageMagick.tar.gz && \
-    tar xzf ImageMagick.tar.gz && cd `ls -d ImageMagick-*` && pwd && ls -al && ./configure && \
+    # b/141476846 latest ImageMagick version fails to build.
+    wget --no-verbose https://github.com/ImageMagick/ImageMagick/archive/7.0.8-65.tar.gz && \
+    tar xzf 7.0.8-65.tar.gz && cd `ls -d ImageMagick-*` && pwd && ls -al && ./configure && \
     make -j $(nproc) && make install && \
     /tmp/clean-layer.sh
 
@@ -312,7 +313,6 @@ RUN pip install kmeans-smote --no-dependencies && \
     # Add google PAIR-code Facets
     cd /opt/ && git clone https://github.com/PAIR-code/facets && cd facets/ && jupyter nbextension install facets-dist/ --user && \
     export PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/ && \
-    pip install --no-dependencies ethnicolr && \
     pip install tensorpack && \
     pip install pycountry && pip install iso3166 && \
     pip install pydash && \
@@ -332,7 +332,10 @@ RUN pip install kmeans-smote --no-dependencies && \
 RUN pip install --upgrade cython && \
     pip install --upgrade cysignals && \
     pip install pyfasttext && \
-    pip install ktext && \
+    # ktext has an explicit dependency on Keras 2.2.4 which is not
+    # compatible with TensorFlow 2.0 (support was added in Keras 2.3.0).
+    # Add the package back once it is fixed upstream.
+    # pip install ktext && \
     pip install fasttext && \
     apt-get install -y libhunspell-dev && pip install hunspell && \
     # b/138723119: annoy's latest version 1.16 was failing
@@ -435,7 +438,7 @@ RUN pip install jsonnet overrides tensorboardX && \
     pip install unidecode parsimonious>=0.8.0 sqlparse>=0.2.4 word2number>=1.1 && \
     pip install pytorch-pretrained-bert>=0.6.0 pytorch-transformers==1.1.0 jsonpickle && \
     pip install requests>=2.18 editdistance conllu==0.11 && \
-    pip install conllu==1.3.1 && \
+    pip install conllu==1.3.1 ftfy && \
     pip install --no-dependencies allennlp && \
     /tmp/clean-layer.sh
 
