@@ -1,6 +1,6 @@
 import unittest
 
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from kaggle_gcp import KaggleKernelCredentials, init_automl
 from test.support import EnvironmentVarGuard
@@ -18,6 +18,11 @@ class TestAutoMl(unittest.TestCase):
         version = float('.'.join(version_parts[0:2]));
         self.assertGreaterEqual(version, 0.5);
 
+    class FakeClient:
+        def __init__(self, credentials=None):
+            self.credentials = credentials
+
+    @patch("google.cloud.automl_v1beta1.AutoMlClient", new=FakeClient)
     def test_user_provided_credentials(self):
         credentials = _make_credentials()
         env = EnvironmentVarGuard()
@@ -26,8 +31,8 @@ class TestAutoMl(unittest.TestCase):
         with env:
             init_automl()
             client = automl.AutoMlClient(credentials=credentials)
-            self.assertNotIsInstance(client._kaggle_credentials, KaggleKernelCredentials)
-            self.assertIsNotNone(client._kaggle_credentials)
+            self.assertNotIsInstance(client.credentials, KaggleKernelCredentials)
+            self.assertIsNotNone(client.credentials)
 
 
     def test_tables_gcs_client(self):
@@ -39,21 +44,38 @@ class TestAutoMl(unittest.TestCase):
         tables_gcs_client = automl.GcsClient(client=gcs_client)
         self.assertIs(tables_gcs_client.client, gcs_client)
 
-    def test_default_credentials_automl_enabled(self):
+
+    @patch("google.cloud.automl_v1beta1.AutoMlClient", new=FakeClient)
+    def test_default_credentials_automl_client(self):
         env = EnvironmentVarGuard()
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
         env.set('KAGGLE_KERNEL_INTEGRATIONS', 'AUTOML')
         with env:
             init_automl()
             automl_client = automl.AutoMlClient()
-            self.assertIsNotNone(automl_client._kaggle_credentials)
-            self.assertIsInstance(automl_client._kaggle_credentials, KaggleKernelCredentials)
+            self.assertIsNotNone(automl_client.credentials)
+            self.assertIsInstance(automl_client.credentials, KaggleKernelCredentials)
+
+    @patch("google.cloud.automl_v1beta1.TablesClient", new=FakeClient)
+    def test_default_credentials_tables_client(self):
+        env = EnvironmentVarGuard()
+        env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'AUTOML')
+        with env:
+            init_automl()
             tables_client = automl.TablesClient()
-            self.assertIsNotNone(automl_client._kaggle_credentials)
-            self.assertIsInstance(automl_client._kaggle_credentials, KaggleKernelCredentials)
+            self.assertIsNotNone(tables_client.credentials)
+            self.assertIsInstance(tables_client.credentials, KaggleKernelCredentials)
+
+    @patch("google.cloud.automl_v1beta1.PredictionServiceClient", new=FakeClient)
+    def test_default_credentials_prediction_client(self):
+        env = EnvironmentVarGuard()
+        env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'AUTOML')
+        with env:
             prediction_client = automl.PredictionServiceClient()
-            self.assertIsNotNone(automl_client._kaggle_credentials)
-            self.assertIsInstance(automl_client._kaggle_credentials, KaggleKernelCredentials)
+            self.assertIsNotNone(prediction_client.credentials)
+            self.assertIsInstance(prediction_client.credentials, KaggleKernelCredentials)
 
     def test_monkeypatching_idempotent(self):
         env = EnvironmentVarGuard()

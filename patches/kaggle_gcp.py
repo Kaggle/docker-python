@@ -224,14 +224,10 @@ def init_automl():
         if specified_credentials is None:
             Log.info("No credentials specified, using KaggleKernelCredentials.")
             kwargs['credentials'] = kaggle_kernel_credentials
-        # Note: This is only here so that unit tests can check whether
-        # credentials were set properly.
-        self._kaggle_credentials = kwargs['credentials']
         return automl_client_init(self, *args, **kwargs)
 
     if (not has_been_monkeypatched(automl.AutoMlClient.__init__)):
         automl.AutoMlClient.__init__ = monkeypatch_automl
-
 
     automl_tablesclient_init = automl.TablesClient.__init__
     def monkeypatch_tablesclient(self, *args, **kwargs):
@@ -239,12 +235,10 @@ def init_automl():
         if specified_credentials is None:
             Log.info("No credentials specified, using KaggleKernelCredentials.")
             kwargs['credentials'] = kaggle_kernel_credentials
-        self._kaggle_credentials = kwargs['credentials']
         return automl_tablesclient_init(self, *args, **kwargs)
 
     if (not has_been_monkeypatched(automl.TablesClient.__init__)):
         automl.TablesClient.__init__ = monkeypatch_tablesclient
-
 
     automl_predictionclient_init = automl.PredictionServiceClient.__init__
     def monkeypatch_predictionclient(self, *args, **kwargs):
@@ -252,7 +246,6 @@ def init_automl():
         if specified_credentials is None:
             Log.info("No credentials specified, using KaggleKernelCredentials.")
             kwargs['credentials'] = kaggle_kernel_credentials
-        self._kaggle_credentials = kwargs['credentials']
         return automl_predictionclient_init(self, *args, **kwargs)
 
     if (not has_been_monkeypatched(automl.PredictionServiceClient.__init__)):
