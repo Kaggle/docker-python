@@ -7,7 +7,7 @@ import importlib
 import importlib.machinery
 
 class GcpModuleFinder(importlib.abc.MetaPathFinder):
-    _MODULES = ['google.cloud.bigquery', 'google.cloud.storage']
+    _MODULES = ['google.cloud.bigquery', 'google.cloud.storage', 'google.cloud.automl_v1beta1']
     _KAGGLE_GCP_PATH = 'kaggle_gcp.py'
     def __init__(self):
         pass
@@ -39,7 +39,8 @@ class GcpModuleLoader(importlib.abc.Loader):
         import kaggle_gcp
         _LOADERS = {
             'google.cloud.bigquery': kaggle_gcp.init_bigquery,
-            'google.cloud.storage': kaggle_gcp.init_gcs
+            'google.cloud.storage': kaggle_gcp.init_gcs,
+            'google.cloud.automl_v1beta1': kaggle_gcp.init_automl,
         }
         monkeypatch_gcp_module = _LOADERS[spec.name]()
         return monkeypatch_gcp_module
