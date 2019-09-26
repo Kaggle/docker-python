@@ -26,7 +26,6 @@ class TestCatalyst(unittest.TestCase):
             transforms.Normalize((0.1307, ), (0.3081, ))
         ])
 
-
         loaders = collections.OrderedDict()
 
         trainset = torchvision.datasets.MNIST(
