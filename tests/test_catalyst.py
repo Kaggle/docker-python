@@ -125,7 +125,7 @@ class TestCatalyst(unittest.TestCase):
 
         # model, criterion, optimizer
         model = Net()
-        criterion = nn.CrossEntropyLoss()
+        criterion = nn.BCEWithLogitsLoss()
         optimizer = torch.optim.Adam(model.parameters())
 
         # model runner
