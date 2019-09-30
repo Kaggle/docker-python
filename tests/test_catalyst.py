@@ -8,6 +8,7 @@ import torch.nn.functional as F
 import torchvision
 import torchvision.transforms as transforms
 
+import catalyst
 from catalyst.dl import SupervisedRunner, CheckpointCallback
 from catalyst import utils
 from safitty import Safict
