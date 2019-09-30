@@ -6,3 +6,4 @@
 1.13.1-py37-2: TensorFlow 1.13.1 with Python 3.7.3
 1.14.0-py36: TensorFlow 1.14.0 with Python 3.6
 2.0.0-rc1-py36: TensorFlow 2.0.0 RC1 with Python 3.6
+2.0.0-py36: TensorFlow 2.0.0 with Python 3.6
