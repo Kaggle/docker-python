@@ -175,9 +175,7 @@ RUN pip install scipy && \
     pip install orderedmultidict && \
     pip install smhasher && \
     pip install bokeh && \
-    # b/134599839: latest version requires llvmlite >= 0.39.0. Base image comes with 0.38.0.
-    # It fails to reinstall it because it is a distutil package. Remove pin once base image include newer verson of llvmlite.
-    pip install numba==0.38.0 && \
+    pip install numba && \
     pip install datashader && \
     # Boruta (python implementation)
     pip install Boruta && \
