@@ -1,5 +1,4 @@
 import unittest
-import cudf as gd
 import pandas as pd
 
 from common import gpu_test
@@ -16,6 +15,7 @@ class TestCudf(unittest.TestCase):
  
     @gpu_test   
     def test_read_csv(self):
+        import cudf as gd
         cols = ['label'] + ['pixel%d'%i for i in range(784)]
         dtypes = ['int32' for i in cols]
         path = "/input/tests/data/train.csv"
@@ -28,6 +28,7 @@ class TestCudf(unittest.TestCase):
 
     @gpu_test
     def test_groupby(self):
+        import cudf as gd
         cols = ['label'] + ['pixel%d'%i for i in range(784)]
         dtypes = ['int32' for i in cols]
         path = "/input/tests/data/train.csv"
