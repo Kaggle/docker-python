@@ -1,5 +1,5 @@
 ARG BASE_TAG=2019.03
-ARG TENSORFLOW_VERSION=1.14.0
+ARG TENSORFLOW_VERSION=2.0.0
 
 FROM gcr.io/kaggle-images/python-tensorflow-whl:${TENSORFLOW_VERSION}-py36 as tensorflow_whl
 FROM continuumio/anaconda3:${BASE_TAG}
