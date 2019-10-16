@@ -1,8 +1,6 @@
 import unittest
 
 from sklearn import datasets
-from cuml import LinearRegression as cuLinearRegression
-import cudf as gd
 import pandas as pd
 
 from common import gpu_test
