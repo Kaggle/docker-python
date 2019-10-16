@@ -28,7 +28,7 @@ while :; do
             ;;
         -g|--gpu)
             IMAGE_TAG='kaggle/python-gpu-build'
-            ADDITONAL_OPTS='-v /tmp/empty_dir:/usr/local/cuda/lib64/stubs:ro --runtime nvidia'
+            ADDITONAL_OPTS='-v /tmp/empty_dir:/usr/local/cuda/lib64/stubs:ro'
             ;;
         -i|--image)
             if [[ -z $2 ]]; then
