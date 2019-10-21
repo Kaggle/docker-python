@@ -378,7 +378,8 @@ RUN pip install bcolz && \
     pip install decorator && \
     pip install entrypoints && \
     pip install html5lib && \
-    pip install ipykernel && \
+    # Latest version breaks nbconvert: https://github.com/ipython/ipykernel/issues/422
+    pip install ipykernel==5.1.1 && \
     pip install ipython && \
     pip install ipython-genutils && \
     pip install ipywidgets && \
