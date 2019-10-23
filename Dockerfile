@@ -494,6 +494,8 @@ RUN pip install flashtext && \
     pip install rtree && \
     pip install osmnx && \
     apt-get -y install libspatialindex-dev && \
+    apt-get install -y cmake libopenmpi-dev python3-dev && \
+    pip install stable-baselines[mpi] && \
     pip install pytorch-ignite && \
     /tmp/clean-layer.sh
 
