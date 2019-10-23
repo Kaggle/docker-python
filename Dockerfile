@@ -4,6 +4,9 @@ ARG TENSORFLOW_VERSION=2.0.0
 FROM gcr.io/kaggle-images/python-tensorflow-whl:${TENSORFLOW_VERSION}-py36 as tensorflow_whl
 FROM continuumio/anaconda3:${BASE_TAG}
 
+# We need to redefine TENSORFLOW_VERSION here to get the default ARG value defined above the FROM instruction.
+# See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
+ARG TENSORFLOW_VERSION
 ARG GIT_COMMIT=unknown
 ARG BUILD_DATE=unknown
 
