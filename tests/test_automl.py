@@ -19,7 +19,7 @@ class TestAutoMl(unittest.TestCase):
         self.assertGreaterEqual(version, 0.5);
 
     class FakeClient:
-        def __init__(self, credentials=None):
+        def __init__(self, credentials=None, **kwargs):
             self.credentials = credentials
 
     @patch("google.cloud.automl_v1beta1.AutoMlClient", new=FakeClient)
@@ -34,7 +34,6 @@ class TestAutoMl(unittest.TestCase):
             self.assertNotIsInstance(client.credentials, KaggleKernelCredentials)
             self.assertIsNotNone(client.credentials)
 
-
     def test_tables_gcs_client(self):
         # The GcsClient can't currently be monkeypatched for default
         # credentials because it requires a project which can't be set.
@@ -44,6 +43,16 @@ class TestAutoMl(unittest.TestCase):
         tables_gcs_client = automl.GcsClient(client=gcs_client)
         self.assertIs(tables_gcs_client.client, gcs_client)
 
+    @patch("google.cloud.automl_v1beta1.gapic.auto_ml_client.AutoMlClient", new=FakeClient)
+    def test_tables_client_credentials(self):
+        credentials = _make_credentials()
+        env = EnvironmentVarGuard()
+        env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'AUTOML')
+        with env:
+            init_automl()
+            tables_client = automl.TablesClient(credentials=credentials)
+            self.assertEqual(tables_client.auto_ml_client.credentials, credentials)
 
     @patch("google.cloud.automl_v1beta1.AutoMlClient", new=FakeClient)
     def test_default_credentials_automl_client(self):
@@ -80,7 +89,7 @@ class TestAutoMl(unittest.TestCase):
     def test_monkeypatching_idempotent(self):
         env = EnvironmentVarGuard()
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
-        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'GCS')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'AUTOML')
         with env:
             client1 = automl.AutoMlClient.__init__
             init_automl()
