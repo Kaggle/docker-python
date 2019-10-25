@@ -193,7 +193,7 @@ RUN pip install scipy && \
     # PyTorch Audio
     apt-get install -y sox libsox-dev libsox-fmt-all && \
     pip install cffi && \
-    pip install git+git://github.com/pytorch/audio.git && \
+    pip install git+git://github.com/pytorch/audio.git@ce1f8aafe63f7d579c74ce54d2a85d452d55c881 && \
     /tmp/clean-layer.sh
 
 # vtk with dependencies
@@ -342,7 +342,7 @@ RUN pip install --upgrade cython && \
     pip install annoy==1.15.2 && \
     # Need to use CountEncoder from category_encoders before it's officially released
     pip install git+https://github.com/scikit-learn-contrib/categorical-encoding.git && \
-    pip install google-cloud-automl=0.6.0 && \
+    pip install google-cloud-automl==0.6.0 && \
     # Newer version crashes (latest = 1.14.0) when running tensorflow.
     # python -c "from google.cloud import bigquery; import tensorflow". This flow is common because bigquery is imported in kaggle_gcp.py
     # which is loaded at startup.
