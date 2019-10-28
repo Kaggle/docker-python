@@ -13,4 +13,4 @@ class TestFbProphet(unittest.TestCase):
         })
 
         forecaster = Prophet(mcmc_samples=1)
-        forecaster.fit(train)
+        forecaster.fit(train, control={'adapt_engaged': False})
