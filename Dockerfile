@@ -4,19 +4,6 @@ ARG TENSORFLOW_VERSION=2.0.0
 FROM gcr.io/kaggle-images/python-tensorflow-whl:${TENSORFLOW_VERSION}-py36 as tensorflow_whl
 FROM continuumio/anaconda3:${BASE_TAG}
 
-# We need to redefine TENSORFLOW_VERSION here to get the default ARG value defined above the FROM instruction.
-# See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
-ARG TENSORFLOW_VERSION
-ARG GIT_COMMIT=unknown
-ARG BUILD_DATE=unknown
-
-LABEL git-commit=$GIT_COMMIT
-LABEL build-date=$BUILD_DATE
-LABEL tensorflow-version=$TENSORFLOW_VERSION
-
-# Correlate current release with the git hash inside the kernel editor by running `!cat /etc/git_commit`.
-RUN echo "$GIT_COMMIT" > /etc/git_commit && echo "$BUILD_DATE" > /etc/build_date
-
 ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 
@@ -565,3 +552,16 @@ ADD patches/tensorboard/notebook.py /opt/conda/lib/python3.6/site-packages/tenso
 
 # Set backend for matplotlib
 ENV MPLBACKEND "agg"
+
+# We need to redefine TENSORFLOW_VERSION here to get the default ARG value defined above the FROM instruction.
+# See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
+ARG TENSORFLOW_VERSION
+ARG GIT_COMMIT=unknown
+ARG BUILD_DATE=unknown
+
+LABEL git-commit=$GIT_COMMIT
+LABEL build-date=$BUILD_DATE
+LABEL tensorflow-version=$TENSORFLOW_VERSION
+
+# Correlate current release with the git hash inside the kernel editor by running `!cat /etc/git_commit`.
+RUN echo "$GIT_COMMIT" > /etc/git_commit && echo "$BUILD_DATE" > /etc/build_date
