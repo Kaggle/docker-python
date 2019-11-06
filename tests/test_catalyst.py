@@ -146,7 +146,7 @@ class TestCatalyst(unittest.TestCase):
         
         metrics = Safict.load("./logs/checkpoints/_metrics.json")
         metrics_flag1 = \
-            metrics.get("train.2", "loss") < metrics.get("train.0", "loss")
+            metrics.get("train.3", "loss") < metrics.get("train.1", "loss")
         metrics_flag2 = metrics.get("best", "loss") < 0.35
         self.assertTrue(metrics_flag1)
         self.assertTrue(metrics_flag2)
