@@ -508,6 +508,13 @@ RUN cd /usr/local/src && \
     pip install vowpal_wabbit/python && \
     /tmp/clean-layer.sh
 
+# torch-geometric & dependencies
+RUN pip install --verbose --no-cache-dir torch-scatter && \
+    pip install --verbose --no-cache-dir torch-sparse && \
+    pip install --verbose --no-cache-dir torch-cluster && \
+    pip install --verbose --no-cache-dir torch-spline-conv  && \
+    pip install torch-geometric
+
 # For Facets
 ENV PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/
 # For Theano with MKL
