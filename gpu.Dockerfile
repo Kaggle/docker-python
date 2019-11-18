@@ -63,4 +63,5 @@ RUN pip install pycuda && \
     /tmp/clean-layer.sh
 
 # Re-add TensorBoard Jupyter extension patch
-ADD patches/tensorboard/notebook.py /opt/conda/lib/python3.6/site-packages/tensorboard/notebook.py
+# b/139212522 re-enable TensorBoard once solution for slowdown is implemented.
+# ADD patches/tensorboard/notebook.py /opt/conda/lib/python3.6/site-packages/tensorboard/notebook.py
