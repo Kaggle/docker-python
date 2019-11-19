@@ -543,11 +543,12 @@ ADD patches/sitecustomize.py /root/.local/lib/python3.6/site-packages/sitecustom
 
 # TensorBoard Jupyter extension. Should be replaced with TensorBoard's provided magic once we have
 # worker tunneling support in place.
-ENV JUPYTER_CONFIG_DIR "/root/.jupyter/"
-RUN pip install jupyter_tensorboard && \
-    jupyter serverextension enable jupyter_tensorboard && \
-    jupyter tensorboard enable
-ADD patches/tensorboard/notebook.py /opt/conda/lib/python3.6/site-packages/tensorboard/notebook.py
+# b/139212522 re-enable TensorBoard once solution for slowdown is implemented.
+# ENV JUPYTER_CONFIG_DIR "/root/.jupyter/"
+# RUN pip install jupyter_tensorboard && \
+#     jupyter serverextension enable jupyter_tensorboard && \
+#     jupyter tensorboard enable
+# ADD patches/tensorboard/notebook.py /opt/conda/lib/python3.6/site-packages/tensorboard/notebook.py
 
 # Set backend for matplotlib
 ENV MPLBACKEND "agg"
