@@ -1,17 +1,20 @@
 import unittest
 
-import torch_cluster
-import torch_sparse
-import torch_scatter
-from torch_geometric.data import Data
-from torch_sparse import coalesce
-import torch_geometric
-from torch_geometric.nn import SplineConv
 import torch
 
+if not torch.cuda.is_available():
+    import torch_cluster
+    import torch_sparse
+    import torch_scatter
+    from torch_geometric.data import Data
+    from torch_sparse import coalesce
+    import torch_geometric
+    from torch_geometric.nn import SplineConv
 
 class TestTorchGeometric(unittest.TestCase):
     def test_scatter(self):
+        if torch.cuda.is_available():
+            return
         src = torch.tensor([[2, 0, 1, 4, 3], [0, 2, 1, 3, 4]])
         index = torch.tensor([[4, 5, 4, 2, 3], [0, 0, 2, 2, 1]])
         out, argmax = torch_scatter.scatter_max(src, index, fill_value=0)
@@ -23,6 +26,8 @@ class TestTorchGeometric(unittest.TestCase):
         self.assertTrue(torch.all(torch.eq(test_out, out)))
 
     def test_cluster(self):
+        if torch.cuda.is_available():
+            return
         x = torch.Tensor([[-1, -1], [-1, 1], [1, -1], [1, 1]])
         batch = torch.tensor([0, 0, 0, 0])
         edge_index = torch_cluster.knn_graph(x, k=2, batch=batch, loop=False)
@@ -31,6 +36,8 @@ class TestTorchGeometric(unittest.TestCase):
         self.assertTrue(torch.all(torch.eq(test_edge_index, edge_index)))
 
     def test_sparse(self):
+        if torch.cuda.is_available():
+            return
         index = torch.tensor([[1, 0, 1, 0, 2, 1],
                               [0, 1, 1, 1, 0, 0]])
         value = torch.Tensor([[1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7]])
@@ -43,6 +50,8 @@ class TestTorchGeometric(unittest.TestCase):
         self.assertTrue(torch.all(torch.eq(test_value, value)))
 
     def test_spline_conv(self):
+        if torch.cuda.is_available():
+            return
         in_channels, out_channels = (16, 32)
         edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
         num_nodes = edge_index.max().item() + 1
@@ -55,6 +64,8 @@ class TestTorchGeometric(unittest.TestCase):
            assert conv(x, edge_index, pseudo).size() == (num_nodes, out_channels)
 
     def test_geometric(self):
+        if torch.cuda.is_available():
+            return
         x = torch.tensor([[1, 3, 5], [2, 4, 6]], dtype=torch.float).t()
         edge_index = torch.tensor([[0, 0, 1, 1, 2], [1, 1, 0, 2, 1]])
         data = Data(x=x, edge_index=edge_index).to(torch.device('cpu'))
