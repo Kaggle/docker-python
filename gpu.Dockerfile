@@ -62,6 +62,24 @@ RUN pip install pycuda && \
     pip install pynvrtc && \
     /tmp/clean-layer.sh
 
+# torch-geometric & dependencies
+# requires reinstall 
+# torch-geometric & dependencies
+ENV LD_LIBRARY_PATH="/usr/local/nvidia/lib64:/usr/local/cuda/lib64"
+RUN pip uninstall torch-scatter && \
+    pip uninstall torch-sparse && \
+    pip uninstall torch-cluster && \
+    pip uninstall torch-spline-conv  && \
+    pip uninstall torch-geometric
+
+RUN pip install --no-cache-dir torch-scatter && \
+    pip install --no-cache-dir torch-sparse && \
+    pip install --no-cache-dir torch-cluster && \
+    pip install --no-cache-dir torch-spline-conv  && \
+    pip install torch-geometric
+
+ENV LD_LIBRARY_PATH="/usr/local/nvidia/lib64:/usr/local/cuda/lib64:/usr/local/cuda/lib64/stubs"
+
 # Re-add TensorBoard Jupyter extension patch
 # b/139212522 re-enable TensorBoard once solution for slowdown is implemented.
 # ADD patches/tensorboard/notebook.py /opt/conda/lib/python3.6/site-packages/tensorboard/notebook.py
