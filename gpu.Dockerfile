@@ -64,7 +64,6 @@ RUN pip install pycuda && \
 
 # torch-geometric & dependencies
 # requires uninstall 
-# torch-geometric & dependencies
 RUN pip uninstall torch-scatter && \
     pip uninstall torch-sparse && \
     pip uninstall torch-cluster && \
