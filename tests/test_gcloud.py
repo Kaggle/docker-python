@@ -6,7 +6,7 @@ class TestGcloud(unittest.TestCase):
     def test_version(self):
         result = subprocess.run([
                 'gcloud',
-                'version',
+                '--version',
             ],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,

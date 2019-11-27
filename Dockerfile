@@ -483,7 +483,8 @@ RUN pip install flashtext && \
     pip install plotly_express && \
     pip install albumentations && \
     pip install catalyst && \
-    pip install rtree && \
+    # b/145133331: latest version is causing issue with gcloud.
+    pip install rtree==0.8.3 && \
     pip install osmnx && \
     apt-get -y install libspatialindex-dev && \
     pip install pytorch-ignite && \
