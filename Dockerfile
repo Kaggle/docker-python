@@ -393,8 +393,9 @@ RUN pip install bcolz && \
     pip install notebook==5.5.0 && \
     pip install olefile && \
     pip install opencv-python && \
-    # b/124184516: tsfresh is not yet compatible with pandas 0.24.0
-    pip install pandas==0.23.4 && \
+    # tsfresh doesn't work with pandas 0.24, requires >= 0.25: https://github.com/blue-yonder/tsfresh/blob/0ef9123d68e3544ef0217caf83f63f93ad837a61/requirements.txt#L3
+    # b/145358669 remove --upgrade once we upgrade base image which will include pandas >= 0.25 
+    pip install --upgrade pandas && \
     pip install pandas_summary && \
     pip install pandocfilters && \
     pip install pexpect && \
@@ -419,9 +420,7 @@ RUN pip install bcolz && \
     pip install wcwidth && \
     pip install webencodings && \
     pip install widgetsnbextension && \
-    # Latest version of pyarrow conflicts with pandas
-    # https://github.com/pandas-dev/pandas/issues/23053
-    pip install pyarrow==0.10.0 && \
+    pip install pyarrow && \
     pip install feather-format && \
     pip install fastai && \
     pip install torchtext && \
@@ -472,8 +471,7 @@ RUN pip install flashtext && \
     pip install ggplot && \
     pip install cesium && \
     pip install rgf_python && \
-    # b/124184516: latest version forces the use of incompatible pandas>0.24
-    pip install pytext-nlp==0.1.2 && \
+    pip install pytext-nlp && \
     pip install tsfresh && \
     pip install pymagnitude && \
     pip install pykalman && \
