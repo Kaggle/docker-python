@@ -49,7 +49,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN conda install -y python=3.6.6 && pip install --upgrade pip && pip install numpy
 
 # The tested build configurations for Tensorflow 1.14 uses Bazel 0.24.1: https://www.tensorflow.org/install/source#tested_build_configurations
-ENV BAZEL_VERSION=0.24.1
+ENV BAZEL_VERSION=0.27.1
 RUN apt-get install -y gnupg zip openjdk-8-jdk && \
     apt-get install -y --no-install-recommends \
       bash-completion \
@@ -62,7 +62,7 @@ RUN apt-get install -y gnupg zip openjdk-8-jdk && \
 RUN cd /usr/local/src && \
     git clone https://github.com/tensorflow/tensorflow && \
     cd tensorflow && \
-    git checkout r2.0 && \
+    git checkout tags/v2.1.0-rc0 && \
     pip install keras_applications --no-deps && \
     pip install keras_preprocessing --no-deps
 
