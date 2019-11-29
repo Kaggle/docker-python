@@ -131,8 +131,8 @@ RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
     pip install cartopy && \
     # MXNet
     pip install mxnet && \
-    # b/140423854 v1.17 prints annoying deprecation warning messages with TensorFlow 1.14.0. Remove once we upgrade to TF 1.14.1 or 2.x
-    pip install numpy==1.16.4 && \
+    # b/145358669 remove --upgrade once we upgrade base image which will include numpy >= 1.17
+    pip install --upgrade numpy && \
     pip install gluonnlp && \
     pip install gluoncv && \
     # h2o (requires java)
