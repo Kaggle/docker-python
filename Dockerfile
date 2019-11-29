@@ -471,7 +471,7 @@ RUN pip install flashtext && \
     pip install ggplot && \
     pip install cesium && \
     pip install rgf_python && \
-    # b/124184516: latest version force specific version of numpy and torch.
+    # b/145404107: latest version force specific version of numpy and torch.
     pip install pytext-nlp==0.1.2 && \
     pip install pytext-nlp && \
     pip install tsfresh && \
