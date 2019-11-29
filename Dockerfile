@@ -509,7 +509,8 @@ RUN cd /usr/local/src && \
     /tmp/clean-layer.sh
 
 # torch-geometric & dependencies
-RUN pip install --no-cache-dir torch-scatter
+RUN pip install --no-cache-dir torch-scatter && \
+    pip install --no-cache-dir torch-sparse
 
 # For Facets
 ENV PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/
