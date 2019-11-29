@@ -180,15 +180,9 @@ RUN pip install scipy && \
     # PyTorch
     export CXXFLAGS="-std=c++11" && \
     export CFLAGS="-std=c99" && \
-    conda install -y pytorch torchvision cpuonly -c pytorch && \
-    # PyTorch Audio
+    conda install -y pytorch torchvision torchaudio cpuonly -c pytorch && \
     apt-get install -y sox libsox-dev libsox-fmt-all && \
     pip install cffi && \
-    # TODO(b/143372552): Unpin when pytorch/audio is compatible with the version
-    # of pytorch-cpu installed through conda above. A better solution would be to
-    # install torchaudio-cpu in the conda install above when there is a
-    # torchaudio-cpu version that doesn't conflict with pytorch-cpu
-    pip install git+git://github.com/pytorch/audio.git@ce1f8aafe63f7d579c74ce54d2a85d452d55c881 && \
     /tmp/clean-layer.sh
 
 # vtk with dependencies
