@@ -62,14 +62,6 @@ RUN pip install pycuda && \
     pip install pynvrtc && \
     /tmp/clean-layer.sh
 
-# torch-geometric & dependencies
-# requires uninstall 
-RUN pip uninstall torch-scatter && \
-    pip uninstall torch-sparse && \
-    pip uninstall torch-cluster && \
-    pip uninstall torch-spline-conv  && \
-    pip uninstall torch-geometric
-
 # Re-add TensorBoard Jupyter extension patch
 # b/139212522 re-enable TensorBoard once solution for slowdown is implemented.
 # ADD patches/tensorboard/notebook.py /opt/conda/lib/python3.6/site-packages/tensorboard/notebook.py
