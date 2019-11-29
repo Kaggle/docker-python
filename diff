@@ -8,13 +8,15 @@ Compare a given Docker image package versions against the prod image.
 
 Options:
     -g, --gpu       Compare GPU images.
-    -t, --target    The image to diff against the prod image.
+    -b, --base      The base image to diff against.
+    -t, --target    The image to diff against the base image.
                     Default is the locally built image.
 EOF
 }
 
 
 BASE_IMAGE_TAG='gcr.io/kaggle-images/python:latest'
+BASE_IMAGE_TAG_OVERRIDE=''
 TARGET_IMAGE_TAG='kaggle/python-build'
 TARGET_IMAGE_TAG_OVERRIDE=''
 
@@ -27,6 +29,15 @@ while :; do
         -g|--gpu)
             BASE_IMAGE_TAG='gcr.io/kaggle-private-byod/python:latest'
             TARGET_IMAGE_TAG='kaggle/python-gpu-build'
+            ;;
+        -b|--base)
+            if [[ -z "$2" ]]; then
+                usage
+                printf 'ERROR: No IMAGE specified after the %s flag.\n' "$1" >&2
+                exit
+            fi
+            BASE_IMAGE_TAG_OVERRIDE="$2"
+            shift # skip the flag value
             ;;
         -t|--target)
             if [[ -z "$2" ]]; then
@@ -49,6 +60,10 @@ while :; do
     shift
 done
 
+if [[ -n "$BASE_IMAGE_TAG_OVERRIDE" ]]; then
+    BASE_IMAGE_TAG="$BASE_IMAGE_TAG_OVERRIDE"
+fi
+
 if [[ -n "$TARGET_IMAGE_TAG_OVERRIDE" ]]; then
     TARGET_IMAGE_TAG="$TARGET_IMAGE_TAG_OVERRIDE"
 fi
@@ -59,7 +74,9 @@ readonly TARGET_IMAGE_TAG
 echo "Base: $BASE_IMAGE_TAG"
 echo "Target: $TARGET_IMAGE_TAG"
 
-docker pull "$BASE_IMAGE_TAG"
+if [[ "$BASE_IMAGE_TAG" == "gcr.io/"* ]]; then
+    docker pull "$BASE_IMAGE_TAG"
+fi
 
 CMDS=('dpkg-query --show -f "${Package}==${Version}\n"' 'pip freeze')
 for cmd in "${CMDS[@]}"; do
