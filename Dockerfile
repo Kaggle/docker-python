@@ -180,8 +180,8 @@ RUN pip install scipy && \
     # PyTorch
     export CXXFLAGS="-std=c++11" && \
     export CFLAGS="-std=c99" && \
-    conda install -y pytorch torchvision torchaudio cpuonly -c pytorch && \
     apt-get install -y sox libsox-dev libsox-fmt-all && \
+    conda install -y pytorch torchvision torchaudio cpuonly -c pytorch && \
     pip install cffi && \
     /tmp/clean-layer.sh
 
