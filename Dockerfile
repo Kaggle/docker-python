@@ -499,7 +499,6 @@ RUN cd /usr/local/src && \
     /tmp/clean-layer.sh
 
 # torch-geometric & dependencies
-# torch-geometric & dependencies
 RUN pip install --no-cache-dir torch-scatter && \
     pip install --no-cache-dir torch-sparse && \
     pip install --no-cache-dir torch-cluster && \
