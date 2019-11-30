@@ -11,6 +11,7 @@ Options:
     -b, --base      The base image to diff against.
     -t, --target    The image to diff against the base image.
                     Default is the locally built image.
+    -p, --package   Only show diff for this package and its dependencies.
 EOF
 }
 
@@ -19,6 +20,7 @@ BASE_IMAGE_TAG='gcr.io/kaggle-images/python:latest'
 BASE_IMAGE_TAG_OVERRIDE=''
 TARGET_IMAGE_TAG='kaggle/python-build'
 TARGET_IMAGE_TAG_OVERRIDE=''
+PACKAGE_NAME=''
 
 while :; do
     case "$1" in 
@@ -46,6 +48,15 @@ while :; do
                 exit
             fi
             TARGET_IMAGE_TAG_OVERRIDE="$2"
+            shift # skip the flag value
+            ;;
+        -p|--package)
+            if [[ -z "$2" ]]; then
+                usage
+                printf 'ERROR: No PACKAGE specified after the %s flag.\n' "$1" >&2
+                exit
+            fi
+            PACKAGE_NAME="$2"
             shift # skip the flag value
             ;;
         -?*)
@@ -78,11 +89,18 @@ if [[ "$BASE_IMAGE_TAG" == "gcr.io/"* ]]; then
     docker pull "$BASE_IMAGE_TAG"
 fi
 
-CMDS=('dpkg-query --show -f "${Package}==${Version}\n"' 'pip freeze')
+
+if [[ -n "$PACKAGE_NAME" ]]; then
+    echo "Package: $PACKAGE_NAME"
+    CMDS=("python /tools/pip_list_versions.py $PACKAGE_NAME | sort")
+else
+    CMDS=('dpkg-query --show -f "${Package}==${Version}\n"' 'pip freeze')
+fi
+
 for cmd in "${CMDS[@]}"; do
     echo "== Comparing $cmd =="
     diff --suppress-common-lines --side-by-side \
-        <(docker run --rm "$BASE_IMAGE_TAG" $cmd) \
-        <(docker run --rm "$TARGET_IMAGE_TAG" $cmd) \
+        <(docker run -v $PWD/tools:/tools --rm "$BASE_IMAGE_TAG" /bin/bash -c "$cmd") \
+        <(docker run -v $PWD/tools:/tools --rm "$TARGET_IMAGE_TAG" /bin/bash -c "$cmd") \
         && echo 'No diff' || true
 done
