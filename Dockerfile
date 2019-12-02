@@ -177,12 +177,7 @@ RUN pip install scipy && \
     apt-get install -y pandoc && \
     pip install git+git://github.com/scikit-learn-contrib/py-earth.git@issue191 && \
     pip install essentia && \
-    # PyTorch
-    export CXXFLAGS="-std=c++11" && \
-    export CFLAGS="-std=c99" && \
-    apt-get install -y sox libsox-dev libsox-fmt-all && \
     conda install -y pytorch torchvision torchaudio cpuonly -c pytorch && \
-    pip install cffi && \
     /tmp/clean-layer.sh
 
 # vtk with dependencies
