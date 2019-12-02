@@ -56,6 +56,8 @@ RUN apt-get install -y libfreetype6-dev && \
     pip install xgboost && \
     pip install lightgbm && \
     pip install git+git://github.com/Lasagne/Lasagne.git && \
+    # b/145530394 don't install deps to avoid installing tensorflow-gpu in the cpu image.
+    pip install --no-deps tensorflow-addons && \
     pip install keras && \
     pip install keras-rl && \
     #keras-rcnn
