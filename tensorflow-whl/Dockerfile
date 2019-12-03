@@ -73,6 +73,23 @@ RUN cd /usr/local/src/tensorflow && \
     bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_cpu && \
     bazel clean
 
+
+RUN cd /usr/local/src && \
+    git clone https://github.com/tensorflow/addons && \
+    cd addons && \
+    git checkout tags/v0.6.0 && \
+    # b/145555176 avoid reinstalling the tensorflow package. 
+    echo '' > build_deps/requirements.txt && \
+    echo '' > build_deps/requirements_gpu.txt
+
+RUN cd /usr/local/src/addons && \
+    # install tensorflow which is required to build the addons
+    pip install /tmp/tensorflow_cpu/tensorflow*.whl && \
+    yes | ./configure.sh && \
+    bazel build build_pip_pkg && \
+    bazel-bin/build_pip_pkg /tmp/tensorflow_addons_cpu && \
+    bazel clean
+
 # Create a tensorflow wheel for GPU/cuda
 ENV TF_NEED_CUDA=1
 ENV TF_CUDA_VERSION=10.0
@@ -94,6 +111,14 @@ RUN cd /usr/local/src/tensorflow && \
                 //tensorflow/tools/pip_package:build_pip_package && \
     rm /etc/ld.so.conf.d/cuda-stubs.conf && ldconfig && \
     bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_gpu && \
+    bazel clean
+
+RUN cd /usr/local/src/addons && \
+    # install tensorflow which is required to build the addons
+    pip install /tmp/tensorflow_gpu/tensorflow*.whl && \
+    yes | ./configure.sh && \
+    bazel build build_pip_pkg && \
+    bazel-bin/build_pip_pkg /tmp/tensorflow_addons_gpu && \
     bazel clean
 
 # Print out the built .whl files
