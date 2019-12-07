@@ -473,7 +473,8 @@ RUN pip install flashtext && \
     pip install catalyst && \
     # b/145133331: latest version is causing issue with gcloud.
     pip install rtree==0.8.3 && \
-    pip install osmnx && \
+    # b/145133331 osmnx 0.11 requires rtree >= 0.9 which is causing issue with gcloud.
+    pip install osmnx==0.10 && \
     apt-get -y install libspatialindex-dev && \
     pip install pytorch-ignite && \
     pip install qgrid && \
