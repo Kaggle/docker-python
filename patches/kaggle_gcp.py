@@ -2,6 +2,7 @@ import os
 import inspect
 from google.auth import credentials
 from google.auth.exceptions import RefreshError
+from google.api_core.client_info import ClientInfo
 from google.cloud import bigquery
 from google.cloud.exceptions import Forbidden
 from google.cloud.bigquery._http import Connection
@@ -9,6 +10,7 @@ from kaggle_secrets import GcpTarget, UserSecretsClient
 
 from log import Log
 
+KAGGLE_GCP_CLIENT_USER_AGENT="kaggle-gcp-client/1.0"
 
 def get_integrations():
     kernel_integrations_var = os.getenv("KAGGLE_KERNEL_INTEGRATIONS")
@@ -165,6 +167,7 @@ def init_bigquery():
                 Log.info("No project specified while using the unmodified client.")
                 print('Please ensure you specify a project id when creating the client'
                     ' in order to use your BigQuery account.')
+            kwargs['client_info'] = set_kaggle_user_agent(kwargs.get('client_info'))
             return bq_client(*args, **kwargs)
 
     # Monkey patches BigQuery client creation to use proxy or user-connected GCP account.
@@ -183,10 +186,27 @@ def monkeypatch_client(client_klass, kaggle_kernel_credentials):
         if specified_credentials is None:
             Log.info("No credentials specified, using KaggleKernelCredentials.")
             kwargs['credentials'] = kaggle_kernel_credentials
+        
+        # TODO(vimota): Remove the exclusion of TablesClient once
+        # the client has fixed the error:
+        # `multiple values for keyword argument 'client_info'``
+        from google.cloud import automl_v1beta1
+        if (client_klass != automl_v1beta1.TablesClient):
+            kwargs['client_info'] = set_kaggle_user_agent(kwargs.get('client_info'))
+
+
         return client_init(self, *args, **kwargs)
 
     if (not has_been_monkeypatched(client_klass.__init__)):
         client_klass.__init__ = patched_init
+
+def set_kaggle_user_agent(client_info: ClientInfo):
+    # Add kaggle client user agent in order to attribute usage.
+    if client_info is None:
+        client_info = ClientInfo(user_agent=KAGGLE_GCP_CLIENT_USER_AGENT)
+    else:
+        client_info.user_agent = KAGGLE_GCP_CLIENT_USER_AGENT
+    return client_info
 
 def init_gcs():
     is_user_secrets_token_set = "KAGGLE_USER_SECRETS_TOKEN" in os.environ

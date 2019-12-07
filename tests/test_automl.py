@@ -19,8 +19,14 @@ class TestAutoMl(unittest.TestCase):
         self.assertGreaterEqual(version, 0.5);
 
     class FakeClient:
-        def __init__(self, credentials=None, **kwargs):
+        def __init__(self, credentials=None, client_info=None, **kwargs):
             self.credentials = credentials
+
+            class FakeConnection():
+                def __init__(self, user_agent):
+                    self.user_agent = user_agent
+            if (client_info is not None):
+                self._connection = FakeConnection(client_info.user_agent)
 
     @patch("google.cloud.automl_v1beta1.AutoMlClient", new=FakeClient)
     def test_user_provided_credentials(self):
@@ -64,6 +70,7 @@ class TestAutoMl(unittest.TestCase):
             automl_client = automl.AutoMlClient()
             self.assertIsNotNone(automl_client.credentials)
             self.assertIsInstance(automl_client.credentials, KaggleKernelCredentials)
+            self.assertTrue(automl_client._connection.user_agent.startswith("kaggle-gcp-client/1.0"))
 
     @patch("google.cloud.automl_v1beta1.TablesClient", new=FakeClient)
     def test_default_credentials_tables_client(self):

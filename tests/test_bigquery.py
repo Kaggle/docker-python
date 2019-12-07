@@ -103,6 +103,7 @@ class TestBigQuery(unittest.TestCase):
         env.set('KAGGLE_KERNEL_INTEGRATIONS', 'BIGQUERY')
         with env:
             client = bigquery.Client(project='ANOTHER_PROJECT')
+            self.assertTrue(client._connection.user_agent.startswith("kaggle-gcp-client/1.0"))
             self._test_integration(client)
 
     @patch.object(Connection, 'API_BASE_URL')
