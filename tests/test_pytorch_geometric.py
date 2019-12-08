@@ -2,86 +2,85 @@ import unittest
 
 import torch
 
-if not torch.cuda.is_available():
-    import torch_cluster
-    import torch_sparse
-    import torch_scatter
-    from torch_geometric.data import Data
-    from torch_sparse import coalesce
-    import torch_geometric
-    from torch_geometric.nn import SplineConv
+import torch_cluster
+import torch_sparse
+import torch_scatter
+from torch_geometric.data import Data
+from torch_sparse import coalesce
+import torch_geometric
+from torch_geometric.nn import SplineConv
+
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 class TestTorchGeometric(unittest.TestCase):
     def test_scatter(self):
-        if torch.cuda.is_available():
-            return
-        src = torch.tensor([[2, 0, 1, 4, 3], [0, 2, 1, 3, 4]])
-        index = torch.tensor([[4, 5, 4, 2, 3], [0, 0, 2, 2, 1]])
+        src = torch.tensor([[2, 0, 1, 4, 3], [0, 2, 1, 3, 4]]).to(device)
+        index = torch.tensor([[4, 5, 4, 2, 3], [0, 0, 2, 2, 1]]).to(device)
         out, argmax = torch_scatter.scatter_max(src, index, fill_value=0)
         test_argmax = torch.LongTensor([[-1, -1,  3,  4,  0,  1],
-                                        [ 1,  4,  3, -1, -1, -1]])
+                                        [ 1,  4,  3, -1, -1, -1]]).to(device)
         test_out = torch.LongTensor([[0, 0, 4, 3, 2, 0],
-                                     [2, 4, 3, 0, 0, 0]])
+                                     [2, 4, 3, 0, 0, 0]]).to(device)
         self.assertTrue(torch.all(torch.eq(test_argmax, argmax)))
         self.assertTrue(torch.all(torch.eq(test_out, out)))
 
     def test_cluster(self):
-        if torch.cuda.is_available():
-            return
-        x = torch.Tensor([[-1, -1], [-1, 1], [1, -1], [1, 1]])
-        batch = torch.tensor([0, 0, 0, 0])
-        edge_index = torch_cluster.knn_graph(x, k=2, batch=batch, loop=False)
+        x = torch.Tensor([[-1, -1], [-1, 1], [1, -1], [1, 1]]).to(device)
+        batch = torch.tensor([0, 0, 0, 0]).to(device)
+        edge_index = torch_cluster.knn_graph(x, k=2, batch=batch, loop=False).to(device)
         test_edge_index = torch.LongTensor([[2, 1, 3, 0, 3, 0, 1, 2],
-                                            [0, 0, 1, 1, 2, 2, 3, 3]])
-        self.assertTrue(torch.all(torch.eq(test_edge_index, edge_index)))
+                                            [0, 0, 1, 1, 2, 2, 3, 3]]).to(device)
+        edge_list = edge_index.tolist()
+        test_edge_list = test_edge_index.tolist()
+        del edge_index, test_edge_index
+        # need to transpose the edges to (ei, ej) format
+        edge_list = [(edge_list[0][i], edge_list[1][i]) for i in range(len(edge_list[0]))]
+        test_edge_list = [(test_edge_list[0][i], test_edge_list[1][i]) for i in range(len(test_edge_list[0]))]
+        self.assertCountEqual(edge_list, test_edge_list)
 
     def test_sparse(self):
-        if torch.cuda.is_available():
-            return
         index = torch.tensor([[1, 0, 1, 0, 2, 1],
-                              [0, 1, 1, 1, 0, 0]])
-        value = torch.Tensor([[1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7]])
+                              [0, 1, 1, 1, 0, 0]]).to(device)
+        value = torch.Tensor([[1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7]]).to(device)
 
         index, value = torch_sparse.transpose(index, value, 3, 2)
         test_index = torch.LongTensor([[0, 0, 1, 1],
-                                       [1, 2, 0, 1]])
-        test_value = torch.Tensor([[7., 9.], [5., 6.], [6., 8.], [3., 4.]])
+                                       [1, 2, 0, 1]]).to(device)
+        test_value = torch.Tensor([[7., 9.], [5., 6.], [6., 8.], [3., 4.]]).to(device)
         self.assertTrue(torch.all(torch.eq(test_index, index)))
         self.assertTrue(torch.all(torch.eq(test_value, value)))
 
     def test_spline_conv(self):
-        if torch.cuda.is_available():
-            return
         in_channels, out_channels = (16, 32)
-        edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
+        edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]]).to(device)
         num_nodes = edge_index.max().item() + 1
-        x = torch.randn((num_nodes, in_channels))
-        pseudo = torch.rand((edge_index.size(1), 3))
+        x = torch.randn((num_nodes, in_channels)).to(device)
+        pseudo = torch.rand((edge_index.size(1), 3)).to(device)
 
-        conv = SplineConv(in_channels, out_channels, dim=3, kernel_size=5)
-        assert conv.__repr__() == 'SplineConv(16, 32)'
+        conv = SplineConv(in_channels, out_channels, dim=3, kernel_size=5).to(device)
+        self.assertEqual('SplineConv(16, 32)', conv.__repr__())
         with torch_geometric.debug():
-           assert conv(x, edge_index, pseudo).size() == (num_nodes, out_channels)
+            self.assertEqual((num_nodes, out_channels), conv(x, edge_index, pseudo).size())
 
     def test_geometric(self):
-        if torch.cuda.is_available():
-            return
-        x = torch.tensor([[1, 3, 5], [2, 4, 6]], dtype=torch.float).t()
-        edge_index = torch.tensor([[0, 0, 1, 1, 2], [1, 1, 0, 2, 1]])
+        x = torch.tensor([[1, 3, 5], [2, 4, 6]], dtype=torch.float).t().to(device)
+        edge_index = torch.tensor([[0, 0, 1, 1, 2], [1, 1, 0, 2, 1]]).to(device)
         data = Data(x=x, edge_index=edge_index).to(torch.device('cpu'))
 
         N = data.num_nodes
 
-        self.assertTrue(data.x.tolist() == x.tolist())
-        self.assertTrue(data['x'].tolist() == x.tolist())
+        self.assertCountEqual(data.x.tolist(), x.tolist())
+        self.assertCountEqual(data['x'].tolist(), x.tolist())
 
-        self.assertTrue(sorted(data.keys) == ['edge_index', 'x'])
-        self.assertTrue(len(data) == 2)
-        self.assertTrue('x' in data and 'edge_index' in data and 'pos' not in data)
-        self.assertTrue(data.__cat_dim__('x', data.x) == 0)
-        self.assertTrue(data.__cat_dim__('edge_index', data.edge_index) == -1)
-        self.assertTrue(data.__inc__('x', data.x) == 0)
-        self.assertTrue(data.__inc__('edge_index', data.edge_index) == data.num_nodes)
+        self.assertEqual(['edge_index', 'x'], sorted(data.keys))
+        self.assertEqual(2, len(data))
+        self.assertIn('x', data)
+        self.assertIn('edge_index', data)
+        self.assertNotIn('pos', data)        
+        self.assertEqual(0, data.__cat_dim__('x', data.x))
+        self.assertEqual(-1, data.__cat_dim__('edge_index', data.edge_index))
+        self.assertEqual(0, data.__inc__('x', data.x))
+        self.assertEqual(data.num_nodes, data.__inc__('edge_index', data.edge_index))
         data.contiguous()
         self.assertTrue(data.x.is_contiguous())
 
@@ -90,24 +89,24 @@ class TestTorchGeometric(unittest.TestCase):
         self.assertTrue(data.is_coalesced())
 
         clone = data.clone()
-        self.assertTrue(clone != data)
-        self.assertTrue(len(clone) == len(data))
-        self.assertTrue(clone.x.tolist() == data.x.tolist())
-        self.assertTrue(clone.edge_index.tolist() == data.edge_index.tolist())
+        self.assertNotEqual(clone, data)
+        self.assertEqual(len(clone), len(data))
+        self.assertCountEqual(clone.x.tolist(), data.x.tolist())
+        self.assertCountEqual(clone.edge_index.tolist(), data.edge_index.tolist())
 
         data['x'] = x + 1
-        self.assertTrue(data.x.tolist() == (x + 1).tolist())
+        self.assertCountEqual(data.x.tolist(), (x + 1).tolist())
 
-        self.assertTrue(data.__repr__() == 'Data(edge_index=[2, 4], x=[3, 2])')
+        self.assertEqual('Data(edge_index=[2, 4], x=[3, 2])', data.__repr__())
 
         dictionary = {'x': data.x, 'edge_index': data.edge_index}
         data = Data.from_dict(dictionary)
-        self.assertTrue(sorted(data.keys) == ['edge_index', 'x'])
+        self.assertEqual(['edge_index', 'x'], sorted(data.keys))
 
         self.assertTrue(data.is_undirected())
 
-        self.assertTrue(data.num_nodes == 3)
-        self.assertTrue(data.num_edges == 4)
-        self.assertTrue(data.num_faces is None)
-        self.assertTrue(data.num_node_features == 2)
-        self.assertTrue(data.num_features == 2)
+        self.assertEqual(3, data.num_nodes)
+        self.assertEqual(4, data.num_edges)
+        self.assertIsNone(data.num_faces)
+        self.assertEqual(2, data.num_node_features)
+        self.assertEqual(2, data.num_features)
