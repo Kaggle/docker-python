@@ -480,7 +480,7 @@ RUN pip install flashtext && \
     pip install pytorch-ignite && \
     pip install qgrid && \
     pip install bqplot && \
-    pip install earth-engine-api && \
+    pip install earthengine-api && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
