@@ -178,10 +178,7 @@ RUN pip install scipy && \
     pip install git+git://github.com/scikit-learn-contrib/py-earth.git@issue191 && \
     pip install essentia && \
     conda install -y pytorch torchvision torchaudio cpuonly -c pytorch && \
-    pip install --no-cache-dir torch-scatter && \
-    pip install --no-cache-dir torch-sparse && \
-    pip install --no-cache-dir torch-cluster && \
-    pip install --no-cache-dir torch-spline-conv && \
+    pip install --no-cache-dir torch-scatter torch-sparse torch-cluster torch-spline-conv && \
     pip install torch-geometric && \
     /tmp/clean-layer.sh
 

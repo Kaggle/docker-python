@@ -19,6 +19,7 @@ LABEL com.nvidia.volumes.needed="nvidia_driver"
 LABEL com.nvidia.cuda.version="${CUDA_VERSION}"
 ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
 # Use shell parameter extension to handle the case that CPATH is likely unset.
+# CPATH needs to be set for the torch-geometrics package: https://github.com/rusty1s/pytorch_geometric#installation
 ENV CPATH=/usr/local/cuda/include:${CPATH:+\:${CPATH}}
 # The stub is useful to us both for built-time linking and run-time linking, on CPU-only systems.
 # When intended to be used with actual GPUs, make sure to (besides providing access to the host
@@ -56,6 +57,9 @@ RUN pip uninstall -y tensorflow && \
     pip uninstall -y mxnet && \
     # b/126259508 --no-deps prevents numpy from being downgraded.
     pip install --no-deps mxnet-cu100 && \
+    pip uninstall torch-scatter torch-sparse torch-cluster torch-spline-conv torch-geometric && \
+    pip install --no-cache-dir torch-scatter torch-sparse torch-cluster torch-spline-conv && \
+    pip install torch-geometric && \
     /tmp/clean-layer.sh
 
 # Install GPU-only packages
