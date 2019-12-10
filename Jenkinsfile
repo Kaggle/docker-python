@@ -26,16 +26,6 @@ pipeline {
           set -exo pipefail
 
           ./build | ts
-        '''
-      }
-    }
-
-    stage('Push CPU Pretest Image') {
-      steps {
-        sh '''#!/bin/bash
-          set -exo pipefail
-
-          date
           ./push ${PRETEST_TAG}
         '''
       }
@@ -47,7 +37,7 @@ pipeline {
           set -exo pipefail
 
           date
-          ./test
+          ./test --image gcr.io/kaggle-images/python:${PRETEST_TAG}
         '''
       }
     }
@@ -76,17 +66,6 @@ pipeline {
           set -exo pipefail
           docker image prune -f # remove previously built image to prevent disk from filling up
           ./build --gpu --base-image-tag ${STAGING_TAG} | ts
-        '''
-      }
-    }
-
-    stage('Push GPU Pretest Image') {
-      agent { label 'ephemeral-linux-gpu' }
-      steps {
-        sh '''#!/bin/bash
-          set -exo pipefail
-
-          date
           ./push --gpu ${PRETEST_TAG}
         '''
       }
@@ -99,7 +78,7 @@ pipeline {
           set -exo pipefail
 
           date
-          ./test --gpu
+          ./test --gpu --image gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
         '''
       }
     }
