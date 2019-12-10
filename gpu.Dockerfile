@@ -18,6 +18,8 @@ ENV CUDA_PKG_VERSION=10-0=$CUDA_VERSION-1
 LABEL com.nvidia.volumes.needed="nvidia_driver"
 LABEL com.nvidia.cuda.version="${CUDA_VERSION}"
 ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
+# Use shell parameter extension to handle the case that CPATH is likely unset.
+ENV CPATH=/usr/local/cuda/include:${CPATH:+\:${CPATH}}
 # The stub is useful to us both for built-time linking and run-time linking, on CPU-only systems.
 # When intended to be used with actual GPUs, make sure to (besides providing access to the host
 # CUDA user libraries, either manually or through the use of nvidia-docker) exclude them. One
