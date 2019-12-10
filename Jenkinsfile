@@ -47,7 +47,7 @@ pipeline {
           set -exo pipefail
 
           date
-          ./test
+          ./test --image gcr.io/kaggle-images/python:${PRETEST_TAG}
         '''
       }
     }
@@ -99,7 +99,7 @@ pipeline {
           set -exo pipefail
 
           date
-          ./test --gpu
+          ./test --gpu --image gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
         '''
       }
     }
