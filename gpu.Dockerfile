@@ -57,7 +57,7 @@ RUN pip uninstall -y tensorflow && \
     pip uninstall -y mxnet && \
     # b/126259508 --no-deps prevents numpy from being downgraded.
     pip install --no-deps mxnet-cu100 && \
-    pip uninstall torch-scatter torch-sparse torch-cluster torch-spline-conv torch-geometric && \
+    pip uninstall -y torch-scatter torch-sparse torch-cluster torch-spline-conv torch-geometric && \
     pip install --no-cache-dir torch-scatter torch-sparse torch-cluster torch-spline-conv && \
     pip install torch-geometric && \
     /tmp/clean-layer.sh
