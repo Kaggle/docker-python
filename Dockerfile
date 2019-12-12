@@ -481,6 +481,7 @@ RUN pip install flashtext && \
     pip install qgrid && \
     pip install bqplot && \
     pip install earthengine-api && \
+    pip install transformers && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
