@@ -75,7 +75,7 @@ class KaggleKernelCredentials(credentials.Credentials):
             if (not get_integrations().has_integration(self.target)):
                 Log.error(f"No {self.target.service} integration found.")
                 print(
-                   f"Please ensure you have selected a {self.target.service} account in the Kernels Settings sidebar.")
+                   f"Please ensure you have selected a {self.target.service} account in the Notebook Add-ons menu.")
             raise RefreshError('Unable to refresh access token.') from e
 
 
@@ -96,7 +96,7 @@ class _DataProxyConnection(Connection):
             return super().api_request(*args, **kwargs)
         except Forbidden as e:
             msg = ("Permission denied using Kaggle's public BigQuery integration. "
-                   "Did you mean to select a BigQuery account in the Kernels Settings sidebar?")
+                   "Did you mean to select a BigQuery account in the Notebook Add-ons menu?")
             print(msg)
             Log.info(msg)
             raise e
@@ -131,7 +131,7 @@ def init_bigquery():
     if not (is_proxy_token_set or is_user_secrets_token_set):
         return bigquery
 
-    # If this Kernel has bigquery integration on startup, preload the Kaggle Credentials
+    # If this Notebook has bigquery integration on startup, preload the Kaggle Credentials
     # object for magics to work.
     if get_integrations().has_bigquery():
         from google.cloud.bigquery import magics
@@ -162,7 +162,7 @@ def init_bigquery():
                 if (not has_bigquery):
                     Log.info("No bigquery integration found, creating client anyways.")
                     print('Please ensure you have selected a BigQuery '
-                        'account in the Kernels Settings sidebar.')
+                        'account in the Notebook Add-ons menu.')
             if explicit_project_id is None:
                 Log.info("No project specified while using the unmodified client.")
                 print('Please ensure you specify a project id when creating the client'
