@@ -17,5 +17,4 @@ class TestJAX(unittest.TestCase):
 
         grad_tanh = grad(self.tanh)
         ag = grad_tanh(1.0)
-        print(f'JAX autograd test: {ag}')
-        assert ag==0.4199743
+        self.assertEqual(0.4199743, ag)
