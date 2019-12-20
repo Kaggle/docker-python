@@ -2,6 +2,8 @@ import unittest
 
 import time
 
+from common import gpu_test
+
 
 class TestJAX(unittest.TestCase):
     def tanh(self, x):
