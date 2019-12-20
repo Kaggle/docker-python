@@ -2,9 +2,6 @@ import unittest
 
 import time
 
-import jax.numpy as np
-from jax import grad, jit
-
 
 class TestJAX(unittest.TestCase):
     def tanh(self, x):
@@ -13,6 +10,11 @@ class TestJAX(unittest.TestCase):
 
     @gpu_test
     def test_JAX(self):
+        # importing inside the gpu-only test because these packages can't be
+        # imported on the CPU image since they are not present there.
+        import jax.numpy as np
+        from jax import grad, jit
+
         grad_tanh = grad(self.tanh)
         ag = grad_tanh(1.0)
         print(f'JAX autograd test: {ag}')
