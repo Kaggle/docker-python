@@ -44,6 +44,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1 && \
     /tmp/clean-layer.sh
 
+# Install JAX
+ENV JAX_PYTHON_VERSION=cp36
+ENV JAX_CUDA_VERSION=cuda100
+ENV JAX_PLATFORM=linux_x86_64
+ENV JAX_BASE_URL="https://storage.googleapis.com/jax-releases"
+
+RUN  pip install --upgrade $JAX_BASE_URL/$JAX_CUDA_VERSION/jaxlib-0.1.36-$JAX_PYTHON_VERSION-none-$JAX_PLATFORM.whl && \
+     pip install --upgrade jax
+
 # Reinstall packages with a separate version for GPU support.
 COPY --from=tensorflow_whl /tmp/tensorflow_gpu/*.whl /tmp/tensorflow_gpu/
 RUN pip uninstall -y tensorflow && \
