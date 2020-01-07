@@ -48,8 +48,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Work to upgrade to Python 3.7 can be found on this branch: https://github.com/Kaggle/docker-python/blob/upgrade-py37/Dockerfile
 RUN conda install -y python=3.6.6 && pip install --upgrade pip && pip install numpy
 
-# The tested build configurations for Tensorflow 1.14 uses Bazel 0.24.1: https://www.tensorflow.org/install/source#tested_build_configurations
-ENV BAZEL_VERSION=0.27.1
+# See _TF_(MIN|MAX)_BAZEL_VERSION at https://github.com/tensorflow/tensorflow/blob/master/configure.py.
+ENV BAZEL_VERSION=1.1.0
 RUN apt-get install -y gnupg zip openjdk-8-jdk && \
     apt-get install -y --no-install-recommends \
       bash-completion \
