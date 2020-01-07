@@ -49,7 +49,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN conda install -y python=3.6.6 && pip install --upgrade pip && pip install numpy
 
 # See _TF_(MIN|MAX)_BAZEL_VERSION at https://github.com/tensorflow/tensorflow/blob/master/configure.py.
-ENV BAZEL_VERSION=1.1.0
+ENV BAZEL_VERSION=0.29.1
 RUN apt-get install -y gnupg zip openjdk-8-jdk && \
     apt-get install -y --no-install-recommends \
       bash-completion \
