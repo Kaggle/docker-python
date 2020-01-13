@@ -44,6 +44,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1 && \
     /tmp/clean-layer.sh
 
+# Install OpenCL (required by LightGBM GPU version)
+RUN apt-get install -y ocl-icd-libopencl1 && \
+    /tmp/clean-layer.sh
+
 # Install JAX
 ENV JAX_PYTHON_VERSION=cp36
 ENV JAX_CUDA_VERSION=cuda100
