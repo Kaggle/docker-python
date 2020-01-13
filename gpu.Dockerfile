@@ -44,8 +44,23 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1 && \
     /tmp/clean-layer.sh
 
-# Install OpenCL (required by LightGBM GPU version) and tools.
-RUN apt-get install -y ocl-icd-libopencl1 clinfo && \
+# Install OpenCL & libboost (required by LightGBM GPU version)
+RUN apt-get install -y ocl-icd-libopencl1 clinfo libboost-all-dev && \
+    mkdir -p /etc/OpenCL/vendors && \
+    echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd && \
+    /tmp/clean-layer.sh
+
+# Install LightGBM with GPU
+RUN pip uninstall -y lightgbm && \
+    cd /usr/local/src && \
+    git clone --recursive https://github.com/microsoft/LightGBM && \
+    cd LightGBM && \
+    git checkout tags/v2.3.1 && \
+    mkdir build && cd build && \
+    cmake -DUSE_GPU=1 -DOpenCL_LIBRARY=/usr/local/cuda/lib64/libOpenCL.so -DOpenCL_INCLUDE_DIR=/usr/local/cuda/include/ .. && \
+    make -j$(nproc) && \
+    cd /usr/local/src/LightGBM/python-package && \
+    python setup.py install --precompile && \
     /tmp/clean-layer.sh
 
 # Install JAX
