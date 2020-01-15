@@ -16,9 +16,14 @@ RUN apt-get update && \
     # as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
 RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list && \
     apt-get update && apt-get install -y build-essential unzip cmake && \
+    # Nodejs installed in the base image is not the latest
+    curl -sL https://deb.nodesource.com/setup_12.x | bash && \
+    apt-get install nodejs -yq && \
     # Work to upgrade to Python 3.7 can be found on this branch: https://github.com/Kaggle/docker-python/blob/upgrade-py37/Dockerfile
     conda install -y python=3.6.6 && \
     pip install --upgrade pip && \
+    # Upgrade npm to latest version
+    npm install -g npm && \
     /tmp/clean-layer.sh
 
 # The anaconda base image includes outdated versions of these packages. Update them to include the latest version.
