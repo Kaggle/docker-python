@@ -61,6 +61,8 @@ RUN pip uninstall -y lightgbm && \
     make -j$(nproc) && \
     cd /usr/local/src/LightGBM/python-package && \
     python setup.py install --precompile && \
+    mkdir -p /etc/OpenCL/vendors && \
+    echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd && \
     /tmp/clean-layer.sh
 
 # Install JAX

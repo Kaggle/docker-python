@@ -46,16 +46,15 @@ class TestLightgbm(unittest.TestCase):
         lgb_eval = lgb.Dataset(iris.data[100:], iris.target[100:], reference=lgb_train)
 
         params = {
-            'task': 'train',
             'boosting_type': 'gbdt',
             'objective': 'regression',
-            'metric': {'l2', 'auc'},
+            'metric': 'auc',
             'num_leaves': 31,
             'learning_rate': 0.05,
             'feature_fraction': 0.9,
             'bagging_fraction': 0.8,
             'bagging_freq': 5,
-            'verbose': 0,
+            'verbose': 1,
             'device': 'gpu'
         }
         
