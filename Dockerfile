@@ -483,6 +483,7 @@ RUN pip install flashtext && \
     pip install bqplot && \
     pip install earthengine-api && \
     pip install transformers && \
+    pip install kaggle-environments && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
