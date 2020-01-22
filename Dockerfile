@@ -129,8 +129,8 @@ RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
     pip install packaging && \
     pip install shapely && \
     pip install cartopy && \
-    # MXNet
-    pip install mxnet && \
+    # b/148097039 remove ping on mxnet version.
+    pip install mxnet==1.5.1.post0 && \
     # b/145358669 remove --upgrade once we upgrade base image which will include numpy >= 1.17
     pip install --upgrade numpy && \
     pip install gluonnlp && \
