@@ -2,7 +2,7 @@ import os
 import inspect
 from google.auth import credentials
 from google.auth.exceptions import RefreshError
-from google.api_core.client_info import ClientInfo
+from google.api_core.gapic_v1.client_info import ClientInfo
 from google.cloud import bigquery
 from google.cloud.exceptions import Forbidden
 from google.cloud.bigquery._http import Connection
