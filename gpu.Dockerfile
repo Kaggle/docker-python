@@ -65,9 +65,8 @@ RUN pip uninstall -y tensorflow && \
     conda remove --force -y pytorch torchvision torchaudio cpuonly && \
     conda install -y pytorch torchvision torchaudio cudatoolkit=10.0 -c pytorch && \
     pip uninstall -y mxnet && \
-    # b/148097039 remove ping on mxnet version.
     # b/126259508 --no-deps prevents numpy from being downgraded.
-    pip install --no-deps mxnet-cu100==1.5.1.post0 && \
+    pip install --no-deps mxnet-cu100 && \
     /tmp/clean-layer.sh
 
 # Install GPU-only packages
