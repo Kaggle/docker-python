@@ -5,11 +5,7 @@ import unittest
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from test.support import EnvironmentVarGuard
 from urllib.parse import urlparse
-from datetime import datetime, timedelta
-import mock
 
-from google.auth.exceptions import DefaultCredentialsError
-from google.cloud import bigquery
 from kaggle_secrets import (_KAGGLE_URL_BASE_ENV_VAR_NAME,
                             _KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME,
                             CredentialError, BackendError, ValidationError)
@@ -107,7 +103,8 @@ class TestDatasets(unittest.TestCase):
             gcs_path = client.get_gcs_path()
             self.assertEqual(gcs_path, _TPU_GCS_BUCKET)
         self._test_client(call_get_gcs_path,
-                          '/requests/CopyDatasetVersionToKnownGcsBucketRequest', {'MountSlug': None, 'IntegrationType': 2, 'JWE': _TEST_JWT},
+                          '/requests/CopyDatasetVersionToKnownGcsBucketRequest',
+                          {'MountSlug': None, 'IntegrationType': 2, 'JWE': _TEST_JWT},
                           is_tpu=True)
 
     def test_get_gcs_path_automl_succeeds(self):
@@ -116,7 +113,8 @@ class TestDatasets(unittest.TestCase):
             gcs_path = client.get_gcs_path()
             self.assertEqual(gcs_path, _AUTOML_GCS_BUCKET)
         self._test_client(call_get_gcs_path,
-                          '/requests/CopyDatasetVersionToKnownGcsBucketRequest', {'MountSlug': None, 'IntegrationType': 1, 'JWE': _TEST_JWT},
+                          '/requests/CopyDatasetVersionToKnownGcsBucketRequest',
+                          {'MountSlug': None, 'IntegrationType': 1, 'JWE': _TEST_JWT},
                           is_tpu=False)
 
     def test_get_gcs_path_handles_unsuccessful(self):
@@ -125,6 +123,7 @@ class TestDatasets(unittest.TestCase):
             with self.assertRaises(BackendError):
                 gcs_path = client.get_gcs_path()
         self._test_client(call_get_gcs_path,
-                          '/requests/CopyDatasetVersionToKnownGcsBucketRequest', {'MountSlug': None, 'IntegrationType': 2, 'JWE': _TEST_JWT},
+                          '/requests/CopyDatasetVersionToKnownGcsBucketRequest',
+                          {'MountSlug': None, 'IntegrationType': 2, 'JWE': _TEST_JWT},
                           is_tpu=True,
                           success=False)
