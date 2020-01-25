@@ -67,6 +67,8 @@ class UserSecretsClient():
         self.headers = {'Content-type': 'application/json'}
 
     def _make_post_request(self, data: dict, endpoint: str = GET_USER_SECRET_ENDPOINT) -> dict:
+        # TODO(b/148309982) This code and the code in the constructor should be
+        # removed and this class should use the new KaggleWebClient class instead.
         url = f'{self.url_base}{endpoint}'
         request_body = dict(data)
         request_body['JWE'] = self.jwt_token
