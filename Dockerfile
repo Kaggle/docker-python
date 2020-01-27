@@ -258,6 +258,8 @@ RUN pip install mpld3 && \
     pip install pyexcel-ods && \
     pip install sklearn-pandas && \
     pip install stemming && \
+    # b/148383434 remove pip install for holidays once fbprophet is compatible with latest version of holidays.
+    pip install holidays==0.9.12 && \
     pip install fbprophet && \
     pip install holoviews && \
     # 1.6.2 is not currently supported by the version of matplotlib we are using.
