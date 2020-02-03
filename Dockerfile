@@ -26,6 +26,8 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
 RUN pip install seaborn python-dateutil dask && \
     pip install pyyaml joblib pytagcloud husl geopy ml_metrics mne pyshp && \
     pip install spacy && python -m spacy download en && python -m spacy download en_core_web_lg && \
+    # b/148783763 removes once qgrid and tsfresh supports pandas 1.0.0
+    pip install pandas==0.25.3 && \
     # The apt-get version of imagemagick is out of date and has compatibility issues, so we build from source
     apt-get -y install dbus fontconfig fontconfig-config fonts-dejavu-core fonts-droid-fallback ghostscript gsfonts hicolor-icon-theme \
     libavahi-client3 libavahi-common-data libavahi-common3 libcairo2 libcap-ng0 libcroco3 \
@@ -383,9 +385,6 @@ RUN pip install bcolz && \
     pip install notebook==5.5.0 && \
     pip install olefile && \
     pip install opencv-python && \
-    # tsfresh doesn't work with pandas 0.24, requires >= 0.25: https://github.com/blue-yonder/tsfresh/blob/0ef9123d68e3544ef0217caf83f63f93ad837a61/requirements.txt#L3
-    # b/145358669 remove --upgrade once we upgrade base image which will include pandas >= 0.25 
-    pip install --upgrade pandas && \
     pip install pandas_summary && \
     pip install pandocfilters && \
     pip install pexpect && \
