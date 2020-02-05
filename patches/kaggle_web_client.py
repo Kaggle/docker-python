@@ -12,7 +12,7 @@ from kaggle_secrets import (_KAGGLE_DEFAULT_URL_BASE,
                             CredentialError, BackendError, ValidationError)
 
 class KaggleWebClient:
-    TIMEOUT_SECS = 90
+    TIMEOUT_SECS = 600
 
     def __init__(self):
         url_base_override = os.getenv(_KAGGLE_URL_BASE_ENV_VAR_NAME)
