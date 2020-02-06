@@ -3,17 +3,13 @@ import unittest
 import lightgbm as lgb
 
 from common import gpu_test, gpu_semaphore
-from sklearn.datasets import load_iris
 
 class TestLightgbm(unittest.TestCase):
     # Based on the "simple_example" from their documentation:
     # https://github.com/Microsoft/LightGBM/blob/master/examples/python-guide/simple_example.py
     def test_cpu(self):
-        # Load a dataset aleady on disk
-        iris = load_iris()
-
-        lgb_train = lgb.Dataset(iris.data[:100], iris.target[:100])
-        lgb_eval = lgb.Dataset(iris.data[100:], iris.target[100:], reference=lgb_train)
+        lgb_train = lgb.Dataset('/input/tests/data/lgb_train.bin')
+        lgb_eval = lgb.Dataset('/input/tests/data/lgb_test.bin', reference=lgb_train)
 
         params = {
             'task': 'train',
@@ -39,11 +35,8 @@ class TestLightgbm(unittest.TestCase):
 
     @gpu_test
     def test_gpu(self):
-        # Load a dataset aleady on disk
-        iris = load_iris()
-
-        lgb_train = lgb.Dataset(iris.data[:100], iris.target[:100])
-        lgb_eval = lgb.Dataset(iris.data[100:], iris.target[100:], reference=lgb_train)
+        lgb_train = lgb.Dataset('/input/tests/data/lgb_train.bin')
+        lgb_eval = lgb.Dataset('/input/tests/data/lgb_test.bin', reference=lgb_train)
 
         params = {
             'boosting_type': 'gbdt',
