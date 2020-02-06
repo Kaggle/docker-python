@@ -48,8 +48,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ln -s /usr/local/cuda-$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION /usr/local/cuda && \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1
 
-# Work to upgrade to Python 3.7 can be found on this branch: https://github.com/Kaggle/docker-python/blob/upgrade-py37/Dockerfile
-RUN conda install -y python=3.6.6 && pip install --upgrade pip && pip install numpy
+RUN pip install --upgrade pip
 
 # See _TF_(MIN|MAX)_BAZEL_VERSION at https://github.com/tensorflow/tensorflow/blob/master/configure.py.
 ENV BAZEL_VERSION=0.29.1
