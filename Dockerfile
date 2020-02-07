@@ -489,7 +489,7 @@ RUN pip install flashtext && \
 # Tesseract and some associated utility packages
 RUN apt-get install tesseract-ocr -y && \
     pip install pytesseract && \
-    pip install wand==0.5.3 && \
+    pip install wand && \
     pip install pdf2image && \
     pip install PyPDF && \
     pip install pyocr && \
