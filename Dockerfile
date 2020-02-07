@@ -16,8 +16,6 @@ RUN apt-get update && \
     # as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
 RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list && \
     apt-get update && apt-get install -y build-essential unzip cmake && \
-    # Work to upgrade to Python 3.7 can be found on this branch: https://github.com/Kaggle/docker-python/blob/upgrade-py37/Dockerfile
-    conda install -y python=3.6.6 && \
     pip install --upgrade pip && \
     /tmp/clean-layer.sh
 
@@ -220,8 +218,8 @@ RUN pip install mpld3 && \
     pip install cleverhans && \
     pip install leven && \
     pip install catboost && \
-    #cd /usr/local/src && git clone --depth=1 https://github.com/AxeldeRomblay/MLBox && cd MLBox/python-package && python setup.py install && \
-    pip install fastFM && \
+    # fastFM doesn't support Python 3.7 yet: https://github.com/ibayer/fastFM/issues/151
+    # pip install fastFM && \
     pip install lightfm && \
     pip install folium && \
     pip install scikit-plot && \
@@ -287,7 +285,9 @@ RUN pip install --upgrade cython && \
     pip install janome && \
     pip install wfdb && \
     pip install vecstack && \
-    pip install sklearn-contrib-lightning && \
+    # Doesn't support Python 3.7 yet. Last release on pypi is from 2017.
+    # Add back once this PR is released: https://github.com/scikit-learn-contrib/lightning/pull/133
+    #pip install sklearn-contrib-lightning && \
     # yellowbrick machine learning visualization library
     pip install yellowbrick && \
     pip install mlcrate && \
@@ -426,24 +426,13 @@ RUN apt-get install tesseract-ocr -y && \
     /tmp/clean-layer.sh
 ENV TESSERACT_PATH=/usr/bin/tesseract
 
-<<<<<<< HEAD
 # Install vowpalwabbit
-RUN apt-get install -y libboost-dev libboost-program-options-dev libboost-system-dev libboost-thread-dev libboost-math-dev libboost-test-dev zlib1g-dev cmake g++ && \
-    pip install six && \
-    apt-get install -y libboost-python-dev default-jdk && \
-    ln -s /usr/lib/x86_64-linux-gnu/libboost_python-py35.so /usr/lib/x86_64-linux-gnu/libboost_python3.so && \
-    pip install vowpalwabbit && \
-    /tmp/clean-layer.sh
-=======
-# Pin Vowpal Wabbit v8.6.0 because 8.6.1 does not build or install successfully
-# This installs python 3.6. Fix before releasing.
-# RUN cd /usr/local/src && \
-#     git clone -b 8.6.0 https://github.com/JohnLangford/vowpal_wabbit.git && \
-#     ./vowpal_wabbit/python/conda_install.sh && \
-#     # Reinstall in non-editable mode (without the -e flag)
-#     pip install vowpal_wabbit/python && \
+# RUN apt-get install -y libboost-dev libboost-program-options-dev libboost-system-dev libboost-thread-dev libboost-math-dev libboost-test-dev zlib1g-dev cmake g++ && \
+#     pip install six && \
+#     apt-get install -y libboost-python-dev default-jdk && \
+#     ln -s /usr/lib/x86_64-linux-gnu/libboost_python-py35.so /usr/lib/x86_64-linux-gnu/libboost_python3.so && \
+#     pip install vowpalwabbit && \
 #     /tmp/clean-layer.sh
->>>>>>> Build TF wheel for Python 3.7
 
 # For Facets
 ENV PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/
