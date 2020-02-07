@@ -1,25 +1,26 @@
-FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04 AS nvidia
+# FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04 AS nvidia
 FROM continuumio/anaconda3:2019.03
 
 # Avoid interactive configuration prompts/dialogs during apt-get.
 ENV DEBIAN_FRONTEND=noninteractive
 
 # This is necessary to for apt to access HTTPS sources
-RUN apt-get update && \
-    apt-get install apt-transport-https
+# RUN apt-get update && \
+#     apt-get install apt-transport-https
 
 # Cuda support
-COPY --from=nvidia /etc/apt/sources.list.d/cuda.list /etc/apt/sources.list.d/
-COPY --from=nvidia /etc/apt/sources.list.d/nvidia-ml.list /etc/apt/sources.list.d/
-COPY --from=nvidia /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d/cuda.gpg
+# COPY --from=nvidia /etc/apt/sources.list.d/cuda.list /etc/apt/sources.list.d/
+# COPY --from=nvidia /etc/apt/sources.list.d/nvidia-ml.list /etc/apt/sources.list.d/
+# COPY --from=nvidia /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d/cuda.gpg
 
 # Ensure the cuda libraries are compatible with the GPU image.
 # TODO(b/120050292): Use templating to keep in sync.
-ENV CUDA_VERSION=10.0.130
-ENV CUDA_PKG_VERSION=10-0=$CUDA_VERSION-1
-LABEL com.nvidia.volumes.needed="nvidia_driver"
-LABEL com.nvidia.cuda.version="${CUDA_VERSION}"
-ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
+# ENV CUDA_VERSION=10.0.130
+# ENV CUDA_PKG_VERSION=10-0=$CUDA_VERSION-1
+# LABEL com.nvidia.volumes.needed="nvidia_driver"
+# LABEL com.nvidia.cuda.version="${CUDA_VERSION}"
+# TODO(rosbo): Is this needed?
+# ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
 # The stub is useful to us both for built-time linking and run-time linking, on CPU-only systems.
 # When intended to be used with actual GPUs, make sure to (besides providing access to the host
 # CUDA user libraries, either manually or through the use of nvidia-docker) exclude them. One
@@ -28,21 +29,24 @@ ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
 ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/nvidia/lib64:/usr/local/cuda/lib64:/usr/local/cuda/lib64/stubs"
 ENV NVIDIA_VISIBLE_DEVICES=all
 ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
-ENV NVIDIA_REQUIRE_CUDA="cuda>=10.0"
-RUN apt-get update && apt-get install -y --no-install-recommends \
-      cuda-cupti-$CUDA_PKG_VERSION \
-      cuda-cudart-$CUDA_PKG_VERSION \
-      cuda-cudart-dev-$CUDA_PKG_VERSION \
-      cuda-libraries-$CUDA_PKG_VERSION \
-      cuda-libraries-dev-$CUDA_PKG_VERSION \
-      cuda-nvml-dev-$CUDA_PKG_VERSION \
-      cuda-minimal-build-$CUDA_PKG_VERSION \
-      cuda-command-line-tools-$CUDA_PKG_VERSION \
-      libcudnn7=7.5.0.56-1+cuda10.0 \
-      libcudnn7-dev=7.5.0.56-1+cuda10.0 \
-      libnccl2=2.4.2-1+cuda10.0 \
-      libnccl-dev=2.4.2-1+cuda10.0 && \
-    ln -s /usr/local/cuda-10.0 /usr/local/cuda && \
+ENV NVIDIA_REQUIRE_CUDA="cuda>=10.1"
+# RUN apt-get update && apt-get install -y --no-install-recommends \
+#       cuda-cupti-$CUDA_PKG_VERSION \
+#       cuda-cudart-$CUDA_PKG_VERSION \
+#       cuda-cudart-dev-$CUDA_PKG_VERSION \
+#       cuda-libraries-$CUDA_PKG_VERSION \
+#       cuda-libraries-dev-$CUDA_PKG_VERSION \
+#       cuda-nvml-dev-$CUDA_PKG_VERSION \
+#       cuda-minimal-build-$CUDA_PKG_VERSION \
+#       cuda-command-line-tools-$CUDA_PKG_VERSION \
+#       libcudnn7=7.5.0.56-1+cuda10.0 \
+#       libcudnn7-dev=7.5.0.56-1+cuda10.0 \
+#       libnccl2=2.4.2-1+cuda10.0 \
+#       libnccl-dev=2.4.2-1+cuda10.0 && \
+#     ln -s /usr/local/cuda-10.0 /usr/local/cuda && \
+#     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1
+RUN conda install -y cudatoolkit=10.1.243 cudnn=7.6.5 && \
+    conda install -y install nccl=2.5.7.1 -c conda-forge && \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1
 
 # Work to upgrade to Python 3.7 can be found on this branch: https://github.com/Kaggle/docker-python/blob/upgrade-py37/Dockerfile
@@ -75,7 +79,7 @@ RUN cd /usr/local/src/tensorflow && \
 
 # Create a tensorflow wheel for GPU/cuda
 ENV TF_NEED_CUDA=1
-ENV TF_CUDA_VERSION=10.0
+ENV TF_CUDA_VERSION=10.1
 # 3.7 is for the K80 and 6.0 is for the P100, 7.5 is for the T4: https://developer.nvidia.com/cuda-gpus
 ENV TF_CUDA_COMPUTE_CAPABILITIES=3.7,6.0,7.5
 ENV TF_CUDNN_VERSION=7
