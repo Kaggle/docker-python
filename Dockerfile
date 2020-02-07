@@ -62,10 +62,7 @@ RUN apt-get install -y libfreetype6-dev && \
     pip install keras-rl && \
     #keras-rcnn
     pip install git+https://github.com/broadinstitute/keras-rcnn && \
-    # version 3.7.1 adds a dependency on entrypoints > 3. This causes a reinstall but fails because
-    # it is a distutils package and can't be uninstalled. Once the anaconda image in updated, this
-    # pin should be removed.
-    pip install flake8==3.6.0 && \
+    pip install flake8 && \
     #neon
     cd /usr/local/src && \
     git clone --depth 1 https://github.com/NervanaSystems/neon.git && \
