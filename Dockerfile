@@ -458,8 +458,7 @@ RUN pip install flashtext && \
     pip install jieba  && \
     pip install git+https://github.com/SauceCat/PDPbox && \
     pip install ggplot && \
-    # b/145856222 cesium 0.9.10 forces a downgrade of scikit-learn.
-    pip install cesium==0.9.9 && \
+    pip install cesium && \
     pip install rgf_python && \
     # b/145404107: latest version force specific version of numpy and torch.
     pip install pytext-nlp==0.1.2 && \
