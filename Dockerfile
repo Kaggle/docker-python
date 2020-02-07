@@ -118,8 +118,7 @@ ENV LD_LIBRARY_PATH=/opt/conda/lib
 RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
     pip install matplotlib && \
     pip install pyshp && \
-    # b/144569992 pyproj 2.4.1 is failing to install because of missing METADATA file.
-    pip install pyproj==2.4.0 && \
+    pip install pyproj && \
     conda install basemap && \
     # sasl is apparently an ibis dependency
     apt-get -y install libsasl2-dev && \
