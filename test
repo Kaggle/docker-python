@@ -83,12 +83,17 @@ if [ $PATTERN == 'test*.py' ]; then
     docker kill jupyter_test && docker rm jupyter_test
 fi
 
+# Note about `TF_FORCE_GPU_ALLOW_GROWTH`. This allocate memory at runtime as needed.
+# By default, TensorFlow maps nearly all of the GPU memory visible to the process.
+# This is causing issue when other libraries are trying to run tests using a GPU.
+# See: https://www.tensorflow.org/guide/gpu#allowing_gpu_memory_growth
 docker run --rm -t --read-only --net=none \
     -e HOME=/tmp -e KAGGLE_DATA_PROXY_TOKEN=test-key \
     -e KAGGLE_USER_SECRETS_TOKEN_KEY=test-secrets-key \
     -e KAGGLE_URL_BASE=http://127.0.0.1:8001 \
     -e KAGGLE_DATA_PROXY_URL=http://127.0.0.1:8000 \
     -e KAGGLE_DATA_PROXY_PROJECT=test \
+    -e TF_FORCE_GPU_ALLOW_GROWTH=true \
     --shm-size=2g \
     -v $PWD:/input:ro -v /tmp/python-build/working:/working \
     -v /tmp/python-build/tmp:/tmp -v /tmp/python-build/devshm:/dev/shm \

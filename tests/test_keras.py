@@ -9,7 +9,7 @@ from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, CuDNNLST
 from keras.optimizers import RMSprop, SGD
 from keras.utils.np_utils import to_categorical
 
-from common import gpu_test, gpu_semaphore
+from common import gpu_test
 
 class TestKeras(unittest.TestCase):
     def test_train(self):
@@ -56,10 +56,9 @@ class TestKeras(unittest.TestCase):
 
         sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
 
-        with gpu_semaphore:
-            # This throws if libcudnn is not properly installed with on a GPU
-            model.compile(loss='categorical_crossentropy', optimizer=sgd)
-            model.fit(x_train, y_train, batch_size=32, epochs=1)
+        # This throws if libcudnn is not properly installed with on a GPU
+        model.compile(loss='categorical_crossentropy', optimizer=sgd)
+        model.fit(x_train, y_train, batch_size=32, epochs=1)
         
         model.evaluate(x_test, y_test, batch_size=32)
 

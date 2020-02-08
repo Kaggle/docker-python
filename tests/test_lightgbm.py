@@ -2,7 +2,7 @@ import unittest
 
 import lightgbm as lgb
 
-from common import gpu_test, gpu_semaphore
+from common import gpu_test
 
 class TestLightgbm(unittest.TestCase):
     # Based on the "simple_example" from their documentation:
@@ -51,12 +51,11 @@ class TestLightgbm(unittest.TestCase):
             'device': 'gpu'
         }
         
-        with gpu_semaphore:
-            # Run only one round for faster test
-            gbm = lgb.train(params,
-                            lgb_train,
-                            num_boost_round=1,
-                            valid_sets=lgb_eval,
-                            early_stopping_rounds=1)
+        # Run only one round for faster test
+        gbm = lgb.train(params,
+                        lgb_train,
+                        num_boost_round=1,
+                        valid_sets=lgb_eval,
+                        early_stopping_rounds=1)
 
         self.assertEqual(1, gbm.best_iteration)
