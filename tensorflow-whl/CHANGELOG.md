@@ -10,3 +10,4 @@
 2.1.0-rc0-py36: TensorFlow 2.1.0-rc0 with Python 3.6
 2.1.0-rc2-py36: TensorFlow 2.1.0-rc2 with Python 3.6
 2.1.0-py36: TensorFlow 2.1.0 with Python 3.6
+2.1.0-py36-2: TensorFlow 2.1.0 with CUDA 10.1
