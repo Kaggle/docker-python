@@ -83,7 +83,7 @@ RUN pip uninstall -y tensorflow && \
     pip install /tmp/tensorflow_gpu/tensorflow*.whl && \
     rm -rf /tmp/tensorflow_gpu && \
     conda remove --force -y pytorch torchvision torchaudio cpuonly && \
-    conda install -y pytorch torchvision torchaudio cudatoolkit=CUDA_MAJOR_VERSION.CUDA_MINOR_VERSION -c pytorch && \
+    conda install -y pytorch torchvision torchaudio cudatoolkit=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION -c pytorch && \
     pip uninstall -y mxnet && \
     # b/126259508 --no-deps prevents numpy from being downgraded.
     pip install --no-deps mxnet-cu$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
