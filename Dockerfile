@@ -56,7 +56,8 @@ RUN apt-get install -y libfreetype6-dev && \
     pip install wordcloud && \
     conda install -y -c conda-forge python-igraph && \
     pip install xgboost && \
-    pip install lightgbm && \
+    # Pinned to match GPU version. Update version together.
+    pip install lightgbm==2.3.1 && \
     pip install git+git://github.com/Lasagne/Lasagne.git && \
     pip install keras && \
     pip install keras-rl && \

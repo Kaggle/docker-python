@@ -9,7 +9,7 @@ from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, CuDNNLST
 from keras.optimizers import RMSprop, SGD
 from keras.utils.np_utils import to_categorical
 
-from common import gpu_test, gpu_semaphore
+from common import gpu_test
 
 class TestKeras(unittest.TestCase):
     def test_train(self):
@@ -30,37 +30,37 @@ class TestKeras(unittest.TestCase):
 
     # Uses convnet which depends on libcudnn when running on GPU
     def test_conv2d(self):
-        with gpu_semaphore:
-            # Generate dummy data
-            x_train = np.random.random((100, 100, 100, 3))
-            y_train = keras.utils.to_categorical(np.random.randint(10, size=(100, 1)), num_classes=10)
-            x_test = np.random.random((20, 100, 100, 3))
-            y_test = keras.utils.to_categorical(np.random.randint(10, size=(20, 1)), num_classes=10)
+        # Generate dummy data
+        x_train = np.random.random((100, 100, 100, 3))
+        y_train = keras.utils.to_categorical(np.random.randint(10, size=(100, 1)), num_classes=10)
+        x_test = np.random.random((20, 100, 100, 3))
+        y_test = keras.utils.to_categorical(np.random.randint(10, size=(20, 1)), num_classes=10)
 
-            model = Sequential()
-            # input: 100x100 images with 3 channels -> (100, 100, 3) tensors.
-            # this applies 32 convolution filters of size 3x3 each.
-            model.add(Conv2D(32, (3, 3), activation='relu', input_shape=(100, 100, 3)))
-            model.add(Conv2D(32, (3, 3), activation='relu'))
-            model.add(MaxPooling2D(pool_size=(2, 2)))
-            model.add(Dropout(0.25))
+        model = Sequential()
+        # input: 100x100 images with 3 channels -> (100, 100, 3) tensors.
+        # this applies 32 convolution filters of size 3x3 each.
+        model.add(Conv2D(32, (3, 3), activation='relu', input_shape=(100, 100, 3)))
+        model.add(Conv2D(32, (3, 3), activation='relu'))
+        model.add(MaxPooling2D(pool_size=(2, 2)))
+        model.add(Dropout(0.25))
 
-            model.add(Conv2D(64, (3, 3), activation='relu'))
-            model.add(Conv2D(64, (3, 3), activation='relu'))
-            model.add(MaxPooling2D(pool_size=(2, 2)))
-            model.add(Dropout(0.25))
+        model.add(Conv2D(64, (3, 3), activation='relu'))
+        model.add(Conv2D(64, (3, 3), activation='relu'))
+        model.add(MaxPooling2D(pool_size=(2, 2)))
+        model.add(Dropout(0.25))
 
-            model.add(Flatten())
-            model.add(Dense(256, activation='relu'))
-            model.add(Dropout(0.5))
-            model.add(Dense(10, activation='softmax'))
+        model.add(Flatten())
+        model.add(Dense(256, activation='relu'))
+        model.add(Dropout(0.5))
+        model.add(Dense(10, activation='softmax'))
 
-            sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+        sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
 
-            # This throws if libcudnn is not properly installed with on a GPU
-            model.compile(loss='categorical_crossentropy', optimizer=sgd)
-            model.fit(x_train, y_train, batch_size=32, epochs=1)
-            model.evaluate(x_test, y_test, batch_size=32)
+        # This throws if libcudnn is not properly installed with on a GPU
+        model.compile(loss='categorical_crossentropy', optimizer=sgd)
+        model.fit(x_train, y_train, batch_size=32, epochs=1)
+        
+        model.evaluate(x_test, y_test, batch_size=32)
 
     # Tensorflow 2.0 doesn't support the contrib package.
     #
