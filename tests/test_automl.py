@@ -5,6 +5,7 @@ from unittest.mock import Mock, patch
 from kaggle_gcp import KaggleKernelCredentials, init_automl
 from test.support import EnvironmentVarGuard
 from google.cloud import storage, automl_v1beta1 as automl
+from packaging.version import parse
 
 def _make_credentials():
     import google.auth.credentials
@@ -14,14 +15,7 @@ class TestAutoMl(unittest.TestCase):
 
     def test_version(self):
         self.assertIsNotNone(automl.auto_ml_client._GAPIC_LIBRARY_VERSION)
-        # follows semver (i.e. major.minor.patch)
-        version_parts = automl.auto_ml_client._GAPIC_LIBRARY_VERSION.split('.')
-        self.assertEqual(3, len(version_parts))
-        # Ensures that version is >= 0.5
-        major = int(version_parts[0])
-        minor = int(version_parts[1])
-        if major == 0:
-            self.assertGreaterEqual(minor, 5)
+        self.assertGreaterEqual(parse(automl.auto_ml_client._GAPIC_LIBRARY_VERSION), parse("0.5.0"))
 
     class FakeClient:
         def __init__(self, credentials=None, client_info=None, **kwargs):
