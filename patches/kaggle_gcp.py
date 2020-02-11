@@ -186,14 +186,8 @@ def monkeypatch_client(client_klass, kaggle_kernel_credentials):
         if specified_credentials is None:
             Log.info("No credentials specified, using KaggleKernelCredentials.")
             kwargs['credentials'] = kaggle_kernel_credentials
-        
-        # TODO(vimota): Remove the exclusion of TablesClient once
-        # the client has fixed the error:
-        # `multiple values for keyword argument 'client_info'``
-        from google.cloud import automl_v1beta1
-        if (client_klass != automl_v1beta1.TablesClient):
-            kwargs['client_info'] = set_kaggle_user_agent(kwargs.get('client_info'))
 
+        kwargs['client_info'] = set_kaggle_user_agent(kwargs.get('client_info'))
 
         return client_init(self, *args, **kwargs)
 
@@ -227,30 +221,35 @@ def init_gcs():
 
 def init_automl():
     is_user_secrets_token_set = "KAGGLE_USER_SECRETS_TOKEN" in os.environ
-    from google.cloud import automl_v1beta1 as automl
+    from google.cloud import automl, automl_v1beta1
     if not is_user_secrets_token_set:
-        return automl
+        return
 
     from kaggle_gcp import get_integrations
     if not get_integrations().has_automl():
-        return automl
+        return
 
     from kaggle_secrets import GcpTarget
     from kaggle_gcp import KaggleKernelCredentials
     kaggle_kernel_credentials = KaggleKernelCredentials(target=GcpTarget.AUTOML)
 
-    # The AutoML client library exposes 4 different client classes (AutoMlClient,
-    # TablesClient, PredictionServiceClient and GcsClient), so patch each of them.
-    # The same KaggleKernelCredentials are passed to all of them.
+    # Patch the 2 GA clients: AutoMlClient and PreditionServiceClient
     monkeypatch_client(automl.AutoMlClient, kaggle_kernel_credentials)
-    monkeypatch_client(automl.TablesClient, kaggle_kernel_credentials)
     monkeypatch_client(automl.PredictionServiceClient, kaggle_kernel_credentials)
-    # TODO(markcollins): The GcsClient in the AutoML client library version
-    # 0.5.0 doesn't handle credentials properly. I wrote PR:
-    # https://github.com/googleapis/google-cloud-python/pull/9299
-    # to address this issue. Add patching for GcsClient when we get a version of
-    # the library that includes the fixes.
-    return automl
+
+    # The AutoML client library exposes 3 different client classes (AutoMlClient,
+    # TablesClient, PredictionServiceClient), so patch each of them.
+    # The same KaggleKernelCredentials are passed to all of them.
+    # The GcsClient class is only used internally by TablesClient.
+
+    # The beta version of the clients that are now GA are included here for now.
+    # They are deprecated and will be removed by 1 May 2020.
+    monkeypatch_client(automl_v1beta1.AutoMlClient, kaggle_kernel_credentials)
+    monkeypatch_client(automl_v1beta1.PredictionServiceClient, kaggle_kernel_credentials)
+
+    # The TablesClient is still in beta, so this will not be deprecated until
+    # the TablesClient is GA.
+    monkeypatch_client(automl_v1beta1.TablesClient, kaggle_kernel_credentials)
 
 def init():
     init_bigquery()
