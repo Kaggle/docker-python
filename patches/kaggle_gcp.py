@@ -187,10 +187,6 @@ def monkeypatch_client(client_klass, kaggle_kernel_credentials):
             Log.info("No credentials specified, using KaggleKernelCredentials.")
             kwargs['credentials'] = kaggle_kernel_credentials
 
-        # TODO(vimota): Remove the exclusion of TablesClient once
-        # the client has fixed the error:
-        # `multiple values for keyword argument 'client_info'``
-        from google.cloud import automl_v1beta1
         kwargs['client_info'] = set_kaggle_user_agent(kwargs.get('client_info'))
 
         return client_init(self, *args, **kwargs)
