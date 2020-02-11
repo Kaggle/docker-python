@@ -5,19 +5,12 @@ from unittest.mock import Mock, patch
 from kaggle_gcp import KaggleKernelCredentials, init_automl
 from test.support import EnvironmentVarGuard
 from google.cloud import storage, automl_v1beta1, automl
-from pkg_resources import get_distribution
-from packaging.version import parse
 
 def _make_credentials():
     import google.auth.credentials
     return Mock(spec=google.auth.credentials.Credentials)
 
 class TestAutoMl(unittest.TestCase):
-
-    def test_version(self):
-        version = get_distribution("google-cloud-automl").version
-        self.assertIsNotNone(version)
-        self.assertGreaterEqual(parse(version), parse("0.5.0"))
 
     class FakeClient:
         def __init__(self, credentials=None, client_info=None, **kwargs):
