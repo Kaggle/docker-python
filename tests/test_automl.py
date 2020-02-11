@@ -95,6 +95,7 @@ class TestAutoMl(unittest.TestCase):
             tables_client = automl_v1beta1.TablesClient()
             self.assertIsNotNone(tables_client.credentials)
             self.assertIsInstance(tables_client.credentials, KaggleKernelCredentials)
+            self.assertTrue(tables_client._connection.user_agent.startswith("kaggle-gcp-client/1.0"))
 
     @patch("google.cloud.automl.PredictionServiceClient", new=FakeClient)
     def test_default_credentials_prediction_client(self):
@@ -105,6 +106,7 @@ class TestAutoMl(unittest.TestCase):
             prediction_client = automl.PredictionServiceClient()
             self.assertIsNotNone(prediction_client.credentials)
             self.assertIsInstance(prediction_client.credentials, KaggleKernelCredentials)
+            self.assertTrue(prediction_client._connection.user_agent.startswith("kaggle-gcp-client/1.0"))
 
     @patch("google.cloud.automl_v1beta1.PredictionServiceClient", new=FakeClient)
     def test_default_credentials_prediction_v1beta1_client(self):
@@ -115,6 +117,7 @@ class TestAutoMl(unittest.TestCase):
             prediction_client = automl_v1beta1.PredictionServiceClient()
             self.assertIsNotNone(prediction_client.credentials)
             self.assertIsInstance(prediction_client.credentials, KaggleKernelCredentials)
+            self.assertTrue(prediction_client._connection.user_agent.startswith("kaggle-gcp-client/1.0"))
 
     def test_monkeypatching_idempotent(self):
         env = EnvironmentVarGuard()

@@ -242,8 +242,9 @@ def init_automl():
     monkeypatch_client(automl.PredictionServiceClient, kaggle_kernel_credentials)
 
     # The AutoML client library exposes 3 different client classes (AutoMlClient,
-    # TablesClient, PredictionServiceClient, so patch each of them.
+    # TablesClient, PredictionServiceClient), so patch each of them.
     # The same KaggleKernelCredentials are passed to all of them.
+    # The GcsClient class is only used internally by TablesClient.
 
     # The beta version of the clients that are now GA are included here for now.
     # They are deprecated and will be removed by 1 May 2020.
