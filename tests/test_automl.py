@@ -14,6 +14,7 @@ class TestAutoMl(unittest.TestCase):
 
     def test_version(self):
         self.assertIsNotNone(automl.auto_ml_client._GAPIC_LIBRARY_VERSION)
+        # follows semver (i.e. major.minor.patch)
         version_parts = automl.auto_ml_client._GAPIC_LIBRARY_VERSION.split('.')
         self.assertEqual(3, len(version_parts))
         # Ensures that version is >= 0.5
