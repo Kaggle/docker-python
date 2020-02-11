@@ -17,10 +17,10 @@ class TestAutoMl(unittest.TestCase):
         version_parts = automl.auto_ml_client._GAPIC_LIBRARY_VERSION.split('.')
         self.assertEqual(3, len(version_parts))
         # Ensures that version is >= 0.5
-        major = version_parts[0]
-        minor = version_parts[1]
+        major = int(version_parts[0])
+        minor = int(version_parts[1])
         if major == 0:
-            self.assertGreaterEqual(5, minor)
+            self.assertGreaterEqual(minor, 5)
 
     class FakeClient:
         def __init__(self, credentials=None, client_info=None, **kwargs):
