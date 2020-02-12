@@ -24,7 +24,6 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
 # The anaconda base image includes outdated versions of these packages. Update them to include the latest version.
 RUN pip install seaborn python-dateutil dask && \
     pip install pyyaml joblib pytagcloud husl geopy ml_metrics mne pyshp && \
-    pip install spacy && python -m spacy download en && python -m spacy download en_core_web_lg && \
     # b/148783763 removes once qgrid and tsfresh supports pandas 1.0.0
     pip install pandas==0.25.3 && \
     # The apt-get version of imagemagick is out of date and has compatibility issues, so we build from source
@@ -411,7 +410,7 @@ RUN pip install bcolz && \
     pip install torchtext && \
     pip install allennlp && \
     # b/149359379 remove once allennlp 1.0 is released which won't cause a spacy downgrade.
-    pip install spacy==2.2.3 && \
+    pip install spacy==2.2.3 && python -m spacy download en && python -m spacy download en_core_web_lg && \
     /tmp/clean-layer.sh
 
     ###########
