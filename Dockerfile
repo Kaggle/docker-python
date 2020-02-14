@@ -470,6 +470,8 @@ RUN pip install flashtext && \
     pip install earthengine-api && \
     pip install transformers && \
     pip install kaggle-environments && \
+    # PySpark package
+    pip install pyspark && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
