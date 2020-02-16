@@ -9,6 +9,6 @@ class TestDLib(unittest.TestCase):
         detector = dlib.get_frontal_face_detector()
         image = cv2.imread('/input/tests/data/face.jpg')
         image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        faces = detector(image, 1)
+        faces = detector(image_gray, 1)
 
         self.assertEqual(len(faces), 1)
