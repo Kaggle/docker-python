@@ -469,6 +469,8 @@ RUN pip install flashtext && \
     pip install bqplot && \
     pip install earthengine-api && \
     pip install transformers && \
+    pip install dlib && \
+    pip install easydict && \
     pip install kaggle-environments && \
     /tmp/clean-layer.sh
 
