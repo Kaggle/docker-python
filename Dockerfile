@@ -470,7 +470,7 @@ RUN pip install flashtext && \
     pip install earthengine-api && \
     pip install transformers && \
     pip install kaggle-environments && \
-    # b/149905611 TODO(philmod)
+    # b/149905611 The geopandas tests are broken with the version 0.7.0
     pip install geopandas==0.6.3 && \
     /tmp/clean-layer.sh
 
