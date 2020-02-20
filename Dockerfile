@@ -470,6 +470,8 @@ RUN pip install flashtext && \
     pip install earthengine-api && \
     pip install transformers && \
     pip install kaggle-environments && \
+    # b/149905611 TODO(philmod)
+    pip install geopandas==0.6.3 && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
