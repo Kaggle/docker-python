@@ -484,12 +484,12 @@ RUN apt-get install tesseract-ocr -y && \
     /tmp/clean-layer.sh
 ENV TESSERACT_PATH=/usr/bin/tesseract
 
-# Pin Vowpal Wabbit v8.6.0 because 8.6.1 does not build or install successfully
-RUN cd /usr/local/src && \
-    git clone -b 8.6.0 https://github.com/JohnLangford/vowpal_wabbit.git && \
-    ./vowpal_wabbit/python/conda_install.sh && \
-    # Reinstall in non-editable mode (without the -e flag)
-    pip install vowpal_wabbit/python && \
+# Install vowpalwabbit
+RUN apt-get install -y libboost-dev libboost-program-options-dev libboost-system-dev libboost-thread-dev libboost-math-dev libboost-test-dev zlib1g-dev cmake g++ && \
+    pip install six && \
+    apt-get install -y libboost-python-dev default-jdk && \
+    ln -s /usr/lib/x86_64-linux-gnu/libboost_python-py35.so /usr/lib/x86_64-linux-gnu/libboost_python3.so && \
+    pip install vowpalwabbit && \
     /tmp/clean-layer.sh
 
 # For Facets
