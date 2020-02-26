@@ -24,7 +24,6 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
 # The anaconda base image includes outdated versions of these packages. Update them to include the latest version.
 RUN pip install seaborn python-dateutil dask && \
     pip install pyyaml joblib pytagcloud husl geopy ml_metrics mne pyshp && \
-    # b/148783763 removes once qgrid and tsfresh supports pandas 1.0.0
     pip install pandas && \
     # The apt-get version of imagemagick is out of date and has compatibility issues, so we build from source
     apt-get -y install dbus fontconfig fontconfig-config fonts-dejavu-core fonts-droid-fallback ghostscript gsfonts hicolor-icon-theme \
