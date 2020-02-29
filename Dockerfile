@@ -22,7 +22,9 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     /tmp/clean-layer.sh
 
 # The anaconda base image includes outdated versions of these packages. Update them to include the latest version.
-RUN pip install seaborn python-dateutil dask && \
+# b/150498764 distributed 2.11.0 fails at import while trying to reach out to 8.8.8.8 since the network is disabled in our hermetic tests.
+RUN pip install distributed==2.10.0 && \
+    pip install seaborn python-dateutil dask && \
     pip install pyyaml joblib pytagcloud husl geopy ml_metrics mne pyshp && \
     # b/148783763 removes once qgrid and tsfresh supports pandas 1.0.0
     pip install pandas==0.25.3 && \
