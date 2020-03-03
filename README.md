@@ -1,6 +1,8 @@
+# docker-python
+
 [Kaggle Kernels](https://www.kaggle.com/kernels) allow users to run a Python Notebook in the cloud against our competitions and datasets without having to download data or set up their environment.
 
-This repository includes our Dockerfiles for building the [CPU-only](Dockerfile) and [GPU](gpu.Dockerfile) image that runs Python Kernels on Kaggle. 
+This repository includes our Dockerfiles for building the [CPU-only](Dockerfile) and [GPU](gpu.Dockerfile) image that runs Python Kernels on Kaggle.
 
 Our Python Docker images are stored on Google Container Registry at:
 
