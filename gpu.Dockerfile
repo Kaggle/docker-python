@@ -93,6 +93,7 @@ RUN pip uninstall -y tensorflow && \
 RUN pip install pycuda && \
     pip install cupy-cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
     pip install pynvrtc && \
+    pip install nnabla-ext-cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
     /tmp/clean-layer.sh
 
 # Re-add TensorBoard Jupyter extension patch

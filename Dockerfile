@@ -22,7 +22,9 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     /tmp/clean-layer.sh
 
 # The anaconda base image includes outdated versions of these packages. Update them to include the latest version.
-RUN pip install seaborn python-dateutil dask && \
+# b/150498764 distributed 2.11.0 fails at import while trying to reach out to 8.8.8.8 since the network is disabled in our hermetic tests.
+RUN pip install distributed==2.10.0 && \
+    pip install seaborn python-dateutil dask && \
     pip install pyyaml joblib pytagcloud husl geopy ml_metrics mne pyshp && \
     # b/148783763 removes once qgrid and tsfresh supports pandas 1.0.0
     pip install pandas==0.25.3 && \
@@ -456,7 +458,11 @@ RUN pip install flashtext && \
     pip install bqplot && \
     pip install earthengine-api && \
     pip install transformers && \
+    pip install dlib && \
     pip install kaggle-environments && \
+    # b/149905611 The geopandas tests are broken with the version 0.7.0
+    pip install geopandas==0.6.3 && \
+    pip install nnabla && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
@@ -469,12 +475,12 @@ RUN apt-get install tesseract-ocr -y && \
     /tmp/clean-layer.sh
 ENV TESSERACT_PATH=/usr/bin/tesseract
 
-# Pin Vowpal Wabbit v8.6.0 because 8.6.1 does not build or install successfully
-RUN cd /usr/local/src && \
-    git clone -b 8.6.0 https://github.com/JohnLangford/vowpal_wabbit.git && \
-    ./vowpal_wabbit/python/conda_install.sh && \
-    # Reinstall in non-editable mode (without the -e flag)
-    pip install vowpal_wabbit/python && \
+# Install vowpalwabbit
+RUN apt-get install -y libboost-dev libboost-program-options-dev libboost-system-dev libboost-thread-dev libboost-math-dev libboost-test-dev zlib1g-dev cmake g++ && \
+    pip install six && \
+    apt-get install -y libboost-python-dev default-jdk && \
+    ln -s /usr/lib/x86_64-linux-gnu/libboost_python-py35.so /usr/lib/x86_64-linux-gnu/libboost_python3.so && \
+    pip install vowpalwabbit && \
     /tmp/clean-layer.sh
 
 # For Facets
