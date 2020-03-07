@@ -475,6 +475,7 @@ RUN pip install flashtext && \
     # b/149905611 The geopandas tests are broken with the version 0.7.0
     pip install geopandas==0.6.3 && \
     pip install nnabla && \
+    conda install -c potassco clingo -y && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
