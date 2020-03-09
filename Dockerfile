@@ -459,6 +459,7 @@ RUN pip install flashtext && \
     pip install chainer-chemistry && \
     pip install plotly_express && \
     pip install albumentations && \
+    pip install safitty && \
     pip install catalyst && \
     # b/145133331: latest version is causing issue with gcloud.
     pip install rtree==0.8.3 && \
