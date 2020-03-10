@@ -133,14 +133,8 @@ RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
     pip install --upgrade numpy && \
     pip install gluonnlp && \
     pip install gluoncv && \
-    # h2o (requires java)
-    # requires java
-    apt-get install -y default-jdk && \
-    cd /usr/local/src && mkdir h2o && cd h2o && \
-    wget --no-verbose http://h2o-release.s3.amazonaws.com/h2o/latest_stable -O latest && \
-    wget --no-verbose --no-check-certificate -i latest -O h2o.zip && rm latest && \
-    unzip h2o.zip && rm h2o.zip && cp h2o-*/h2o.jar . && \
-    pip install `find . -name "*whl"` && \
+    # h2o
+    conda install -c h2oai h2o && \
     /tmp/clean-layer.sh
 
 # b/128333086: Set PROJ_LIB to points to the proj4 cartographic library.
