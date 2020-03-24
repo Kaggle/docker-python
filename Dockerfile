@@ -27,20 +27,7 @@ RUN pip install distributed==2.10.0 && \
     pip install seaborn python-dateutil dask && \
     pip install pyyaml joblib pytagcloud husl geopy ml_metrics mne pyshp && \
     pip install pandas && \
-    # The apt-get version of imagemagick is out of date and has compatibility issues, so we build from source
-    apt-get -y install dbus fontconfig fontconfig-config fonts-dejavu-core fonts-droid-fallback ghostscript gsfonts hicolor-icon-theme \
-    libavahi-client3 libavahi-common-data libavahi-common3 libcairo2 libcap-ng0 libcroco3 \
-    libcups2 libcupsfilters1 libcupsimage2 libdatrie1 libdbus-1-3 libdjvulibre-text libdjvulibre21 libfftw3-double3 libfontconfig1 \
-    libfreetype6 libgdk-pixbuf2.0-0 libgdk-pixbuf2.0-common libgomp1 libgraphite2-3 libgs9 libgs9-common libharfbuzz0b libijs-0.35 \
-    libilmbase12 libjbig0 libjbig2dec0 libjpeg62-turbo liblcms2-2 liblqr-1-0 libltdl7 libmagickcore-6.q16-3 \
-    libmagickcore-6.q16-3-extra libmagickwand-6.q16-3 libnetpbm10 libopenexr22 libpango-1.0-0 libpangocairo-1.0-0 libpangoft2-1.0-0 \
-    libpaper-utils libpaper1 libpixman-1-0 libpng16-16 librsvg2-2 librsvg2-common libthai-data libthai0 libtiff5 libwmf0.2-7 \
-    libxcb-render0 libxcb-shm0 netpbm poppler-data p7zip-full python3-rtree && \
-    cd /usr/local/src && \
-    # b/141476846 latest ImageMagick version fails to build.
-    wget --no-verbose https://github.com/ImageMagick/ImageMagick/archive/7.0.8-65.tar.gz && \
-    tar xzf 7.0.8-65.tar.gz && cd `ls -d ImageMagick-*` && pwd && ls -al && ./configure && \
-    make -j $(nproc) && make install && \
+    apt-get install -y imagemagick && \
     /tmp/clean-layer.sh
 
 # Install tensorflow from a pre-built wheel
