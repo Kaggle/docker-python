@@ -26,9 +26,21 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
 RUN pip install distributed==2.10.0 && \
     pip install seaborn python-dateutil dask && \
     pip install pyyaml joblib pytagcloud husl geopy ml_metrics mne pyshp && \
-    # b/148783763 removes once qgrid and tsfresh supports pandas 1.0.0
-    pip install pandas==0.25.3 && \
-    apt-get install -y imagemagick && \
+    pip install pandas && \
+    # The apt-get version of imagemagick is out of date and has compatibility issues, so we build from source
+    apt-get -y install dbus fontconfig fontconfig-config fonts-dejavu-core fonts-droid-fallback ghostscript gsfonts hicolor-icon-theme \
+    libavahi-client3 libavahi-common-data libavahi-common3 libcairo2 libcap-ng0 libcroco3 \
+    libcups2 libcupsfilters1 libcupsimage2 libdatrie1 libdbus-1-3 libdjvulibre-text libdjvulibre21 libfftw3-double3 libfontconfig1 \
+    libfreetype6 libgdk-pixbuf2.0-0 libgdk-pixbuf2.0-common libgomp1 libgraphite2-3 libgs9 libgs9-common libharfbuzz0b libijs-0.35 \
+    libilmbase12 libjbig0 libjbig2dec0 libjpeg62-turbo liblcms2-2 liblqr-1-0 libltdl7 libmagickcore-6.q16-3 \
+    libmagickcore-6.q16-3-extra libmagickwand-6.q16-3 libnetpbm10 libopenexr22 libpango-1.0-0 libpangocairo-1.0-0 libpangoft2-1.0-0 \
+    libpaper-utils libpaper1 libpixman-1-0 libpng16-16 librsvg2-2 librsvg2-common libthai-data libthai0 libtiff5 libwmf0.2-7 \
+    libxcb-render0 libxcb-shm0 netpbm poppler-data p7zip-full python3-rtree && \
+    cd /usr/local/src && \
+    # b/141476846 latest ImageMagick version fails to build.
+    wget --no-verbose https://github.com/ImageMagick/ImageMagick/archive/7.0.8-65.tar.gz && \
+    tar xzf 7.0.8-65.tar.gz && cd `ls -d ImageMagick-*` && pwd && ls -al && ./configure && \
+    make -j $(nproc) && make install && \
     /tmp/clean-layer.sh
 
 # Install tensorflow from a pre-built wheel
@@ -121,14 +133,8 @@ RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
     pip install --upgrade numpy && \
     pip install gluonnlp && \
     pip install gluoncv && \
-    # h2o (requires java)
-    # requires java
-    apt-get install -y default-jdk && \
-    cd /usr/local/src && mkdir h2o && cd h2o && \
-    wget --no-verbose http://h2o-release.s3.amazonaws.com/h2o/latest_stable -O latest && \
-    wget --no-verbose --no-check-certificate -i latest -O h2o.zip && rm latest && \
-    unzip h2o.zip && rm h2o.zip && cp h2o-*/h2o.jar . && \
-    pip install `find . -name "*whl"` && \
+    # h2o
+    conda install -c h2oai h2o && \
     /tmp/clean-layer.sh
 
 # b/128333086: Set PROJ_LIB to points to the proj4 cartographic library.
@@ -447,6 +453,7 @@ RUN pip install flashtext && \
     pip install chainer-chemistry && \
     pip install plotly_express && \
     pip install albumentations && \
+    pip install safitty && \
     pip install catalyst && \
     # b/145133331: latest version is causing issue with gcloud.
     pip install rtree==0.8.3 && \
