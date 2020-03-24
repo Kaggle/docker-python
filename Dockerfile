@@ -543,5 +543,3 @@ LABEL tensorflow-version=$TENSORFLOW_VERSION
 RUN echo "$GIT_COMMIT" > /etc/git_commit && echo "$BUILD_DATE" > /etc/build_date
 
 EXPOSE 8080
-ADD notebook_config/jupyter_notebook_config.py /root/.jupyter/jupyter_notebook_config.py
-ENV JUPYTER_CONFIG_DIR "/root/.jupyter/"

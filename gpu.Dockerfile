@@ -1,4 +1,4 @@
-ARG BASE_TAG=staging
+ARG BASE_TAG=dlvm-pretest
 
 FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu16.04 AS nvidia
 FROM gcr.io/kaggle-images/python-tensorflow-whl:2.1.0-py36-2 as tensorflow_whl
