@@ -61,8 +61,6 @@ RUN apt-get install -y libfreetype6-dev && \
     pip install git+git://github.com/Lasagne/Lasagne.git && \
     pip install keras && \
     pip install keras-rl && \
-    #keras-rcnn
-    pip install git+https://github.com/broadinstitute/keras-rcnn && \
     pip install flake8 && \
     #neon
     cd /usr/local/src && \
