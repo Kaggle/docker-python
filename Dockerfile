@@ -100,6 +100,9 @@ RUN apt-get install -y libfreetype6-dev && \
 # Make sure the dynamic linker finds the right libstdc++
 ENV LD_LIBRARY_PATH=/opt/conda/lib
 
+# Disable deep conda dependency checks
+RUN conda config --set unsatisfiable_hints_check_depth 1
+
 RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
     pip install matplotlib && \
     pip install pyshp && \
