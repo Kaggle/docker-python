@@ -272,7 +272,6 @@ RUN pip install mpld3 && \
     pip install plotnine==0.4.0 && \
     pip install scikit-surprise && \
     pip install pymongo && \
-    pip install edward && \
     pip install geoplot && \
     pip install eli5 && \
     pip install implicit && \
