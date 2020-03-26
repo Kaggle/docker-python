@@ -322,7 +322,6 @@ RUN pip install --upgrade cython && \
     pip install mlcrate && \
     /tmp/clean-layer.sh
 
-# Fast.ai and dependencies
 RUN pip install bcolz && \
     pip install bleach && \
     pip install certifi && \
@@ -355,6 +354,9 @@ RUN pip install bcolz && \
     pip install pexpect && \
     pip install pickleshare && \
     pip install Pillow && \
+    # Install openslide and its python binding
+    apt-get install -y openslide-tools && \
+    pip install openslide-python && \
     pip install ptyprocess && \
     pip install Pygments && \
     pip install pyparsing && \
