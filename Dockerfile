@@ -243,7 +243,6 @@ RUN pip install mpld3 && \
     pip install geoviews==1.6.1 && \
     pip install hypertools && \
     pip install py_stringsimjoin && \
-    pip install speedml && \
     pip install nibabel && \
     pip install mlens && \
     pip install scikit-multilearn && \
