@@ -69,16 +69,9 @@ RUN apt-get install -y libfreetype6-dev && \
     git clone --depth 1 https://github.com/NervanaSystems/neon.git && \
     cd neon && pip install . && \
     #nolearn
-    cd /usr/local/src && mkdir nolearn && cd nolearn && \
-    git clone --depth 1 https://github.com/dnouri/nolearn.git && cd nolearn && \
-    echo "x" > README.rst && echo "x" > CHANGES.rst && \
-    python setup.py install && \
-    # Dev branch of Theano
-    pip install git+git://github.com/Theano/Theano.git --upgrade --no-deps && \
-    # put theano compiledir inside /tmp (it needs to be in writable dir)
-    printf "[global]\nbase_compiledir = /tmp/.theano\n" > /.theanorc && \
-    cd /usr/local/src &&  git clone --depth 1 https://github.com/pybrain/pybrain && \
-    cd pybrain && python setup.py install && \
+    pip install nolearn
+    pip install Theano
+    pip install pybrain
     # Base ATLAS
     apt-get install -y libatlas-base-dev && \
     cd /usr/local/src && git clone --depth 1 https://github.com/ztane/python-Levenshtein && \
