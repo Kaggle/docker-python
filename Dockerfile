@@ -221,7 +221,6 @@ RUN pip install mpld3 && \
     pip install geojson && \
     pip install pysal && \
     pip install terminalplot && \
-    pip install raccoon && \
     pip install pydicom && \
     pip install wavio && \
     pip install SimpleITK && \
