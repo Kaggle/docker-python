@@ -106,8 +106,7 @@ ENV LD_LIBRARY_PATH=/opt/conda/lib
 # Disable deep conda dependency checks
 RUN conda config --set unsatisfiable_hints_check_depth 1
 
-RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
-    pip install matplotlib && \
+RUN pip install matplotlib && \
     pip install pyshp && \
     pip install pyproj && \
     conda install basemap && \
