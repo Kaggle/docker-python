@@ -214,7 +214,7 @@ RUN pip install mpld3 && \
     pip install ecos && \
     pip install CVXcanon && \
     pip install fancyimpute && \
-    pip install git+https://github.com/pymc-devs/pymc3 && \
+    pip install pymc3 && \
     pip install tifffile && \
     pip install spectral && \
     pip install descartes && \
