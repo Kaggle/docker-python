@@ -334,9 +334,6 @@ RUN pip install --upgrade cython && \
     # yellowbrick machine learning visualization library
     pip install yellowbrick && \
     pip install mlcrate && \
-    # Required to display Altair charts in Jupyter notebook
-    pip install vega3 && \
-    jupyter nbextension install --sys-prefix --py vega3 && \
     /tmp/clean-layer.sh
 
 # Fast.ai and dependencies
