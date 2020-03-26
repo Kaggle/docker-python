@@ -155,8 +155,6 @@ RUN pip install scipy && \
     pip install datashader && \
     # Boruta (python implementation)
     pip install Boruta && \
-    cd /usr/local/src && git clone git://github.com/nicolashennetier/pyeconometrics.git && \
-    cd pyeconometrics && python setup.py install && \
     apt-get install -y graphviz && pip install graphviz && \
     # Pandoc is a dependency of deap
     apt-get install -y pandoc && \
