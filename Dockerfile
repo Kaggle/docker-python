@@ -60,7 +60,6 @@ RUN apt-get install -y libfreetype6-dev && \
     pip install lightgbm==2.3.1 && \
     pip install git+git://github.com/Lasagne/Lasagne.git && \
     pip install keras && \
-    pip install keras-rl && \
     pip install flake8 && \
     #neon
     cd /usr/local/src && \
