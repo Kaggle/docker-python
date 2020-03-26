@@ -50,9 +50,6 @@ RUN apt-get install -y libfreetype6-dev && \
     pip install lightgbm==2.3.1 && \
     pip install git+git://github.com/Lasagne/Lasagne.git && \
     pip install keras && \
-    pip install keras-rl && \
-    #keras-rcnn
-    pip install git+https://github.com/broadinstitute/keras-rcnn && \
     pip install flake8 && \
     #neon
     cd /usr/local/src && \
@@ -183,10 +180,7 @@ RUN pip install mpld3 && \
     pip install toolz cytoolz && \
     pip install sacred && \
     pip install plotly && \
-    pip install git+https://github.com/nicta/dora.git && \
     pip install git+https://github.com/hyperopt/hyperopt.git && \
-    # tflean. Deep learning library featuring a higher-level API for TensorFlow. http://tflearn.org
-    pip install git+https://github.com/tflearn/tflearn.git && \
     pip install fitter && \
     pip install langid && \
     # Delorean. Useful for dealing with datetime
@@ -214,7 +208,6 @@ RUN pip install mpld3 && \
     pip install descartes && \
     pip install geojson && \
     pip install pysal && \
-    pip install pyflux && \
     pip install terminalplot && \
     pip install raccoon && \
     pip install pydicom && \
@@ -257,10 +250,8 @@ RUN pip install mpld3 && \
     # plotnine 0.5 is depending on matplotlib >= 3.0 which is not compatible with basemap.
     # once basemap support matplotlib, we can unpin this package.
     pip install plotnine==0.4.0 && \
-    pip install git+https://github.com/dvaida/hallucinate.git && \
     pip install scikit-surprise && \
     pip install pymongo && \
-    pip install edward && \
     pip install geoplot && \
     pip install eli5 && \
     pip install implicit && \
@@ -281,7 +272,6 @@ RUN pip install kmeans-smote --no-dependencies && \
     pip install fbpca && \
     pip install sentencepiece && \
     pip install cufflinks && \
-    pip install glmnet_py && \
     pip install lime && \
     pip install memory_profiler && \
     /tmp/clean-layer.sh
@@ -309,7 +299,6 @@ RUN pip install --upgrade cython && \
     pip install scattertext && \
     # Pandas data reader
     pip install pandas-datareader && \
-    pip install pykoko && \
     pip install wordsegment && \
     pip install pyahocorasick && \
     pip install wordbatch && \
@@ -322,9 +311,6 @@ RUN pip install --upgrade cython && \
     # yellowbrick machine learning visualization library
     pip install yellowbrick && \
     pip install mlcrate && \
-    # Required to display Altair charts in Jupyter notebook
-    pip install vega3 && \
-    jupyter nbextension install --sys-prefix --py vega3 && \
     /tmp/clean-layer.sh
 
 # Fast.ai and dependencies
