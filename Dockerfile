@@ -97,6 +97,7 @@ RUN apt-get install -y libfreetype6-dev && \
     vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
     # Stop-words
     pip install stop-words && \
+    # remove --upgrade once base image is upgraded and include scikit-image >= 0.16.2
     pip install --upgrade scikit-image && \
     /tmp/clean-layer.sh
 
