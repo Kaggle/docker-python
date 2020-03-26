@@ -224,7 +224,6 @@ RUN pip install mpld3 && \
     pip install descartes && \
     pip install geojson && \
     pip install pysal && \
-    pip install pyflux && \
     pip install terminalplot && \
     pip install raccoon && \
     pip install pydicom && \
