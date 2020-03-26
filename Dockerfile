@@ -69,9 +69,9 @@ RUN apt-get install -y libfreetype6-dev && \
     git clone --depth 1 https://github.com/NervanaSystems/neon.git && \
     cd neon && pip install . && \
     #nolearn
-    pip install nolearn
-    pip install Theano
-    pip install pybrain
+    pip install nolearn && \
+    pip install Theano && \
+    pip install pybrain && \
     # Base ATLAS
     apt-get install -y libatlas-base-dev && \
     cd /usr/local/src && git clone --depth 1 https://github.com/ztane/python-Levenshtein && \
