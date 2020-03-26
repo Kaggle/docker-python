@@ -113,8 +113,7 @@ RUN apt-get install -y libfreetype6-dev && \
 # Make sure the dynamic linker finds the right libstdc++
 ENV LD_LIBRARY_PATH=/opt/conda/lib
 
-RUN apt-get -y install zlib1g-dev liblcms2-dev libwebp-dev libgeos-dev && \
-    pip install matplotlib && \
+RUN pip install matplotlib && \
     pip install pyshp && \
     pip install pyproj && \
     conda install basemap && \
