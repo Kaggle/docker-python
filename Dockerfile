@@ -252,7 +252,6 @@ RUN pip install mpld3 && \
     #cd /usr/local/src && git clone --depth=1 https://github.com/AxeldeRomblay/MLBox && cd MLBox/python-package && python setup.py install && \
     pip install fastFM && \
     pip install lightfm && \
-    pip install paramnb && \
     pip install folium && \
     pip install scikit-plot && \
     # dipy requires the optional fury dependency for visualizations.
@@ -363,10 +362,8 @@ RUN pip install bcolz && \
     pip install PyYAML && \
     pip install pyzmq && \
     pip install qtconsole && \
-    pip install simplegeneric && \
     pip install six && \
     pip install terminado && \
-    pip install testpath && \
     # Latest version (6.0) of tornado breaks Jupyter notebook:
     # https://github.com/jupyter/notebook/issues/4439
     pip install tornado==5.0.2 && \
@@ -402,7 +399,6 @@ RUN pip install flashtext && \
     pip install featuretools && \
     pip install -e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper && \
     pip install hpsklearn && \
-    pip install keras-tqdm && \
     pip install git+https://github.com/Kaggle/learntools && \
     pip install kmapper && \
     pip install shap && \
@@ -412,7 +408,6 @@ RUN pip install flashtext && \
     pip install pyarabic && \
     pip install conx && \
     pip install pandasql && \
-    pip install trackml && \
     pip install tensorflow_hub && \
     pip install jieba  && \
     pip install git+https://github.com/SauceCat/PDPbox && \
@@ -429,7 +424,6 @@ RUN pip install flashtext && \
     pip install chainer-chemistry && \
     pip install plotly_express && \
     pip install albumentations && \
-    pip install safitty && \
     pip install catalyst && \
     # b/145133331: latest version is causing issue with gcloud.
     pip install rtree==0.8.3 && \
