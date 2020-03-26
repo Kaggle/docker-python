@@ -317,7 +317,6 @@ RUN pip install --upgrade cython && \
     pip install scattertext && \
     # Pandas data reader
     pip install pandas-datareader && \
-    pip install pykoko && \
     pip install wordsegment && \
     pip install pyahocorasick && \
     pip install wordbatch && \
