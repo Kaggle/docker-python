@@ -292,7 +292,6 @@ RUN pip install kmeans-smote --no-dependencies && \
     pip install fbpca && \
     pip install sentencepiece && \
     pip install cufflinks && \
-    pip install glmnet_py && \
     pip install lime && \
     pip install memory_profiler && \
     /tmp/clean-layer.sh
