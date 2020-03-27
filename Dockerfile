@@ -86,6 +86,7 @@ RUN pip install nolearn && \
     vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
     # Stop-words
     pip install stop-words && \
+    # remove --upgrade once base image is upgraded and include scikit-image >= 0.16.2
     pip install --upgrade scikit-image && \
     /tmp/clean-layer.sh
 
@@ -139,8 +140,6 @@ RUN pip install scipy && \
     pip install datashader && \
     # Boruta (python implementation)
     pip install Boruta && \
-    cd /usr/local/src && git clone git://github.com/nicolashennetier/pyeconometrics.git && \
-    cd pyeconometrics && python setup.py install && \
     apt-get install -y graphviz && pip install graphviz && \
     # Pandoc is a dependency of deap
     apt-get install -y pandoc && \
@@ -165,7 +164,6 @@ RUN pip install mpld3 && \
     pip install nibabel && \
     pip install pronouncing && \
     pip install markovify && \
-    pip install rf_perm_feat_import && \
     pip install imgaug && \
     pip install preprocessing && \
     pip install Baker && \
@@ -180,14 +178,13 @@ RUN pip install mpld3 && \
     pip install toolz cytoolz && \
     pip install sacred && \
     pip install plotly && \
-    pip install git+https://github.com/hyperopt/hyperopt.git && \
+    pip install hyperopt && \
     pip install fitter && \
     pip install langid && \
     # Delorean. Useful for dealing with datetime
     pip install delorean && \
     pip install trueskill && \
     pip install heamy && \
-    pip install vida && \
     # Useful data exploration libraries (for missing data and generating reports)
     pip install missingno && \
     pip install pandas-profiling && \
@@ -202,14 +199,13 @@ RUN pip install mpld3 && \
     pip install ecos && \
     pip install CVXcanon && \
     pip install fancyimpute && \
-    pip install git+https://github.com/pymc-devs/pymc3 && \
+    pip install pymc3 && \
     pip install tifffile && \
     pip install spectral && \
     pip install descartes && \
     pip install geojson && \
     pip install pysal && \
     pip install terminalplot && \
-    pip install raccoon && \
     pip install pydicom && \
     pip install wavio && \
     pip install SimpleITK && \
@@ -232,7 +228,6 @@ RUN pip install mpld3 && \
     pip install geoviews==1.6.1 && \
     pip install hypertools && \
     pip install py_stringsimjoin && \
-    pip install speedml && \
     pip install nibabel && \
     pip install mlens && \
     pip install scikit-multilearn && \
@@ -242,7 +237,6 @@ RUN pip install mpld3 && \
     #cd /usr/local/src && git clone --depth=1 https://github.com/AxeldeRomblay/MLBox && cd MLBox/python-package && python setup.py install && \
     pip install fastFM && \
     pip install lightfm && \
-    pip install paramnb && \
     pip install folium && \
     pip install scikit-plot && \
     # dipy requires the optional fury dependency for visualizations.
@@ -313,7 +307,6 @@ RUN pip install --upgrade cython && \
     pip install mlcrate && \
     /tmp/clean-layer.sh
 
-# Fast.ai and dependencies
 RUN pip install bcolz && \
     pip install bleach && \
     pip install certifi && \
@@ -346,6 +339,10 @@ RUN pip install bcolz && \
     pip install pexpect && \
     pip install pickleshare && \
     pip install Pillow && \
+    # Install openslide and its python binding
+    apt-get install -y openslide-tools && \
+    # b/152402322 install latest from pip once is in: https://github.com/openslide/openslide-python/pull/76
+    pip install git+git://github.com/rosbo/openslide-python.git@fix-setup && \
     pip install ptyprocess && \
     pip install Pygments && \
     pip install pyparsing && \
@@ -353,10 +350,8 @@ RUN pip install bcolz && \
     pip install PyYAML && \
     pip install pyzmq && \
     pip install qtconsole && \
-    pip install simplegeneric && \
     pip install six && \
     pip install terminado && \
-    pip install testpath && \
     # Latest version (6.0) of tornado breaks Jupyter notebook:
     # https://github.com/jupyter/notebook/issues/4439
     pip install tornado==5.0.2 && \
@@ -392,7 +387,6 @@ RUN pip install flashtext && \
     pip install featuretools && \
     pip install -e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper && \
     pip install hpsklearn && \
-    pip install keras-tqdm && \
     pip install git+https://github.com/Kaggle/learntools && \
     pip install kmapper && \
     pip install shap && \
@@ -402,7 +396,6 @@ RUN pip install flashtext && \
     pip install pyarabic && \
     pip install conx && \
     pip install pandasql && \
-    pip install trackml && \
     pip install tensorflow_hub && \
     pip install jieba  && \
     pip install git+https://github.com/SauceCat/PDPbox && \
@@ -419,7 +412,6 @@ RUN pip install flashtext && \
     pip install chainer-chemistry && \
     pip install plotly_express && \
     pip install albumentations && \
-    pip install safitty && \
     pip install catalyst && \
     # b/145133331: latest version is causing issue with gcloud.
     pip install rtree==0.8.3 && \
