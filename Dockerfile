@@ -26,9 +26,6 @@ ENV LD_LIBRARY_PATH=/opt/conda/lib
 # b/128333086: Set PROJ_LIB to points to the proj4 cartographic library.
 ENV PROJ_LIB=/opt/conda/share/proj
 
-# Disable deep conda dependency checks
-# RUN conda config --set unsatisfiable_hints_check_depth 1
-
 # Install conda packages not available on pip.
 # When using pip in a conda environment, conda commands should be ran first and then
 # the remaining pip commands: https://www.anaconda.com/using-pip-in-a-conda-environment/
