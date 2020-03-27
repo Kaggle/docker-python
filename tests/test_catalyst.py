@@ -1,5 +1,6 @@
 import unittest
 import collections
+import json
 import numpy as np
 
 import torch
@@ -11,7 +12,6 @@ import torchvision.transforms as transforms
 import catalyst
 from catalyst.dl import SupervisedRunner, CheckpointCallback
 from catalyst import utils
-from safitty import Safict
 
 
 def _to_categorical(y, num_classes=None, dtype='float32'):
@@ -144,9 +144,7 @@ class TestCatalyst(unittest.TestCase):
             callbacks=[CheckpointCallback(save_n_best=3)]
         )
         
-        metrics = Safict.load("./logs/checkpoints/_metrics.json")
-        metrics_flag1 = \
-            metrics.get("train.3", "loss") < metrics.get("train.1", "loss")
-        metrics_flag2 = metrics.get("best", "loss") < 0.35
-        self.assertTrue(metrics_flag1)
-        self.assertTrue(metrics_flag2)
+        with open('./logs/checkpoints/_metrics.json') as f:
+            metrics = json.load(f)
+            self.assertTrue(metrics['train.3']['loss'] < metrics['train.1']['loss'])
+            self.assertTrue(metrics['best']['loss'] < 0.35)
