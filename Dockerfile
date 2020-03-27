@@ -193,7 +193,7 @@ RUN pip install mpld3 && \
     pip install toolz cytoolz && \
     pip install sacred && \
     pip install plotly && \
-    pip install git+https://github.com/hyperopt/hyperopt.git && \
+    pip install hyperopt && \
     pip install fitter && \
     pip install langid && \
     # Delorean. Useful for dealing with datetime
