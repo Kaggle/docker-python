@@ -322,7 +322,6 @@ RUN pip install --upgrade cython && \
     pip install mlcrate && \
     /tmp/clean-layer.sh
 
-# Fast.ai and dependencies
 RUN pip install bcolz && \
     pip install bleach && \
     pip install certifi && \
@@ -355,6 +354,10 @@ RUN pip install bcolz && \
     pip install pexpect && \
     pip install pickleshare && \
     pip install Pillow && \
+    # Install openslide and its python binding
+    apt-get install -y openslide-tools && \
+    # b/152402322 install latest from pip once is in: https://github.com/openslide/openslide-python/pull/76
+    pip install git+git://github.com/rosbo/openslide-python.git@fix-setup && \
     pip install ptyprocess && \
     pip install Pygments && \
     pip install pyparsing && \
