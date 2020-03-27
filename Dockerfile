@@ -21,26 +21,16 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     pip install --upgrade pip && \
     /tmp/clean-layer.sh
 
+# Disable deep conda dependency checks
+RUN conda config --set unsatisfiable_hints_check_depth 1
+
 # The anaconda base image includes outdated versions of these packages. Update them to include the latest version.
 # b/150498764 distributed 2.11.0 fails at import while trying to reach out to 8.8.8.8 since the network is disabled in our hermetic tests.
 RUN pip install distributed==2.10.0 && \
     pip install seaborn python-dateutil dask && \
     pip install pyyaml joblib pytagcloud husl geopy ml_metrics mne pyshp && \
     pip install pandas && \
-    # The apt-get version of imagemagick is out of date and has compatibility issues, so we build from source
-    apt-get -y install dbus fontconfig fontconfig-config fonts-dejavu-core fonts-droid-fallback ghostscript gsfonts hicolor-icon-theme \
-    libavahi-client3 libavahi-common-data libavahi-common3 libcairo2 libcap-ng0 libcroco3 \
-    libcups2 libcupsfilters1 libcupsimage2 libdatrie1 libdbus-1-3 libdjvulibre-text libdjvulibre21 libfftw3-double3 libfontconfig1 \
-    libfreetype6 libgdk-pixbuf2.0-0 libgdk-pixbuf2.0-common libgomp1 libgraphite2-3 libgs9 libgs9-common libharfbuzz0b libijs-0.35 \
-    libilmbase12 libjbig0 libjbig2dec0 libjpeg62-turbo liblcms2-2 liblqr-1-0 libltdl7 libmagickcore-6.q16-3 \
-    libmagickcore-6.q16-3-extra libmagickwand-6.q16-3 libnetpbm10 libopenexr22 libpango-1.0-0 libpangocairo-1.0-0 libpangoft2-1.0-0 \
-    libpaper-utils libpaper1 libpixman-1-0 libpng16-16 librsvg2-2 librsvg2-common libthai-data libthai0 libtiff5 libwmf0.2-7 \
-    libxcb-render0 libxcb-shm0 netpbm poppler-data p7zip-full python3-rtree && \
-    cd /usr/local/src && \
-    # b/141476846 latest ImageMagick version fails to build.
-    wget --no-verbose https://github.com/ImageMagick/ImageMagick/archive/7.0.8-65.tar.gz && \
-    tar xzf 7.0.8-65.tar.gz && cd `ls -d ImageMagick-*` && pwd && ls -al && ./configure && \
-    make -j $(nproc) && make install && \
+    conda install -c conda-forge/label/cf202003 imagemagick && \
     /tmp/clean-layer.sh
 
 # Install tensorflow from a pre-built wheel
@@ -69,10 +59,7 @@ RUN apt-get install -y libfreetype6-dev && \
     pip install nolearn && \
     pip install Theano && \
     pip install pybrain && \
-    # Base ATLAS
-    apt-get install -y libatlas-base-dev && \
-    cd /usr/local/src && git clone --depth 1 https://github.com/ztane/python-Levenshtein && \
-    cd python-Levenshtein && python setup.py install && \
+    pip install python-Levenshtein && \
     pip install hep_ml && \
     # chainer
     pip install chainer && \
@@ -104,9 +91,6 @@ RUN apt-get install -y libfreetype6-dev && \
 # Make sure the dynamic linker finds the right libstdc++
 ENV LD_LIBRARY_PATH=/opt/conda/lib
 
-# Disable deep conda dependency checks
-RUN conda config --set unsatisfiable_hints_check_depth 1
-
 RUN pip install matplotlib && \
     pip install pyshp && \
     pip install pyproj && \
@@ -116,11 +100,10 @@ RUN pip install matplotlib && \
     # ...as is psycopg2
     apt-get install -y libpq-dev && \
     pip install ibis-framework && \
-    # Cartopy plus dependencies
-    yes | conda install proj4 && \
-    pip install packaging && \
-    pip install shapely && \
-    pip install cartopy && \
+    # Shapely
+    pip install Shapely && \
+    # Cartopy
+    conda install -c conda-forge cartopy && \
     pip install mxnet && \
     # b/145358669 remove --upgrade once we upgrade base image which will include numpy >= 1.17
     pip install --upgrade numpy && \
