@@ -356,7 +356,7 @@ RUN pip install bcolz && \
     pip install Pillow && \
     # Install openslide and its python binding
     apt-get install -y openslide-tools && \
-    pip install openslide-python && \
+    pip install git+git://github.com/rosbo/openslide-python.git@fix-setup && \
     pip install ptyprocess && \
     pip install Pygments && \
     pip install pyparsing && \
