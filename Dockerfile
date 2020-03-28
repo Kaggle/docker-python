@@ -21,9 +21,24 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     pip install --upgrade pip && \
     /tmp/clean-layer.sh
 
+# Make sure the dynamic linker finds the right libstdc++
+ENV LD_LIBRARY_PATH=/opt/conda/lib
+# b/128333086: Set PROJ_LIB to points to the proj4 cartographic library.
+ENV PROJ_LIB=/opt/conda/share/proj
+
+# Install conda packages not available on pip.
+# When using pip in a conda environment, conda commands should be ran first and then
+# the remaining pip commands: https://www.anaconda.com/using-pip-in-a-conda-environment/
+RUN conda install -c conda-forge matplotlib basemap cartopy python-igraph && \
+    conda install -c h2oai h2o && \
+    conda install -c pytorch pytorch torchvision torchaudio cpuonly && \
+    /tmp/clean-layer.sh
+
 # The anaconda base image includes outdated versions of these packages. Update them to include the latest version.
 # b/150498764 distributed 2.11.0 fails at import while trying to reach out to 8.8.8.8 since the network is disabled in our hermetic tests.
 RUN pip install distributed==2.10.0 && \
+    # b/145358669 remove --upgrade once we upgrade base image which will include numpy >= 1.17
+    pip install --upgrade numpy && \
     pip install seaborn python-dateutil dask && \
     pip install pyyaml joblib pytagcloud husl geopy ml_metrics mne pyshp && \
     pip install pandas && \
@@ -54,7 +69,6 @@ RUN apt-get install -y libfreetype6-dev && \
     pip install gensim && \
     pip install textblob && \
     pip install wordcloud && \
-    conda install -y -c conda-forge python-igraph && \
     pip install xgboost && \
     # Pinned to match GPU version. Update version together.
     pip install lightgbm==2.3.1 && \
@@ -101,37 +115,11 @@ RUN apt-get install -y libfreetype6-dev && \
     pip install --upgrade scikit-image && \
     /tmp/clean-layer.sh
 
-# Make sure the dynamic linker finds the right libstdc++
-ENV LD_LIBRARY_PATH=/opt/conda/lib
-
-# Disable deep conda dependency checks
-RUN conda config --set unsatisfiable_hints_check_depth 1
-
-RUN pip install matplotlib && \
-    pip install pyshp && \
-    pip install pyproj && \
-    conda install basemap && \
-    # sasl is apparently an ibis dependency
-    apt-get -y install libsasl2-dev && \
-    # ...as is psycopg2
-    apt-get install -y libpq-dev && \
-    pip install ibis-framework && \
-    # Cartopy plus dependencies
-    yes | conda install proj4 && \
-    pip install packaging && \
-    pip install shapely && \
-    pip install cartopy && \
+RUN pip install ibis-framework && \
     pip install mxnet && \
-    # b/145358669 remove --upgrade once we upgrade base image which will include numpy >= 1.17
-    pip install --upgrade numpy && \
     pip install gluonnlp && \
-    pip install gluoncv && \
-    # h2o
-    conda install -c h2oai h2o && \
+    pip install gluoncv && \    
     /tmp/clean-layer.sh
-
-# b/128333086: Set PROJ_LIB to points to the proj4 cartographic library.
-ENV PROJ_LIB=/opt/conda/share/proj
 
 # scikit-learn dependencies
 RUN pip install scipy && \
@@ -160,7 +148,6 @@ RUN pip install scipy && \
     apt-get install -y pandoc && \
     pip install git+git://github.com/scikit-learn-contrib/py-earth.git@issue191 && \
     pip install essentia && \
-    conda install -y pytorch torchvision torchaudio cpuonly -c pytorch && \
     /tmp/clean-layer.sh
 
 # vtk with dependencies
