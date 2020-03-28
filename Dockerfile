@@ -33,6 +33,7 @@ RUN conda install -c conda-forge matplotlib basemap cartopy python-igraph && \
     conda install -c h2oai h2o && \
     conda install -c pytorch pytorch torchvision torchaudio cpuonly && \
     conda install -c conda-forge/label/cf202003 imagemagick && \
+    conda install -c anaconda pysal && \
     /tmp/clean-layer.sh
 
 # The anaconda base image includes outdated versions of these packages. Update them to include the latest version.
@@ -190,7 +191,6 @@ RUN pip install mpld3 && \
     pip install spectral && \
     pip install descartes && \
     pip install geojson && \
-    pip install pysal && \
     pip install terminalplot && \
     pip install pydicom && \
     pip install wavio && \
