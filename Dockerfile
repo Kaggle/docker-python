@@ -373,55 +373,100 @@ RUN pip install bcolz && \
     ###########
 
 RUN pip install flashtext && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install wandb && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install marisa-trie && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install pyemd && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install pyupset && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install pympler && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install s3fs && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install featuretools && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install -e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install hpsklearn && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install git+https://github.com/Kaggle/learntools && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install kmapper && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install shap && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install ray && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install gym && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install tensorforce && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install pyarabic && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install conx && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install pandasql && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install tensorflow_hub && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install jieba  && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install git+https://github.com/SauceCat/PDPbox && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install ggplot && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install cesium && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install rgf_python && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     # b/145404107: latest version force specific version of numpy and torch.
     pip install pytext-nlp==0.1.2 && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install tsfresh && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install pymagnitude && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install pykalman && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install optuna && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install chainercv && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install chainer-chemistry && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install plotly_express && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install albumentations && \
     pip install catalyst && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     # b/145133331: latest version is causing issue with gcloud.
     pip install rtree==0.8.3 && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     # b/145133331 osmnx 0.11 requires rtree >= 0.9 which is causing issue with gcloud.
     pip install osmnx==0.10 && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     apt-get -y install libspatialindex-dev && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install pytorch-ignite && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install qgrid && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install bqplot && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install earthengine-api && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install transformers && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install dlib && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install kaggle-environments && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     # b/149905611 The geopandas tests are broken with the version 0.7.0
     pip install geopandas==0.6.3 && \
+    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install nnabla && \
     python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     /tmp/clean-layer.sh
