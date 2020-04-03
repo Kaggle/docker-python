@@ -36,6 +36,9 @@ RUN conda install -c conda-forge matplotlib basemap cartopy python-igraph && \
     conda install -c anaconda pysal && \
     /tmp/clean-layer.sh
 
+RUN conda install -c conda-forge vowpalwabbit && \
+    /tmp/clean-layer.sh
+
 # The anaconda base image includes outdated versions of these packages. Update them to include the latest version.
 # b/150498764 distributed 2.11.0 fails at import while trying to reach out to 8.8.8.8 since the network is disabled in our hermetic tests.
 RUN pip install distributed==2.10.0 && \
@@ -428,13 +431,9 @@ RUN apt-get install tesseract-ocr -y && \
     /tmp/clean-layer.sh
 ENV TESSERACT_PATH=/usr/bin/tesseract
 
-# # Install vowpalwabbit
-# RUN apt-get install -y libboost-dev libboost-program-options-dev libboost-system-dev libboost-thread-dev libboost-math-dev libboost-test-dev zlib1g-dev cmake g++ && \
-#     pip install six && \
-#     apt-get install -y libboost-python-dev default-jdk && \
-#     ln -nfs /usr/lib/x86_64-linux-gnu/libboost_python-py35.so /usr/lib/x86_64-linux-gnu/libboost_python3.so && \
-#     pip install vowpalwabbit && \
-#     /tmp/clean-layer.sh
+# Install Java JRE in order to support H2O.
+RUN apt-get install -y openjdk-8-jre-headless && \
+    /tmp/clean-layer.sh
 
 # For Facets
 ENV PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/
@@ -469,6 +468,8 @@ ADD patches/kaggle_web_client.py /root/.local/lib/python3.6/site-packages/kaggle
 ADD patches/kaggle_datasets.py /root/.local/lib/python3.6/site-packages/kaggle_datasets.py
 ADD patches/log.py /root/.local/lib/python3.6/site-packages/log.py
 ADD patches/sitecustomize.py /root/.local/lib/python3.6/site-packages/sitecustomize.py
+# Override default imagemagick policies
+ADD patches/imagemagick-policy.xml /etc/ImageMagick-6/policy.xml
 
 # TensorBoard Jupyter extension. Should be replaced with TensorBoard's provided magic once we have
 # worker tunneling support in place.
