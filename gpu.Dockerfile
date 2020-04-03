@@ -2,7 +2,7 @@ ARG BASE_TAG=dlvm-pretest
 
 FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu16.04 AS nvidia
 FROM gcr.io/kaggle-images/python-tensorflow-whl:2.1.0-py36-2 as tensorflow_whl
-FROM gcr.io/vimota-project/vimota-python:dlvm-cpu
+FROM gcr.io/kaggle-images/python:${BASE_TAG}
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
 
