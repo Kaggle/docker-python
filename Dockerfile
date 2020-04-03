@@ -48,7 +48,6 @@ RUN pip install distributed==2.10.0 && \
 COPY --from=tensorflow_whl /tmp/tensorflow_cpu/*.whl /tmp/tensorflow_cpu/
 RUN pip install /tmp/tensorflow_cpu/tensorflow*.whl && \
     rm -rf /tmp/tensorflow_cpu && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     /tmp/clean-layer.sh
 
 RUN apt-get install -y libfreetype6-dev && \
@@ -97,14 +96,12 @@ RUN apt-get install -y libfreetype6-dev && \
     pip install stop-words && \
     # remove --upgrade once base image is upgraded and include scikit-image >= 0.16.2
     pip install --upgrade scikit-image && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     /tmp/clean-layer.sh
 
 RUN pip install ibis-framework && \
     pip install mxnet && \
     pip install gluonnlp && \
     pip install gluoncv && \    
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     /tmp/clean-layer.sh
 
 # scikit-learn dependencies
@@ -134,7 +131,6 @@ RUN pip install scipy && \
     apt-get install -y pandoc && \
     pip install git+git://github.com/scikit-learn-contrib/py-earth.git@issue191 && \
     pip install essentia && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     /tmp/clean-layer.sh
 
 # vtk with dependencies
@@ -143,7 +139,6 @@ RUN apt-get install -y libgl1-mesa-glx && \
     # xvfbwrapper with dependencies
     apt-get install -y xvfb && \
     pip install xvfbwrapper && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     /tmp/clean-layer.sh
 
 RUN pip install mpld3 && \
@@ -239,7 +234,6 @@ RUN pip install mpld3 && \
     pip install eli5 && \
     pip install implicit && \
     pip install dask-ml[xgboost] && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     /tmp/clean-layer.sh
 
 RUN pip install kmeans-smote --no-dependencies && \
@@ -258,7 +252,6 @@ RUN pip install kmeans-smote --no-dependencies && \
     pip install cufflinks && \
     pip install lime && \
     pip install memory_profiler && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     /tmp/clean-layer.sh
 
 # install cython & cysignals before pyfasttext
@@ -298,7 +291,6 @@ RUN pip install --upgrade cython && \
     # yellowbrick machine learning visualization library
     pip install yellowbrick && \
     pip install mlcrate && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     /tmp/clean-layer.sh
 
 RUN pip install bcolz && \
@@ -361,7 +353,6 @@ RUN pip install bcolz && \
     pip install allennlp && \
     # b/149359379 remove once allennlp 1.0 is released which won't cause a spacy downgrade.
     pip install spacy==2.2.3 && python -m spacy download en && python -m spacy download en_core_web_lg && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     /tmp/clean-layer.sh
 
     ###########
@@ -373,102 +364,55 @@ RUN pip install bcolz && \
     ###########
 
 RUN pip install flashtext && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install wandb && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install marisa-trie && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install pyemd && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install pyupset && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install pympler && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install s3fs && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install featuretools && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install -e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install hpsklearn && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install git+https://github.com/Kaggle/learntools && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install kmapper && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install shap && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install ray && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install gym && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install tensorforce && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install pyarabic && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install conx && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install pandasql && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install tensorflow_hub && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install jieba  && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install git+https://github.com/SauceCat/PDPbox && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install ggplot && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install cesium && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install rgf_python && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     # b/145404107: latest version force specific version of numpy and torch.
     pip install pytext-nlp==0.1.2 && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install tsfresh && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
-    pip install pymagnitude && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install pykalman && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install optuna && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install chainercv && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install chainer-chemistry && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install plotly_express && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install albumentations && \
     pip install catalyst && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     # b/145133331: latest version is causing issue with gcloud.
     pip install rtree==0.8.3 && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     # b/145133331 osmnx 0.11 requires rtree >= 0.9 which is causing issue with gcloud.
     pip install osmnx==0.10 && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     apt-get -y install libspatialindex-dev && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install pytorch-ignite && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install qgrid && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install bqplot && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install earthengine-api && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install transformers && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install dlib && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install kaggle-environments && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     # b/149905611 The geopandas tests are broken with the version 0.7.0
     pip install geopandas==0.6.3 && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     pip install nnabla && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
@@ -478,7 +422,6 @@ RUN apt-get install tesseract-ocr -y && \
     pip install pdf2image && \
     pip install PyPDF && \
     pip install pyocr && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     /tmp/clean-layer.sh
 ENV TESSERACT_PATH=/usr/bin/tesseract
 
@@ -505,7 +448,6 @@ RUN pip install --upgrade dask && \
     sed -i "s/^.*Matplotlib is building the font cache using fc-list.*$/# Warning removed by Kaggle/g" /opt/conda/lib/python3.7/site-packages/matplotlib/font_manager.py && \
     # Make matplotlib output in Jupyter notebooks display correctly
     mkdir -p /etc/ipython/ && echo "c = get_config(); c.IPKernelApp.matplotlib = 'inline'" > /etc/ipython/ipython_config.py && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     /tmp/clean-layer.sh
 
 # gcloud SDK https://cloud.google.com/sdk/docs/quickstart-debian-ubuntu
@@ -514,7 +456,6 @@ RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.c
     curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
     apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - && \
     apt-get update -y && apt-get install google-cloud-sdk -y && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)" && \
     /tmp/clean-layer.sh
 
 # Add BigQuery client proxy settings
@@ -549,5 +490,4 @@ LABEL build-date=$BUILD_DATE
 LABEL tensorflow-version=$TENSORFLOW_VERSION
 
 # Correlate current release with the git hash inside the kernel editor by running `!cat /etc/git_commit`.
-RUN echo "$GIT_COMMIT" > /etc/git_commit && echo "$BUILD_DATE" > /etc/build_date && \
-    python -c "import torch; print('rosbo-torch:', torch.__version__)"
+RUN echo "$GIT_COMMIT" > /etc/git_commit && echo "$BUILD_DATE" > /etc/build_date
