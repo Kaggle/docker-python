@@ -71,7 +71,7 @@ For the GPU image:
 # Run the image built locally:
 docker run --runtime nvidia --rm -it kaggle/python-gpu-build /bin/bash
 # Run the image pre-built image from gcr.io
-docker run --rm -it gcr.io/kaggle-gpu-images/python /bin/bash
+docker run --runtime nvidia --rm -it gcr.io/kaggle-gpu-images/python /bin/bash
 ```
 
 To ensure your container can access the GPU, follow the instructions posted [here](https://github.com/Kaggle/docker-python/issues/361#issuecomment-448093930).
