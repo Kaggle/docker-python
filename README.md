@@ -7,7 +7,7 @@ This repository includes our Dockerfiles for building the [CPU-only](Dockerfile)
 Our Python Docker images are stored on Google Container Registry at:
 
 * CPU-only: [gcr.io/kaggle-images/python](https://gcr.io/kaggle-images/python)
-* GPU: private for now, we will make it public soon.
+* GPU: [gcr.io/kaggle-gpu-images/python](https://gcr.io/kaggle-gpu-images/python)
 
 Note: The base image for the GPU image is our CPU-only image. The [gpu.Dockerfile](gpu.Dockerfile) adds a few extra layers to install GPU related libraries and packages (cuda, libcudnn, pycuda etc.) and reinstall packages with specific GPU builds (torch, tensorflow and a few mores).
 
@@ -71,7 +71,7 @@ For the GPU image:
 # Run the image built locally:
 docker run --runtime nvidia --rm -it kaggle/python-gpu-build /bin/bash
 # Run the image pre-built image from gcr.io
-# TODO: Our GPU images are not yet publicly available.
+docker run --rm -it gcr.io/kaggle-gpu-images/python /bin/bash
 ```
 
 To ensure your container can access the GPU, follow the instructions posted [here](https://github.com/Kaggle/docker-python/issues/361#issuecomment-448093930).
