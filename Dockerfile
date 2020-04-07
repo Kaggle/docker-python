@@ -1,8 +1,8 @@
-ARG BASE_TAG=2020.02
+ARG BASE_TAG=latest
 ARG TENSORFLOW_VERSION=2.1.0
 
 FROM gcr.io/kaggle-images/python-tensorflow-whl:${TENSORFLOW_VERSION}-py37 as tensorflow_whl
-FROM continuumio/anaconda3:${BASE_TAG}
+FROM gcr.io/deeplearning-platform-release/base-cpu:${BASE_TAG}
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
@@ -27,10 +27,9 @@ ENV PROJ_LIB=/opt/conda/share/proj
 # Install conda packages not available on pip.
 # When using pip in a conda environment, conda commands should be ran first and then
 # the remaining pip commands: https://www.anaconda.com/using-pip-in-a-conda-environment/
-RUN conda install -c conda-forge matplotlib basemap cartopy python-igraph && \
+RUN conda install -c conda-forge matplotlib basemap cartopy python-igraph imagemagick && \
     conda install -c h2oai h2o && \
     conda install -c pytorch pytorch torchvision torchaudio cpuonly && \
-    conda install -c conda-forge/label/cf202003 imagemagick && \
     conda install -c anaconda pysal && \
     /tmp/clean-layer.sh
 
