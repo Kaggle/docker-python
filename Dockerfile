@@ -1,4 +1,4 @@
-ARG BASE_TAG=2019.03
+ARG BASE_TAG=2020.02
 ARG TENSORFLOW_VERSION=2.1.0
 
 FROM gcr.io/kaggle-images/python-tensorflow-whl:${TENSORFLOW_VERSION}-py37 as tensorflow_whl
@@ -37,8 +37,6 @@ RUN conda install -c conda-forge matplotlib basemap cartopy python-igraph && \
 # The anaconda base image includes outdated versions of these packages. Update them to include the latest version.
 # b/150498764 distributed 2.11.0 fails at import while trying to reach out to 8.8.8.8 since the network is disabled in our hermetic tests.
 RUN pip install distributed==2.10.0 && \
-    # b/145358669 remove --upgrade once we upgrade base image which will include numpy >= 1.17
-    pip install --upgrade numpy && \
     pip install seaborn python-dateutil dask && \
     pip install pyyaml joblib pytagcloud husl geopy ml_metrics mne pyshp && \
     pip install pandas && \
@@ -94,8 +92,6 @@ RUN apt-get install -y libfreetype6-dev && \
     vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
     # Stop-words
     pip install stop-words && \
-    # remove --upgrade once base image is upgraded and include scikit-image >= 0.16.2
-    pip install --upgrade scikit-image && \
     /tmp/clean-layer.sh
 
 RUN pip install ibis-framework && \
@@ -426,12 +422,10 @@ RUN apt-get install tesseract-ocr -y && \
 ENV TESSERACT_PATH=/usr/bin/tesseract
 
 # Install vowpalwabbit
-# RUN apt-get install -y libboost-dev libboost-program-options-dev libboost-system-dev libboost-thread-dev libboost-math-dev libboost-test-dev zlib1g-dev cmake g++ && \
-#     pip install six && \
-#     apt-get install -y libboost-python-dev default-jdk && \
-#     ln -s /usr/lib/x86_64-linux-gnu/libboost_python-py35.so /usr/lib/x86_64-linux-gnu/libboost_python3.so && \
-#     pip install vowpalwabbit && \
-#     /tmp/clean-layer.sh
+# Instructions: https://github.com/VowpalWabbit/vowpal_wabbit/wiki/Python#installing
+RUN apt-get install -y libboost-dev libboost-program-options-dev libboost-system-dev libboost-thread-dev libboost-math-dev libboost-test-dev libboost-python-dev zlib1g-dev && \
+    pip install vowpalwabbit && \
+    /tmp/clean-layer.sh
 
 # For Facets
 ENV PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/
