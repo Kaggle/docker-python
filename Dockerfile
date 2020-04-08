@@ -471,6 +471,8 @@ ADD patches/kaggle_web_client.py /root/.local/lib/python3.7/site-packages/kaggle
 ADD patches/kaggle_datasets.py /root/.local/lib/python3.7/site-packages/kaggle_datasets.py
 ADD patches/log.py /root/.local/lib/python3.7/site-packages/log.py
 ADD patches/sitecustomize.py /root/.local/lib/python3.7/site-packages/sitecustomize.py
+# Override default imagemagick policies
+ADD patches/imagemagick-policy.xml /etc/ImageMagick-6/policy.xml
 
 # TensorBoard Jupyter extension. Should be replaced with TensorBoard's provided magic once we have
 # worker tunneling support in place.
