@@ -29,10 +29,9 @@ ENV PROJ_LIB=/opt/conda/share/proj
 # Install conda packages not available on pip.
 # When using pip in a conda environment, conda commands should be ran first and then
 # the remaining pip commands: https://www.anaconda.com/using-pip-in-a-conda-environment/
-RUN conda install -c conda-forge matplotlib basemap cartopy python-igraph imagemagick && \
+RUN conda install -c conda-forge matplotlib basemap cartopy python-igraph imagemagick pysal && \
     conda install -c h2oai h2o && \
     conda install -c pytorch pytorch torchvision torchaudio cpuonly && \
-    conda install -c anaconda pysal && \
     /tmp/clean-layer.sh
 
 # The anaconda base image includes outdated versions of these packages. Update them to include the latest version.
