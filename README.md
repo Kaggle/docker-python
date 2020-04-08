@@ -1,23 +1,23 @@
 # docker-python
 
-[Kaggle Kernels](https://www.kaggle.com/kernels) allow users to run a Python Notebook in the cloud against our competitions and datasets without having to download data or set up their environment.
+[Kaggle Notebooks](https://www.kaggle.com/notebooks) allow users to run a Python Notebook in the cloud against our competitions and datasets without having to download data or set up their environment.
 
-This repository includes our Dockerfiles for building the [CPU-only](Dockerfile) and [GPU](gpu.Dockerfile) image that runs Python Kernels on Kaggle.
+This repository includes our Dockerfiles for building the [CPU-only](Dockerfile) and [GPU](gpu.Dockerfile) image that runs Python Notebooks on Kaggle.
 
 Our Python Docker images are stored on Google Container Registry at:
 
 * CPU-only: [gcr.io/kaggle-images/python](https://gcr.io/kaggle-images/python)
-* GPU: private for now, we will make it public soon.
+* GPU: [gcr.io/kaggle-gpu-images/python](https://gcr.io/kaggle-gpu-images/python)
 
 Note: The base image for the GPU image is our CPU-only image. The [gpu.Dockerfile](gpu.Dockerfile) adds a few extra layers to install GPU related libraries and packages (cuda, libcudnn, pycuda etc.) and reinstall packages with specific GPU builds (torch, tensorflow and a few mores).
 
 ## Getting started
 
-To get started with this image, read our [guide](http://blog.kaggle.com/2016/02/05/how-to-get-started-with-data-science-in-containers/) to using it yourself, or browse [Kaggle Kernels](https://www.kaggle.com/kernels) for ideas.
+To get started with this image, read our [guide](http://blog.kaggle.com/2016/02/05/how-to-get-started-with-data-science-in-containers/) to using it yourself, or browse [Kaggle Notebooks](https://www.kaggle.com/notebooks) for ideas.
 
 ## Requesting new packages
 
-First, evaluate whether installing the package yourself in your own Kernels suits your needs. See [guide](https://github.com/Kaggle/docker-python/wiki/Missing-Packages).
+First, evaluate whether installing the package yourself in your own notebooks suits your needs. See [guide](https://github.com/Kaggle/docker-python/wiki/Missing-Packages).
 
 If you the first step above doesn't work for your use case, [open an issue](https://github.com/Kaggle/docker-python/issues/new) or a [pull request](https://github.com/Kaggle/docker-python/pulls).
 
@@ -71,7 +71,7 @@ For the GPU image:
 # Run the image built locally:
 docker run --runtime nvidia --rm -it kaggle/python-gpu-build /bin/bash
 # Run the image pre-built image from gcr.io
-# TODO: Our GPU images are not yet publicly available.
+docker run --runtime nvidia --rm -it gcr.io/kaggle-gpu-images/python /bin/bash
 ```
 
 To ensure your container can access the GPU, follow the instructions posted [here](https://github.com/Kaggle/docker-python/issues/361#issuecomment-448093930).

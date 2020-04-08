@@ -17,7 +17,7 @@ RUN apt-get update && \
 RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list && \
     apt-get update && apt-get install -y build-essential unzip cmake && \
     pip install --upgrade pip && \
-    # enum34 is a backport of the Python 3.4 enum class to Python < 3.4. 
+    # enum34 is a backport of the Python 3.4 enum class to Python < 3.4.
     # No need since we are using Python 3.7. This is causing errors for packages
     # expecting the 3.7 version of enum. e.g. AttributeError: module 'enum' has no attribute 'IntFlag'
     pip uninstall -y enum34 && \
@@ -31,10 +31,8 @@ ENV PROJ_LIB=/opt/conda/share/proj
 # Install conda packages not available on pip.
 # When using pip in a conda environment, conda commands should be ran first and then
 # the remaining pip commands: https://www.anaconda.com/using-pip-in-a-conda-environment/
-RUN conda install -c conda-forge matplotlib basemap cartopy python-igraph imagemagick && \
-    # b/142337634#comment22 pin required to avoid torchaudio downgrade.
-    conda install -c pytorch pytorch torchvision "torchaudio>=0.4.0" cpuonly && \
-    conda install -c anaconda pysal && \
+RUN conda install -c conda-forge matplotlib basemap cartopy python-igraph imagemagick pysal && \
+    conda install -c pytorch pytorch torchvision torchaudio cpuonly && \
     /tmp/clean-layer.sh
 
 # The anaconda base image includes outdated versions of these packages. Update them to include the latest version.
@@ -290,7 +288,7 @@ RUN pip install --upgrade cython && \
     pip install vecstack && \
     # Doesn't support Python 3.7 yet. Last release on pypi is from 2017.
     # Add back once this PR is released: https://github.com/scikit-learn-contrib/lightning/pull/133
-    #pip install sklearn-contrib-lightning && \
+    # pip install sklearn-contrib-lightning && \
     # yellowbrick machine learning visualization library
     pip install yellowbrick && \
     pip install mlcrate && \
