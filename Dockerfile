@@ -33,7 +33,7 @@ ENV PROJ_LIB=/opt/conda/share/proj
 # the remaining pip commands: https://www.anaconda.com/using-pip-in-a-conda-environment/
 RUN conda install -c conda-forge matplotlib basemap cartopy python-igraph imagemagick && \
     # b/142337634#comment22 pin required to avoid torchaudio downgrade.
-    conda install -c pytorch pytorch=1.4.0 torchvision=0.5.0 torchaudio=0.4.0 cpuonly && \
+    conda install -c pytorch pytorch torchvision "torchaudio>=0.4.0" cpuonly && \
     conda install -c anaconda pysal && \
     /tmp/clean-layer.sh
 
