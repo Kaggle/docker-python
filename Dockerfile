@@ -43,6 +43,14 @@ RUN pip install distributed==2.10.0 && \
     pip install seaborn python-dateutil dask && \
     pip install pyyaml joblib pytagcloud husl geopy ml_metrics mne pyshp && \
     pip install pandas && \
+    # Install h2o from source.
+    # Use `conda install -c h2oai h2o` once Python 3.7 version is released to conda.
+    apt-get install -y default-jdk && \
+    cd /usr/local/src && mkdir h2o && cd h2o && \
+    wget --no-verbose http://h2o-release.s3.amazonaws.com/h2o/latest_stable -O latest && \
+    wget --no-verbose --no-check-certificate -i latest -O h2o.zip && rm latest && \
+    unzip h2o.zip && rm h2o.zip && cp h2o-*/h2o.jar . && \
+    pip install `find . -name "*whl"` && \
     /tmp/clean-layer.sh
 
 # Install tensorflow from a pre-built wheel
