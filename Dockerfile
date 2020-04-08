@@ -29,10 +29,9 @@ ENV PROJ_LIB=/opt/conda/share/proj
 # Install conda packages not available on pip.
 # When using pip in a conda environment, conda commands should be ran first and then
 # the remaining pip commands: https://www.anaconda.com/using-pip-in-a-conda-environment/
-RUN conda install -c conda-forge matplotlib basemap cartopy python-igraph && \
+RUN conda install -c conda-forge matplotlib basemap cartopy python-igraph imagemagick && \
     conda install -c h2oai h2o && \
     conda install -c pytorch pytorch torchvision torchaudio cpuonly && \
-    conda install -c conda-forge/label/cf202003 imagemagick && \
     conda install -c anaconda pysal && \
     /tmp/clean-layer.sh
 
@@ -466,6 +465,8 @@ ADD patches/kaggle_web_client.py /root/.local/lib/python3.6/site-packages/kaggle
 ADD patches/kaggle_datasets.py /root/.local/lib/python3.6/site-packages/kaggle_datasets.py
 ADD patches/log.py /root/.local/lib/python3.6/site-packages/log.py
 ADD patches/sitecustomize.py /root/.local/lib/python3.6/site-packages/sitecustomize.py
+# Override default imagemagick policies
+ADD patches/imagemagick-policy.xml /etc/ImageMagick-6/policy.xml
 
 # TensorBoard Jupyter extension. Should be replaced with TensorBoard's provided magic once we have
 # worker tunneling support in place.
