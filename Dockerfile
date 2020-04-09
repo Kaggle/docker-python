@@ -32,7 +32,8 @@ ENV PROJ_LIB=/opt/conda/share/proj
 # When using pip in a conda environment, conda commands should be ran first and then
 # the remaining pip commands: https://www.anaconda.com/using-pip-in-a-conda-environment/
 RUN conda install -c conda-forge matplotlib basemap cartopy python-igraph imagemagick pysal && \
-    conda install -c pytorch pytorch torchvision torchaudio cpuonly && \
+    # b/142337634#comment22 pin required to avoid torchaudio downgrade.
+    conda install -c pytorch pytorch torchvision "torchaudio>=0.4.0" cpuonly && \
     /tmp/clean-layer.sh
 
 # The anaconda base image includes outdated versions of these packages. Update them to include the latest version.
