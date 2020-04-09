@@ -26,7 +26,7 @@ ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
 # CUDA user libraries, either manually or through the use of nvidia-docker) exclude them. One
 # convenient way to do so is to obscure its contents by a bind mount:
 #   docker run .... -v /non-existing-directory:/usr/local/cuda/lib64/stubs:ro ...
-ENV LD_LIBRARY_PATH="/usr/local/nvidia/lib64:/usr/local/cuda/lib64:/usr/local/cuda/lib64/stubs"
+ENV LD_LIBRARY_PATH="/usr/local/nvidia/lib64:/usr/local/cuda/lib64:/usr/local/cuda/lib64/stubs:$LD_LIBRARY_PATH"
 ENV NVIDIA_VISIBLE_DEVICES=all
 ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
 ENV NVIDIA_REQUIRE_CUDA="cuda>=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION"
@@ -60,7 +60,10 @@ RUN pip uninstall -y lightgbm && \
     cd LightGBM && \
     git checkout tags/v2.3.1 && \
     mkdir build && cd build && \
-    cmake -DUSE_GPU=1 -DOpenCL_LIBRARY=/usr/local/cuda/lib64/libOpenCL.so -DOpenCL_INCLUDE_DIR=/usr/local/cuda/include/ .. && \
+    cmake -DUSE_GPU=1 \
+        -DOpenCL_LIBRARY=/usr/local/cuda/lib64/libOpenCL.so -DOpenCL_INCLUDE_DIR=/usr/local/cuda/include/ \
+        -DBoost_LIBRARY_DIR=/usr/lib/x86_64-linux-gnu -DBoost_INCLUDE_DIR=/usr/local/include \
+        .. && \
     make -j$(nproc) && \
     cd /usr/local/src/LightGBM/python-package && \
     python setup.py install --precompile && \
