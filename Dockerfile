@@ -15,7 +15,12 @@ RUN apt-get update && \
     # Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
     # as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
 RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list && \
-    apt-get update && apt-get install -y build-essential unzip cmake && \
+    apt-get update && \
+    # Needed by vowpalwabbit & lightGBM (GPU build).
+    # https://github.com/VowpalWabbit/vowpal_wabbit/wiki/Python#installing
+    # https://lightgbm.readthedocs.io/en/latest/GPU-Tutorial.html#build-lightgbm
+    apt-get install -y build-essential unzip cmake && \
+    apt-get install -y libboost-dev libboost-program-options-dev libboost-system-dev libboost-thread-dev libboost-math-dev libboost-test-dev libboost-python-dev libboost-filesystem-dev zlib1g-dev && \
     pip install --upgrade pip && \
     # enum34 is a backport of the Python 3.4 enum class to Python < 3.4.
     # No need since we are using Python 3.7. This is causing errors for packages
@@ -415,6 +420,7 @@ RUN pip install flashtext && \
     # b/149905611 The geopandas tests are broken with the version 0.7.0
     pip install geopandas==0.6.3 && \
     pip install nnabla && \
+    pip install vowpalwabbit && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
@@ -426,12 +432,6 @@ RUN apt-get install tesseract-ocr -y && \
     pip install pyocr && \
     /tmp/clean-layer.sh
 ENV TESSERACT_PATH=/usr/bin/tesseract
-
-# Install vowpalwabbit
-# Instructions: https://github.com/VowpalWabbit/vowpal_wabbit/wiki/Python#installing
-RUN apt-get install -y libboost-dev libboost-program-options-dev libboost-system-dev libboost-thread-dev libboost-math-dev libboost-test-dev libboost-python-dev zlib1g-dev && \
-    pip install vowpalwabbit && \
-    /tmp/clean-layer.sh
 
 # For Facets
 ENV PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/
