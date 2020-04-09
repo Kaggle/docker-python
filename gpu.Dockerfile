@@ -69,7 +69,7 @@ RUN pip uninstall -y lightgbm && \
     /tmp/clean-layer.sh
 
 # Install JAX
-ENV JAX_PYTHON_VERSION=cp36
+ENV JAX_PYTHON_VERSION=cp37
 ENV JAX_CUDA_VERSION=cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION
 ENV JAX_PLATFORM=linux_x86_64
 ENV JAX_BASE_URL="https://storage.googleapis.com/jax-releases"
