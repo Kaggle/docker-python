@@ -1,7 +1,7 @@
 ARG BASE_TAG=staging
 
-FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu16.04 AS nvidia
-FROM gcr.io/kaggle-images/python-tensorflow-whl:2.1.0-py36-2 as tensorflow_whl
+FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu18.04 AS nvidia
+FROM gcr.io/kaggle-images/python-tensorflow-whl:2.1.0-py37 as tensorflow_whl
 FROM gcr.io/kaggle-images/python:${BASE_TAG}
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
@@ -10,6 +10,8 @@ ADD clean-layer.sh  /tmp/clean-layer.sh
 COPY --from=nvidia /etc/apt/sources.list.d/cuda.list /etc/apt/sources.list.d/
 COPY --from=nvidia /etc/apt/sources.list.d/nvidia-ml.list /etc/apt/sources.list.d/
 COPY --from=nvidia /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d/cuda.gpg
+# See b/142337634#comment28
+RUN sed -i 's/deb https:\/\/developer.download.nvidia.com/deb http:\/\/developer.download.nvidia.com/' /etc/apt/sources.list.d/*.list
 
 # Ensure the cuda libraries are compatible with the custom Tensorflow wheels.
 # TODO(b/120050292): Use templating to keep in sync or COPY installed binaries from it.
@@ -26,7 +28,7 @@ ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
 # CUDA user libraries, either manually or through the use of nvidia-docker) exclude them. One
 # convenient way to do so is to obscure its contents by a bind mount:
 #   docker run .... -v /non-existing-directory:/usr/local/cuda/lib64/stubs:ro ...
-ENV LD_LIBRARY_PATH="/usr/local/nvidia/lib64:/usr/local/cuda/lib64:/usr/local/cuda/lib64/stubs"
+ENV LD_LIBRARY_PATH="/usr/local/nvidia/lib64:/usr/local/cuda/lib64:/usr/local/cuda/lib64/stubs:$LD_LIBRARY_PATH"
 ENV NVIDIA_VISIBLE_DEVICES=all
 ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
 ENV NVIDIA_REQUIRE_CUDA="cuda>=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION"
@@ -69,7 +71,7 @@ RUN pip uninstall -y lightgbm && \
     /tmp/clean-layer.sh
 
 # Install JAX
-ENV JAX_PYTHON_VERSION=cp36
+ENV JAX_PYTHON_VERSION=cp37
 ENV JAX_CUDA_VERSION=cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION
 ENV JAX_PLATFORM=linux_x86_64
 ENV JAX_BASE_URL="https://storage.googleapis.com/jax-releases"
@@ -98,4 +100,4 @@ RUN pip install pycuda && \
 
 # Re-add TensorBoard Jupyter extension patch
 # b/139212522 re-enable TensorBoard once solution for slowdown is implemented.
-# ADD patches/tensorboard/notebook.py /opt/conda/lib/python3.6/site-packages/tensorboard/notebook.py
+# ADD patches/tensorboard/notebook.py /opt/conda/lib/python3.7/site-packages/tensorboard/notebook.py

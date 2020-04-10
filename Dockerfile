@@ -1,8 +1,8 @@
-ARG BASE_TAG=2019.03
+ARG BASE_TAG=latest
 ARG TENSORFLOW_VERSION=2.1.0
 
-FROM gcr.io/kaggle-images/python-tensorflow-whl:${TENSORFLOW_VERSION}-py36-2 as tensorflow_whl
-FROM continuumio/anaconda3:${BASE_TAG}
+FROM gcr.io/kaggle-images/python-tensorflow-whl:${TENSORFLOW_VERSION}-py37 as tensorflow_whl
+FROM gcr.io/deeplearning-platform-release/base-cpu:${BASE_TAG}
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
@@ -15,10 +15,17 @@ RUN apt-get update && \
     # Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
     # as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
 RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list && \
-    apt-get update && apt-get install -y build-essential unzip cmake && \
-    # Work to upgrade to Python 3.7 can be found on this branch: https://github.com/Kaggle/docker-python/blob/upgrade-py37/Dockerfile
-    conda install -y python=3.6.6 && \
+    apt-get update && \
+    # Needed by vowpalwabbit & lightGBM (GPU build).
+    # https://github.com/VowpalWabbit/vowpal_wabbit/wiki/Python#installing
+    # https://lightgbm.readthedocs.io/en/latest/GPU-Tutorial.html#build-lightgbm
+    apt-get install -y build-essential unzip cmake && \
+    apt-get install -y libboost-dev libboost-program-options-dev libboost-system-dev libboost-thread-dev libboost-math-dev libboost-test-dev libboost-python-dev libboost-filesystem-dev zlib1g-dev && \
     pip install --upgrade pip && \
+    # enum34 is a backport of the Python 3.4 enum class to Python < 3.4.
+    # No need since we are using Python 3.7. This is causing errors for packages
+    # expecting the 3.7 version of enum. e.g. AttributeError: module 'enum' has no attribute 'IntFlag'
+    pip uninstall -y enum34 && \
     /tmp/clean-layer.sh
 
 # Make sure the dynamic linker finds the right libstdc++
@@ -30,18 +37,20 @@ ENV PROJ_LIB=/opt/conda/share/proj
 # When using pip in a conda environment, conda commands should be ran first and then
 # the remaining pip commands: https://www.anaconda.com/using-pip-in-a-conda-environment/
 RUN conda install -c conda-forge matplotlib basemap cartopy python-igraph imagemagick pysal && \
-    conda install -c h2oai h2o && \
-    conda install -c pytorch pytorch torchvision torchaudio cpuonly && \
+    # b/142337634#comment22 pin required to avoid torchaudio downgrade.
+    conda install -c pytorch pytorch torchvision "torchaudio>=0.4.0" cpuonly && \
     /tmp/clean-layer.sh
 
 # The anaconda base image includes outdated versions of these packages. Update them to include the latest version.
 # b/150498764 distributed 2.11.0 fails at import while trying to reach out to 8.8.8.8 since the network is disabled in our hermetic tests.
 RUN pip install distributed==2.10.0 && \
-    # b/145358669 remove --upgrade once we upgrade base image which will include numpy >= 1.17
-    pip install --upgrade numpy && \
     pip install seaborn python-dateutil dask && \
     pip install pyyaml joblib pytagcloud husl geopy ml_metrics mne pyshp && \
     pip install pandas && \
+    # Install h2o from source.
+    # Use `conda install -c h2oai h2o` once Python 3.7 version is released to conda.
+    apt-get install -y default-jre && \
+    pip install -f https://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o && \
     /tmp/clean-layer.sh
 
 # Install tensorflow from a pre-built wheel
@@ -94,8 +103,6 @@ RUN apt-get install -y libfreetype6-dev && \
     vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
     # Stop-words
     pip install stop-words && \
-    # remove --upgrade once base image is upgraded and include scikit-image >= 0.16.2
-    pip install --upgrade scikit-image && \
     /tmp/clean-layer.sh
 
 RUN pip install ibis-framework && \
@@ -155,7 +162,7 @@ RUN pip install mpld3 && \
     pip install path.py && \
     pip install Geohash && \
     # https://github.com/vinsci/geohash/issues/4
-    sed -i -- 's/geohash/.geohash/g' /opt/conda/lib/python3.6/site-packages/Geohash/__init__.py && \
+    sed -i -- 's/geohash/.geohash/g' /opt/conda/lib/python3.7/site-packages/Geohash/__init__.py && \
     pip install deap && \
     pip install tpot && \
     pip install scikit-optimize && \
@@ -218,7 +225,8 @@ RUN pip install mpld3 && \
     pip install cleverhans && \
     pip install leven && \
     pip install catboost && \
-    pip install fastFM && \
+    # fastFM doesn't support Python 3.7 yet: https://github.com/ibayer/fastFM/issues/151
+    # pip install fastFM && \
     pip install lightfm && \
     pip install folium && \
     pip install scikit-plot && \
@@ -284,7 +292,9 @@ RUN pip install --upgrade cython && \
     pip install janome && \
     pip install wfdb && \
     pip install vecstack && \
-    pip install sklearn-contrib-lightning && \
+    # Doesn't support Python 3.7 yet. Last release on pypi is from 2017.
+    # Add back once this PR is released: https://github.com/scikit-learn-contrib/lightning/pull/133
+    # pip install sklearn-contrib-lightning && \
     # yellowbrick machine learning visualization library
     pip install yellowbrick && \
     pip install mlcrate && \
@@ -388,7 +398,6 @@ RUN pip install flashtext && \
     # b/145404107: latest version force specific version of numpy and torch.
     pip install pytext-nlp==0.1.2 && \
     pip install tsfresh && \
-    pip install pymagnitude && \
     pip install pykalman && \
     pip install optuna && \
     pip install chainercv && \
@@ -411,6 +420,7 @@ RUN pip install flashtext && \
     # b/149905611 The geopandas tests are broken with the version 0.7.0
     pip install geopandas==0.6.3 && \
     pip install nnabla && \
+    pip install vowpalwabbit && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
@@ -422,14 +432,6 @@ RUN apt-get install tesseract-ocr -y && \
     pip install pyocr && \
     /tmp/clean-layer.sh
 ENV TESSERACT_PATH=/usr/bin/tesseract
-
-# Install vowpalwabbit
-RUN apt-get install -y libboost-dev libboost-program-options-dev libboost-system-dev libboost-thread-dev libboost-math-dev libboost-test-dev zlib1g-dev cmake g++ && \
-    pip install six && \
-    apt-get install -y libboost-python-dev default-jdk && \
-    ln -s /usr/lib/x86_64-linux-gnu/libboost_python-py35.so /usr/lib/x86_64-linux-gnu/libboost_python3.so && \
-    pip install vowpalwabbit && \
-    /tmp/clean-layer.sh
 
 # For Facets
 ENV PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/
@@ -443,7 +445,7 @@ RUN pip install --upgrade dask && \
     mkdir -p /root/.jupyter && touch /root/.jupyter/jupyter_nbconvert_config.py && touch /root/.jupyter/migrated && \
     mkdir -p /.jupyter && touch /.jupyter/jupyter_nbconvert_config.py && touch /.jupyter/migrated && \
     # Stop Matplotlib printing junk to the console on first load
-    sed -i "s/^.*Matplotlib is building the font cache using fc-list.*$/# Warning removed by Kaggle/g" /opt/conda/lib/python3.6/site-packages/matplotlib/font_manager.py && \
+    sed -i "s/^.*Matplotlib is building the font cache using fc-list.*$/# Warning removed by Kaggle/g" /opt/conda/lib/python3.7/site-packages/matplotlib/font_manager.py && \
     # Make matplotlib output in Jupyter notebooks display correctly
     mkdir -p /etc/ipython/ && echo "c = get_config(); c.IPKernelApp.matplotlib = 'inline'" > /etc/ipython/ipython_config.py && \
     /tmp/clean-layer.sh
@@ -458,12 +460,12 @@ RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.c
 
 # Add BigQuery client proxy settings
 ENV PYTHONUSERBASE "/root/.local"
-ADD patches/kaggle_gcp.py /root/.local/lib/python3.6/site-packages/kaggle_gcp.py
-ADD patches/kaggle_secrets.py /root/.local/lib/python3.6/site-packages/kaggle_secrets.py
-ADD patches/kaggle_web_client.py /root/.local/lib/python3.6/site-packages/kaggle_web_client.py
-ADD patches/kaggle_datasets.py /root/.local/lib/python3.6/site-packages/kaggle_datasets.py
-ADD patches/log.py /root/.local/lib/python3.6/site-packages/log.py
-ADD patches/sitecustomize.py /root/.local/lib/python3.6/site-packages/sitecustomize.py
+ADD patches/kaggle_gcp.py /root/.local/lib/python3.7/site-packages/kaggle_gcp.py
+ADD patches/kaggle_secrets.py /root/.local/lib/python3.7/site-packages/kaggle_secrets.py
+ADD patches/kaggle_web_client.py /root/.local/lib/python3.7/site-packages/kaggle_web_client.py
+ADD patches/kaggle_datasets.py /root/.local/lib/python3.7/site-packages/kaggle_datasets.py
+ADD patches/log.py /root/.local/lib/python3.7/site-packages/log.py
+ADD patches/sitecustomize.py /root/.local/lib/python3.7/site-packages/sitecustomize.py
 # Override default imagemagick policies
 ADD patches/imagemagick-policy.xml /etc/ImageMagick-6/policy.xml
 
@@ -474,7 +476,7 @@ ADD patches/imagemagick-policy.xml /etc/ImageMagick-6/policy.xml
 # RUN pip install jupyter_tensorboard && \
 #     jupyter serverextension enable jupyter_tensorboard && \
 #     jupyter tensorboard enable
-# ADD patches/tensorboard/notebook.py /opt/conda/lib/python3.6/site-packages/tensorboard/notebook.py
+# ADD patches/tensorboard/notebook.py /opt/conda/lib/python3.7/site-packages/tensorboard/notebook.py
 
 # Set backend for matplotlib
 ENV MPLBACKEND "agg"
