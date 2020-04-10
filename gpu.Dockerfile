@@ -62,10 +62,7 @@ RUN pip uninstall -y lightgbm && \
     cd LightGBM && \
     git checkout tags/v2.3.1 && \
     mkdir build && cd build && \
-    cmake -DUSE_GPU=1 \
-        -DOpenCL_LIBRARY=/usr/local/cuda/lib64/libOpenCL.so -DOpenCL_INCLUDE_DIR=/usr/local/cuda/include/ \
-        -DBoost_LIBRARY_DIR=/usr/lib/x86_64-linux-gnu -DBoost_INCLUDE_DIR=/usr/local/include \
-        .. && \
+    cmake -DUSE_GPU=1 -DOpenCL_LIBRARY=/usr/local/cuda/lib64/libOpenCL.so -DOpenCL_INCLUDE_DIR=/usr/local/cuda/include/ .. && \
     make -j$(nproc) && \
     cd /usr/local/src/LightGBM/python-package && \
     python setup.py install --precompile && \
