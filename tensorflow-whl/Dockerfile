@@ -1,5 +1,5 @@
-FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu16.04 AS nvidia
-FROM continuumio/anaconda3:2019.03
+FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu18.04 AS nvidia
+FROM gcr.io/deeplearning-platform-release/base-cpu:latest
 
 # Avoid interactive configuration prompts/dialogs during apt-get.
 ENV DEBIAN_FRONTEND=noninteractive
@@ -12,6 +12,8 @@ RUN apt-get update && \
 COPY --from=nvidia /etc/apt/sources.list.d/cuda.list /etc/apt/sources.list.d/
 COPY --from=nvidia /etc/apt/sources.list.d/nvidia-ml.list /etc/apt/sources.list.d/
 COPY --from=nvidia /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d/cuda.gpg
+# See b/142337634#comment28
+RUN sed -i 's/deb https:\/\/developer.download.nvidia.com/deb http:\/\/developer.download.nvidia.com/' /etc/apt/sources.list.d/*.list
 
 # Ensure the cuda libraries are compatible with the GPU image.
 # TODO(b/120050292): Use templating to keep in sync.
@@ -28,7 +30,7 @@ ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
 # CUDA user libraries, either manually or through the use of nvidia-docker) exclude them. One
 # convenient way to do so is to obscure its contents by a bind mount:
 #   docker run .... -v /non-existing-directory:/usr/local/cuda/lib64/stubs:ro ...
-ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/nvidia/lib64:/usr/local/cuda/lib64:/usr/local/cuda/lib64/stubs"
+ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/nvidia/lib64:/usr/local/cuda/lib64:/usr/local/cuda/lib64/stubs:$LD_LIBRARY_PATH"
 ENV NVIDIA_VISIBLE_DEVICES=all
 ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
 ENV NVIDIA_REQUIRE_CUDA="cuda>=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION"
