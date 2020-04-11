@@ -49,7 +49,7 @@ RUN pip install distributed==2.10.0 && \
     pip install pandas && \
     # Install h2o from source.
     # Use `conda install -c h2oai h2o` once Python 3.7 version is released to conda.
-    apt-get install -y default-jre && \
+    apt-get install -y default-jre-headless && \
     pip install -f https://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o && \
     /tmp/clean-layer.sh
 
