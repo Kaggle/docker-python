@@ -64,7 +64,13 @@ pipeline {
       steps {
         sh '''#!/bin/bash
           set -exo pipefail
-          docker image prune -f # remove previously built image to prevent disk from filling up
+          # Remove images (dangling or not) created more than 120h (5 days ago) to prevent disk from filling up.
+          docker image prune --all --force --filter "until=120h"
+          # Remove any dangling images (no tags).
+          # All builds for the same branch uses the same tag. This means a subsequent build for the same branch
+          # will untag the previously built image which is safe to do. Builds for a single branch are performed
+          # serially.
+          docker image prune -f
           ./build --gpu --base-image-tag ${STAGING_TAG} | ts
           ./push --gpu ${PRETEST_TAG}
         '''
