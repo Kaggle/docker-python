@@ -39,6 +39,7 @@ ENV PROJ_LIB=/opt/conda/share/proj
 RUN conda install -c conda-forge matplotlib basemap cartopy python-igraph imagemagick pysal && \
     # b/142337634#comment22 pin required to avoid torchaudio downgrade.
     conda install -c pytorch pytorch torchvision "torchaudio>=0.4.0" cpuonly && \
+	conda install -c conda-forge --no-deps pixman==0.34 && \
     /tmp/clean-layer.sh
 
 # The anaconda base image includes outdated versions of these packages. Update them to include the latest version.
