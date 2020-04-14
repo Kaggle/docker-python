@@ -28,6 +28,7 @@ ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
 # CUDA user libraries, either manually or through the use of nvidia-docker) exclude them. One
 # convenient way to do so is to obscure its contents by a bind mount:
 #   docker run .... -v /non-existing-directory:/usr/local/cuda/lib64/stubs:ro ...
+ENV LD_LIBRARY_PATH_NO_STUBS="/usr/local/nvidia/lib64:/usr/local/cuda/lib64:$LD_LIBRARY_PATH"
 ENV LD_LIBRARY_PATH="/usr/local/nvidia/lib64:/usr/local/cuda/lib64:/usr/local/cuda/lib64/stubs:$LD_LIBRARY_PATH"
 ENV NVIDIA_VISIBLE_DEVICES=all
 ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
@@ -101,3 +102,6 @@ RUN pip install pycuda && \
 # Re-add TensorBoard Jupyter extension patch
 # b/139212522 re-enable TensorBoard once solution for slowdown is implemented.
 # ADD patches/tensorboard/notebook.py /opt/conda/lib/python3.7/site-packages/tensorboard/notebook.py
+
+# Remove the CUDA stubs.
+ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH_NO_STUBS"
