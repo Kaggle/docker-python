@@ -491,6 +491,8 @@ ARG BUILD_DATE=unknown
 LABEL git-commit=$GIT_COMMIT
 LABEL build-date=$BUILD_DATE
 LABEL tensorflow-version=$TENSORFLOW_VERSION
+# Used in the Jenkins `Docker GPU Build` step to restrict the images being pruned.
+LABEL kaggle-image=python
 
 # Correlate current release with the git hash inside the kernel editor by running `!cat /etc/git_commit`.
 RUN echo "$GIT_COMMIT" > /etc/git_commit && echo "$BUILD_DATE" > /etc/build_date
