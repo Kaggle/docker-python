@@ -39,7 +39,9 @@ ENV PROJ_LIB=/opt/conda/share/proj
 RUN conda install -c conda-forge matplotlib basemap cartopy python-igraph imagemagick pysal && \
     # b/142337634#comment22 pin required to avoid torchaudio downgrade.
     conda install -c pytorch pytorch torchvision "torchaudio>=0.4.0" cpuonly && \
-	conda install -c conda-forge --no-deps pixman==0.34 && \
+    # pixman 0.38.0 has a known issue causing issues with packages such as pycairo & openslide.
+    # See: https://gitlab.freedesktop.org/pixman/pixman/commit/8256c235d9b3854d039242356905eca854a890ba
+    conda install -c conda-forge --no-deps pixman==0.34 && \
     /tmp/clean-layer.sh
 
 # The anaconda base image includes outdated versions of these packages. Update them to include the latest version.
