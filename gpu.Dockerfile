@@ -56,6 +56,14 @@ RUN apt-get install -y ocl-icd-libopencl1 clinfo libboost-all-dev && \
     echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd && \
     /tmp/clean-layer.sh
 
+# When using pip in a conda environment, conda commands should be ran first and then
+# the remaining pip commands: https://www.anaconda.com/using-pip-in-a-conda-environment/
+# However, because this image is based on the CPU image, this isn't possible but better
+# to put them at the top of this file to minize conflicts.
+RUN conda remove --force -y pytorch torchvision torchaudio cpuonly && \
+    conda install -y pytorch torchvision torchaudio cudatoolkit=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION -c pytorch && \ && \
+    /tmp/clean-layer.sh
+
 # Install LightGBM with GPU
 RUN pip uninstall -y lightgbm && \
     cd /usr/local/src && \
@@ -88,8 +96,6 @@ COPY --from=tensorflow_whl /tmp/tensorflow_gpu/*.whl /tmp/tensorflow_gpu/
 RUN pip uninstall -y tensorflow && \
     pip install /tmp/tensorflow_gpu/tensorflow*.whl && \
     rm -rf /tmp/tensorflow_gpu && \
-    conda remove --force -y pytorch torchvision torchaudio cpuonly && \
-    conda install -y pytorch torchvision torchaudio cudatoolkit=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION -c pytorch && \
     pip uninstall -y mxnet && \
     # b/126259508 --no-deps prevents numpy from being downgraded.
     pip install --no-deps mxnet-cu$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
