@@ -1,0 +1,2 @@
+include tensorflow_gcs_config/*.py
+include tensorflow_gcs_config/*.so

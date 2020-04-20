@@ -1,0 +1,44 @@
+workspace(name = "tensorflow_gcs_config")
+
+load("//third_party/tensorflow:tf_configure.bzl", "tf_configure")
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+tf_configure(
+    name = "local_config_tf",
+)
+
+http_archive(
+    name = "com_github_grpc_grpc",
+    sha256 = "1bf082fb3016154d3f806da8eb5876caf05743da4b2e8130fadd000df74b5bb6",
+    strip_prefix = "grpc-1.21.1",
+    urls = [
+        "https://mirror.bazel.build/github.com/grpc/grpc/archive/v1.21.1.tar.gz",
+        "https://github.com/grpc/grpc/archive/v1.21.1.tar.gz",
+    ],
+)
+
+# 3.7.1 with a fix to BUILD file
+http_archive(
+    name = "com_google_protobuf",
+    sha256 = "1c020fafc84acd235ec81c6aac22d73f23e85a700871466052ff231d69c1b17a",
+    strip_prefix = "protobuf-5902e759108d14ee8e6b0b07653dac2f4e70ac73",
+    urls = [
+        "http://mirror.tensorflow.org/github.com/protocolbuffers/protobuf/archive/5902e759108d14ee8e6b0b07653dac2f4e70ac73.tar.gz",
+        "https://github.com/protocolbuffers/protobuf/archive/5902e759108d14ee8e6b0b07653dac2f4e70ac73.tar.gz",
+    ],
+)
+
+load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
+
+grpc_deps()
+
+http_archive(
+    name = "jsoncpp_git",
+    build_file = "//third_party:jsoncpp.BUILD",
+    sha256 = "c49deac9e0933bcb7044f08516861a2d560988540b23de2ac1ad443b219afdb6",
+    strip_prefix = "jsoncpp-1.8.4",
+    urls = [
+        "http://mirror.tensorflow.org/github.com/open-source-parsers/jsoncpp/archive/1.8.4.tar.gz",
+        "https://github.com/open-source-parsers/jsoncpp/archive/1.8.4.tar.gz",
+    ],
+)
