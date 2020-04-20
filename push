@@ -7,11 +7,13 @@ Usage: $0 [OPTIONS] [LABEL]
 Push a newly-built image with the given LABEL to gcr.io and DockerHub.
 
 Options:
-    -g, --gpu   Push the image with GPU support.
+    -g, --gpu                   Push the image with GPU support.
+    -s, --source-image IMAGE    Tag for the source image. 
 EOF
 }
 
-SOURCE_IMAGE='kaggle/python-build'
+SOURCE_IMAGE_TAG='kaggle/python-build:latest'
+SOURCE_IMAGE_TAG_OVERRIDE=''
 TARGET_IMAGE='gcr.io/kaggle-images/python'
 
 while :; do
@@ -21,8 +23,17 @@ while :; do
             exit
             ;;
         -g|--gpu)
-            SOURCE_IMAGE='kaggle/python-gpu-build'
+            SOURCE_IMAGE_TAG='kaggle/python-gpu-build:latest'
             TARGET_IMAGE='gcr.io/kaggle-private-byod/python'
+            ;;
+        -s|--source-image)
+            if [[ -z $2 ]]; then
+                usage
+                printf 'ERROR: No IMAGE specified after the %s flag.\n' "$1" >&2
+                exit
+            fi
+            SOURCE_IMAGE_TAG_OVERRIDE=$2
+            shift # skip the flag value
             ;;
         -?*)
             usage
@@ -38,16 +49,14 @@ done
 
 LABEL=${1:-testing}
 
-readonly SOURCE_IMAGE
+if [[ -n "$SOURCE_IMAGE_TAG_OVERRIDE" ]]; then
+    SOURCE_IMAGE_TAG="$SOURCE_IMAGE_TAG_OVERRIDE"
+fi
+
+readonly SOURCE_IMAGE_TAG
 readonly TARGET_IMAGE
 readonly LABEL
 
 set -x
-docker tag "${SOURCE_IMAGE}:latest" "${TARGET_IMAGE}:${LABEL}"
+docker tag "${SOURCE_IMAGE_TAG}" "${TARGET_IMAGE}:${LABEL}"
 gcloud docker -- push "${TARGET_IMAGE}:${LABEL}"
-
-# Only CPU images are made public at this time.
-if [[ "$LABEL" == "latest" && SOURCE_IMAGE = "kaggle/python-build" ]]; then
-  docker tag "${SOURCE_IMAGE}:latest" "kaggle/python:${LABEL}"
-  docker push "kaggle/python:${LABEL}"
-fi

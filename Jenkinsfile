@@ -48,7 +48,8 @@ pipeline {
           set -exo pipefail
 
           date
-          ./push ${STAGING_TAG}
+          docker pull gcr.io/kaggle-images/python:${PRETEST_TAG}
+          ./push --source-image gcr.io/kaggle-images/python:${PRETEST_TAG} ${STAGING_TAG}
         '''
       }
     }
@@ -96,7 +97,8 @@ pipeline {
           set -exo pipefail
 
           date
-          ./push --gpu ${STAGING_TAG}
+          docker pull gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
+          ./push --source-image gcr.io/kaggle-private-byod/python:${PRETEST_TAG} --gpu ${STAGING_TAG}
         '''
       }
     }
