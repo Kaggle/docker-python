@@ -100,5 +100,14 @@ RUN cd /usr/local/src/tensorflow && \
     bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_gpu && \
     bazel clean
 
+ADD tensorflow-gcs-config /usr/local/src/tensorflow_gcs_config/
+
+# Build tensorflow_gcs_config library against the tensorflow_cpu build
+RUN cd /usr/local/src/tensorflow_gcs_config && \
+    apt-get install -y libcurl4-openssl-dev && \
+    pip install /tmp/tensorflow_cpu/tensorflow*.whl && \
+    python setup.py bdist_wheel -d /tmp/tensorflow_gcs_config && \
+    bazel clean
+
 # Print out the built .whl files
 RUN ls -R /tmp/tensorflow*

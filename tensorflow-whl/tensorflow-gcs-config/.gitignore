@@ -1,0 +1,12 @@
+bazel-bin
+bazel-genfiles
+bazel-out
+bazel-tensorflow-gcs-config
+bazel-out
+bazel-testlogs
+build
+dist
+__pycache__
+*.egg-info
+*.so
+.bazelrc
