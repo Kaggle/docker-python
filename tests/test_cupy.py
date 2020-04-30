@@ -1,13 +1,12 @@
 import unittest
 
-import cupy as cp
-
 from common import gpu_test
 
 
 class TestCupy(unittest.TestCase):
     @gpu_test
     def test_kernel(self):
+        import cupy as cp
         x = cp.arange(6, dtype='f').reshape(2, 3)
         y = cp.arange(3, dtype='f')
         kernel = cp.ElementwiseKernel(
