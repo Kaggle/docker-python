@@ -4,7 +4,7 @@ import cv2
 import torch
 import kornia
 
-class TestOpenCV(unittest.TestCase):
+class TestKornia(unittest.TestCase):
     def test_imread_opencv(self):
         img = cv2.imread('/input/tests/data/dot.png')
         img_t = kornia.image_to_tensor(img)
