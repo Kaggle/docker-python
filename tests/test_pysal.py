@@ -1,6 +1,6 @@
 import unittest
 
-from pysal.weights import lat2W
+from pysal.lib.weights import lat2W
 
 class TestPysal(unittest.TestCase):
     def test_distance_band(self):
