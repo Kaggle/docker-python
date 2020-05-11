@@ -488,6 +488,12 @@ ADD patches/imagemagick-policy.xml /etc/ImageMagick-6/policy.xml
 #     jupyter tensorboard enable
 # ADD patches/tensorboard/notebook.py /opt/conda/lib/python3.7/site-packages/tensorboard/notebook.py
 
+# Disable unnecessary jupyter extensions
+RUN jupyter-nbextension disable nb_conda --py --sys-prefix && \
+    jupyter-serverextension disable nb_conda --py --sys-prefix && \
+    jupyter-nbextension disable nbpresent --py --sys-prefix && \
+    jupyter-serverextension disable nbpresent --py --sys-prefix
+
 # Set backend for matplotlib
 ENV MPLBACKEND "agg"
 
