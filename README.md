@@ -13,7 +13,7 @@ Note: The base image for the GPU image is our CPU-only image. The [gpu.Dockerfil
 
 ## Getting started
 
-To get started with this image, read our [guide](http://blog.kaggle.com/2016/02/05/how-to-get-started-with-data-science-in-containers/) to using it yourself, or browse [Kaggle Notebooks](https://www.kaggle.com/notebooks) for ideas.
+To get started with this image, read our [guide](https://medium.com/@kaggleteam/how-to-get-started-with-data-science-in-containers-6ed48cb08266) to using it yourself, or browse [Kaggle Notebooks](https://www.kaggle.com/notebooks) for ideas.
 
 ## Requesting new packages
 
