@@ -22,7 +22,7 @@ ENV CUDA_VERSION=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION.$CUDA_PATCH_VERSION
 ENV CUDA_PKG_VERSION=$CUDA_MAJOR_VERSION-$CUDA_MINOR_VERSION=$CUDA_VERSION-1
 LABEL com.nvidia.volumes.needed="nvidia_driver"
 LABEL com.nvidia.cuda.version="${CUDA_VERSION}"
-ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
+ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:/opt/bin:${PATH}
 # The stub is useful to us both for built-time linking and run-time linking, on CPU-only systems.
 # When intended to be used with actual GPUs, make sure to (besides providing access to the host
 # CUDA user libraries, either manually or through the use of nvidia-docker) exclude them. One
