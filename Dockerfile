@@ -115,7 +115,7 @@ RUN apt-get install -y libfreetype6-dev && \
 RUN pip install ibis-framework && \
     pip install mxnet && \
     pip install gluonnlp && \
-    pip install gluoncv && \    
+    pip install gluoncv && \
     /tmp/clean-layer.sh
 
 # scikit-learn dependencies
@@ -430,6 +430,8 @@ RUN pip install flashtext && \
     pip install geopandas==0.6.3 && \
     pip install nnabla && \
     pip install vowpalwabbit && \
+    # install stack to build haskell projects
+    curl -sSL https://get.haskellstack.org/ | sh && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
