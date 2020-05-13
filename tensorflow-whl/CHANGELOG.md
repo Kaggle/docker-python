@@ -14,3 +14,4 @@
 * `2.1.0-py37`: TensorFlow 2.1.0 with Python 3.7
 * `2.1.0-py37-2`: TensorFlow 2.1.0 with Python 3.7 & DLVM base image.
 * `2.1.0-py37-3`: TensorFlow 2.1.0 with Python 3.7, DLVM base image, tensorflow-gcs-config.
+* `2.2.0-py37`: TensorFlow 2.2.0 with Python 3.7.
