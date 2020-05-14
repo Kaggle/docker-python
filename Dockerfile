@@ -422,6 +422,8 @@ RUN pip install flashtext && \
     pip install geopandas==0.6.3 && \
     pip install nnabla && \
     pip install vowpalwabbit && \
+    # papermill can replace nbconvert for executing notebooks
+    pip install papermill && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
@@ -486,9 +488,6 @@ RUN jupyter-nbextension disable nb_conda --py --sys-prefix && \
     jupyter-serverextension disable nb_conda --py --sys-prefix && \
     jupyter-nbextension disable nbpresent --py --sys-prefix && \
     jupyter-serverextension disable nbpresent --py --sys-prefix
-
-# Install papermill so it can replace nbconvert as a method to execute notebooks.
-RUN pip install papermill
 
 # Set backend for matplotlib
 ENV MPLBACKEND "agg"
