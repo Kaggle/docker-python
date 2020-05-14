@@ -219,9 +219,7 @@ RUN pip install mpld3 && \
     pip install stemming && \
     pip install fbprophet && \
     pip install holoviews && \
-    # 1.6.2 is not currently supported by the version of matplotlib we are using.
-    # See other comments about why matplotlib is pinned.
-    pip install geoviews==1.6.1 && \
+    pip install geoviews && \
     pip install hypertools && \
     pip install py_stringsimjoin && \
     pip install nibabel && \
@@ -237,9 +235,7 @@ RUN pip install mpld3 && \
     pip install scikit-plot && \
     # dipy requires the optional fury dependency for visualizations.
     pip install fury dipy && \
-    # plotnine 0.5 is depending on matplotlib >= 3.0 which is not compatible with basemap.
-    # once basemap support matplotlib, we can unpin this package.
-    pip install plotnine==0.4.0 && \
+    pip install plotnine && \
     pip install scikit-surprise && \
     pip install pymongo && \
     pip install geoplot && \
