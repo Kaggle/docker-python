@@ -430,8 +430,33 @@ RUN pip install flashtext && \
     pip install geopandas==0.6.3 && \
     pip install nnabla && \
     pip install vowpalwabbit && \
-    # install stack to build haskell projects
-    curl -sSL https://get.haskellstack.org/ | sh && \
+    /tmp/clean-layer.sh
+
+# install and setup stack to build haskell projects
+RUN curl -sSL https://get.haskellstack.org/ | sh && \
+    stack setup && stack update && \
+    stack install aeson && \
+    stack install vector && \
+    stack install union-find && \
+    stack install bytestring && \
+    stack install mtl && \
+    stack install pqueue && \
+    stack install containers && \
+    stack install hspec && \
+    stack install cmdargs && \
+    stack install filepath && \
+    stack install extra && \
+    stack install directory && \
+    stack install hashtables && \
+    stack install fail && \
+    stack install sort && \
+    stack install deepseq && \
+    stack install pooled-io && \
+    stack install hashtables && \
+    stack install vector-instances && \
+    stack install hashable && \
+    stack install transformers && \
+    stack install pantry && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
