@@ -487,6 +487,9 @@ RUN jupyter-nbextension disable nb_conda --py --sys-prefix && \
     jupyter-nbextension disable nbpresent --py --sys-prefix && \
     jupyter-serverextension disable nbpresent --py --sys-prefix
 
+# Install papermill so it can replace nbconvert as a method to execute notebooks.
+RUN pip install papermill
+
 # Set backend for matplotlib
 ENV MPLBACKEND "agg"
 
