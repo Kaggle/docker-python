@@ -89,7 +89,8 @@ ENV JAX_PLATFORM=linux_x86_64
 ENV JAX_BASE_URL="https://storage.googleapis.com/jax-releases"
 
 RUN  pip install $JAX_BASE_URL/$JAX_CUDA_VERSION/jaxlib-$JAXLIB_VERSION-$JAX_PYTHON_VERSION-none-$JAX_PLATFORM.whl && \
-     pip install jax==$JAX_VERSION
+     pip install jax==$JAX_VERSION && \
+     /tmp/clean-layer.sh
 
 # Reinstall packages with a separate version for GPU support.
 COPY --from=tensorflow_whl /tmp/tensorflow_gpu/*.whl /tmp/tensorflow_gpu/
