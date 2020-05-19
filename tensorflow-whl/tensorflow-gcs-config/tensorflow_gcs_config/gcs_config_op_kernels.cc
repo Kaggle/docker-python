@@ -172,8 +172,8 @@ class GcsCredentialsOpKernel : public OpKernel {
     Env* env_;
 
     mutex mu_;
-    string current_token_ GUARDED_BY(mu_);
-    uint64 expiration_timestamp_sec_ GUARDED_BY(mu_) = 0;
+    string current_token_ TF_GUARDED_BY(mu_);
+    uint64 expiration_timestamp_sec_ TF_GUARDED_BY(mu_) = 0;
 
     // The initial delay for exponential backoffs when retrying failed calls.
     const int64 initial_retry_delay_usec_;
