@@ -424,6 +424,7 @@ RUN pip install flashtext && \
     pip install vowpalwabbit && \
     # papermill can replace nbconvert for executing notebooks
     pip install papermill && \
+    pip install cloud-tpu-client && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
