@@ -1,7 +1,7 @@
 ARG BASE_TAG=latest
-ARG TENSORFLOW_VERSION=2.1.0
+ARG TENSORFLOW_VERSION=2.2.0
 
-FROM gcr.io/kaggle-images/python-tensorflow-whl:${TENSORFLOW_VERSION}-py37-3 as tensorflow_whl
+FROM gcr.io/kaggle-images/python-tensorflow-whl:${TENSORFLOW_VERSION}-py37 as tensorflow_whl
 FROM gcr.io/deeplearning-platform-release/base-cpu:${BASE_TAG}
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
