@@ -62,7 +62,7 @@ RUN apt-get install -y gnupg zip openjdk-8-jdk && \
     dpkg -i bazel_*.deb && \
     rm bazel_*.deb
 
-# Fetch tensorflow & install dependencies.
+# Fetch TensorFlow & install dependencies.
 RUN cd /usr/local/src && \
     git clone https://github.com/tensorflow/tensorflow && \
     cd tensorflow && \
@@ -70,7 +70,7 @@ RUN cd /usr/local/src && \
     pip install keras_applications --no-deps && \
     pip install keras_preprocessing --no-deps
 
-# Create a tensorflow wheel for CPU
+# Create a TensorFlow wheel for CPU
 RUN cd /usr/local/src/tensorflow && \
     cat /dev/null | ./configure && \
     bazel build --config=opt \
@@ -78,6 +78,26 @@ RUN cd /usr/local/src/tensorflow && \
                 --cxxopt="-D_GLIBCXX_USE_CXX11_ABI=0" \
                 //tensorflow/tools/pip_package:build_pip_package && \
     bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_cpu && \
+    bazel clean
+
+# Install TensorFlow CPU wheel which is required to build the GCS & addons libraries.
+RUN pip install /tmp/tensorflow_cpu/tensorflow*.whl
+
+# Build TensorFlow addons library against TensorFlow CPU.
+RUN cd /usr/local/src/ && \
+    git clone https://github.com/tensorflow/addons && \
+    cd addons && \
+    git checkout tags/v0.10.0 && \
+    python ./configure.py && \
+    bazel build --enable_runfiles build_pip_pkg && \
+    bazel-bin/build_pip_pkg /tmp/tfa_cpu && \
+    bazel clean
+
+# Build tensorflow_gcs_config library against TensorFlow CPU.
+ADD tensorflow-gcs-config /usr/local/src/tensorflow_gcs_config/
+RUN cd /usr/local/src/tensorflow_gcs_config && \
+    apt-get install -y libcurl4-openssl-dev && \
+    python setup.py bdist_wheel -d /tmp/tensorflow_gcs_config && \
     bazel clean
 
 # Create a tensorflow wheel for GPU/cuda
@@ -103,13 +123,16 @@ RUN cd /usr/local/src/tensorflow && \
     bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_gpu && \
     bazel clean
 
-ADD tensorflow-gcs-config /usr/local/src/tensorflow_gcs_config/
+# Install TensorFlow GPU wheel which to build addons against.
+RUN pip install /tmp/tensorflow_gpu/tensorflow*.whl
 
-# Build tensorflow_gcs_config library against the tensorflow_cpu build
-RUN cd /usr/local/src/tensorflow_gcs_config && \
-    apt-get install -y libcurl4-openssl-dev && \
-    pip install /tmp/tensorflow_cpu/tensorflow*.whl && \
-    python setup.py bdist_wheel -d /tmp/tensorflow_gcs_config && \
+# Build TensorFlow addons library against TensorFlow GPU.
+ENV CUDA_TOOLKIT_PATH=/usr/local/cuda
+ENV CUDNN_INSTALL_PATH=/usr/lib/x86_64-linux-gnu
+RUN cd /usr/local/src/addons && \
+    python ./configure.py && \
+    bazel build --enable_runfiles build_pip_pkg && \
+    bazel-bin/build_pip_pkg /tmp/tfa_gpu && \
     bazel clean
 
 # Print out the built .whl files
