@@ -47,18 +47,6 @@ pipeline {
         '''
       }
     }
-
-    stage('Push CPU Image') {
-      steps {
-        sh '''#!/bin/bash
-          set -exo pipefail
-
-          date
-          docker pull gcr.io/kaggle-images/python:${PRETEST_TAG}
-          ./push --source-image gcr.io/kaggle-images/python:${PRETEST_TAG} ${STAGING_TAG}
-        '''
-      }
-    }
     
     stage('Docker GPU Build') {
       // A GPU is not required to build this image. However, in our current setup,
@@ -81,7 +69,7 @@ pipeline {
           # will untag the previously built image which is safe to do. Builds for a single branch are performed
           # serially.
           docker image prune -f
-          ./build --gpu --base-image-tag ${STAGING_TAG} | ts
+          ./build --gpu --base-image-tag ${PRETEST_TAG} | ts
           ./push --gpu ${PRETEST_TAG}
         '''
       }
@@ -102,19 +90,6 @@ pipeline {
       }
     }
 
-    stage('Push GPU Image') {
-      agent { label 'ephemeral-linux-gpu' }
-      steps {
-        sh '''#!/bin/bash
-          set -exo pipefail
-
-          date
-          docker pull gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
-          ./push --source-image gcr.io/kaggle-private-byod/python:${PRETEST_TAG} --gpu ${STAGING_TAG}
-        '''
-      }
-    }
-
     stage('Package Versions') {
       parallel {
         stage('CPU Diff') {
@@ -122,8 +97,8 @@ pipeline {
             sh '''#!/bin/bash
             set -exo pipefail
 
-            docker pull gcr.io/kaggle-images/python:${STAGING_TAG}
-            ./diff --target gcr.io/kaggle-images/python:${STAGING_TAG}
+            docker pull gcr.io/kaggle-images/python:${PRETEST_TAG}
+            ./diff --target gcr.io/kaggle-images/python:${PRETEST_TAG}
           '''
           }
         }
@@ -133,11 +108,22 @@ pipeline {
             sh '''#!/bin/bash
             set -exo pipefail
 
-            docker pull gcr.io/kaggle-private-byod/python:${STAGING_TAG}
-            ./diff --gpu --target gcr.io/kaggle-private-byod/python:${STAGING_TAG}
+            docker pull gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
+            ./diff --gpu --target gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
           '''
           }
         }
+      }
+    }
+
+    stage('Label CPU/GPU Staging Images') {
+      steps {
+        sh '''#!/bin/bash
+          set -exo pipefail
+
+          gcloud container images add-tag gcr.io/kaggle-images/python:${PRETEST_TAG} gcr.io/kaggle-images/python:${STAGING_TAG}
+          gcloud container images add-tag gcr.io/kaggle-private-byod/python:${PRETEST_TAG} gcr.io/kaggle-private-byod/python:${STAGING_TAG}
+        '''
       }
     }
   }
