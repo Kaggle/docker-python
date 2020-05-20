@@ -1,5 +1,6 @@
 import unittest
 
+import numpy as np
 import tensorflow as tf
 import tensorflow_addons as tfa
 
@@ -12,3 +13,11 @@ class TestTensorflowAddons(unittest.TestCase):
         mean = tfa.image.mean_filter2d(img, filter_shape=1)
 
         self.assertEqual(1, len(mean))
+    
+    # This test exercises TFA Custom Op. See: b/145555176
+    def test_gelu(self):
+        x = tf.constant([[0.5, 1.2, -0.3]])
+        layer = tfa.layers.GELU()
+        result = layer(x)
+
+        self.assertEqual((1, 3), result.shape)
