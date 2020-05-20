@@ -1,7 +1,7 @@
 ARG BASE_TAG=staging
 
 FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu18.04 AS nvidia
-FROM gcr.io/kaggle-images/python-tensorflow-whl:2.2.0-py37 as tensorflow_whl
+FROM gcr.io/kaggle-images/python-tensorflow-whl:2.2.0-py37-2 as tensorflow_whl
 FROM gcr.io/kaggle-images/python:${BASE_TAG}
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
@@ -100,6 +100,12 @@ RUN pip uninstall -y tensorflow && \
     pip uninstall -y mxnet && \
     # b/126259508 --no-deps prevents numpy from being downgraded.
     pip install --no-deps mxnet-cu$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
+    /tmp/clean-layer.sh
+
+ # Reinstall TensorFlow addons (TFA) with GPU support.
+COPY --from=tensorflow_whl /tmp/tfa_gpu/*.whl /tmp/tfa_gpu/
+RUN pip install /tmp/tfa_gpu/tensorflow*.whl && \
+    rm -rf /tmp/tfa_gpu/ && \
     /tmp/clean-layer.sh
 
 # Install GPU-only packages
