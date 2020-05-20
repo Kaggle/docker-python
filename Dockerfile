@@ -1,7 +1,7 @@
 ARG BASE_TAG=latest
 ARG TENSORFLOW_VERSION=2.2.0
 
-FROM gcr.io/kaggle-images/python-tensorflow-whl:${TENSORFLOW_VERSION}-py37 as tensorflow_whl
+FROM gcr.io/kaggle-images/python-tensorflow-whl:${TENSORFLOW_VERSION}-py37-2 as tensorflow_whl
 FROM gcr.io/deeplearning-platform-release/base-cpu:${BASE_TAG}
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
@@ -66,8 +66,9 @@ RUN pip install /tmp/tensorflow_gcs_config/tensorflow*.whl && \
     /tmp/clean-layer.sh
 
 # Install TensorFlow addons (TFA).
-# TFA functionnality relying on Custom Op won't work. See: https://github.com/tensorflow/addons/issues/987.
-RUN pip install tensorflow-addons==0.10.0 && \
+COPY --from=tensorflow_whl /tmp/tfa_cpu/*.whl /tmp/tfa_cpu/
+RUN pip install /tmp/tfa_cpu/tensorflow*.whl && \
+    rm -rf /tmp/tfa_cpu/ && \
     /tmp/clean-layer.sh
 
 RUN apt-get install -y libfreetype6-dev && \
