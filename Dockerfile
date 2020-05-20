@@ -65,6 +65,11 @@ RUN pip install /tmp/tensorflow_gcs_config/tensorflow*.whl && \
     rm -rf /tmp/tensorflow_gcs_config && \
     /tmp/clean-layer.sh
 
+# Install TensorFlow addons (TFA).
+# TFA functionnality relying on Custom Op won't work. See: https://github.com/tensorflow/addons/issues/987.
+RUN pip install tensorflow-addons==0.10.0 && \
+    /tmp/clean-layer.sh
+
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
     pip install gensim && \
