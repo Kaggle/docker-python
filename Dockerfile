@@ -36,9 +36,15 @@ ENV PROJ_LIB=/opt/conda/share/proj
 # Install conda packages not available on pip.
 # When using pip in a conda environment, conda commands should be ran first and then
 # the remaining pip commands: https://www.anaconda.com/using-pip-in-a-conda-environment/
-RUN conda install -c conda-forge matplotlib basemap cartopy python-igraph imagemagick pysal && \
+# Using the same global consistent ordered list of channels
+RUN conda config --add channels conda-forge && \
+    conda config --add channels nvidia && \
+    conda config --add channels pytorch && \
+    conda config --add channels rapidsai && \
+    # ^ rapidsai is the highest priority channel, default lowest, conda-forge 2nd lowest.
+    conda install matplotlib basemap cartopy python-igraph imagemagick pysal && \
     # b/142337634#comment22 pin required to avoid torchaudio downgrade.
-    conda install -c pytorch pytorch torchvision "torchaudio>=0.4.0" cpuonly && \
+    conda install "pytorch>=1.5.0" "torchvision>=0.6.0" "torchaudio>=0.5.0" cpuonly && \
     /tmp/clean-layer.sh
 
 # The anaconda base image includes outdated versions of these packages. Update them to include the latest version.
