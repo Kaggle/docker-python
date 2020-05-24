@@ -127,7 +127,7 @@ RUN apt-get install -y libfreetype6-dev && \
 RUN pip install ibis-framework && \
     pip install mxnet && \
     pip install gluonnlp && \
-    pip install gluoncv && \    
+    pip install gluoncv && \
     /tmp/clean-layer.sh
 
 # scikit-learn dependencies
@@ -375,7 +375,7 @@ RUN pip install bcolz && \
     pip install allennlp && \
     # b/149359379 remove once allennlp 1.0 is released which won't cause a spacy downgrade.
     pip install spacy==2.2.3 && python -m spacy download en && python -m spacy download en_core_web_lg && \
-    apt-get install -y ffmpeg && \ 
+    apt-get install -y ffmpeg && \
     /tmp/clean-layer.sh
 
     ###########
@@ -408,7 +408,8 @@ RUN pip install flashtext && \
     pip install tensorflow_hub && \
     pip install jieba  && \
     pip install git+https://github.com/SauceCat/PDPbox && \
-    pip install ggplot && \
+    # ggplot is broken and main repo does not merge and release https://github.com/yhat/ggpy/pull/668
+    pip install https://github.com/hbasria/ggpy/archive/0.11.5.zip && \
     pip install cesium && \
     pip install rgf_python && \
     # b/145404107: latest version force specific version of numpy and torch.
