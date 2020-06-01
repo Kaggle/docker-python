@@ -1,4 +1,5 @@
-ARG BASE_TAG=latest
+# b/157908450 set to latest once numba 0.49.x fixes performance regression for datashader.
+ARG BASE_TAG=m46
 ARG TENSORFLOW_VERSION=2.2.0
 
 FROM gcr.io/kaggle-images/python-tensorflow-whl:${TENSORFLOW_VERSION}-py37-2 as tensorflow_whl
