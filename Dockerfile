@@ -373,6 +373,7 @@ RUN pip install bcolz && \
     pip install pyarrow && \
     pip install feather-format && \
     pip install fastai && \
+    pip install fastai2 && \
     pip install torchtext && \
     pip install allennlp && \
     # b/149359379 remove once allennlp 1.0 is released which won't cause a spacy downgrade.
