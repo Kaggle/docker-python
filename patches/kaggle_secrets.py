@@ -30,6 +30,9 @@ class BackendError(Exception):
 class ValidationError(Exception):
     pass
 
+class NotFoundError(Exception):
+    pass
+
 @unique
 class GcpTarget(Enum):
     """Enum class to store GCP targets."""
@@ -115,6 +118,22 @@ class UserSecretsClient():
             raise BackendError(
                 f'Unexpected response from the service. Response: {response_json}')
         return response_json['secret']
+
+    def get_gcloud_credential(self) -> str:
+        """Retrieves the Google Cloud SDK credential attached to the current
+        kernel.
+        Example usage:
+            client = UserSecretsClient()
+            credential_json = client.get_gcloud_credential()
+        """
+        try:
+            return self.get_secret("__gcloud_sdk_auth__")
+        except BackendError as backend_error:
+            message = str(backend_error.args)
+            if message.find('No user secrets exist') != -1:
+              raise NotFoundError('Google Cloud SDK credential not found.')
+            else:
+              raise
 
     def get_bigquery_access_token(self) -> Tuple[str, Optional[datetime]]:
         """Retrieves BigQuery access token information from the UserSecrets service.

@@ -13,7 +13,7 @@ from google.cloud import bigquery
 from kaggle_secrets import (_KAGGLE_URL_BASE_ENV_VAR_NAME,
                             _KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME,
                             CredentialError, GcpTarget, UserSecretsClient,
-                            BackendError, ValidationError)
+                            BackendError, NotFoundError, ValidationError)
 
 _TEST_JWT = 'test-secrets-key'
 
@@ -55,7 +55,7 @@ class TestUserSecrets(unittest.TestCase):
                 if success:
                     return {'result': {'secret': secret, 'secretType': 'refreshToken', 'secretProvider': 'google', 'expiresInSeconds': 3600}, 'wasSuccessful': "true"}
                 else:
-                    return {'wasSuccessful': "false"}
+                    return {'wasSuccessful': "false", 'errors': ['No user secrets exist for kernel']}
 
         env = EnvironmentVarGuard()
         env.set(_KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME, _TEST_JWT)
@@ -95,7 +95,7 @@ class TestUserSecrets(unittest.TestCase):
         self._test_client(call_get_secret,
                           '/requests/GetUserSecretByLabelRequest', {'Label': "secret_label", 'JWE': _TEST_JWT},
                           secret=secret)
-    
+
     def test_get_secret_handles_unsuccessful(self):
         def call_get_secret():
             client = UserSecretsClient()
@@ -112,7 +112,28 @@ class TestUserSecrets(unittest.TestCase):
             client = UserSecretsClient()
             with self.assertRaises(ValidationError):
                 secret_response = client.get_secret("")
-                          
+
+    def test_get_gcloud_secret_succeeds(self):
+        secret = '{"client_id":"gcloud","type":"authorized_user"}'
+
+        def call_get_secret():
+            client = UserSecretsClient()
+            secret_response = client.get_gcloud_credential()
+            self.assertEqual(secret_response, secret)
+        self._test_client(call_get_secret,
+                          '/requests/GetUserSecretByLabelRequest', {'Label': "__gcloud_sdk_auth__", 'JWE': _TEST_JWT},
+                          secret=secret)
+
+    def test_get_gcloud_secret_handles_unsuccessful(self):
+        def call_get_secret():
+            client = UserSecretsClient()
+            with self.assertRaises(NotFoundError):
+              secret_response = client.get_gcloud_credential()
+        self._test_client(call_get_secret,
+                          '/requests/GetUserSecretByLabelRequest', {'Label': "__gcloud_sdk_auth__", 'JWE': _TEST_JWT},
+                          success=False)
+
+
     @mock.patch('kaggle_secrets.datetime')
     def test_get_access_token_succeeds(self, mock_dt):
         secret = '12345'
