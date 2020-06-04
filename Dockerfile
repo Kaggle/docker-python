@@ -500,6 +500,7 @@ ADD patches/imagemagick-policy.xml /etc/ImageMagick-6/policy.xml
 # Disable unnecessary jupyter extensions
 RUN jupyter-nbextension disable nb_conda --py --sys-prefix && \
     jupyter-serverextension disable nb_conda --py --sys-prefix && \
+    python -m nb_conda_kernels.install --disable && \
     jupyter-nbextension disable nbpresent --py --sys-prefix && \
     jupyter-serverextension disable nbpresent --py --sys-prefix
 
