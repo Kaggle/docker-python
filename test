@@ -87,6 +87,10 @@ fi
 # By default, TensorFlow maps nearly all of the GPU memory visible to the process.
 # This is causing issue when other libraries are trying to run tests using a GPU.
 # See: https://www.tensorflow.org/guide/gpu#allowing_gpu_memory_growth
+#
+# Note about `--hostname localhost` (b/158137436)
+# hostname defaults to the container name which fails DNS name
+# resolution with --net=none (required to keep tests hermetic). See details in bug.
 docker run --rm -t --read-only --net=none \
     -e HOME=/tmp -e KAGGLE_DATA_PROXY_TOKEN=test-key \
     -e KAGGLE_USER_SECRETS_TOKEN_KEY=test-secrets-key \
@@ -94,8 +98,6 @@ docker run --rm -t --read-only --net=none \
     -e KAGGLE_DATA_PROXY_URL=http://127.0.0.1:8000 \
     -e KAGGLE_DATA_PROXY_PROJECT=test \
     -e TF_FORCE_GPU_ALLOW_GROWTH=true \
-    # b/158137436: hostname defaults to the container name which fails DNS name
-    # resolution with --net=none (required to keep tests hermetic). See details in bug.
     --hostname localhost \
     --shm-size=2g \
     -v $PWD:/input:ro -v /tmp/python-build/working:/working \
