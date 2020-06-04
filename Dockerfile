@@ -49,8 +49,7 @@ RUN conda config --add channels conda-forge && \
     /tmp/clean-layer.sh
 
 # The anaconda base image includes outdated versions of these packages. Update them to include the latest version.
-RUN pip install distributed && \
-    pip install seaborn python-dateutil dask && \
+RUN pip install seaborn python-dateutil dask && \
     pip install pyyaml joblib pytagcloud husl geopy ml_metrics mne pyshp && \
     pip install pandas && \
     # Install h2o from source.
