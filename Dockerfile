@@ -438,6 +438,7 @@ RUN pip install flashtext && \
     # papermill can replace nbconvert for executing notebooks
     pip install papermill && \
     pip install cloud-tpu-client && \
+    pip install tensorflow-datasets && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
