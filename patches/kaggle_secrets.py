@@ -7,6 +7,7 @@ currently used for retrieving an access token for supported integrations
 import json
 import os
 import socket
+import tensorflow_gcs_config
 import urllib.request
 from datetime import datetime, timedelta
 from enum import Enum, unique
@@ -134,6 +135,21 @@ class UserSecretsClient():
               raise NotFoundError('Google Cloud SDK credential not found.')
             else:
               raise
+
+    def set_tensorflow_credential(self, credential):
+        """Sets the credential for use by Tensorflow both in the local notebook
+        and to pass to the TPU.
+        """
+        # Write to a local JSON credentials file and set
+        # GOOGLE_APPLICATION_CREDENTIALS for tensorflow running in the notebook.
+        adc_path = os.path.join(
+            os.environ.get('HOME', '/'), 'gcloud_credential.json')
+        with open(adc_path, 'w') as f:
+          f.write(credential)
+          os.environ['GOOGLE_APPLICATION_CREDENTIALS']=adc_path
+
+        # set the credential for the TPU
+        tensorflow_gcs_config.configure_gcs(credentials=credential)
 
     def get_bigquery_access_token(self) -> Tuple[str, Optional[datetime]]:
         """Retrieves BigQuery access token information from the UserSecrets service.
