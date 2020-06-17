@@ -211,6 +211,7 @@ RUN pip install mpld3 && \
     pip install CVXcanon && \
     pip install fancyimpute && \
     pip install pymc3 && \
+    pip install imagecodecs && \
     pip install tifffile && \
     pip install spectral && \
     pip install descartes && \
