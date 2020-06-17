@@ -8,22 +8,20 @@ from dipy.core.graph import Graph
 from dipy.denoise.enhancement_kernel import EnhancementKernel
 from dipy.tracking.fbcmeasures import FBCMeasures
 from dipy.core.sphere import Sphere
-from dipy.viz import window
-from xvfbwrapper import Xvfb
+from dipy.viz import window, actor
 
 class TestDipy(unittest.TestCase):
-    def test_renderer(self):
-        vdisplay = Xvfb()
-        vdisplay.start()
+    def test_scene(self):
+        xyz = 10 * np.random.rand(100, 3)
+        colors = np.random.rand(100, 4)
+        radii = np.random.rand(100) + 0.5
 
-        ren = window.Renderer()
+        sphere_actor = actor.sphere(centers=xyz, colors=colors, radii=radii)
 
-        with tempfile.TemporaryDirectory() as dir:
-            out_file = os.path.join(dir, 'test.png')
-            window.record(ren, n_frames=1, out_path=out_file, size=(600, 600))
-            self.assertTrue(os.path.exists(out_file))
-
-        vdisplay.stop()
+        scene = window.Scene()
+        scene.add(sphere_actor)
+        
+        self.assertEqual((0, 0), scene.GetSize())
 
     def test_graph(self):
         g = Graph()
