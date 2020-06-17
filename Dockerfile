@@ -373,8 +373,7 @@ RUN pip install bcolz && \
     pip install fastai && \
     pip install torchtext && \
     pip install allennlp && \
-    # b/149359379 remove once allennlp 1.0 is released which won't cause a spacy downgrade.
-    pip install spacy==2.2.3 && python -m spacy download en && python -m spacy download en_core_web_lg && \
+    python -m spacy download en && python -m spacy download en_core_web_lg && \
     apt-get install -y ffmpeg && \
     /tmp/clean-layer.sh
 
