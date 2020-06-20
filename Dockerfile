@@ -341,7 +341,6 @@ RUN pip install bcolz && \
     pip install nbformat && \
     pip install notebook==5.5.0 && \
     pip install olefile && \
-    pip install opencv-python && \
     pip install kornia && \
     pip install pandas_summary && \
     pip install pandocfilters && \
