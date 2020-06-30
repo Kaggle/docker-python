@@ -346,7 +346,8 @@ RUN pip install bcolz && \
     pip install pandocfilters && \
     pip install pexpect && \
     pip install pickleshare && \
-    pip install Pillow && \
+    # b/160263325: the version included in the m46 base image has a known issue.
+    pip install --upgrade Pillow && \
     # Install openslide and its python binding
     apt-get install -y openslide-tools && \
     # b/152402322 install latest from pip once is in: https://github.com/openslide/openslide-python/pull/76
