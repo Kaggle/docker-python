@@ -7,7 +7,6 @@ currently used for retrieving an access token for supported integrations
 import json
 import os
 import socket
-import tensorflow_gcs_config
 import urllib.request
 from datetime import datetime, timedelta
 from enum import Enum, unique
@@ -140,6 +139,9 @@ class UserSecretsClient():
         """Sets the credential for use by Tensorflow both in the local notebook
         and to pass to the TPU.
         """
+        # b/159906185: Import tensorflow_gcs_config only when this method is called to prevent preloading TensorFlow.
+        import tensorflow_gcs_config
+
         # Write to a local JSON credentials file and set
         # GOOGLE_APPLICATION_CREDENTIALS for tensorflow running in the notebook.
         adc_path = os.path.join(
