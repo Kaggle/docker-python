@@ -43,7 +43,8 @@ RUN conda config --add channels conda-forge && \
     conda config --add channels pytorch && \
     conda config --add channels rapidsai && \
     # ^ rapidsai is the highest priority channel, default lowest, conda-forge 2nd lowest.
-    conda install matplotlib basemap cartopy python-igraph imagemagick pysal && \
+    # b/161473620 pin required to prevent resolver from picking pysal 1.x.
+    conda install matplotlib basemap cartopy python-igraph imagemagick "pysal>=2.1.0" && \
     # b/142337634#comment22 pin required to avoid torchaudio downgrade.
     conda install "pytorch>=1.5.0" "torchvision>=0.6.0" "torchaudio>=0.5.0" cpuonly && \
     /tmp/clean-layer.sh
