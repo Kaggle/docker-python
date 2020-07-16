@@ -440,6 +440,7 @@ RUN pip install flashtext && \
     pip install cloud-tpu-client && \
     pip install tensorflow-datasets && \
     pip install pydub && \
+    pip install pydegensac && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
