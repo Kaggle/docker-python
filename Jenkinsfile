@@ -22,7 +22,7 @@ pipeline {
   stages {
     stage('Docker CPU Build') {
       options {
-        timeout(time: 90, unit: 'MINUTES')
+        timeout(time: 120, unit: 'MINUTES')
       }
       steps {
         sh '''#!/bin/bash
