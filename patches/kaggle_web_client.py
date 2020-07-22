@@ -26,6 +26,7 @@ class KaggleWebClient:
         self.headers = {
             'Content-type': 'application/json',
             'Authorization': f'Bearer {self.jwt_token}',
+            'X-Kaggle-Authorization': f'Bearer {self.jwt_token}',
         }
 
     def make_post_request(self, data: dict, endpoint: str) -> dict:
