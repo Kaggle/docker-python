@@ -2,14 +2,23 @@ import json
 import os
 import socket
 import urllib.request
-from datetime import datetime, timedelta
-from enum import Enum, unique
-from typing import Optional, Tuple
 from urllib.error import HTTPError, URLError
-from kaggle_secrets import (_KAGGLE_DEFAULT_URL_BASE,
-                            _KAGGLE_URL_BASE_ENV_VAR_NAME,
-                            _KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME,
-                            CredentialError, BackendError, ValidationError)
+
+_KAGGLE_DEFAULT_URL_BASE = "https://www.kaggle.com"
+_KAGGLE_URL_BASE_ENV_VAR_NAME = "KAGGLE_URL_BASE"
+_KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME = "KAGGLE_USER_SECRETS_TOKEN"
+TIMEOUT_SECS = 40
+
+class CredentialError(Exception):
+    pass
+
+
+class BackendError(Exception):
+    pass
+
+
+class ValidationError(Exception):
+    pass
 
 class KaggleWebClient:
     TIMEOUT_SECS = 600
