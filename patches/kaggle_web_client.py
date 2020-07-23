@@ -2,17 +2,22 @@ import json
 import os
 import socket
 import urllib.request
-from datetime import datetime, timedelta
-from enum import Enum, unique
-from typing import Optional, Tuple
 from urllib.error import HTTPError, URLError
-from kaggle_secrets import (_KAGGLE_DEFAULT_URL_BASE,
-                            _KAGGLE_URL_BASE_ENV_VAR_NAME,
-                            _KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME,
-                            CredentialError, BackendError, ValidationError)
+
+_KAGGLE_DEFAULT_URL_BASE = "https://www.kaggle.com"
+_KAGGLE_URL_BASE_ENV_VAR_NAME = "KAGGLE_URL_BASE"
+_KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME = "KAGGLE_USER_SECRETS_TOKEN"
+TIMEOUT_SECS = 40
+
+class CredentialError(Exception):
+    pass
+
+
+class BackendError(Exception):
+    pass
+
 
 class KaggleWebClient:
-    TIMEOUT_SECS = 600
 
     def __init__(self):
         url_base_override = os.getenv(_KAGGLE_URL_BASE_ENV_VAR_NAME)
@@ -29,14 +34,14 @@ class KaggleWebClient:
             'X-Kaggle-Authorization': f'Bearer {self.jwt_token}',
         }
 
-    def make_post_request(self, data: dict, endpoint: str) -> dict:
+    def make_post_request(self, data: dict, endpoint: str, timeout: int = TIMEOUT_SECS) -> dict:
         url = f'{self.url_base}{endpoint}'
         request_body = dict(data)
         request_body['JWE'] = self.jwt_token
         req = urllib.request.Request(url, headers=self.headers, data=bytes(
             json.dumps(request_body), encoding="utf-8"))
         try:
-            with urllib.request.urlopen(req, timeout=self.TIMEOUT_SECS) as response:
+            with urllib.request.urlopen(req, timeout=timeout) as response:
                 response_json = json.loads(response.read())
                 if not response_json.get('wasSuccessful') or 'result' not in response_json:
                     raise BackendError(
