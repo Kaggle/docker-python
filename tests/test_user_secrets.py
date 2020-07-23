@@ -10,10 +10,11 @@ import mock
 
 from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import bigquery
-from kaggle_secrets import (_KAGGLE_URL_BASE_ENV_VAR_NAME,
+from kaggle_secrets import (GcpTarget, UserSecretsClient,
+                            NotFoundError)
+from kaggle_web_client import (_KAGGLE_URL_BASE_ENV_VAR_NAME,
                             _KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME,
-                            CredentialError, GcpTarget, UserSecretsClient,
-                            BackendError, NotFoundError, ValidationError)
+                            CredentialError, BackendError, ValidationError)
 
 _TEST_JWT = 'test-secrets-key'
 

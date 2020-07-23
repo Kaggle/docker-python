@@ -6,10 +6,10 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from test.support import EnvironmentVarGuard
 from urllib.parse import urlparse
 
-from kaggle_secrets import (_KAGGLE_URL_BASE_ENV_VAR_NAME,
+from kaggle_web_client import (KaggleWebClient,
+                            _KAGGLE_URL_BASE_ENV_VAR_NAME,
                             _KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME,
                             CredentialError, BackendError, ValidationError)
-from kaggle_web_client import KaggleWebClient
 from kaggle_datasets import KaggleDatasets, _KAGGLE_TPU_NAME_ENV_VAR_NAME
 
 _TEST_JWT = 'test-secrets-key'
