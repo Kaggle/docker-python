@@ -5,6 +5,7 @@ _KAGGLE_TPU_NAME_ENV_VAR_NAME = 'TPU_NAME'
 
 class KaggleDatasets:
     GET_GCS_PATH_ENDPOINT = '/requests/CopyDatasetVersionToKnownGcsBucketRequest'
+    TIMEOUT_SECS = 600
 
     # Integration types for GCS
     AUTO_ML = 1
@@ -20,5 +21,5 @@ class KaggleDatasets:
             'MountSlug': dataset_dir,
             'IntegrationType': integration_type,
         }
-        result = self.web_client.make_post_request(data, self.GET_GCS_PATH_ENDPOINT)
+        result = self.web_client.make_post_request(data, self.GET_GCS_PATH_ENDPOINT, self.TIMEOUT_SECS)
         return result['destinationBucket']

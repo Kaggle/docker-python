@@ -9,7 +9,10 @@ from datetime import datetime, timedelta
 from enum import Enum, unique
 from typing import Optional, Tuple
 from kaggle_web_client import KaggleWebClient
-from kaggle_web_client import (CredentialError, BackendError, ValidationError)
+from kaggle_web_client import (CredentialError, BackendError)
+
+class ValidationError(Exception):
+    pass
 
 class NotFoundError(Exception):
     pass

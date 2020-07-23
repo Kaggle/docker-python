@@ -17,11 +17,7 @@ class BackendError(Exception):
     pass
 
 
-class ValidationError(Exception):
-    pass
-
 class KaggleWebClient:
-    TIMEOUT_SECS = 600
 
     def __init__(self):
         url_base_override = os.getenv(_KAGGLE_URL_BASE_ENV_VAR_NAME)
@@ -38,14 +34,14 @@ class KaggleWebClient:
             'X-Kaggle-Authorization': f'Bearer {self.jwt_token}',
         }
 
-    def make_post_request(self, data: dict, endpoint: str) -> dict:
+    def make_post_request(self, data: dict, endpoint: str, timeout: int = TIMEOUT_SECS) -> dict:
         url = f'{self.url_base}{endpoint}'
         request_body = dict(data)
         request_body['JWE'] = self.jwt_token
         req = urllib.request.Request(url, headers=self.headers, data=bytes(
             json.dumps(request_body), encoding="utf-8"))
         try:
-            with urllib.request.urlopen(req, timeout=self.TIMEOUT_SECS) as response:
+            with urllib.request.urlopen(req, timeout=timeout) as response:
                 response_json = json.loads(response.read())
                 if not response_json.get('wasSuccessful') or 'result' not in response_json:
                     raise BackendError(
