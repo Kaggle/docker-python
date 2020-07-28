@@ -61,7 +61,7 @@ RUN apt-get install -y ocl-icd-libopencl1 clinfo libboost-all-dev && \
 # However, because this image is based on the CPU image, this isn't possible but better
 # to put them at the top of this file to minize conflicts.
 RUN conda remove --force -y pytorch torchvision torchaudio cpuonly && \
-    conda install "pytorch>=1.5.0" "torchvision>=0.6.0" "torchaudio>=0.5.0" cudatoolkit=$CUDA_VERSION && \
+    conda install "pytorch=1.5" "torchvision=0.6" "torchaudio=0.5" "torchtext=0.6" cudatoolkit=$CUDA_VERSION && \
     /tmp/clean-layer.sh
 
 # Install LightGBM with GPU
