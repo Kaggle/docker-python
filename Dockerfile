@@ -46,7 +46,8 @@ RUN conda config --add channels conda-forge && \
     # 161473620#comment7 pin required to prevent resolver from picking pysal 1.x., pysal 2.2.x is also downloading data on import.
     conda install matplotlib basemap cartopy python-igraph imagemagick "pysal==2.1.0" && \
     # b/142337634#comment22 pin required to avoid torchaudio downgrade.
-    conda install "pytorch>=1.5.0" "torchvision>=0.6.0" "torchaudio>=0.5.0" cpuonly && \
+    # b/162357958##comment7 Upgrade once new versions of torch* libs are released for pytorch 1.6.
+    conda install "pytorch=1.5" "torchvision=0.6" "torchaudio=0.5" "torchtext=0.6" cpuonly && \
     /tmp/clean-layer.sh
 
 # The anaconda base image includes outdated versions of these packages. Update them to include the latest version.
@@ -373,7 +374,6 @@ RUN pip install bcolz && \
     pip install pyarrow && \
     pip install feather-format && \
     pip install fastai && \
-    pip install torchtext && \
     pip install allennlp && \
     python -m spacy download en && python -m spacy download en_core_web_lg && \
     apt-get install -y ffmpeg && \
