@@ -53,7 +53,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN pip install --upgrade pip
 
 # See _TF_(MIN|MAX)_BAZEL_VERSION at https://github.com/tensorflow/tensorflow/blob/master/configure.py.
-ENV BAZEL_VERSION=2.0.0
+ENV BAZEL_VERSION=3.1.0
 RUN apt-get install -y gnupg zip openjdk-8-jdk && \
     apt-get install -y --no-install-recommends \
       bash-completion \
@@ -66,7 +66,7 @@ RUN apt-get install -y gnupg zip openjdk-8-jdk && \
 RUN cd /usr/local/src && \
     git clone https://github.com/tensorflow/tensorflow && \
     cd tensorflow && \
-    git checkout tags/v2.2.0 && \
+    git checkout tags/v2.3.0 && \
     pip install keras_applications --no-deps && \
     pip install keras_preprocessing --no-deps
 
