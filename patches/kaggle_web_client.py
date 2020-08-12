@@ -30,14 +30,12 @@ class KaggleWebClient:
                 f'but none found in environment variable {_KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME}')
         self.headers = {
             'Content-type': 'application/json',
-            'Authorization': f'Bearer {self.jwt_token}',
             'X-Kaggle-Authorization': f'Bearer {self.jwt_token}',
         }
 
     def make_post_request(self, data: dict, endpoint: str, timeout: int = TIMEOUT_SECS) -> dict:
         url = f'{self.url_base}{endpoint}'
         request_body = dict(data)
-        request_body['JWE'] = self.jwt_token
         req = urllib.request.Request(url, headers=self.headers, data=bytes(
             json.dumps(request_body), encoding="utf-8"))
         try:
