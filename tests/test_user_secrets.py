@@ -94,7 +94,7 @@ class TestUserSecrets(unittest.TestCase):
             secret_response = client.get_secret("secret_label")
             self.assertEqual(secret_response, secret)
         self._test_client(call_get_secret,
-                          '/requests/GetUserSecretByLabelRequest', {'Label': "secret_label", 'JWE': _TEST_JWT},
+                          '/requests/GetUserSecretByLabelRequest', {'Label': "secret_label"},
                           secret=secret)
 
     def test_get_secret_handles_unsuccessful(self):
@@ -103,7 +103,7 @@ class TestUserSecrets(unittest.TestCase):
             with self.assertRaises(BackendError):
                 secret_response = client.get_secret("secret_label")
         self._test_client(call_get_secret,
-                          '/requests/GetUserSecretByLabelRequest', {'Label': "secret_label", 'JWE': _TEST_JWT},
+                          '/requests/GetUserSecretByLabelRequest', {'Label': "secret_label"},
                           success=False)
 
     def test_get_secret_validates_label(self):
@@ -122,7 +122,7 @@ class TestUserSecrets(unittest.TestCase):
             secret_response = client.get_gcloud_credential()
             self.assertEqual(secret_response, secret)
         self._test_client(call_get_secret,
-                          '/requests/GetUserSecretByLabelRequest', {'Label': "__gcloud_sdk_auth__", 'JWE': _TEST_JWT},
+                          '/requests/GetUserSecretByLabelRequest', {'Label': "__gcloud_sdk_auth__"},
                           secret=secret)
 
     def test_get_gcloud_secret_handles_unsuccessful(self):
@@ -131,7 +131,7 @@ class TestUserSecrets(unittest.TestCase):
             with self.assertRaises(NotFoundError):
               secret_response = client.get_gcloud_credential()
         self._test_client(call_get_secret,
-                          '/requests/GetUserSecretByLabelRequest', {'Label': "__gcloud_sdk_auth__", 'JWE': _TEST_JWT},
+                          '/requests/GetUserSecretByLabelRequest', {'Label': "__gcloud_sdk_auth__"},
                           success=False)
 
 
@@ -150,10 +150,10 @@ class TestUserSecrets(unittest.TestCase):
             secret_response = client._get_gcs_access_token()
             self.assertEqual(secret_response, (secret, now + timedelta(seconds=3600)))
         self._test_client(call_get_bigquery_access_token,
-                          '/requests/GetUserSecretRequest', {'Target': GcpTarget.BIGQUERY.target, 'JWE': _TEST_JWT},
+                          '/requests/GetUserSecretRequest', {'Target': GcpTarget.BIGQUERY.target},
                           secret=secret)
         self._test_client(call_get_gcs_access_token,
-                          '/requests/GetUserSecretRequest', {'Target': GcpTarget.GCS.target, 'JWE': _TEST_JWT},
+                          '/requests/GetUserSecretRequest', {'Target': GcpTarget.GCS.target},
                           secret=secret)
 
     def test_get_access_token_handles_unsuccessful(self):
@@ -162,4 +162,4 @@ class TestUserSecrets(unittest.TestCase):
             with self.assertRaises(BackendError):
                 client.get_bigquery_access_token()
         self._test_client(call_get_access_token,
-                          '/requests/GetUserSecretRequest', {'Target': GcpTarget.BIGQUERY.target, 'JWE': _TEST_JWT}, success=False)
+                          '/requests/GetUserSecretRequest', {'Target': GcpTarget.BIGQUERY.target}, success=False)

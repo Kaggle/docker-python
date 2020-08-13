@@ -85,10 +85,10 @@ class TestDatasets(unittest.TestCase):
                     msg="Fake server did not receive a Content-Type header from the KaggleDatasets client.")
                 self.assertEqual('application/json', headers.get('Content-Type'),
                     msg="Fake server did not receive an application/json content type header from the KaggleDatasets client.")
-                self.assertIn('Authorization', headers.keys(),
-                    msg="Fake server did not receive an Authorization header from the KaggleDatasets client.")
-                self.assertEqual(f'Bearer {_TEST_JWT}', headers.get('Authorization'),
-                    msg="Fake server did not receive the right Authorization header from the KaggleDatasets client.")
+                self.assertIn('X-Kaggle-Authorization', headers.keys(),
+                    msg="Fake server did not receive an X-Kaggle-Authorization header from the KaggleDatasets client.")
+                self.assertEqual(f'Bearer {_TEST_JWT}', headers.get('X-Kaggle-Authorization'),
+                    msg="Fake server did not receive the right X-Kaggle-Authorization header from the KaggleDatasets client.")
 
     def test_no_token_fails(self):
         env = EnvironmentVarGuard()
@@ -104,7 +104,7 @@ class TestDatasets(unittest.TestCase):
             self.assertEqual(gcs_path, _TPU_GCS_BUCKET)
         self._test_client(call_get_gcs_path,
                           '/requests/CopyDatasetVersionToKnownGcsBucketRequest',
-                          {'MountSlug': None, 'IntegrationType': 2, 'JWE': _TEST_JWT},
+                          {'MountSlug': None, 'IntegrationType': 2},
                           is_tpu=True)
 
     def test_get_gcs_path_automl_succeeds(self):
@@ -114,7 +114,7 @@ class TestDatasets(unittest.TestCase):
             self.assertEqual(gcs_path, _AUTOML_GCS_BUCKET)
         self._test_client(call_get_gcs_path,
                           '/requests/CopyDatasetVersionToKnownGcsBucketRequest',
-                          {'MountSlug': None, 'IntegrationType': 1, 'JWE': _TEST_JWT},
+                          {'MountSlug': None, 'IntegrationType': 1},
                           is_tpu=False)
 
     def test_get_gcs_path_handles_unsuccessful(self):
@@ -124,6 +124,6 @@ class TestDatasets(unittest.TestCase):
                 gcs_path = client.get_gcs_path()
         self._test_client(call_get_gcs_path,
                           '/requests/CopyDatasetVersionToKnownGcsBucketRequest',
-                          {'MountSlug': None, 'IntegrationType': 2, 'JWE': _TEST_JWT},
+                          {'MountSlug': None, 'IntegrationType': 2},
                           is_tpu=True,
                           success=False)
