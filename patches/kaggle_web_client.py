@@ -7,6 +7,7 @@ from urllib.error import HTTPError, URLError
 _KAGGLE_DEFAULT_URL_BASE = "https://www.kaggle.com"
 _KAGGLE_URL_BASE_ENV_VAR_NAME = "KAGGLE_URL_BASE"
 _KAGGLE_USER_SECRETS_TOKEN_ENV_VAR_NAME = "KAGGLE_USER_SECRETS_TOKEN"
+_KAGGLE_IAP_TOKEN_ENV_VAR_NAME = "KAGGLE_IAP_TOKEN"
 TIMEOUT_SECS = 40
 
 class CredentialError(Exception):
@@ -32,6 +33,9 @@ class KaggleWebClient:
             'Content-type': 'application/json',
             'X-Kaggle-Authorization': f'Bearer {self.jwt_token}',
         }
+        iap_token = os.getenv(_KAGGLE_IAP_TOKEN_ENV_VAR_NAME)
+        if iap_token:
+          self.headers['Authorization'] = f'Bearer {iap_token}'
 
     def make_post_request(self, data: dict, endpoint: str, timeout: int = TIMEOUT_SECS) -> dict:
         url = f'{self.url_base}{endpoint}'
