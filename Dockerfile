@@ -343,7 +343,8 @@ RUN pip install bcolz && \
     pip install nbformat && \
     pip install notebook==5.5.0 && \
     pip install olefile && \
-    pip install kornia && \
+    # b/162850432 unpin once we upgrade to pytorch 1.6
+    pip install kornia==0.3.2 && \
     pip install pandas_summary && \
     pip install pandocfilters && \
     pip install pexpect && \
@@ -373,7 +374,8 @@ RUN pip install bcolz && \
     pip install widgetsnbextension && \
     pip install pyarrow && \
     pip install feather-format && \
-    pip install fastai && \
+    # b/162850432 unpin once we upgrade to pytorch 1.6
+    pip install fastai~=1.0.61 && \
     pip install allennlp && \
     python -m spacy download en && python -m spacy download en_core_web_lg && \
     apt-get install -y ffmpeg && \
