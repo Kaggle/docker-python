@@ -435,8 +435,7 @@ RUN pip install flashtext && \
     pip install transformers && \
     pip install dlib && \
     pip install kaggle-environments && \
-    # b/149905611 The geopandas tests are broken with the version 0.7.0
-    pip install geopandas==0.6.3 && \
+    pip install geopandas && \
     pip install nnabla && \
     pip install vowpalwabbit && \
     # papermill can replace nbconvert for executing notebooks
