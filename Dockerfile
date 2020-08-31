@@ -404,7 +404,8 @@ RUN pip install flashtext && \
     pip install shap && \
     pip install ray && \
     pip install gym && \
-    pip install tensorforce && \
+    # b/167220714 unpin once matplotlib >= 3.3 is installed in the base image.
+    pip install tensorforce==0.5.5 && \
     pip install pyarabic && \
     pip install conx && \
     pip install pandasql && \
