@@ -444,6 +444,7 @@ RUN pip install flashtext && \
     pip install tensorflow-datasets && \
     pip install pydub && \
     pip install pydegensac && \
+    pip install pytorch-lightning && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
