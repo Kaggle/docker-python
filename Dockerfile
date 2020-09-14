@@ -424,7 +424,8 @@ RUN pip install flashtext && \
     pip install plotly_express && \
     pip install albumentations && \
     pip install catalyst && \
-    pip install osmnx && \
+    # b/162850432 prevent matplotlib upgrade.
+    pip install osmnx==0.15.1 && \
     apt-get -y install libspatialindex-dev && \
     pip install pytorch-ignite && \
     pip install qgrid && \
