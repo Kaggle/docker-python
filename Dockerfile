@@ -47,7 +47,7 @@ RUN conda config --add channels conda-forge && \
     conda install matplotlib basemap cartopy python-igraph imagemagick "pysal==2.1.0" && \
     # b/142337634#comment22 pin required to avoid torchaudio downgrade.
     # b/162357958##comment7 Upgrade once new versions of torch* libs are released for pytorch 1.6.
-    conda install "pytorch=1.5" "torchvision=0.6" "torchaudio=0.5" "torchtext=0.6" cpuonly && \
+    conda install "pytorch=1.6" "torchvision=0.7" "torchaudio=0.6" "torchtext=0.7" cpuonly && \
     /tmp/clean-layer.sh
 
 # The anaconda base image includes outdated versions of these packages. Update them to include the latest version.
@@ -340,8 +340,7 @@ RUN pip install bcolz && \
     pip install nbformat && \
     pip install notebook==5.5.0 && \
     pip install olefile && \
-    # b/162850432 unpin once we upgrade to pytorch 1.6
-    pip install kornia==0.3.2 && \
+    pip install kornia && \
     pip install pandas_summary && \
     pip install pandocfilters && \
     pip install pexpect && \
@@ -371,8 +370,7 @@ RUN pip install bcolz && \
     pip install widgetsnbextension && \
     pip install pyarrow && \
     pip install feather-format && \
-    # b/162850432 unpin once we upgrade to pytorch 1.6
-    pip install fastai~=1.0.61 && \
+    pip install fastai && \
     pip install allennlp && \
     python -m spacy download en && python -m spacy download en_core_web_lg && \
     apt-get install -y ffmpeg && \
@@ -423,7 +421,8 @@ RUN pip install flashtext && \
     pip install plotly_express && \
     pip install albumentations && \
     pip install catalyst && \
-    pip install osmnx && \
+    # b/162850432 prevent matplotlib upgrade.
+    pip install osmnx==0.15.1 && \
     apt-get -y install libspatialindex-dev && \
     pip install pytorch-ignite && \
     pip install qgrid && \
