@@ -35,18 +35,18 @@ ENV NVIDIA_VISIBLE_DEVICES=all
 ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
 ENV NVIDIA_REQUIRE_CUDA="cuda>=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION"
 RUN apt-get update && apt-get install -y --no-install-recommends \
-      cuda-cupti-$CUDA_PKG_VERSION \
-      cuda-cudart-$CUDA_PKG_VERSION \
-      cuda-cudart-dev-$CUDA_PKG_VERSION \
-      cuda-libraries-$CUDA_PKG_VERSION \
-      cuda-libraries-dev-$CUDA_PKG_VERSION \
-      cuda-nvml-dev-$CUDA_PKG_VERSION \
-      cuda-minimal-build-$CUDA_PKG_VERSION \
-      cuda-command-line-tools-$CUDA_PKG_VERSION \
-      libcudnn7=7.6.5.32-1+cuda$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION \
-      libcudnn7-dev=7.6.5.32-1+cuda$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION \
-      libnccl2=2.5.6-1+cuda$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION \
-      libnccl-dev=2.5.6-1+cuda$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
+    cuda-cupti-$CUDA_PKG_VERSION \
+    cuda-cudart-$CUDA_PKG_VERSION \
+    cuda-cudart-dev-$CUDA_PKG_VERSION \
+    cuda-libraries-$CUDA_PKG_VERSION \
+    cuda-libraries-dev-$CUDA_PKG_VERSION \
+    cuda-nvml-dev-$CUDA_PKG_VERSION \
+    cuda-minimal-build-$CUDA_PKG_VERSION \
+    cuda-command-line-tools-$CUDA_PKG_VERSION \
+    libcudnn7=7.6.5.32-1+cuda$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION \
+    libcudnn7-dev=7.6.5.32-1+cuda$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION \
+    libnccl2=2.5.6-1+cuda$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION \
+    libnccl-dev=2.5.6-1+cuda$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
     ln -s /usr/local/cuda-$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION /usr/local/cuda && \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1
 
@@ -56,8 +56,8 @@ RUN pip install --upgrade pip
 ENV BAZEL_VERSION=3.1.0
 RUN apt-get install -y gnupg zip openjdk-8-jdk && \
     apt-get install -y --no-install-recommends \
-      bash-completion \
-      zlib1g-dev && \
+    bash-completion \
+    zlib1g-dev && \
     wget --no-verbose "https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel_${BAZEL_VERSION}-linux-x86_64.deb" && \
     dpkg -i bazel_*.deb && \
     rm bazel_*.deb
@@ -74,9 +74,9 @@ RUN cd /usr/local/src && \
 RUN cd /usr/local/src/tensorflow && \
     cat /dev/null | ./configure && \
     bazel build --config=opt \
-                --config=v2 \
-                --cxxopt="-D_GLIBCXX_USE_CXX11_ABI=0" \
-                //tensorflow/tools/pip_package:build_pip_package && \
+    --config=v2 \
+    --cxxopt="-D_GLIBCXX_USE_CXX11_ABI=0" \
+    //tensorflow/tools/pip_package:build_pip_package && \
     bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_cpu && \
     bazel clean
 
@@ -112,13 +112,15 @@ ENV NCCL_INSTALL_PATH=/usr/
 RUN cd /usr/local/src/tensorflow && \
     # TF_NCCL_INSTALL_PATH is used for both libnccl.so.2 and libnccl.h. Make sure they are both accessible from the same directory.
     ln -s /usr/lib/x86_64-linux-gnu/libnccl.so.2 /usr/lib/ && \
+    cp /usr/local/cuda-10.2/targets/x86_64-linux/include/*.h /usr/local/cuda-10.1/targets/x86_64-linux/include/ && \
+    cp /usr/local/cuda-10.2/targets/x86_64-linux/lib/libcublas.so.10* /usr/local/cuda-10.1/targets/x86_64-linux/lib/ && \
     cat /dev/null | ./configure && \
     echo "/usr/local/cuda-${TF_CUDA_VERSION}/targets/x86_64-linux/lib/stubs" > /etc/ld.so.conf.d/cuda-stubs.conf && ldconfig && \
     bazel build --config=opt \
-                --config=v2 \
-                --config=cuda \
-                --cxxopt="-D_GLIBCXX_USE_CXX11_ABI=0" \
-                //tensorflow/tools/pip_package:build_pip_package && \
+    --config=v2 \
+    --config=cuda \
+    --cxxopt="-D_GLIBCXX_USE_CXX11_ABI=0" \
+    //tensorflow/tools/pip_package:build_pip_package && \
     rm /etc/ld.so.conf.d/cuda-stubs.conf && ldconfig && \
     bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_gpu && \
     bazel clean
