@@ -291,7 +291,8 @@ RUN pip install --upgrade cython && \
     pip install annoy && \
     # Need to use CountEncoder from category_encoders before it's officially released
     pip install git+https://github.com/scikit-learn-contrib/categorical-encoding.git && \
-    pip install google-cloud-automl && \
+    # google-cloud-automl 2.0.0 introduced incompatible API changes, need to pin to 1.0.1
+    pip install google-cloud-automl==1.0.1 && \
     # Newer version crashes (latest = 1.14.0) when running tensorflow.
     # python -c "from google.cloud import bigquery; import tensorflow". This flow is common because bigquery is imported in kaggle_gcp.py
     # which is loaded at startup.
