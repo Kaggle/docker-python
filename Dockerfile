@@ -445,6 +445,7 @@ RUN pip install flashtext && \
     pip install pydub && \
     pip install pydegensac && \
     pip install pytorch-lightning && \
+    pip install https://storage.googleapis.com/tpu-pytorch/wheels/torch_xla-1.6-cp37-cp37m-linux_x86_64.whl && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
