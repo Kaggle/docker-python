@@ -132,6 +132,9 @@ RUN pip install ibis-framework && \
     pip install gluoncv && \
     /tmp/clean-layer.sh
 
+#update FastAI
+RUN pip install git+https://github.com/fastai/fastai
+
 # scikit-learn dependencies
 RUN pip install scipy && \
     pip install scikit-learn && \
