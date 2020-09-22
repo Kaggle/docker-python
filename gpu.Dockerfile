@@ -108,6 +108,9 @@ RUN pip install /tmp/tfa_gpu/tensorflow*.whl && \
     rm -rf /tmp/tfa_gpu/ && \
     /tmp/clean-layer.sh
 
+#Update FastAI
+RUN pip install git+https://github.com/fastai/fastai
+
 # Install GPU-only packages
 RUN pip install pycuda && \
     pip install cupy-cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
