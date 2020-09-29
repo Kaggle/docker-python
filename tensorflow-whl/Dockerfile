@@ -66,7 +66,7 @@ RUN apt-get install -y gnupg zip openjdk-8-jdk && \
 RUN cd /usr/local/src && \
     git clone https://github.com/tensorflow/tensorflow && \
     cd tensorflow && \
-    git checkout tags/v2.3.0 && \
+    git checkout tags/v2.3.1 && \
     pip install keras_applications --no-deps && \
     pip install keras_preprocessing --no-deps
 
