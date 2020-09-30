@@ -1,5 +1,5 @@
 FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu18.04 AS nvidia
-FROM gcr.io/deeplearning-platform-release/base-cpu:latest
+FROM gcr.io/deeplearning-platform-release/base-cpu:m46
 
 # Avoid interactive configuration prompts/dialogs during apt-get.
 ENV DEBIAN_FRONTEND=noninteractive
@@ -62,13 +62,17 @@ RUN apt-get install -y gnupg zip openjdk-8-jdk && \
     dpkg -i bazel_*.deb && \
     rm bazel_*.deb
 
+# CUDA 10.1 changed the location of the toolkit (libcublas): https://forums.developer.nvidia.com/t/cublas-for-10-1-is-missing/71015/17
+RUN cp /usr/local/cuda-10.2/targets/x86_64-linux/include/cublas_api.h /usr/local/cuda-10.1/targets/x86_64-linux/include/ && \
+    cp /usr/local/cuda-10.2/lib64/libcublas.so.10.2.2.214 /usr/local/cuda-10.1/lib64/ && \
+    ln /usr/local/cuda-10.1/lib64/libcublas.so.10.2.2.214 /usr/local/cuda-10.1/lib64/libcublas.so.10.1 && \
+    ln -s /usr/local/cuda-10.1/lib64/libcublas.so.10.1 /usr/local/cuda-10.1/lib64/libcublas.so
+
 # Fetch TensorFlow & install dependencies.
 RUN cd /usr/local/src && \
     git clone https://github.com/tensorflow/tensorflow && \
     cd tensorflow && \
-    git checkout tags/v2.3.1 && \
-    pip install keras_applications --no-deps && \
-    pip install keras_preprocessing --no-deps
+    git checkout tags/v2.3.1
 
 # Create a TensorFlow wheel for CPU
 RUN cd /usr/local/src/tensorflow && \
