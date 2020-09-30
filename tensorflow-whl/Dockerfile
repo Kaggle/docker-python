@@ -72,7 +72,9 @@ RUN cp /usr/local/cuda-10.2/targets/x86_64-linux/include/cublas_api.h /usr/local
 RUN cd /usr/local/src && \
     git clone https://github.com/tensorflow/tensorflow && \
     cd tensorflow && \
-    git checkout tags/v2.3.1
+    git checkout tags/v2.3.1 && \
+    pip install keras_applications --no-deps && \
+    pip install keras_preprocessing --no-deps
 
 # Create a TensorFlow wheel for CPU
 RUN cd /usr/local/src/tensorflow && \
