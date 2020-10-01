@@ -291,7 +291,8 @@ RUN pip install --upgrade cython && \
     pip install annoy && \
     # Need to use CountEncoder from category_encoders before it's officially released
     pip install git+https://github.com/scikit-learn-contrib/categorical-encoding.git && \
-    pip install google-cloud-automl && \
+    # google-cloud-automl 2.0.0 introduced incompatible API changes, need to pin to 1.0.1
+    pip install google-cloud-automl==1.0.1 && \
     pip install google-cloud-bigquery && \
     pip install google-cloud-storage && \
     pip install ortools && \
@@ -440,6 +441,7 @@ RUN pip install flashtext && \
     pip install tensorflow-datasets && \
     pip install pydub && \
     pip install pydegensac && \
+    pip install pytorch-lightning && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
