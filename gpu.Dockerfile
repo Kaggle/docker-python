@@ -1,6 +1,6 @@
 ARG BASE_TAG=staging
 
-FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu18.04 AS nvidia
+FROM nvidia/cuda:10.2-cudnn7-devel-ubuntu18.04 AS nvidia
 FROM gcr.io/kaggle-images/python-tensorflow-whl:2.3.0-py37 as tensorflow_whl
 FROM gcr.io/kaggle-images/python:${BASE_TAG}
 
@@ -16,8 +16,8 @@ RUN sed -i 's/deb https:\/\/developer.download.nvidia.com/deb http:\/\/developer
 # Ensure the cuda libraries are compatible with the custom Tensorflow wheels.
 # TODO(b/120050292): Use templating to keep in sync or COPY installed binaries from it.
 ENV CUDA_MAJOR_VERSION=10
-ENV CUDA_MINOR_VERSION=1
-ENV CUDA_PATCH_VERSION=243
+ENV CUDA_MINOR_VERSION=2
+ENV CUDA_PATCH_VERSION=89
 ENV CUDA_VERSION=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION.$CUDA_PATCH_VERSION
 ENV CUDA_PKG_VERSION=$CUDA_MAJOR_VERSION-$CUDA_MINOR_VERSION=$CUDA_VERSION-1
 LABEL com.nvidia.volumes.needed="nvidia_driver"
