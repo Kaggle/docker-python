@@ -1,4 +1,4 @@
-FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu18.04 AS nvidia
+FROM nvidia/cuda:10.2-cudnn7-devel-ubuntu18.04 AS nvidia
 FROM gcr.io/deeplearning-platform-release/base-cpu:m46
 
 # Avoid interactive configuration prompts/dialogs during apt-get.
@@ -18,8 +18,8 @@ RUN sed -i 's/deb https:\/\/developer.download.nvidia.com/deb http:\/\/developer
 # Ensure the cuda libraries are compatible with the GPU image.
 # TODO(b/120050292): Use templating to keep in sync.
 ENV CUDA_MAJOR_VERSION=10
-ENV CUDA_MINOR_VERSION=1
-ENV CUDA_PATCH_VERSION=243
+ENV CUDA_MINOR_VERSION=2
+ENV CUDA_PATCH_VERSION=89
 ENV CUDA_VERSION=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION.$CUDA_PATCH_VERSION
 ENV CUDA_PKG_VERSION=$CUDA_MAJOR_VERSION-$CUDA_MINOR_VERSION=$CUDA_VERSION-1
 LABEL com.nvidia.volumes.needed="nvidia_driver"
@@ -61,12 +61,6 @@ RUN apt-get install -y gnupg zip openjdk-8-jdk && \
     wget --no-verbose "https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel_${BAZEL_VERSION}-linux-x86_64.deb" && \
     dpkg -i bazel_*.deb && \
     rm bazel_*.deb
-
-# CUDA 10.1 changed the location of the toolkit (libcublas): https://forums.developer.nvidia.com/t/cublas-for-10-1-is-missing/71015/17
-RUN cp /usr/local/cuda-10.2/targets/x86_64-linux/include/cublas_api.h /usr/local/cuda-10.1/targets/x86_64-linux/include/ && \
-    cp /usr/local/cuda-10.2/lib64/libcublas.so.10.2.2.214 /usr/local/cuda-10.1/lib64/ && \
-    ln /usr/local/cuda-10.1/lib64/libcublas.so.10.2.2.214 /usr/local/cuda-10.1/lib64/libcublas.so.10.1 && \
-    ln -s /usr/local/cuda-10.1/lib64/libcublas.so.10.1 /usr/local/cuda-10.1/lib64/libcublas.so
 
 # Fetch TensorFlow & install dependencies.
 RUN cd /usr/local/src && \
