@@ -1,11 +1,9 @@
 import unittest
 
+import pytorch_lightning as pl
 import torch
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, TensorDataset
-
-import pytorch_lightning as pl
-from pytorch_lightning.metrics.functional import to_onehot
 
 
 class LitDataModule(pl.LightningDataModule):
@@ -16,10 +14,10 @@ class LitDataModule(pl.LightningDataModule):
         self.batch_size = batch_size
 
     def setup(self, stage=None):
-        X_train = torch.rand(100, 1, 28, 28).float()
-        y_train = to_onehot(torch.randint(0, 10, size=(100,)), num_classes=10).float()
+        X_train = torch.rand(100, 1, 28, 28)
+        y_train = torch.randint(0, 10, size=(100,))
         X_valid = torch.rand(20, 1, 28, 28)
-        y_valid = to_onehot(torch.randint(0, 10, size=(20,)), num_classes=10).float()
+        y_valid = torch.randint(0, 10, size=(20,))
 
         self.train_ds = TensorDataset(X_train, y_train)
         self.valid_ds = TensorDataset(X_valid, y_valid)
@@ -38,26 +36,23 @@ class LitClassifier(pl.LightningModule):
         self.l1 = torch.nn.Linear(28 * 28, 10)
 
     def forward(self, x):
-        return torch.relu(self.l1(x.view(x.size(0), -1)))
+        return F.relu(self.l1(x.view(x.size(0), -1)))
 
     def training_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
-        loss = F.binary_cross_entropy_with_logits(y_hat, y)
-        result = pl.TrainResult(loss)
-        result.log('train_loss', loss, on_epoch=True)
-        return result
+        loss = F.cross_entropy(y_hat, y)
+        self.log('train_loss', loss)
+        return loss
 
     def validation_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
-        loss = F.binary_cross_entropy_with_logits(y_hat, y)
-        result = pl.EvalResult(checkpoint_on=loss)
-        result.log('val_loss', loss)
-        return result
+        loss = F.cross_entropy(y_hat, y)
+        self.log('val_loss', loss)
 
     def configure_optimizers(self):
-        return torch.optim.Adam(self.parameters(), lr=0.02)
+        return torch.optim.Adam(self.parameters(), lr=1e-2)
 
 
 class TestPytorchLightning(unittest.TestCase):
