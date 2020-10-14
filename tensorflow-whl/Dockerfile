@@ -1,5 +1,5 @@
-FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu18.04 AS nvidia
-FROM gcr.io/deeplearning-platform-release/base-cpu:latest
+FROM nvidia/cuda:10.2-cudnn7-devel-ubuntu18.04 AS nvidia
+FROM gcr.io/deeplearning-platform-release/base-cpu:m46
 
 # Avoid interactive configuration prompts/dialogs during apt-get.
 ENV DEBIAN_FRONTEND=noninteractive
@@ -18,8 +18,8 @@ RUN sed -i 's/deb https:\/\/developer.download.nvidia.com/deb http:\/\/developer
 # Ensure the cuda libraries are compatible with the GPU image.
 # TODO(b/120050292): Use templating to keep in sync.
 ENV CUDA_MAJOR_VERSION=10
-ENV CUDA_MINOR_VERSION=1
-ENV CUDA_PATCH_VERSION=243
+ENV CUDA_MINOR_VERSION=2
+ENV CUDA_PATCH_VERSION=89
 ENV CUDA_VERSION=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION.$CUDA_PATCH_VERSION
 ENV CUDA_PKG_VERSION=$CUDA_MAJOR_VERSION-$CUDA_MINOR_VERSION=$CUDA_VERSION-1
 LABEL com.nvidia.volumes.needed="nvidia_driver"
@@ -66,7 +66,7 @@ RUN apt-get install -y gnupg zip openjdk-8-jdk && \
 RUN cd /usr/local/src && \
     git clone https://github.com/tensorflow/tensorflow && \
     cd tensorflow && \
-    git checkout tags/v2.3.0 && \
+    git checkout tags/v2.3.1 && \
     pip install keras_applications --no-deps && \
     pip install keras_preprocessing --no-deps
 
