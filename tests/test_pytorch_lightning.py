@@ -5,6 +5,7 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader, TensorDataset
 
 import pytorch_lightning as pl
+from pytorch_lightning.core.step_result import EvalResult, TrainResult
 from pytorch_lightning.metrics.functional import to_onehot
 
 
@@ -44,7 +45,7 @@ class LitClassifier(pl.LightningModule):
         x, y = batch
         y_hat = self(x)
         loss = F.binary_cross_entropy_with_logits(y_hat, y)
-        result = pl.TrainResult(loss)
+        result = TrainResult(loss)
         result.log('train_loss', loss, on_epoch=True)
         return result
 
@@ -52,7 +53,7 @@ class LitClassifier(pl.LightningModule):
         x, y = batch
         y_hat = self(x)
         loss = F.binary_cross_entropy_with_logits(y_hat, y)
-        result = pl.EvalResult(checkpoint_on=loss)
+        result = EvalResult(checkpoint_on=loss)
         result.log('val_loss', loss)
         return result
 
