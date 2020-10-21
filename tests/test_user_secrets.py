@@ -1,5 +1,6 @@
 import json
 import os
+import subprocess
 import threading
 import unittest
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -134,6 +135,34 @@ class TestUserSecrets(unittest.TestCase):
                           '/requests/GetUserSecretByLabelRequest', {'Label': "__gcloud_sdk_auth__"},
                           success=False)
 
+    def test_set_gcloud_credentials_succeeds(self):
+        secret = '{"client_id":"gcloud","type":"authorized_user"}'
+        project = 'foo'
+        account = 'bar'
+
+        def get_gcloud_config_value(field):
+            result = subprocess.run(['gcloud', 'config', 'get-value', field], capture_output=True)
+            result.check_returncode()
+            return result.stdout.strip().decode('ascii')
+
+        def test_fn():
+            client = UserSecretsClient()
+            client.set_gcloud_credentials(project=project, account=account)
+
+            self.assertEqual(project, os.environ['GOOGLE_CLOUD_PROJECT'])
+            self.assertEqual(project, get_gcloud_config_value('project'))
+
+            self.assertEqual(account, os.environ['GOOGLE_ACCOUNT'])
+            self.assertEqual(account, get_gcloud_config_value('account'))
+
+            expected_creds_file = '/tmp/gcloud_credential.json'
+            self.assertEqual(expected_creds_file, os.environ['GOOGLE_APPLICATION_CREDENTIALS'])
+            self.assertEqual(expected_creds_file, get_gcloud_config_value('auth/credential_file_override'))
+
+            with open(expected_creds_file, 'r') as f:
+                self.assertEqual(secret, '\n'.join(f.readlines()))
+
+        self._test_client(test_fn, '/requests/GetUserSecretByLabelRequest', {'Label': "__gcloud_sdk_auth__"}, secret=secret)
 
     @mock.patch('kaggle_secrets.datetime')
     def test_get_access_token_succeeds(self, mock_dt):
