@@ -1,5 +1,8 @@
 # This Dockerfile builds an image to quickly iterate on the kaggle libraries.
 #
+# Create a new image with the latest kaggle librairies using the latest image
+# built by CI with a successful test run as the base.
+#
 # Usage:
 #   cd path/to/docker-python
 #   docker build -t kaggle/python-dev -f dev.Dockerfile .
