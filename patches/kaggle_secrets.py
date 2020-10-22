@@ -7,6 +7,7 @@ currently used for retrieving an access token for supported integrations
 import os
 from datetime import datetime, timedelta
 from enum import Enum, unique
+import subprocess
 from typing import Optional, Tuple
 from kaggle_web_client import KaggleWebClient
 from kaggle_web_client import (CredentialError, BackendError)
@@ -80,6 +81,28 @@ class UserSecretsClient():
             else:
               raise
 
+    def set_gcloud_credentials(self, project=None, account=None):
+        """Set user credentials attached to the current kernel and optionally the project & account name to the `gcloud` CLI.
+        
+        Example usage:
+            client = UserSecretsClient()
+            client.set_gcloud_credentials(project="my-gcp-project", account="me@my-org.com")
+
+            !gcloud ai-platform jobs list
+        """
+        creds = self.get_gcloud_credential()
+        creds_path = self._write_credentials_file(creds)
+
+        subprocess.run(['gcloud', 'config', 'set', 'auth/credential_file_override', creds_path])
+        
+        if project:
+            os.environ['GOOGLE_CLOUD_PROJECT'] = project
+            subprocess.run(['gcloud', 'config', 'set', 'project', project])
+
+        if account:
+            os.environ['GOOGLE_ACCOUNT'] = account
+            subprocess.run(['gcloud', 'config', 'set', 'account', account])
+
     def set_tensorflow_credential(self, credential):
         """Sets the credential for use by Tensorflow both in the local notebook
         and to pass to the TPU.
@@ -89,11 +112,7 @@ class UserSecretsClient():
 
         # Write to a local JSON credentials file and set
         # GOOGLE_APPLICATION_CREDENTIALS for tensorflow running in the notebook.
-        adc_path = os.path.join(
-            os.environ.get('HOME', '/'), 'gcloud_credential.json')
-        with open(adc_path, 'w') as f:
-          f.write(credential)
-          os.environ['GOOGLE_APPLICATION_CREDENTIALS']=adc_path
+        self._write_credentials_file(credential)
 
         # set the credential for the TPU
         tensorflow_gcs_config.configure_gcs(credentials=credential)
@@ -108,6 +127,14 @@ class UserSecretsClient():
             token, expiry = client.get_bigquery_access_token()
         """
         return self._get_access_token(GcpTarget.BIGQUERY)
+    
+    def _write_credentials_file(self, credentials) -> str:
+        adc_path = os.path.join(os.environ.get('HOME', '/'), 'gcloud_credential.json')
+        with open(adc_path, 'w') as f:
+            f.write(credentials)
+        os.environ['GOOGLE_APPLICATION_CREDENTIALS']=adc_path
+
+        return adc_path
 
     def _get_gcs_access_token(self) -> Tuple[str, Optional[datetime]]:
         return self._get_access_token(GcpTarget.GCS)
