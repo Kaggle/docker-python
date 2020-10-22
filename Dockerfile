@@ -364,9 +364,7 @@ RUN pip install bcolz && \
     pip install qtconsole && \
     pip install six && \
     pip install terminado && \
-    # Latest version (6.0) of tornado breaks Jupyter notebook:
-    # https://github.com/jupyter/notebook/issues/4439
-    pip install tornado==5.0.2 && \
+    pip install tornado && \
     pip install tqdm && \
     pip install traitlets && \
     pip install wcwidth && \
