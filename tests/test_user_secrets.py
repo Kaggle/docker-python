@@ -136,7 +136,7 @@ class TestUserSecrets(unittest.TestCase):
                           success=False)
 
     def test_set_gcloud_credentials_succeeds(self):
-        secret = '{"client_id":"gcloud","type":"authorized_user"}'
+        secret = '{"client_id":"gcloud","type":"authorized_user","refresh_token":"refresh_token"}'
         project = 'foo'
         account = 'bar'
 
