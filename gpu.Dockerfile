@@ -1,7 +1,7 @@
 ARG BASE_TAG=staging
 
 FROM nvidia/cuda:10.2-cudnn7-devel-ubuntu18.04 AS nvidia
-FROM gcr.io/kaggle-images/python-tensorflow-whl:2.3.1-py37 as tensorflow_whl
+FROM gcr.io/kaggle-images/python-tensorflow-whl:2.3.1-py37-2 as tensorflow_whl
 FROM gcr.io/kaggle-images/python:${BASE_TAG}
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
