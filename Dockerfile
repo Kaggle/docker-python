@@ -442,6 +442,7 @@ RUN pip install flashtext && \
     # papermill can replace nbconvert for executing notebooks
     pip install papermill && \
     pip install cloud-tpu-client && \
+    pip install tensorflow-cloud && \
     pip install tensorflow-datasets && \
     pip install pydub && \
     pip install pydegensac && \
