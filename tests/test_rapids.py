@@ -1,13 +1,14 @@
 import unittest
 
-import cudf
-from cuml.cluster import DBSCAN
-
 from common import gpu_test
 
 
 class TestRapids(unittest.TestCase):
+    @gpu_test
     def test_dbscan(self):
+        import cudf
+        from cuml.cluster import DBSCAN
+
         # Create and populate a GPU DataFrame
         gdf_float = cudf.DataFrame()
         gdf_float['0'] = [1.0, 2.0, 5.0]
