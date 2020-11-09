@@ -2,7 +2,7 @@
 ARG BASE_TAG=m46
 ARG TENSORFLOW_VERSION=2.3.1
 
-FROM gcr.io/kaggle-images/python-tensorflow-whl:${TENSORFLOW_VERSION}-py37 as tensorflow_whl
+FROM gcr.io/kaggle-images/python-tensorflow-whl:${TENSORFLOW_VERSION}-py37-2 as tensorflow_whl
 FROM gcr.io/deeplearning-platform-release/base-cpu:${BASE_TAG}
 
 ADD clean-layer.sh  /tmp/clean-layer.sh

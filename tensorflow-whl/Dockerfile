@@ -87,7 +87,7 @@ RUN pip install /tmp/tensorflow_cpu/tensorflow*.whl
 RUN cd /usr/local/src/ && \
     git clone https://github.com/tensorflow/addons && \
     cd addons && \
-    git checkout tags/v0.10.0 && \
+    git checkout tags/v0.11.2 && \
     python ./configure.py && \
     bazel build --enable_runfiles build_pip_pkg && \
     bazel-bin/build_pip_pkg /tmp/tfa_cpu && \

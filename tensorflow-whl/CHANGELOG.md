@@ -17,4 +17,5 @@
 * `2.2.0-py37`: TensorFlow 2.2.0 with Python 3.7
 * `2.2.0-py37-2`: TensorFlow 2.2.0 with Python 3.7 & TFA
 * `2.3.0-py37`: TensorFlow 2.3.0 with Python 3.7
-* `2.3.1-py37`: TensorFlow 2.3.1 with Python 3.6
+* `2.3.1-py37`: TensorFlow 2.3.1 with Python 3.7
+* `2.3.1-py37-2`: TensorFlow 2.3.1 & TFA 0.11 with Python 3.7
