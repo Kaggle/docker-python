@@ -376,6 +376,8 @@ RUN pip install bcolz && \
     pip install feather-format && \
     # b/172491515: Unpin after upgrading to torch 1.7
     pip install fastai==2.0.19 && \
+    # b/172491515: Remove the next line after removing pin for fastai
+    pip install fastcore==1.3.2 && \
     pip install allennlp && \
     python -m spacy download en && python -m spacy download en_core_web_lg && \
     apt-get install -y ffmpeg && \
