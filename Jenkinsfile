@@ -57,7 +57,7 @@ pipeline {
       // `--runtime=nvidia` flag for the `docker run` command when GPU support is needed.
       agent { label 'ephemeral-linux-gpu' }
       options {
-        timeout(time: 45, unit: 'MINUTES')
+        timeout(time: 60, unit: 'MINUTES')
       }
       steps {
         sh '''#!/bin/bash
