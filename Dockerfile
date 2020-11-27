@@ -39,12 +39,13 @@ ENV PROJ_LIB=/opt/conda/share/proj
 # the remaining pip commands: https://www.anaconda.com/using-pip-in-a-conda-environment/
 # Using the same global consistent ordered list of channels
 RUN conda config --add channels conda-forge && \
+    conda config --add channels h2oai && \
     conda config --add channels nvidia && \
     conda config --add channels pytorch && \
     conda config --add channels rapidsai && \
     # ^ rapidsai is the highest priority channel, default lowest, conda-forge 2nd lowest.
     # 161473620#comment7 pin required to prevent resolver from picking pysal 1.x., pysal 2.2.x is also downloading data on import.
-    conda install matplotlib basemap cartopy python-igraph imagemagick "pysal==2.1.0" && \
+    conda install matplotlib basemap cartopy python-igraph imagemagick "pysal==2.1.0" h2o && \
     # b/142337634#comment22 pin required to avoid torchaudio downgrade.
     # b/162357958##comment7 Upgrade once new versions of torch* libs are released for pytorch 1.6.
     conda install "pytorch=1.6" "torchvision=0.7" "torchaudio=0.6" "torchtext=0.7" cpuonly && \
@@ -54,10 +55,6 @@ RUN conda config --add channels conda-forge && \
 RUN pip install seaborn python-dateutil dask && \
     pip install pyyaml joblib pytagcloud husl geopy ml_metrics mne pyshp && \
     pip install pandas && \
-    # Install h2o from source.
-    # Use `conda install -c h2oai h2o` once Python 3.7 version is released to conda.
-    apt-get install -y default-jre-headless && \
-    pip install -f https://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o && \
     /tmp/clean-layer.sh
 
 # Install tensorflow from a pre-built wheel
