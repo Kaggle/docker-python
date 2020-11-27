@@ -41,9 +41,7 @@ RUN conda config --add channels conda-forge && \
     # ^ rapidsai is the highest priority channel, default lowest, conda-forge 2nd lowest.
     # 161473620#comment7 pin required to prevent resolver from picking pysal 1.x., pysal 2.2.x is also downloading data on import.
     conda install matplotlib basemap cartopy python-igraph imagemagick "pysal==2.1.0" && \
-    # b/142337634#comment22 pin required to avoid torchaudio downgrade.
-    # b/162357958##comment7 Upgrade once new versions of torch* libs are released for pytorch 1.6.
-    conda install "pytorch=1.6" "torchvision=0.7" "torchaudio=0.6" "torchtext=0.7" cpuonly && \
+    conda install "pytorch=1.7" "torchvision=0.8" "torchaudio=0.7" "torchtext=0.8" cpuonly && \
     /tmp/clean-layer.sh
 
 # The anaconda base image includes outdated versions of these packages. Update them to include the latest version.
@@ -370,10 +368,7 @@ RUN pip install bcolz && \
     pip install widgetsnbextension && \
     pip install pyarrow && \
     pip install feather-format && \
-    # b/172491515: Unpin after upgrading to torch 1.7
-    pip install fastai==2.0.19 && \
-    # b/172491515: Remove the next line after removing pin for fastai
-    pip install fastcore==1.3.2 && \
+    pip install fastai && \
     pip install allennlp && \
     python -m spacy download en && python -m spacy download en_core_web_lg && \
     apt-get install -y ffmpeg && \
