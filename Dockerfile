@@ -23,10 +23,6 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     apt-get install -y build-essential unzip cmake && \
     apt-get install -y libboost-dev libboost-program-options-dev libboost-system-dev libboost-thread-dev libboost-math-dev libboost-test-dev libboost-python-dev libboost-filesystem-dev zlib1g-dev && \
     pip install --upgrade pip && \
-    # enum34 is a backport of the Python 3.4 enum class to Python < 3.4.
-    # No need since we are using Python 3.7. This is causing errors for packages
-    # expecting the 3.7 version of enum. e.g. AttributeError: module 'enum' has no attribute 'IntFlag'
-    pip uninstall -y enum34 && \
     /tmp/clean-layer.sh
 
 # Make sure the dynamic linker finds the right libstdc++
