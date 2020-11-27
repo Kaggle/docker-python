@@ -80,16 +80,7 @@ RUN pip uninstall -y lightgbm && \
     /tmp/clean-layer.sh
 
 # Install JAX
-# b/154150582#comment9: JAX 0.1.63 with jaxlib 0.1.43 is causing the GPU tests to hang.
-ENV JAX_VERSION=0.1.62
-ENV JAXLIB_VERSION=0.1.41
-ENV JAX_PYTHON_VERSION=cp37
-ENV JAX_CUDA_VERSION=cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION
-ENV JAX_PLATFORM=linux_x86_64
-ENV JAX_BASE_URL="https://storage.googleapis.com/jax-releases"
-
-RUN  pip install $JAX_BASE_URL/$JAX_CUDA_VERSION/jaxlib-$JAXLIB_VERSION-$JAX_PYTHON_VERSION-none-$JAX_PLATFORM.whl && \
-     pip install jax==$JAX_VERSION && \
+RUN  pip install jax==0.2.6 jaxlib==0.1.57+cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION -f https://storage.googleapis.com/jax-releases/jax_releases.html && \
      /tmp/clean-layer.sh
 
 # Reinstall packages with a separate version for GPU support.
