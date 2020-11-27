@@ -196,7 +196,7 @@ RUN pip install mpld3 && \
     pip install missingno && \
     pip install pandas-profiling && \
     pip install s2sphere && \
-    pip install git+https://github.com/fmfn/BayesianOptimization.git && \
+    pip install bayesian-optimization && \
     pip install matplotlib-venn && \
     pip install pyldavis && \
     pip install mlxtend && \
