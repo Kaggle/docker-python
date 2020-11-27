@@ -52,7 +52,7 @@ RUN conda config --add channels conda-forge && \
 
 # The anaconda base image includes outdated versions of these packages. Update them to include the latest version.
 RUN pip install seaborn python-dateutil dask && \
-    pip install pyyaml joblib pytagcloud husl geopy ml_metrics mne pyshp && \
+    pip install pyyaml joblib husl geopy ml_metrics mne pyshp && \
     pip install pandas && \
     # Install h2o from source.
     # Use `conda install -c h2oai h2o` once Python 3.7 version is released to conda.
@@ -86,21 +86,12 @@ RUN apt-get install -y libfreetype6-dev && \
     pip install xgboost && \
     # Pinned to match GPU version. Update version together.
     pip install lightgbm==2.3.1 && \
-    pip install git+git://github.com/Lasagne/Lasagne.git && \
     pip install keras && \
     pip install keras-tuner && \
     pip install flake8 && \
-    #neon
-    cd /usr/local/src && \
-    git clone --depth 1 https://github.com/NervanaSystems/neon.git && \
-    cd neon && pip install . && \
-    #nolearn
-    pip install nolearn && \
     pip install Theano && \
-    pip install pybrain && \
     pip install python-Levenshtein && \
     pip install hep_ml && \
-    # chainer
     pip install chainer && \
     # NLTK Project datasets
     mkdir -p /usr/share/nltk_data && \
@@ -141,10 +132,6 @@ RUN pip install scipy && \
     # PUDB, for local debugging convenience
     pip install pudb && \
     pip install imbalanced-learn && \
-    # Convex Optimization library
-    # Latest version fails to install, see https://github.com/cvxopt/cvxopt/issues/77
-    #    and https://github.com/cvxopt/cvxopt/issues/80
-    # pip install cvxopt && \
     # Profiling and other utilities
     pip install line_profiler && \
     pip install orderedmultidict && \
@@ -170,7 +157,6 @@ RUN apt-get install -y libgl1-mesa-glx && \
     /tmp/clean-layer.sh
 
 RUN pip install mpld3 && \
-    pip install mplleaflet && \
     pip install gpxpy && \
     pip install arrow && \
     pip install nilearn && \
@@ -179,7 +165,6 @@ RUN pip install mpld3 && \
     pip install markovify && \
     pip install imgaug && \
     pip install preprocessing && \
-    pip install Baker && \
     pip install path.py && \
     pip install Geohash && \
     # https://github.com/vinsci/geohash/issues/4
@@ -189,7 +174,6 @@ RUN pip install mpld3 && \
     pip install scikit-optimize && \
     pip install haversine && \
     pip install toolz cytoolz && \
-    pip install sacred && \
     pip install plotly && \
     pip install hyperopt && \
     pip install fitter && \
@@ -197,7 +181,6 @@ RUN pip install mpld3 && \
     # Delorean. Useful for dealing with datetime
     pip install delorean && \
     pip install trueskill && \
-    pip install heamy && \
     # Useful data exploration libraries (for missing data and generating reports)
     pip install missingno && \
     pip install pandas-profiling && \
@@ -218,7 +201,6 @@ RUN pip install mpld3 && \
     pip install spectral && \
     pip install descartes && \
     pip install geojson && \
-    pip install terminalplot && \
     pip install pydicom && \
     pip install wavio && \
     pip install SimpleITK && \
@@ -237,14 +219,11 @@ RUN pip install mpld3 && \
     pip install geoviews && \
     pip install hypertools && \
     pip install py_stringsimjoin && \
-    pip install nibabel && \
     pip install mlens && \
     pip install scikit-multilearn && \
     pip install cleverhans && \
     pip install leven && \
     pip install catboost && \
-    # fastFM doesn't support Python 3.7 yet: https://github.com/ibayer/fastFM/issues/151
-    # pip install fastFM && \
     pip install lightfm && \
     pip install folium && \
     pip install scikit-plot && \
@@ -260,12 +239,12 @@ RUN pip install mpld3 && \
     pip install kaggle && \
     /tmp/clean-layer.sh
 
-RUN pip install kmeans-smote --no-dependencies && \
+RUN pip install tensorpack && \   
     # Add google PAIR-code Facets
     cd /opt/ && git clone https://github.com/PAIR-code/facets && cd facets/ && jupyter nbextension install facets-dist/ --user && \
     export PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/ && \
-    pip install tensorpack && \
-    pip install pycountry && pip install iso3166 && \
+    pip install pycountry && \
+    pip install iso3166 && \
     pip install pydash && \
     pip install kmodes --no-dependencies && \
     pip install librosa && \
@@ -303,23 +282,18 @@ RUN pip install --upgrade cython && \
     # Pandas data reader
     pip install pandas-datareader && \
     pip install wordsegment && \
-    pip install pyahocorasick && \
     pip install wordbatch && \
     pip install emoji && \
     # Add Japanese morphological analysis engine
     pip install janome && \
     pip install wfdb && \
     pip install vecstack && \
-    # Doesn't support Python 3.7 yet. Last release on pypi is from 2017.
-    # Add back once this PR is released: https://github.com/scikit-learn-contrib/lightning/pull/133
-    # pip install sklearn-contrib-lightning && \
     # yellowbrick machine learning visualization library
     pip install yellowbrick && \
     pip install mlcrate && \
     /tmp/clean-layer.sh
 
-RUN pip install bcolz && \
-    pip install bleach && \
+RUN pip install bleach && \
     pip install certifi && \
     pip install cycler && \
     pip install decorator && \
@@ -409,7 +383,6 @@ RUN pip install flashtext && \
     # b/167220714 unpin once matplotlib >= 3.3 is installed in the base image.
     pip install tensorforce==0.5.5 && \
     pip install pyarabic && \
-    pip install conx && \
     pip install pandasql && \
     pip install tensorflow_hub && \
     pip install jieba  && \
