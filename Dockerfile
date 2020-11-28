@@ -196,7 +196,7 @@ RUN pip install mpld3 && \
     pip install missingno && \
     pip install pandas-profiling && \
     pip install s2sphere && \
-    pip install git+https://github.com/fmfn/BayesianOptimization.git && \
+    pip install bayesian-optimization && \
     pip install matplotlib-venn && \
     pip install pyldavis && \
     pip install mlxtend && \
@@ -283,8 +283,7 @@ RUN pip install --upgrade cython && \
     pip install fasttext && \
     apt-get install -y libhunspell-dev && pip install hunspell && \
     pip install annoy && \
-    # Need to use CountEncoder from category_encoders before it's officially released
-    pip install git+https://github.com/scikit-learn-contrib/categorical-encoding.git && \
+    pip install category_encoders && \
     # google-cloud-automl 2.0.0 introduced incompatible API changes, need to pin to 1.0.1
     pip install google-cloud-automl==1.0.1 && \
     # Newer version crashes (latest = 1.14.0) when running tensorflow.
@@ -347,8 +346,7 @@ RUN pip install bcolz && \
     pip install --upgrade Pillow && \
     # Install openslide and its python binding
     apt-get install -y openslide-tools && \
-    # b/152402322 install latest from pip once is in: https://github.com/openslide/openslide-python/pull/76
-    pip install git+git://github.com/rosbo/openslide-python.git@fix-setup && \
+    pip install openslide-python && \
     pip install ptyprocess && \
     pip install Pygments && \
     pip install pyparsing && \
