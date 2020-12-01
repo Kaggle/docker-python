@@ -411,6 +411,7 @@ RUN pip install flashtext && \
     pip install pydub && \
     pip install pydegensac && \
     pip install pytorch-lightning && \
+    pip install datatable && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
