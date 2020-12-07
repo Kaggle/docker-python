@@ -229,7 +229,6 @@ RUN pip install mpld3 && \
     pip install geoplot && \
     pip install eli5 && \
     pip install implicit && \
-    pip install dask-ml[xgboost] && \
     pip install kaggle && \
     /tmp/clean-layer.sh
 
