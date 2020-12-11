@@ -83,7 +83,7 @@ RUN apt-get install -y libfreetype6-dev && \
     pip install keras && \
     pip install keras-tuner && \
     pip install flake8 && \
-    pip install Theano && \
+    pip install theano-pymc && \
     pip install python-Levenshtein && \
     pip install hep_ml && \
     pip install chainer && \
