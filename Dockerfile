@@ -400,7 +400,8 @@ RUN pip install flashtext && \
     pip install dlib && \
     pip install kaggle-environments && \
     pip install geopandas && \
-    pip install nnabla && \
+    # b/175638062 remove pin once we update to cuDNN 8.x
+    pip install nnabla==1.13.0 && \
     pip install vowpalwabbit && \
     # papermill can replace nbconvert for executing notebooks
     pip install papermill && \
