@@ -89,8 +89,7 @@ RUN pip uninstall -y tensorflow && \
     pip install /tmp/tensorflow_gpu/tensorflow*.whl && \
     rm -rf /tmp/tensorflow_gpu && \
     pip uninstall -y mxnet && \
-    # b/126259508 --no-deps prevents numpy from being downgraded.
-    pip install --no-deps mxnet-cu$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
+    pip install mxnet-cu$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
     /tmp/clean-layer.sh
 
  # Reinstall TensorFlow addons (TFA) with GPU support.
