@@ -86,7 +86,6 @@ RUN apt-get install -y libfreetype6-dev && \
     pip install theano-pymc && \
     pip install python-Levenshtein && \
     pip install hep_ml && \
-    pip install chainer && \
     # NLTK Project datasets
     mkdir -p /usr/share/nltk_data && \
     # NLTK Downloader no longer continues smoothly after an error, so we explicitly list
@@ -384,8 +383,6 @@ RUN pip install flashtext && \
     pip install tsfresh && \
     pip install pykalman && \
     pip install optuna && \
-    pip install chainercv && \
-    pip install chainer-chemistry && \
     pip install plotly_express && \
     pip install albumentations && \
     pip install catalyst && \
