@@ -88,6 +88,11 @@ fi
 # This is causing issue when other libraries are trying to run tests using a GPU.
 # See: https://www.tensorflow.org/guide/gpu#allowing_gpu_memory_growth
 #
+# Note about `XLA_PYTHON_CLIENT_PREALLOCATE`. By default, JAX preallocates 90%
+# of the GPU memory which is causing issues when other libraries are trying to run
+# tests using a GPU.
+# See: https://jax.readthedocs.io/en/latest/gpu_memory_allocation.html
+#
 # Note about `--hostname localhost` (b/158137436)
 # hostname defaults to the container name which fails DNS name
 # resolution with --net=none (required to keep tests hermetic). See details in bug.
@@ -98,6 +103,7 @@ docker run --rm -t --read-only --net=none \
     -e KAGGLE_DATA_PROXY_URL=http://127.0.0.1:8000 \
     -e KAGGLE_DATA_PROXY_PROJECT=test \
     -e TF_FORCE_GPU_ALLOW_GROWTH=true \
+    -e XLA_PYTHON_CLIENT_PREALLOCATE=false \
     --hostname localhost \
     --shm-size=2g \
     -v $PWD:/input:ro -v /tmp/python-build/working:/working \
