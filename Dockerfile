@@ -79,7 +79,7 @@ RUN apt-get install -y libfreetype6-dev && \
     pip install wordcloud && \
     pip install xgboost && \
     # Pinned to match GPU version. Update version together.
-    pip install lightgbm==2.3.1 && \
+    pip install lightgbm==3.1.1 && \
     pip install keras && \
     pip install keras-tuner && \
     pip install flake8 && \
