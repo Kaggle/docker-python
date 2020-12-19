@@ -147,10 +147,10 @@ class PublicBigqueryClient(bigquery.client.Client):
 def has_been_monkeypatched(method):
     return "kaggle_gcp" in inspect.getsourcefile(method)
 
-def is_user_secrets_token_set()
+def is_user_secrets_token_set():
     return "KAGGLE_USER_SECRETS_TOKEN" in os.environ
 
-def is_proxy_token_set()
+def is_proxy_token_set():
     return "KAGGLE_DATA_PROXY_TOKEN" in os.environ
 
 def init_bigquery():
