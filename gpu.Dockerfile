@@ -69,7 +69,7 @@ RUN pip uninstall -y lightgbm && \
     cd /usr/local/src && \
     git clone --recursive https://github.com/microsoft/LightGBM && \
     cd LightGBM && \
-    git checkout tags/v2.3.1 && \
+    git checkout tags/v3.1.1 && \
     mkdir build && cd build && \
     cmake -DUSE_GPU=1 -DOpenCL_LIBRARY=/usr/local/cuda/lib64/libOpenCL.so -DOpenCL_INCLUDE_DIR=/usr/local/cuda/include/ .. && \
     make -j$(nproc) && \
@@ -89,8 +89,7 @@ RUN pip uninstall -y tensorflow && \
     pip install /tmp/tensorflow_gpu/tensorflow*.whl && \
     rm -rf /tmp/tensorflow_gpu && \
     pip uninstall -y mxnet && \
-    # b/126259508 --no-deps prevents numpy from being downgraded.
-    pip install --no-deps mxnet-cu$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
+    pip install mxnet-cu$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
     /tmp/clean-layer.sh
 
  # Reinstall TensorFlow addons (TFA) with GPU support.
@@ -103,7 +102,8 @@ RUN pip install /tmp/tfa_gpu/tensorflow*.whl && \
 RUN pip install pycuda && \
     pip install cupy-cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
     pip install pynvrtc && \
-    pip install nnabla-ext-cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
+    # b/175638062 remove pin once we update to cuDNN 8.x
+    pip install nnabla-ext-cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION==1.13.0 && \
     /tmp/clean-layer.sh
 
 # Re-add TensorBoard Jupyter extension patch

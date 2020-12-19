@@ -79,14 +79,13 @@ RUN apt-get install -y libfreetype6-dev && \
     pip install wordcloud && \
     pip install xgboost && \
     # Pinned to match GPU version. Update version together.
-    pip install lightgbm==2.3.1 && \
+    pip install lightgbm==3.1.1 && \
     pip install keras && \
     pip install keras-tuner && \
     pip install flake8 && \
-    pip install Theano && \
+    pip install theano-pymc && \
     pip install python-Levenshtein && \
     pip install hep_ml && \
-    pip install chainer && \
     # NLTK Project datasets
     mkdir -p /usr/share/nltk_data && \
     # NLTK Downloader no longer continues smoothly after an error, so we explicitly list
@@ -388,8 +387,6 @@ RUN pip install flashtext && \
     pip install tsfresh && \
     pip install pykalman && \
     pip install optuna && \
-    pip install chainercv && \
-    pip install chainer-chemistry && \
     pip install plotly_express && \
     pip install albumentations && \
     pip install catalyst && \
@@ -404,7 +401,8 @@ RUN pip install flashtext && \
     pip install dlib && \
     pip install kaggle-environments && \
     pip install geopandas && \
-    pip install nnabla && \
+    # b/175638062 remove pin once we update to cuDNN 8.x
+    pip install nnabla==1.13.0 && \
     pip install vowpalwabbit && \
     # papermill can replace nbconvert for executing notebooks
     pip install papermill && \
