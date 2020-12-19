@@ -1,6 +1,6 @@
 import os
 import inspect
-from google.auth import credentials
+from google.auth import credentials, environment_vars
 from google.auth.exceptions import RefreshError
 from google.api_core.gapic_v1.client_info import ClientInfo
 from google.cloud import bigquery
@@ -22,7 +22,7 @@ def get_integrations():
             target = GcpTarget[integration.upper()]
             kernel_integrations.add_integration(target)
         except KeyError as e:
-            Log.error(f"Unknown integration target: {e}")
+            Log.error(f"Unknown integration target: {integration.upper()}")
     return kernel_integrations
 
 
@@ -45,6 +45,17 @@ class KernelIntegrations():
     def has_automl(self):
         return GcpTarget.AUTOML in self.integrations
 
+    def has_translation(self):
+        return GcpTarget.TRANSLATION in self.integrations
+
+    def has_natural_language(self):
+        return GcpTarget.NATURAL_LANGUAGE in self.integrations
+
+    def has_video_intelligence(self):
+        return GcpTarget.VIDEO_INTELLIGENCE in self.integrations
+
+    def has_vision(self):
+        return GcpTarget.VISION in self.integrations
 
 class KaggleKernelCredentials(credentials.Credentials):
     """Custom Credentials used to authenticate using the Kernel's connected OAuth account.
@@ -65,6 +76,14 @@ class KaggleKernelCredentials(credentials.Credentials):
                 self.token, self.expiry = client._get_gcs_access_token()
             elif self.target == GcpTarget.AUTOML:
                 self.token, self.expiry = client._get_automl_access_token()
+            elif self.target == GcpTarget.TRANSLATION:
+                self.token, self.expiry = client._get_translation_access_token()
+            elif self.target == GcpTarget.NATURAL_LANGUAGE:
+                self.token, self.expiry = client._get_natural_language_access_token()
+            elif self.target == GcpTarget.VIDEO_INTELLIGENCE:
+                self.token, self.expiry = client._get_video_intelligence_access_token()
+            elif self.target == GcpTarget.VISION:
+                self.token, self.expiry = client._get_vision_access_token()
         except ConnectionError as e:
             Log.error(f"Connection error trying to refresh access token: {e}")
             print("There was a connection error trying to fetch the access token. "
@@ -78,6 +97,12 @@ class KaggleKernelCredentials(credentials.Credentials):
                    f"Please ensure you have selected a {self.target.service} account in the Notebook Add-ons menu.")
             raise RefreshError('Unable to refresh access token.') from e
 
+class KaggleKernelWithProjetCredentials(KaggleKernelCredentials):
+    """ Wrapper Kaggle Credentials with quota_project_id.
+    """
+    def __init__(self, parentCredential=None, quota_project_id=None):
+        super().__init__(target=parentCredential.target)
+        self._quota_project_id=quota_project_id
 
 class _DataProxyConnection(Connection):
     """Custom Connection class used to proxy the BigQuery client to Kaggle's data proxy."""
@@ -122,13 +147,16 @@ class PublicBigqueryClient(bigquery.client.Client):
 def has_been_monkeypatched(method):
     return "kaggle_gcp" in inspect.getsourcefile(method)
 
+def is_user_secrets_token_set()
+    return "KAGGLE_USER_SECRETS_TOKEN" in os.environ
+
+def is_proxy_token_set()
+    return "KAGGLE_DATA_PROXY_TOKEN" in os.environ
+
 def init_bigquery():
-    from google.auth import environment_vars
     from google.cloud import bigquery
 
-    is_proxy_token_set = "KAGGLE_DATA_PROXY_TOKEN" in os.environ
-    is_user_secrets_token_set = "KAGGLE_USER_SECRETS_TOKEN" in os.environ
-    if not (is_proxy_token_set or is_user_secrets_token_set):
+    if not (is_proxy_token_set() or is_user_secrets_token_set()):
         return bigquery
 
     # If this Notebook has bigquery integration on startup, preload the Kaggle Credentials
@@ -185,14 +213,24 @@ def monkeypatch_client(client_klass, kaggle_kernel_credentials):
         specified_credentials = kwargs.get('credentials')
         if specified_credentials is None:
             Log.info("No credentials specified, using KaggleKernelCredentials.")
-            kwargs['credentials'] = kaggle_kernel_credentials
+            # Some GCP services demand the billing and target project must be the same.
+            # To avoid using default service account based credential as caller credential
+            # user need to provide ClientOptions with quota_project_id:
+            # srv.Client(client_options=client_options.ClientOptions(quota_project_id="YOUR PROJECT"))
+            client_options=kwargs.get('client_options')
+            if client_options != None and client_options.quota_project_id != None:
+                kwargs['credentials'] = KaggleKernelWithProjetCredentials(
+                    parentCredential = kaggle_kernel_credentials,
+                    quota_project_id = client_options.quota_project_id)
+            else:
+                kwargs['credentials'] = kaggle_kernel_credentials
 
         kwargs['client_info'] = set_kaggle_user_agent(kwargs.get('client_info'))
-
         return client_init(self, *args, **kwargs)
 
     if (not has_been_monkeypatched(client_klass.__init__)):
         client_klass.__init__ = patched_init
+        Log.info(f"Client patched: {client_klass}")
 
 def set_kaggle_user_agent(client_info: ClientInfo):
     # Add kaggle client user agent in order to attribute usage.
@@ -203,9 +241,8 @@ def set_kaggle_user_agent(client_info: ClientInfo):
     return client_info
 
 def init_gcs():
-    is_user_secrets_token_set = "KAGGLE_USER_SECRETS_TOKEN" in os.environ
     from google.cloud import storage
-    if not is_user_secrets_token_set:
+    if not is_user_secrets_token_set():
         return storage
 
     from kaggle_gcp import get_integrations
@@ -220,9 +257,8 @@ def init_gcs():
     return storage
 
 def init_automl():
-    is_user_secrets_token_set = "KAGGLE_USER_SECRETS_TOKEN" in os.environ
     from google.cloud import automl, automl_v1beta1
-    if not is_user_secrets_token_set:
+    if not is_user_secrets_token_set():
         return
 
     from kaggle_gcp import get_integrations
@@ -251,10 +287,91 @@ def init_automl():
     # the TablesClient is GA.
     monkeypatch_client(automl_v1beta1.TablesClient, kaggle_kernel_credentials)
 
+def init_translation_v2():
+    from google.cloud import translate_v2
+    if not is_user_secrets_token_set():
+        return translate_v2
+
+    from kaggle_gcp import get_integrations
+    if not get_integrations().has_translation():
+        return translate_v2
+    from kaggle_secrets import GcpTarget
+    kernel_credentials = KaggleKernelCredentials(target=GcpTarget.TRANSLATION)
+    monkeypatch_client(translate_v2.Client,kernel_credentials)
+    return translate_v2
+
+def init_translation_v3():
+    # Translate v3 exposes different client than translate v2.
+    from google.cloud import translate_v3
+    if not is_user_secrets_token_set():
+        return translate_v3
+
+    from kaggle_gcp import get_integrations
+    if not get_integrations().has_translation():
+        return translate_v3
+    from kaggle_secrets import GcpTarget
+    kernel_credentials = KaggleKernelCredentials(target=GcpTarget.TRANSLATION)
+    monkeypatch_client(translate_v3.TranslationServiceClient,kernel_credentials)
+    return translate_v3
+
+def init_natural_language():
+    from google.cloud import language
+    if not is_user_secrets_token_set():
+        return language
+
+    from kaggle_gcp import get_integrations
+    if not get_integrations().has_natural_language():
+        return language
+
+    from kaggle_secrets import GcpTarget
+    kernel_credentials = KaggleKernelCredentials(target=GcpTarget.NATURAL_LANGUAGE)
+    monkeypatch_client(language.LanguageServiceClient,kernel_credentials)    
+    monkeypatch_client(language.LanguageServiceAsyncClient,kernel_credentials)
+    return language
+
+def init_video_intelligence():
+    from google.cloud import videointelligence
+    if not is_user_secrets_token_set():
+        return videointelligence
+
+    from kaggle_gcp import get_integrations
+    if not get_integrations().has_video_intelligence():
+        return videointelligence
+
+    from kaggle_secrets import GcpTarget
+    kernel_credentials = KaggleKernelCredentials(target=GcpTarget.VIDEO_INTELLIGENCE)
+    monkeypatch_client(
+        videointelligence.VideoIntelligenceServiceClient,
+        kernel_credentials)
+    monkeypatch_client(
+        videointelligence.VideoIntelligenceServiceAsyncClient,
+        kernel_credentials)
+    return videointelligence
+
+def init_vision():
+    from google.cloud import vision
+    if not is_user_secrets_token_set():
+        return vision
+
+    from kaggle_gcp import get_integrations
+    if not get_integrations().has_vision():
+        return vision
+
+    from kaggle_secrets import GcpTarget
+    kernel_credentials = KaggleKernelCredentials(target=GcpTarget.VISION)
+    monkeypatch_client(vision.ImageAnnotatorClient,kernel_credentials)
+    monkeypatch_client(vision.ImageAnnotatorAsyncClient,kernel_credentials)
+    return vision
+
 def init():
     init_bigquery()
     init_gcs()
     init_automl()
+    init_translation_v2()
+    init_translation_v3()
+    init_natural_language()
+    init_video_intelligence()
+    init_vision()
 
 # We need to initialize the monkeypatching of the client libraries
 # here since there is a circular dependency between our import hook version

@@ -269,6 +269,10 @@ RUN pip install --upgrade cython && \
     # which is loaded at startup.
     pip install google-cloud-bigquery==1.12.1 && \
     pip install google-cloud-storage && \
+    pip install google-cloud-translate==3.* && \
+    pip install google-cloud-language==2.* && \
+    pip install google-cloud-videointelligence==2.* && \
+    pip install google-cloud-vision==2.* && \
     pip install ortools && \
     pip install scattertext && \
     # Pandas data reader

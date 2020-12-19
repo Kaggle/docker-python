@@ -184,6 +184,21 @@ class TestUserSecrets(unittest.TestCase):
         self._test_client(call_get_gcs_access_token,
                           '/requests/GetUserSecretRequest', {'Target': GcpTarget.GCS.target},
                           secret=secret)
+        self._test_client(call_get_gcs_access_token,
+                          '/requests/GetUserSecretRequest', {'Target': GcpTarget.AUTOML.target},
+                          secret=secret)
+        self._test_client(call_get_gcs_access_token,
+                          '/requests/GetUserSecretRequest', {'Target': GcpTarget.TRANSLATION.target},
+                          secret=secret)
+        self._test_client(call_get_gcs_access_token,
+                          '/requests/GetUserSecretRequest', {'Target': GcpTarget.NATURAL_LANGUAGE.target},
+                          secret=secret)
+        self._test_client(call_get_gcs_access_token,
+                          '/requests/GetUserSecretRequest', {'Target': GcpTarget.VIDEO_INTELLIGENCE.target},
+                          secret=secret)
+        self._test_client(call_get_gcs_access_token,
+                          '/requests/GetUserSecretRequest', {'Target': GcpTarget.VISION.target},
+                          secret=secret)
 
     def test_get_access_token_handles_unsuccessful(self):
         def call_get_access_token():
