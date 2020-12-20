@@ -24,6 +24,10 @@ class GcpTarget(Enum):
     BIGQUERY = (1, "BigQuery")
     GCS = (2, "Google Cloud Storage")
     AUTOML = (3, "Cloud AutoML")
+    TRANSLATION = (4, "Cloud Translation")
+    NATURAL_LANGUAGE = (5, "Cloud Natural Language")
+    VIDEO_INTELLIGENCE = (6, "Cloud Video Intelligence")
+    VISION = (7, "Cloud Vision")
 
     def __init__(self, target, service):
         self._target = target
@@ -153,6 +157,18 @@ class UserSecretsClient():
 
     def _get_automl_access_token(self) -> Tuple[str, Optional[datetime]]:
         return self._get_access_token(GcpTarget.AUTOML)
+
+    def _get_translation_access_token(self) -> Tuple[str, Optional[datetime]]:
+        return self._get_access_token(GcpTarget.TRANSLATION)
+
+    def _get_natural_language_access_token(self) -> Tuple[str, Optional[datetime]]:
+        return self._get_access_token(GcpTarget.NATURAL_LANGUAGE)
+
+    def _get_video_intelligence_access_token(self) -> Tuple[str, Optional[datetime]]:
+        return self._get_access_token(GcpTarget.VIDEO_INTELLIGENCE)
+
+    def _get_vision_access_token(self) -> Tuple[str, Optional[datetime]]:
+        return self._get_access_token(GcpTarget.VISION)
 
     def _get_access_token(self, target: GcpTarget) -> Tuple[str, Optional[datetime]]:
         request_body = {

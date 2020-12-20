@@ -7,7 +7,20 @@ import importlib
 import importlib.machinery
 
 class GcpModuleFinder(importlib.abc.MetaPathFinder):
-    _MODULES = ['google.cloud.bigquery', 'google.cloud.storage', 'google.cloud.automl_v1beta1']
+    _MODULES = [
+        'google.cloud.bigquery',
+        'google.cloud.storage',
+        'google.cloud.automl_v1beta1',
+        'google.cloud.translate',
+        'google.cloud.translate_v2',
+        'google.cloud.translate_v3',
+        'google.cloud.language',
+        'google.cloud.language_v1',
+        'google.cloud.videointelligence',
+        'google.cloud.videointelligence_v1',
+        'google.cloud.vision',
+        'google.cloud.vision_v1',
+        ]
     _KAGGLE_GCP_PATH = 'kaggle_gcp.py'
     def __init__(self):
         pass
@@ -41,13 +54,21 @@ class GcpModuleLoader(importlib.abc.Loader):
             'google.cloud.bigquery': kaggle_gcp.init_bigquery,
             'google.cloud.storage': kaggle_gcp.init_gcs,
             'google.cloud.automl_v1beta1': kaggle_gcp.init_automl,
+            'google.cloud.translate': kaggle_gcp.init_translation_v3,
+            'google.cloud.translate_v2': kaggle_gcp.init_translation_v2,
+            'google.cloud.translate_v3': kaggle_gcp.init_translation_v3,
+            'google.cloud.language': kaggle_gcp.init_natural_language,
+            'google.cloud.language_v1': kaggle_gcp.init_natural_language,
+            'google.cloud.videointelligence': kaggle_gcp.init_video_intelligence,
+            'google.cloud.videointelligence_v1': kaggle_gcp.init_video_intelligence,
+            'google.cloud.vision': kaggle_gcp.init_vision,
+            'google.cloud.vision_v1': kaggle_gcp.init_vision
         }
         monkeypatch_gcp_module = _LOADERS[spec.name]()
         return monkeypatch_gcp_module
 
     def exec_module(self, module):
         pass
-
 
 if not hasattr(sys, 'frozen'):
     sys.meta_path.insert(0, GcpModuleFinder())
