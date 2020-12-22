@@ -297,7 +297,7 @@ def init_translation_v2():
         return translate_v2
     from kaggle_secrets import GcpTarget
     kernel_credentials = KaggleKernelCredentials(target=GcpTarget.TRANSLATION)
-    monkeypatch_client(translate_v2.Client,kernel_credentials)
+    monkeypatch_client(translate_v2.Client, kernel_credentials)
     return translate_v2
 
 def init_translation_v3():
@@ -311,7 +311,7 @@ def init_translation_v3():
         return translate_v3
     from kaggle_secrets import GcpTarget
     kernel_credentials = KaggleKernelCredentials(target=GcpTarget.TRANSLATION)
-    monkeypatch_client(translate_v3.TranslationServiceClient,kernel_credentials)
+    monkeypatch_client(translate_v3.TranslationServiceClient, kernel_credentials)
     return translate_v3
 
 def init_natural_language():
@@ -325,8 +325,8 @@ def init_natural_language():
 
     from kaggle_secrets import GcpTarget
     kernel_credentials = KaggleKernelCredentials(target=GcpTarget.NATURAL_LANGUAGE)
-    monkeypatch_client(language.LanguageServiceClient,kernel_credentials)    
-    monkeypatch_client(language.LanguageServiceAsyncClient,kernel_credentials)
+    monkeypatch_client(language.LanguageServiceClient, kernel_credentials)    
+    monkeypatch_client(language.LanguageServiceAsyncClient, kernel_credentials)
     return language
 
 def init_video_intelligence():
@@ -359,8 +359,8 @@ def init_vision():
 
     from kaggle_secrets import GcpTarget
     kernel_credentials = KaggleKernelCredentials(target=GcpTarget.VISION)
-    monkeypatch_client(vision.ImageAnnotatorClient,kernel_credentials)
-    monkeypatch_client(vision.ImageAnnotatorAsyncClient,kernel_credentials)
+    monkeypatch_client(vision.ImageAnnotatorClient, kernel_credentials)
+    monkeypatch_client(vision.ImageAnnotatorAsyncClient, kernel_credentials)
     return vision
 
 def init():

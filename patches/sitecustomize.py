@@ -20,7 +20,7 @@ class GcpModuleFinder(importlib.abc.MetaPathFinder):
         'google.cloud.videointelligence_v1',
         'google.cloud.vision',
         'google.cloud.vision_v1',
-        ]
+    ]
     _KAGGLE_GCP_PATH = 'kaggle_gcp.py'
     def __init__(self):
         pass
