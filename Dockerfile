@@ -116,9 +116,9 @@ RUN pip install ibis-framework && \
     pip install gluoncv && \
     /tmp/clean-layer.sh
 
-# scikit-learn dependencies
 RUN pip install scipy && \
-    pip install scikit-learn && \
+    # b/176817038 avoid upgrade to 0.24 which is causing issues with hep-ml package.
+    pip install scikit-learn==0.23.2 && \
     # HDF5 support
     pip install h5py && \
     pip install biopython && \
