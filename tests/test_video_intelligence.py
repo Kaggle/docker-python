@@ -26,7 +26,7 @@ class TestCloudVideoIntelligence(unittest.TestCase):
     def test_default_credentials(self):
         env = EnvironmentVarGuard()
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
-        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'VIDEO_INTELLIGENCE')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'CLOUDAI')
         with env:
             init_video_intelligence()
             client = videointelligence.VideoIntelligenceServiceClient()
@@ -38,7 +38,7 @@ class TestCloudVideoIntelligence(unittest.TestCase):
         credentials = _make_credentials()
         env = EnvironmentVarGuard()
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
-        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'VIDEO_INTELLIGENCE')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'CLOUDAI')
         with env:
             init_video_intelligence()
             client = videointelligence.VideoIntelligenceServiceClient(credentials=credentials)
@@ -48,7 +48,7 @@ class TestCloudVideoIntelligence(unittest.TestCase):
     def test_monkeypatching_succeed(self):
         env = EnvironmentVarGuard()
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
-        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'TRANSLATION')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'CLOUDAI')
         with env:
             init_video_intelligence()
             client = videointelligence.VideoIntelligenceServiceClient.__init__
@@ -57,7 +57,7 @@ class TestCloudVideoIntelligence(unittest.TestCase):
     def test_monkeypatching_idempotent(self):
         env = EnvironmentVarGuard()
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
-        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'VIDEO_INTELLIGENCE')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'CLOUDAI')
         with env:
             init_video_intelligence()
             client1 = videointelligence.VideoIntelligenceServiceClient.__init__
