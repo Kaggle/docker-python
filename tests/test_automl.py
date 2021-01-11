@@ -27,7 +27,7 @@ class TestAutoMl(unittest.TestCase):
         credentials = _make_credentials()
         env = EnvironmentVarGuard()
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
-        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'AUTOML')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'CLOUDAI')
         with env:
             init_automl()
             client = automl.AutoMlClient(credentials=credentials)
@@ -48,7 +48,7 @@ class TestAutoMl(unittest.TestCase):
         credentials = _make_credentials()
         env = EnvironmentVarGuard()
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
-        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'AUTOML')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'CLOUDAI')
         with env:
             init_automl()
             tables_client = automl_v1beta1.TablesClient(credentials=credentials)
@@ -58,7 +58,7 @@ class TestAutoMl(unittest.TestCase):
     def test_default_credentials_automl_client(self):
         env = EnvironmentVarGuard()
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
-        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'AUTOML')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'CLOUDAI')
         with env:
             init_automl()
             automl_client = automl.AutoMlClient()
@@ -70,7 +70,7 @@ class TestAutoMl(unittest.TestCase):
     def test_default_credentials_automl_v1beta1_client(self):
         env = EnvironmentVarGuard()
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
-        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'AUTOML')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'CLOUDAI')
         with env:
             init_automl()
             automl_client = automl_v1beta1.AutoMlClient()
@@ -82,7 +82,7 @@ class TestAutoMl(unittest.TestCase):
     def test_default_credentials_tables_client(self):
         env = EnvironmentVarGuard()
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
-        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'AUTOML')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'CLOUDAI')
         with env:
             init_automl()
             tables_client = automl_v1beta1.TablesClient()
@@ -94,7 +94,7 @@ class TestAutoMl(unittest.TestCase):
     def test_default_credentials_prediction_client(self):
         env = EnvironmentVarGuard()
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
-        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'AUTOML')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'CLOUDAI')
         with env:
             prediction_client = automl.PredictionServiceClient()
             self.assertIsNotNone(prediction_client.credentials)
@@ -105,7 +105,7 @@ class TestAutoMl(unittest.TestCase):
     def test_default_credentials_prediction_v1beta1_client(self):
         env = EnvironmentVarGuard()
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
-        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'AUTOML')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'CLOUDAI')
         with env:
             prediction_client = automl_v1beta1.PredictionServiceClient()
             self.assertIsNotNone(prediction_client.credentials)
@@ -115,7 +115,7 @@ class TestAutoMl(unittest.TestCase):
     def test_monkeypatching_idempotent(self):
         env = EnvironmentVarGuard()
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
-        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'AUTOML')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'CLOUDAI')
         with env:
             client1 = automl.AutoMlClient.__init__
             init_automl()

@@ -42,20 +42,8 @@ class KernelIntegrations():
     def has_gcs(self):
         return GcpTarget.GCS in self.integrations
 
-    def has_automl(self):
-        return GcpTarget.AUTOML in self.integrations
-
-    def has_translation(self):
-        return GcpTarget.TRANSLATION in self.integrations
-
-    def has_natural_language(self):
-        return GcpTarget.NATURAL_LANGUAGE in self.integrations
-
-    def has_video_intelligence(self):
-        return GcpTarget.VIDEO_INTELLIGENCE in self.integrations
-
-    def has_vision(self):
-        return GcpTarget.VISION in self.integrations
+    def has_cloudai(self):
+        return GcpTarget.CLOUDAI in self.integrations
 
 class KaggleKernelCredentials(credentials.Credentials):
     """Custom Credentials used to authenticate using the Kernel's connected OAuth account.
@@ -74,16 +62,8 @@ class KaggleKernelCredentials(credentials.Credentials):
                 self.token, self.expiry = client.get_bigquery_access_token()
             elif self.target == GcpTarget.GCS:
                 self.token, self.expiry = client._get_gcs_access_token()
-            elif self.target == GcpTarget.AUTOML:
-                self.token, self.expiry = client._get_automl_access_token()
-            elif self.target == GcpTarget.TRANSLATION:
-                self.token, self.expiry = client._get_translation_access_token()
-            elif self.target == GcpTarget.NATURAL_LANGUAGE:
-                self.token, self.expiry = client._get_natural_language_access_token()
-            elif self.target == GcpTarget.VIDEO_INTELLIGENCE:
-                self.token, self.expiry = client._get_video_intelligence_access_token()
-            elif self.target == GcpTarget.VISION:
-                self.token, self.expiry = client._get_vision_access_token()
+            elif self.target == GcpTarget.CLOUDAI:
+                self.token, self.expiry = client._get_cloudai_access_token()
         except ConnectionError as e:
             Log.error(f"Connection error trying to refresh access token: {e}")
             print("There was a connection error trying to fetch the access token. "
@@ -262,12 +242,12 @@ def init_automl():
         return
 
     from kaggle_gcp import get_integrations
-    if not get_integrations().has_automl():
+    if not get_integrations().has_cloudai():
         return
 
     from kaggle_secrets import GcpTarget
     from kaggle_gcp import KaggleKernelCredentials
-    kaggle_kernel_credentials = KaggleKernelCredentials(target=GcpTarget.AUTOML)
+    kaggle_kernel_credentials = KaggleKernelCredentials(target=GcpTarget.CLOUDAI)
 
     # Patch the 2 GA clients: AutoMlClient and PreditionServiceClient
     monkeypatch_client(automl.AutoMlClient, kaggle_kernel_credentials)
@@ -293,10 +273,10 @@ def init_translation_v2():
         return translate_v2
 
     from kaggle_gcp import get_integrations
-    if not get_integrations().has_translation():
+    if not get_integrations().has_cloudai():
         return translate_v2
     from kaggle_secrets import GcpTarget
-    kernel_credentials = KaggleKernelCredentials(target=GcpTarget.TRANSLATION)
+    kernel_credentials = KaggleKernelCredentials(target=GcpTarget.CLOUDAI)
     monkeypatch_client(translate_v2.Client, kernel_credentials)
     return translate_v2
 
@@ -307,10 +287,10 @@ def init_translation_v3():
         return translate_v3
 
     from kaggle_gcp import get_integrations
-    if not get_integrations().has_translation():
+    if not get_integrations().has_cloudai():
         return translate_v3
     from kaggle_secrets import GcpTarget
-    kernel_credentials = KaggleKernelCredentials(target=GcpTarget.TRANSLATION)
+    kernel_credentials = KaggleKernelCredentials(target=GcpTarget.CLOUDAI)
     monkeypatch_client(translate_v3.TranslationServiceClient, kernel_credentials)
     return translate_v3
 
@@ -320,11 +300,11 @@ def init_natural_language():
         return language
 
     from kaggle_gcp import get_integrations
-    if not get_integrations().has_natural_language():
+    if not get_integrations().has_cloudai():
         return language
 
     from kaggle_secrets import GcpTarget
-    kernel_credentials = KaggleKernelCredentials(target=GcpTarget.NATURAL_LANGUAGE)
+    kernel_credentials = KaggleKernelCredentials(target=GcpTarget.CLOUDAI)
     monkeypatch_client(language.LanguageServiceClient, kernel_credentials)    
     monkeypatch_client(language.LanguageServiceAsyncClient, kernel_credentials)
     return language
@@ -335,11 +315,11 @@ def init_video_intelligence():
         return videointelligence
 
     from kaggle_gcp import get_integrations
-    if not get_integrations().has_video_intelligence():
+    if not get_integrations().has_cloudai():
         return videointelligence
 
     from kaggle_secrets import GcpTarget
-    kernel_credentials = KaggleKernelCredentials(target=GcpTarget.VIDEO_INTELLIGENCE)
+    kernel_credentials = KaggleKernelCredentials(target=GcpTarget.CLOUDAI)
     monkeypatch_client(
         videointelligence.VideoIntelligenceServiceClient,
         kernel_credentials)
@@ -354,11 +334,11 @@ def init_vision():
         return vision
 
     from kaggle_gcp import get_integrations
-    if not get_integrations().has_vision():
+    if not get_integrations().has_cloudai():
         return vision
 
     from kaggle_secrets import GcpTarget
-    kernel_credentials = KaggleKernelCredentials(target=GcpTarget.VISION)
+    kernel_credentials = KaggleKernelCredentials(target=GcpTarget.CLOUDAI)
     monkeypatch_client(vision.ImageAnnotatorClient, kernel_credentials)
     monkeypatch_client(vision.ImageAnnotatorAsyncClient, kernel_credentials)
     return vision

@@ -13,7 +13,7 @@ class TestTensorflowCredentials(unittest.TestCase):
         credential = '{"client_id":"fake_client_id",' \
             '"client_secret":"fake_client_secret",' \
             '"refresh_token":"not a refresh token",' \
-            '"type":"authorized_user"}';
+            '"type":"authorized_user"}'
 
         env = EnvironmentVarGuard()
         env.set('HOME', '/tmp')
@@ -22,7 +22,7 @@ class TestTensorflowCredentials(unittest.TestCase):
         # These need to be set to make UserSecretsClient happy, but aren't
         # pertinent to this test.
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
-        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'AUTOML')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'CLOUDAI')
 
         user_secrets = UserSecretsClient()
         user_secrets.set_tensorflow_credential(credential)

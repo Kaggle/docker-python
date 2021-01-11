@@ -26,7 +26,7 @@ class TestCloudNaturalLanguage(unittest.TestCase):
     def test_default_credentials(self):
         env = EnvironmentVarGuard()
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
-        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'NATURAL_LANGUAGE')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'CLOUDAI')
         with env:
             init_natural_language()
             client = language.LanguageServiceClient()
@@ -38,7 +38,7 @@ class TestCloudNaturalLanguage(unittest.TestCase):
         credentials = _make_credentials()
         env = EnvironmentVarGuard()
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
-        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'NATURAL_LANGUAGE')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'CLOUDAI')
         with env:
             init_natural_language()
             client = language.LanguageServiceClient(credentials=credentials)
@@ -49,7 +49,7 @@ class TestCloudNaturalLanguage(unittest.TestCase):
     def test_monkeypatching_succeed(self):
         env = EnvironmentVarGuard()
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
-        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'TRANSLATION')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'CLOUDAI')
         with env:
             init_natural_language()
             client = language.LanguageServiceClient.__init__
@@ -58,7 +58,7 @@ class TestCloudNaturalLanguage(unittest.TestCase):
     def test_monkeypatching_idempotent(self):
         env = EnvironmentVarGuard()
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
-        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'NATURAL_LANGUAGE')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'CLOUDAI')
         with env:
             init_natural_language()
             client1 = language.LanguageServiceClient.__init__

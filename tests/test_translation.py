@@ -28,7 +28,7 @@ class TestCloudTranslation(unittest.TestCase):
     def test_default_credentials_v2(self):
         env = EnvironmentVarGuard()
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
-        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'TRANSLATION')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'CLOUDAI')
         with env:
             init_translation_v2()
             client = translate_v2.Client()
@@ -41,7 +41,7 @@ class TestCloudTranslation(unittest.TestCase):
         credentials = _make_credentials()
         env = EnvironmentVarGuard()
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
-        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'TRANSLATION')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'CLOUDAI')
         with env:
             init_translation_v2()
             client = translate_v2.Client(credentials=credentials)
@@ -52,7 +52,7 @@ class TestCloudTranslation(unittest.TestCase):
     def test_default_credentials_v3(self):
         env = EnvironmentVarGuard()
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
-        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'TRANSLATION')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'CLOUDAI')
         with env:
             init_translation_v3()
             client = translate.TranslationServiceClient()
@@ -65,7 +65,7 @@ class TestCloudTranslation(unittest.TestCase):
         credentials = _make_credentials()
         env = EnvironmentVarGuard()
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
-        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'TRANSLATION')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'CLOUDAI')
         with env:
             init_translation_v3()
             client = translate.TranslationServiceClient(credentials=credentials)
@@ -76,7 +76,7 @@ class TestCloudTranslation(unittest.TestCase):
     def test_monkeypatching_succeed(self):
         env = EnvironmentVarGuard()
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
-        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'TRANSLATION')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'CLOUDAI')
         with env:
             init_translation_v2()
             init_translation_v3()
@@ -90,7 +90,7 @@ class TestCloudTranslation(unittest.TestCase):
     def test_monkeypatching_idempotent(self):
         env = EnvironmentVarGuard()
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
-        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'TRANSLATION')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'CLOUDAI')
         with env:
             init_translation_v2()
             init_translation_v3()
@@ -116,7 +116,7 @@ class TestCloudTranslation(unittest.TestCase):
         credentials = _make_credentials()
         env = EnvironmentVarGuard()
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
-        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'TRANSLATION')
+        env.set('KAGGLE_KERNEL_INTEGRATIONS', 'CLOUDAI')
         with env:
             init_translation_v3()
             client1 = translate.TranslationServiceClient()

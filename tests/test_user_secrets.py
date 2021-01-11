@@ -178,9 +178,9 @@ class TestUserSecrets(unittest.TestCase):
             client = UserSecretsClient()
             secret_response = client._get_gcs_access_token()
             self.assertEqual(secret_response, (secret, now + timedelta(seconds=3600)))
-        def call_get_automl_access_token():
+        def call_get_cloudai_access_token():
             client = UserSecretsClient()
-            secret_response = client._get_automl_access_token()
+            secret_response = client._get_cloudai_access_token()
             self.assertEqual(secret_response, (secret, now + timedelta(seconds=3600)))
         def call_get_translation_access_token():
             client = UserSecretsClient()
@@ -205,20 +205,8 @@ class TestUserSecrets(unittest.TestCase):
         self._test_client(call_get_gcs_access_token,
                           '/requests/GetUserSecretRequest', {'Target': GcpTarget.GCS.target},
                           secret=secret)
-        self._test_client(call_get_automl_access_token,
-                          '/requests/GetUserSecretRequest', {'Target': GcpTarget.AUTOML.target},
-                          secret=secret)
-        self._test_client(call_get_translation_access_token,
-                          '/requests/GetUserSecretRequest', {'Target': GcpTarget.TRANSLATION.target},
-                          secret=secret)
-        self._test_client(call_get_natural_lang_access_token,
-                          '/requests/GetUserSecretRequest', {'Target': GcpTarget.NATURAL_LANGUAGE.target},
-                          secret=secret)
-        self._test_client(call_get_video_intell_access_token,
-                          '/requests/GetUserSecretRequest', {'Target': GcpTarget.VIDEO_INTELLIGENCE.target},
-                          secret=secret)
-        self._test_client(call_get_vision_access_token,
-                          '/requests/GetUserSecretRequest', {'Target': GcpTarget.VISION.target},
+        self._test_client(call_get_cloudai_access_token,
+                          '/requests/GetUserSecretRequest', {'Target': GcpTarget.CLOUDAI.target},
                           secret=secret)
 
     def test_get_access_token_handles_unsuccessful(self):
