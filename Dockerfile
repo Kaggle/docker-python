@@ -1,5 +1,4 @@
-# b/157908450 set to latest once numba 0.49.x fixes performance regression for datashader.
-ARG BASE_TAG=m46
+ARG BASE_TAG=m61
 ARG TENSORFLOW_VERSION=2.4.0
 
 FROM gcr.io/kaggle-images/python-tensorflow-whl:${TENSORFLOW_VERSION}-py37 as tensorflow_whl
@@ -320,8 +319,7 @@ RUN pip install bleach && \
     pip install pandocfilters && \
     pip install pexpect && \
     pip install pickleshare && \
-    # b/160263325: the version included in the m46 base image has a known issue.
-    pip install --upgrade Pillow && \
+    pip install Pillow && \
     # Install openslide and its python binding
     apt-get install -y openslide-tools && \
     pip install openslide-python && \
@@ -373,8 +371,7 @@ RUN pip install flashtext && \
     pip install shap && \
     pip install ray && \
     pip install gym && \
-    # b/167220714 unpin once matplotlib >= 3.3 is installed in the base image.
-    pip install tensorforce==0.5.5 && \
+    pip install tensorforce && \
     pip install pyarabic && \
     pip install pandasql && \
     pip install tensorflow_hub && \
@@ -392,8 +389,7 @@ RUN pip install flashtext && \
     pip install plotly_express && \
     pip install albumentations && \
     pip install catalyst && \
-    # b/162850432 prevent matplotlib upgrade.
-    pip install osmnx==0.15.1 && \
+    pip install osmnx && \
     apt-get -y install libspatialindex-dev && \
     pip install pytorch-ignite && \
     pip install qgrid && \
@@ -478,9 +474,7 @@ ADD patches/imagemagick-policy.xml /etc/ImageMagick-6/policy.xml
 # Disable unnecessary jupyter extensions
 RUN jupyter-nbextension disable nb_conda --py --sys-prefix && \
     jupyter-serverextension disable nb_conda --py --sys-prefix && \
-    python -m nb_conda_kernels.install --disable && \
-    jupyter-nbextension disable nbpresent --py --sys-prefix && \
-    jupyter-serverextension disable nbpresent --py --sys-prefix
+    python -m nb_conda_kernels.install --disable
 
 # Set backend for matplotlib
 ENV MPLBACKEND "agg"
