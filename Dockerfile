@@ -407,7 +407,7 @@ RUN pip install flashtext && \
     pip install nnabla==1.13.0 && \
     pip install vowpalwabbit && \
     # papermill can replace nbconvert for executing notebooks
-    pip install papermill && \
+    pip install --upgrade papermill && \
     pip install cloud-tpu-client && \
     pip install tensorflow-cloud && \
     pip install tensorflow-datasets && \
