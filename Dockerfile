@@ -1,8 +1,8 @@
 # b/157908450 set to latest once numba 0.49.x fixes performance regression for datashader.
 ARG BASE_TAG=m46
-ARG TENSORFLOW_VERSION=2.3.1
+ARG TENSORFLOW_VERSION=2.4.0
 
-FROM gcr.io/kaggle-images/python-tensorflow-whl:${TENSORFLOW_VERSION}-py37-2 as tensorflow_whl
+FROM gcr.io/kaggle-images/python-tensorflow-whl:${TENSORFLOW_VERSION}-py37 as tensorflow_whl
 FROM gcr.io/deeplearning-platform-release/base-cpu:${BASE_TAG}
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
@@ -210,6 +210,8 @@ RUN pip install mpld3 && \
     pip install fbprophet && \
     pip install holoviews && \
     pip install geoviews && \
+    # b/177279594 umap-learn 0.5.0 is causing a llvmlite upgrade.
+    pip install umap-learn==0.4.6 && \
     pip install hypertools && \
     pip install py_stringsimjoin && \
     pip install mlens && \

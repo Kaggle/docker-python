@@ -66,7 +66,7 @@ RUN apt-get install -y gnupg zip openjdk-8-jdk && \
 RUN cd /usr/local/src && \
     git clone https://github.com/tensorflow/tensorflow && \
     cd tensorflow && \
-    git checkout tags/v2.3.1 && \
+    git checkout tags/v2.4.0 && \
     pip install keras_applications --no-deps && \
     pip install keras_preprocessing --no-deps
 
@@ -87,7 +87,7 @@ RUN pip install /tmp/tensorflow_cpu/tensorflow*.whl
 RUN cd /usr/local/src/ && \
     git clone https://github.com/tensorflow/addons && \
     cd addons && \
-    git checkout tags/v0.11.2 && \
+    git checkout tags/v0.12.0 && \
     python ./configure.py && \
     bazel build --enable_runfiles build_pip_pkg && \
     bazel-bin/build_pip_pkg /tmp/tfa_cpu && \
