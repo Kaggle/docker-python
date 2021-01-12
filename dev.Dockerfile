@@ -13,9 +13,8 @@
 #   # you can run the tests against this new image using:
 #   ./test -i kaggle/python-dev -p test_user_secrets.py
 #
+FROM gcr.io/kaggle-images/python:staging
 
-#FROM gcr.io/kaggle-images/python:staging
-FROM kaggle/python-build:latest
 ADD patches/kaggle_gcp.py /root/.local/lib/python3.7/site-packages/kaggle_gcp.py
 ADD patches/kaggle_secrets.py /root/.local/lib/python3.7/site-packages/kaggle_secrets.py
 ADD patches/kaggle_session.py /root/.local/lib/python3.7/site-packages/kaggle_session.py
