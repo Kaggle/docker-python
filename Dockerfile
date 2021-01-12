@@ -371,7 +371,8 @@ RUN pip install flashtext && \
     pip install shap && \
     pip install ray && \
     pip install gym && \
-    pip install tensorforce && \
+    # b/167268016 tensorforce 0.6.6 has an explicit dependency on tensorflow 2.3.1 which is causing a downgrade.
+    pip install tensorforce==0.5.5 && \
     pip install pyarabic && \
     pip install pandasql && \
     pip install tensorflow_hub && \
