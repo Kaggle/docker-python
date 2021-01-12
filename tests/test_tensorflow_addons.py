@@ -11,7 +11,7 @@ class TestTensorflowAddons(unittest.TestCase):
         img = tf.image.convert_image_dtype(img, tf.float32)
         mean = tfa.image.mean_filter2d(img, filter_shape=1)
 
-        self.assertEqual(1, len(mean))
+        self.assertEqual([1, 1, 3], mean.shape)
     
     # This test exercises TFA Custom Op. See: b/145555176
     def test_gelu(self):

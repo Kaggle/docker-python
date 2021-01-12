@@ -209,8 +209,6 @@ RUN pip install mpld3 && \
     pip install fbprophet && \
     pip install holoviews && \
     pip install geoviews && \
-    # b/177279594 umap-learn 0.5.0 is causing a llvmlite upgrade.
-    pip install umap-learn==0.4.6 && \
     pip install hypertools && \
     pip install py_stringsimjoin && \
     pip install mlens && \
