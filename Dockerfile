@@ -6,6 +6,7 @@ FROM gcr.io/deeplearning-platform-release/base-cpu:${BASE_TAG}
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
+ADD patches/template_conf.json /opt/kaggle/conf.json
 
 # This is necessary for apt to access HTTPS sources
 RUN apt-get update && \

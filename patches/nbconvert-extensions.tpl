@@ -4,7 +4,7 @@ All cell metadata starting with '_kg_' will be included with its value ({key}-{v
 as a class in the cell's DIV container
 #}
     
-{% extends 'full.tpl'%}
+{% extends 'classic/index.html.j2'%}
 {% block any_cell %}
     <div class="{% for k in cell['metadata'] if k.startswith("_kg_") %}{{k}}-{{cell['metadata'][k] | lower}} {% endfor %}">
         {{ super() }}
