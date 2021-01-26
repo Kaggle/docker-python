@@ -413,7 +413,10 @@ RUN pip install flashtext && \
     pip install pytorch-lightning && \
     pip install datatable && \
     pip install sympy && \
+    # flask is used by agents in the simulation competitions.
     pip install flask && \
+    # pycrypto is used by competitions team.
+    pip install pycrypto && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
