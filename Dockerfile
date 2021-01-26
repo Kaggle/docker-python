@@ -301,7 +301,8 @@ RUN pip install bleach && \
     pip install ipython-genutils && \
     pip install ipywidgets && \
     pip install isoweek && \
-    pip install jedi && \
+    # Lastest version breaks ipython: https://github.com/ipython/ipython/issues/12740
+    pip install jedi==0.17.2 && \
     pip install Jinja2 && \
     pip install jsonschema && \
     pip install jupyter && \
