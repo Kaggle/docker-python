@@ -1,7 +1,7 @@
 ARG BASE_TAG=m61
 ARG TENSORFLOW_VERSION=2.4.0
 
-FROM gcr.io/kaggle-images/python-tensorflow-whl:${TENSORFLOW_VERSION}-py37-2 as tensorflow_whl
+FROM gcr.io/kaggle-images/python-tensorflow-whl:${TENSORFLOW_VERSION}-py37-3 as tensorflow_whl
 FROM gcr.io/deeplearning-platform-release/base-cpu:${BASE_TAG}
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
@@ -83,7 +83,8 @@ RUN apt-get install -y libfreetype6-dev && \
     pip install keras && \
     pip install keras-tuner && \
     pip install flake8 && \
-    pip install theano-pymc && \
+    # Pinned because it breaks theano test with the latest version (b/178107003).
+    pip install theano-pymc==1.0.11 && \
     pip install python-Levenshtein && \
     pip install hep_ml && \
     # NLTK Project datasets

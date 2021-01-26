@@ -21,3 +21,4 @@
 * `2.3.1-py37-2`: TensorFlow 2.3.1 & TFA 0.11 with Python 3.7
 * `2.4.0-py37`: TensorFlow 2.4.0 & Python 3.7 & TFA 0.12
 * `2.4.0-py37-2`: TensorFlow 2.4.0 & m61 base image
+* `2.4.0-py37-3`: TensorFlow 2.4.0 & 7.0 CUDA compute capability

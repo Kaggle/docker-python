@@ -103,8 +103,8 @@ RUN cd /usr/local/src/tensorflow_gcs_config && \
 # Create a tensorflow wheel for GPU/cuda
 ENV TF_NEED_CUDA=1
 ENV TF_CUDA_VERSION=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION
-# 3.7 is for the K80 and 6.0 is for the P100, 7.5 is for the T4: https://developer.nvidia.com/cuda-gpus
-ENV TF_CUDA_COMPUTE_CAPABILITIES=3.7,6.0,7.5
+# 3.7 (K80), 6.0 (P100), 7.0 (V100), 7.5 (T4): https://developer.nvidia.com/cuda-gpus
+ENV TF_CUDA_COMPUTE_CAPABILITIES=3.7,6.0,7.0,7.5
 ENV TF_CUDNN_VERSION=7
 ENV TF_NCCL_VERSION=2
 ENV NCCL_INSTALL_PATH=/usr/
