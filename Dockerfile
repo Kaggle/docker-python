@@ -413,6 +413,8 @@ RUN pip install flashtext && \
     pip install pytorch-lightning && \
     pip install datatable && \
     pip install sympy && \
+    # pycrypto is used by competitions team.
+    pip install pycrypto && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
