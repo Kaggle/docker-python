@@ -413,6 +413,7 @@ RUN pip install flashtext && \
     pip install pytorch-lightning && \
     pip install datatable && \
     pip install sympy && \
+    pip install flask && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
