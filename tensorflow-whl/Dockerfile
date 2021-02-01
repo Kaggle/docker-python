@@ -52,7 +52,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN pip install --upgrade pip
 
-# See _TF_(MIN|MAX)_BAZEL_VERSION at https://github.com/tensorflow/tensorflow/blob/master/configure.py.
+# See _TF_(MIN|MAX)_BAZEL_VERSION at https://github.com/tensorflow/tensorflow/blob/master/configure.py
 ENV BAZEL_VERSION=3.1.0
 RUN apt-get install -y gnupg zip openjdk-8-jdk && \
     apt-get install -y --no-install-recommends \
@@ -66,7 +66,7 @@ RUN apt-get install -y gnupg zip openjdk-8-jdk && \
 RUN cd /usr/local/src && \
     git clone https://github.com/tensorflow/tensorflow && \
     cd tensorflow && \
-    git checkout tags/v2.4.0 && \
+    git checkout tags/v2.4.1 && \
     pip install keras_applications --no-deps && \
     pip install keras_preprocessing --no-deps
 
@@ -87,7 +87,7 @@ RUN pip install /tmp/tensorflow_cpu/tensorflow*.whl
 RUN cd /usr/local/src/ && \
     git clone https://github.com/tensorflow/addons && \
     cd addons && \
-    git checkout tags/v0.12.0 && \
+    git checkout tags/v0.12.1 && \
     python ./configure.py && \
     bazel build --enable_runfiles build_pip_pkg && \
     bazel-bin/build_pip_pkg /tmp/tfa_cpu && \
