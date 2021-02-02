@@ -52,15 +52,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN pip install --upgrade pip
 
-# See _TF_(MIN|MAX)_BAZEL_VERSION at https://github.com/tensorflow/tensorflow/blob/master/configure.py
-ENV BAZEL_VERSION=3.7.2
-RUN apt-get install -y gnupg zip openjdk-8-jdk && \
-    apt-get install -y --no-install-recommends \
-      bash-completion \
-      zlib1g-dev && \
-    wget --no-verbose "https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel_${BAZEL_VERSION}-linux-x86_64.deb" && \
-    dpkg -i bazel_*.deb && \
-    rm bazel_*.deb
+# Use Bazelisk to ensure the proper bazel version is used.
+RUN cd /usr/local/src && \
+    wget --no-verbose "https://github.com/bazelbuild/bazelisk/releases/download/v1.7.4/bazelisk-linux-amd64" && \
+    mv bazelisk-linux-amd64 /usr/local/bin/bazel && \
+    chmod u+x /usr/local/bin/bazel
 
 # Fetch TensorFlow & install dependencies.
 RUN cd /usr/local/src && \
