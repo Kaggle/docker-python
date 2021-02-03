@@ -188,6 +188,8 @@ RUN pip install mpld3 && \
     pip install ImageHash && \
     pip install ecos && \
     pip install CVXcanon && \
+    # b/179264579 cvxpy 1.1.8 requires numpy >= 1.20
+    pip install cvxpy==1.1.7 && \
     pip install fancyimpute && \
     pip install pymc3 && \
     pip install imagecodecs && \
