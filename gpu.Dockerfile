@@ -112,3 +112,4 @@ RUN pip install pycuda && \
 
 # Remove the CUDA stubs.
 ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH_NO_STUBS"
+RUN pip install gdown
