@@ -421,6 +421,8 @@ RUN pip install flashtext && \
     pip install flask && \
     # pycrypto is used by competitions team.
     pip install pycrypto && \
+    # daal4py used for cpu optimized scikit-learn
+    pip install daal4py&& \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
