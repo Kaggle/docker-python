@@ -70,7 +70,6 @@ readonly PATTERN
 
 set -x
 docker run --rm --net=none -v /tmp/python-build:/tmp/python-build "$IMAGE_TAG" rm -rf /tmp/python-build/*
-
 docker rm jupyter_test || true
 mkdir -p /tmp/python-build/tmp
 mkdir -p /tmp/python-build/devshm
