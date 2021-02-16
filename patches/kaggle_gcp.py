@@ -187,6 +187,23 @@ def init_bigquery():
             bq_client, *args, **kwargs)
     return bigquery
 
+# Monkey patch classes that use the init method
+# eg
+# from google.cloud import aiplatform
+# aiplatform.init(args)
+def monkeypatch_init(client_klass, kaggle_kernel_credentials):
+    client_init = client_klass.init
+    def patched_init(self, *args, **kwargs):
+        specified_credentials = kwargs.get('credentials')
+        if specified_credentials is None:
+            Log.info("No credentials specified, using KaggleKernelCredentials.")
+            kwargs['credentials'] = kaggle_kernel_credentials
+            return client_init(self, *args, **kwargs)
+
+    if (not has_been_monkeypatched(client_klass.init)):
+        client_klass.init = patched_init
+        Log.info(f"Client patched: {client_klass}")
+
 def monkeypatch_client(client_klass, kaggle_kernel_credentials):
     client_init = client_klass.__init__
     def patched_init(self, *args, **kwargs):
@@ -309,6 +326,22 @@ def init_natural_language():
     monkeypatch_client(language.LanguageServiceAsyncClient, kernel_credentials)
     return language
 
+def init_ucaip():
+    from google.cloud import aiplatform
+    if not is_user_secrets_token_set():
+        return
+
+    from kaggle_gcp import get_integrations
+    if not get_integrations().has_cloudai():
+        return
+
+    from kaggle_secrets import GcpTarget
+    from kaggle_gcp import KaggleKernelCredentials
+    kaggle_kernel_credentials = KaggleKernelCredentials(target=GcpTarget.CLOUDAI)
+
+    # Patch the ucaip init method, this flows down to all ucaip services
+    monkeypatch_init(aiplatform.initializer.global_config, kaggle_kernel_credentials)
+
 def init_video_intelligence():
     from google.cloud import videointelligence
     if not is_user_secrets_token_set():
@@ -352,6 +385,7 @@ def init():
     init_natural_language()
     init_video_intelligence()
     init_vision()
+    init_ucaip()
 
 # We need to initialize the monkeypatching of the client libraries
 # here since there is a circular dependency between our import hook version
