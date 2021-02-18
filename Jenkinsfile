@@ -1,4 +1,4 @@
-String cron_string = BRANCH_NAME == "master" ? "H 12 * * 1,3,5" : ""
+String cron_string = BRANCH_NAME == "master" ? "H 12 * * 1-5" : "" // Mon-Fri at noon UTC, 8am EST, 5am PDT
 
 pipeline {
   agent { label 'ephemeral-linux' }
