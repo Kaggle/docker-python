@@ -88,10 +88,8 @@ class KaggleKernelWithProjetCredentials(KaggleKernelCredentials):
 class _DataProxyConnection(Connection):
     """Custom Connection class used to proxy the BigQuery client to Kaggle's data proxy."""
 
-    API_BASE_URL = os.getenv("KAGGLE_DATA_PROXY_URL")
-
-    def __init__(self, client):
-        super().__init__(client)
+    def __init__(self, client, **kwargs):
+        super().__init__(client, **kwargs)
         self.extra_headers["X-KAGGLE-PROXY-DATA"] = os.getenv(
             "KAGGLE_DATA_PROXY_TOKEN")
 
@@ -117,13 +115,14 @@ class PublicBigqueryClient(bigquery.client.Client):
 
     def __init__(self, *args, **kwargs):
         data_proxy_project = os.getenv("KAGGLE_DATA_PROXY_PROJECT")
+        default_api_endpoint = os.getenv("KAGGLE_DATA_PROXY_URL")
         anon_credentials = credentials.AnonymousCredentials()
         anon_credentials.refresh = lambda *args: None
         super().__init__(
             project=data_proxy_project, credentials=anon_credentials, *args, **kwargs
         )
         # TODO: Remove this once https://github.com/googleapis/google-cloud-python/issues/7122 is implemented.
-        self._connection = _DataProxyConnection(self)
+        self._connection = _DataProxyConnection(self, api_endpoint=default_api_endpoint)
 
 def has_been_monkeypatched(method):
     return "kaggle_gcp" in inspect.getsourcefile(method)
