@@ -1,6 +1,6 @@
 ARG BASE_TAG=staging
 
-FROM nvidia/cuda:11.0-cudnn8-devel-ubuntu18.04 AS nvidia
+FROM nvidia/cuda:11.2.2-cudnn8-devel-ubuntu18.04 AS nvidia
 FROM gcr.io/kaggle-images/python:${BASE_TAG}
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
@@ -11,7 +11,7 @@ COPY --from=nvidia /etc/apt/sources.list.d/nvidia-ml.list /etc/apt/sources.list.
 COPY --from=nvidia /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d/cuda.gpg
 
 ENV CUDA_MAJOR_VERSION=11
-ENV CUDA_MINOR_VERSION=0
+ENV CUDA_MINOR_VERSION=2
 ENV CUDA_VERSION=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION
 LABEL com.nvidia.volumes.needed="nvidia_driver"
 LABEL com.nvidia.cuda.version="${CUDA_VERSION}"
@@ -23,6 +23,9 @@ ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:/opt/bin:${PATH}
 #   docker run .... -v /non-existing-directory:/usr/local/cuda/lib64/stubs:ro ...
 # b/197989446#comment7 libgnutls version at /opt/conda/lib causes apt to fail to fetch packages using https URLs.
 ENV LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu
+# Starting with driver 450.80.02, minor version compatibility is possible across the CUDA 11.x family of toolkits.
+# We have 450.119.04 which does support CUDA 11.2 but the checks fails
+ENV NVIDIA_DISABLE_REQUIRE=1
 RUN apt-get update && apt-get install -y --no-install-recommends \
       cuda-cupti-$CUDA_VERSION \
       cuda-cudart-$CUDA_VERSION \
@@ -32,10 +35,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       cuda-nvml-dev-$CUDA_VERSION \
       cuda-minimal-build-$CUDA_VERSION \
       cuda-command-line-tools-$CUDA_VERSION \
-      libcudnn8=8.0.4.30-1+cuda$CUDA_VERSION \
-      libcudnn8-dev=8.0.4.30-1+cuda$CUDA_VERSION \
-      libnccl2=2.7.8-1+cuda$CUDA_VERSION \
-      libnccl-dev=2.7.8-1+cuda$CUDA_VERSION && \
+      libcudnn8=8.1.1.33-1+cuda$CUDA_VERSION \
+      libcudnn8-dev=8.1.1.33-1+cuda$CUDA_VERSION \
+      libnccl2=2.8.4-1+cuda$CUDA_VERSION \
+      libnccl-dev=2.8.4-1+cuda$CUDA_VERSION && \
     ln -s /usr/local/cuda-$CUDA_VERSION /usr/local/cuda && \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1 && \
     /tmp/clean-layer.sh
@@ -44,7 +47,13 @@ ENV LD_LIBRARY_PATH_NO_STUBS="/usr/local/nvidia/lib64:/usr/local/cuda/lib64:/opt
 ENV LD_LIBRARY_PATH="/usr/local/nvidia/lib64:/usr/local/cuda/lib64:/usr/local/cuda/lib64/stubs:/opt/conda/lib"
 ENV NVIDIA_VISIBLE_DEVICES=all
 ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
-ENV NVIDIA_REQUIRE_CUDA="cuda>=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION"
+# With CUDA enhanced compatibility, applications compiled with CUDA 11.1 can be run on the driver associated with CUDA 11.0 (i.e. R450).
+# See: https://docs.nvidia.com/deploy/cuda-compatibility/index.html#existing-apps-minor-versions
+ENV NVIDIA_REQUIRE_CUDA="cuda>=$CUDA_MAJOR_VERSION"
+
+# Introduced in CUDA 11.1, CUDA Enhanced Compatibility leverages semantic versioning across components in the CUDA Toolkit, an application can be built for one CUDA minor release (such as 11.1) and work across all future minor releases within the major family (such as 11.x).
+# See: https://docs.nvidia.com/deploy/cuda-compatibility/index.html#overview
+# Many packages only published wheels for cuda 11.1 since it works with cuda >= 11.1
 
 # Install OpenCL & libboost (required by LightGBM GPU version)
 RUN apt-get install -y ocl-icd-libopencl1 clinfo libboost-all-dev && \
@@ -60,11 +69,12 @@ RUN conda install cudf=21.08 cuml=21.08 cudatoolkit=$CUDA_VERSION && \
     /tmp/clean-layer.sh
 
 # Install Pytorch and torchvision with GPU support.
-# Note: torchtext and torchaudio do not require a separate GPU package.
-RUN pip install torch==1.7.1+cu$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION torchvision==0.8.2+cu$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION -f https://download.pytorch.org/whl/torch_stable.html && \
+# Note: torchtext and torchaudio do not require GPU specific packages.
+# See: https://docs.nvidia.com/deploy/cuda-compatibility/index.html#overview
+RUN pip install torch==1.8.1+cu111 torchvision==0.9.1+cu111 -f https://download.pytorch.org/whl/torch_stable.html && \
     /tmp/clean-layer.sh
 
-# Install LightGBM with GPU
+# Install LightGBM with GPU support.
 RUN pip uninstall -y lightgbm && \
     cd /usr/local/src && \
     git clone --recursive https://github.com/microsoft/LightGBM && \
@@ -80,7 +90,7 @@ RUN pip uninstall -y lightgbm && \
     /tmp/clean-layer.sh
 
 # Install JAX (Keep JAX version in sync with CPU image)
-RUN pip install jax[cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION]==0.2.19 -f https://storage.googleapis.com/jax-releases/jax_releases.html && \
+RUN pip install jax[cuda111]==0.2.19 -f https://storage.googleapis.com/jax-releases/jax_releases.html && \
     /tmp/clean-layer.sh
 
 # Reinstall packages with a separate version for GPU support.
@@ -91,9 +101,8 @@ RUN pip uninstall -y mxnet && \
 # Install GPU-only packages
 RUN pip install pycuda && \
     pip install pynvrtc && \
-    # b/190622765 latest version is causing issue. nnabla fixed it in https://github.com/sony/nnabla/issues/892, waiting for new release before we can remove this pin.
-    pip install pynvml==8.0.4 && \
-    pip install nnabla-ext-cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
+    # TODO(b/181966788) Replace `110` with `$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION` once new version of nnabla is out.
+    pip install nnabla-ext-cuda110 && \
     /tmp/clean-layer.sh
 
 # Re-add TensorBoard Jupyter extension patch

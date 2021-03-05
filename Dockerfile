@@ -1,5 +1,5 @@
 ARG BASE_TAG=m78
-ARG TENSORFLOW_VERSION=2.4.1
+ARG TENSORFLOW_VERSION=2.5.0
 
 FROM gcr.io/deeplearning-platform-release/base-cpu:${BASE_TAG}
 
@@ -39,7 +39,7 @@ RUN conda config --add channels nvidia && \
     conda install mkl cartopy=0.19 imagemagick=7.1 pyproj==3.1.0 && \
     /tmp/clean-layer.sh
 
-RUN pip install torch==1.7.1+cpu torchvision==0.8.2+cpu torchaudio==0.7.2 torchtext==0.8.1 -f https://download.pytorch.org/whl/torch_stable.html && \
+RUN pip install torch==1.8.1+cpu torchvision==0.9.1+cpu torchaudio==0.8.1 torchtext==0.9.1 -f https://download.pytorch.org/whl/torch_stable.html && \
     /tmp/clean-layer.sh
 
 RUN pip install pysal && \
@@ -53,9 +53,9 @@ RUN pip install pysal && \
     /tmp/clean-layer.sh
 
 RUN pip install tensorflow==${TENSORFLOW_VERSION} && \
-    pip install tensorflow-gcs-config==2.4.0 && \
-    pip install tensorflow-addons==0.12.1 && \
-    pip install tensorflow_probability==0.12.2 && \
+    pip install tensorflow-gcs-config==${TENSORFLOW_VERSION} && \
+    pip install tensorflow-addons==0.13.0 && \
+    pip install tensorflow_probability==0.13.0 && \
     /tmp/clean-layer.sh
 
 RUN apt-get install -y libfreetype6-dev && \
@@ -325,8 +325,7 @@ RUN pip install bleach && \
     pip install widgetsnbextension && \
     pip install pyarrow && \
     pip install feather-format && \
-    # fastai >= 2.3.1 upgrades pytorch/torchvision. upgrade of pytorch will be handled in b/181966788
-    pip install fastai==2.2.7 && \
+    pip install fastai && \
     pip install allennlp && \
     # https://b.corp.google.com/issues/184685619#comment9: 3.9.0 is causing a major performance degradation with spacy 2.3.5
     pip install importlib-metadata==3.4.0 && \
