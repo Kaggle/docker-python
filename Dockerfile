@@ -41,7 +41,7 @@ RUN conda config --add channels conda-forge && \
     # ^ rapidsai is the highest priority channel, default lowest, conda-forge 2nd lowest.
     # 161473620#comment7 pin required to prevent resolver from picking pysal 1.x., pysal 2.2.x is also downloading data on import.
     conda install matplotlib basemap cartopy python-igraph imagemagick "pysal==2.1.0" && \
-    conda install "pytorch=1.7" "torchvision=0.8" "torchaudio=0.7" "torchtext=0.8" cpuonly && \
+    conda install "pytorch=1.8" "torchvision=0.9" "torchaudio=0.8" "torchtext=0.9" cpuonly && \
     /tmp/clean-layer.sh
 
 # The anaconda base image includes outdated versions of these packages. Update them to include the latest version.
