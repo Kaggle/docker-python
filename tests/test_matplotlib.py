@@ -14,5 +14,5 @@ class TestMatplotlib(unittest.TestCase):
         self.assertTrue(os.path.isfile("plot1.png"))
 
     def test_basemap(self):
-        Basemap(width=100,height=100,projection='aeqd',
-                lat_0=40,lon_0=-105)
+        m = Basemap(width=100,height=100,projection='aeqd', lat_0=40,lon_0=-105)
+        self.assertEqual(0, m.xmin)
