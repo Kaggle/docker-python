@@ -1,7 +1,7 @@
-ARG BASE_TAG=m61
-ARG TENSORFLOW_VERSION=2.4.0
+ARG BASE_TAG=m64
+ARG TENSORFLOW_VERSION=2.4.1
 
-FROM gcr.io/kaggle-images/python-tensorflow-whl:${TENSORFLOW_VERSION}-py37-3 as tensorflow_whl
+FROM gcr.io/kaggle-images/python-tensorflow-whl:${TENSORFLOW_VERSION}-py37 as tensorflow_whl
 FROM gcr.io/deeplearning-platform-release/base-cpu:${BASE_TAG}
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
@@ -22,6 +22,8 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     # https://lightgbm.readthedocs.io/en/latest/GPU-Tutorial.html#build-lightgbm
     apt-get install -y build-essential unzip cmake && \
     apt-get install -y libboost-dev libboost-program-options-dev libboost-system-dev libboost-thread-dev libboost-math-dev libboost-test-dev libboost-python-dev libboost-filesystem-dev zlib1g-dev && \
+    # b/182601974: ssh client was removed from the base image but is required for packages such as stable-baselines.
+    apt-get install -y openssh-client && \
     pip install --upgrade pip && \
     /tmp/clean-layer.sh
 
@@ -39,8 +41,9 @@ RUN conda config --add channels conda-forge && \
     conda config --add channels pytorch && \
     conda config --add channels rapidsai && \
     # ^ rapidsai is the highest priority channel, default lowest, conda-forge 2nd lowest.
-    # 161473620#comment7 pin required to prevent resolver from picking pysal 1.x., pysal 2.2.x is also downloading data on import.
-    conda install matplotlib basemap cartopy python-igraph imagemagick "pysal==2.1.0" && \
+    # b/182405233 pyproj 3.x is not compatible with basemap 1.2.1
+    # b/161473620#comment7 pin required to prevent resolver from picking pysal 1.x., pysal 2.2.x is also downloading data on import.
+    conda install matplotlib basemap cartopy python-igraph imagemagick "pyproj=2.6" "pysal==2.1.0" && \
     conda install "pytorch=1.7" "torchvision=0.8" "torchaudio=0.7" "torchtext=0.8" cpuonly && \
     /tmp/clean-layer.sh
 
@@ -80,6 +83,7 @@ RUN apt-get install -y libfreetype6-dev && \
     pip install xgboost && \
     # Pinned to match GPU version. Update version together.
     pip install lightgbm==3.1.1 && \
+    pip install pydot && \
     pip install keras && \
     pip install keras-tuner && \
     pip install flake8 && \
@@ -188,6 +192,8 @@ RUN pip install mpld3 && \
     pip install ImageHash && \
     pip install ecos && \
     pip install CVXcanon && \
+    # b/179264579 cvxpy 1.1.8 requires numpy >= 1.20
+    pip install cvxpy==1.1.7 && \
     pip install fancyimpute && \
     pip install pymc3 && \
     pip install imagecodecs && \
@@ -264,15 +270,14 @@ RUN pip install --upgrade cython && \
     pip install category_encoders && \
     # google-cloud-automl 2.0.0 introduced incompatible API changes, need to pin to 1.0.1
     pip install google-cloud-automl==1.0.1 && \
-    # Newer version crashes (latest = 1.14.0) when running tensorflow.
-    # python -c "from google.cloud import bigquery; import tensorflow". This flow is common because bigquery is imported in kaggle_gcp.py
-    # which is loaded at startup.
-    pip install google-cloud-bigquery==1.12.1 && \
+    pip install google-cloud-bigquery==2.2.0 && \
     pip install google-cloud-storage && \
     pip install google-cloud-translate==3.* && \
     pip install google-cloud-language==2.* && \
     pip install google-cloud-videointelligence==2.* && \
     pip install google-cloud-vision==2.* && \
+    # After launch this should be installed from pip
+    pip install git+https://github.com/googleapis/python-aiplatform.git@mb-release && \ 
     pip install ortools && \
     pip install scattertext && \
     # Pandas data reader
@@ -301,7 +306,8 @@ RUN pip install bleach && \
     pip install ipython-genutils && \
     pip install ipywidgets && \
     pip install isoweek && \
-    pip install jedi && \
+    # Lastest version breaks ipython. https://github.com/ipython/ipython/issues/12740
+    pip install jedi==0.17.2 && \
     pip install Jinja2 && \
     pip install jsonschema && \
     pip install jupyter && \
@@ -371,8 +377,6 @@ RUN pip install flashtext && \
     pip install shap && \
     pip install ray && \
     pip install gym && \
-    # b/167268016 tensorforce 0.6.6 has an explicit dependency on tensorflow 2.3.1 which is causing a downgrade.
-    pip install tensorforce==0.5.5 && \
     pip install pyarabic && \
     pip install pandasql && \
     pip install tensorflow_hub && \
@@ -413,6 +417,8 @@ RUN pip install flashtext && \
     pip install pytorch-lightning && \
     pip install datatable && \
     pip install sympy && \
+    # flask is used by agents in the simulation competitions.
+    pip install flask && \
     # pycrypto is used by competitions team.
     pip install pycrypto && \
     /tmp/clean-layer.sh

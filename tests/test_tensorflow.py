@@ -1,4 +1,5 @@
 import unittest
+import os.path
 
 import numpy as np
 import tensorflow as tf
@@ -37,8 +38,13 @@ class TestTensorflow(unittest.TestCase):
             metrics=['accuracy'])
 
         model.fit(x_train, y_train, epochs=1)
-        model.evaluate(x_test, y_test)
-        
+
+        result = model.evaluate(x_test, y_test)
+        self.assertEqual(2, len(result))
+
+        # exercices pydot path.
+        tf.keras.utils.plot_model(model, to_file="tf_plot_model.png")
+        self.assertTrue(os.path.isfile("tf_plot_model.png"))          
 
     def test_lstm(self):
         x_train = np.random.random((100, 28, 28))
@@ -58,7 +64,8 @@ class TestTensorflow(unittest.TestCase):
             metrics=['accuracy'])
 
         model.fit(x_train, y_train, epochs=1)
-        model.evaluate(x_test, y_test)
+        result = model.evaluate(x_test, y_test)
+        self.assertEqual(2, len(result))
     
     @gpu_test
     def test_gpu(self):
