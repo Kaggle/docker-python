@@ -421,6 +421,7 @@ RUN pip install flashtext && \
     pip install flask && \
     # pycrypto is used by competitions team.
     pip install pycrypto && \
+    pip install easyocr && \
     /tmp/clean-layer.sh
 
 # Tesseract and some associated utility packages
