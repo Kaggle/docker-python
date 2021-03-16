@@ -20,7 +20,7 @@ class TestNNabla(unittest.TestCase):
         # forward
         c.forward()
 
-        self.assertAlmostEqual(c.d, a.d + b.d)
+        self.assertAlmostEqual(c.d, a.d + b.d, places=3)
 
     @gpu_test
     def test_cuda_ext(self):
