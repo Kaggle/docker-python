@@ -141,10 +141,10 @@ class TestCatalyst(unittest.TestCase):
             logdir=logdir,
             num_epochs=num_epochs,
             verbose=False,
-            callbacks=[CheckpointCallback(save_n_best=3)]
+            callbacks=[CheckpointCallback(save_n_best=3, use_runner_logdir=True)]
         )
         
-        with open('./logs/checkpoints/_metrics.json') as f:
+        with open('./logs/_metrics.json') as f:
             metrics = json.load(f)
-            self.assertTrue(metrics['train.3']['loss'] < metrics['train.1']['loss'])
-            self.assertTrue(metrics['best']['loss'] < 0.35)
+            self.assertTrue(metrics['train.3']['valid']['loss'] < metrics['train.1']['valid']['loss'])
+            self.assertTrue(metrics['best']['valid']['loss'] < 0.35)
