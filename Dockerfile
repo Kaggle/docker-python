@@ -424,6 +424,14 @@ RUN pip install flashtext && \
     pip install easyocr && \
     /tmp/clean-layer.sh
 
+# Download base easyocr models.
+# https://github.com/JaidedAI/EasyOCR#usage
+RUN mkdir -p /root/.EasyOCR/model && \
+    wget --no-verbose "https://github.com/JaidedAI/EasyOCR/releases/download/pre-v1.1.6/latin.zip" /root/.EasyOCR/model/latin.zip && \
+    unzip /root/.EasyOCR/model/latin.zip -d /root/.EasyOCR/model/ && \
+    wget --no-verbose "https://github.com/JaidedAI/EasyOCR/releases/download/pre-v1.1.6/craft_mlt_25k.zip" /root/.EasyOCR/model/craft_mlt_25k.zip && \
+    unzip /root/.EasyOCR/model/craft_mlt_25k.zip -d /root/.EasyOCR/model/
+
 # Tesseract and some associated utility packages
 RUN apt-get install tesseract-ocr -y && \
     pip install pytesseract && \
