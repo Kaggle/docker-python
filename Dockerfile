@@ -427,9 +427,9 @@ RUN pip install flashtext && \
 # Download base easyocr models.
 # https://github.com/JaidedAI/EasyOCR#usage
 RUN mkdir -p /root/.EasyOCR/model && \
-    wget --no-verbose "https://github.com/JaidedAI/EasyOCR/releases/download/pre-v1.1.6/latin.zip" /root/.EasyOCR/model/latin.zip && \
+    wget --no-verbose "https://github.com/JaidedAI/EasyOCR/releases/download/pre-v1.1.6/latin.zip" -O /root/.EasyOCR/model/latin.zip && \
     unzip /root/.EasyOCR/model/latin.zip -d /root/.EasyOCR/model/ && \
-    wget --no-verbose "https://github.com/JaidedAI/EasyOCR/releases/download/pre-v1.1.6/craft_mlt_25k.zip" /root/.EasyOCR/model/craft_mlt_25k.zip && \
+    wget --no-verbose "https://github.com/JaidedAI/EasyOCR/releases/download/pre-v1.1.6/craft_mlt_25k.zip" -O /root/.EasyOCR/model/craft_mlt_25k.zip && \
     unzip /root/.EasyOCR/model/craft_mlt_25k.zip -d /root/.EasyOCR/model/
 
 # Tesseract and some associated utility packages
