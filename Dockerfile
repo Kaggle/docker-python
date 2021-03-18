@@ -270,7 +270,8 @@ RUN pip install --upgrade cython && \
     pip install category_encoders && \
     # google-cloud-automl 2.0.0 introduced incompatible API changes, need to pin to 1.0.1
     pip install google-cloud-automl==1.0.1 && \
-    pip install google-cloud-bigquery==2.2.0 && \
+    pip install google-cloud-bigquery==2.* && \
+    pip install google-cloud-bigquery-storage==2.* && \
     pip install google-cloud-storage && \
     pip install google-cloud-translate==3.* && \
     pip install google-cloud-language==2.* && \
