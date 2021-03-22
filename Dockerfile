@@ -427,9 +427,12 @@ RUN pip install flashtext && \
 # Download base easyocr models.
 # https://github.com/JaidedAI/EasyOCR#usage
 RUN mkdir -p /root/.EasyOCR/model && \
-    wget --no-verbose "https://github.com/JaidedAI/EasyOCR/releases/download/pre-v1.1.6/latin.zip" -O /root/.EasyOCR/model/latin.zip && \
+    wget --no-verbose "https://github.com/JaidedAI/EasyOCR/releases/download/v1.3/latin_g2.zip" -O /root/.EasyOCR/model/latin.zip && \
     unzip /root/.EasyOCR/model/latin.zip -d /root/.EasyOCR/model/ && \
     rm /root/.EasyOCR/model/latin.zip && \
+    wget --no-verbose "https://github.com/JaidedAI/EasyOCR/releases/download/v1.3/english_g2.zip" -O /root/.EasyOCR/model/english.zip && \
+    unzip /root/.EasyOCR/model/english.zip -d /root/.EasyOCR/model/ && \
+    rm /root/.EasyOCR/model/english.zip && \
     wget --no-verbose "https://github.com/JaidedAI/EasyOCR/releases/download/pre-v1.1.6/craft_mlt_25k.zip" -O /root/.EasyOCR/model/craft_mlt_25k.zip && \
     unzip /root/.EasyOCR/model/craft_mlt_25k.zip -d /root/.EasyOCR/model/ && \
     rm /root/.EasyOCR/model/craft_mlt_25k.zip && \
