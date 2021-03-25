@@ -276,6 +276,8 @@ RUN pip install --upgrade cython && \
     pip install google-cloud-language==2.* && \
     pip install google-cloud-videointelligence==2.* && \
     pip install google-cloud-vision==2.* && \
+    # b/183041606#comment5: the Kaggle data proxy doesn't support these APIs. If the library is missing, it falls back to using a regular BigQuery query to fetch data.
+    pip uninstall -y google-cloud-bigquery-storage && \
     # After launch this should be installed from pip
     pip install git+https://github.com/googleapis/python-aiplatform.git@mb-release && \ 
     pip install ortools && \
