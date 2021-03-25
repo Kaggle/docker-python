@@ -415,6 +415,7 @@ RUN pip install flashtext && \
     pip install pydub && \
     pip install pydegensac && \
     pip install pytorch-lightning && \
+    pip install lightning-flash && \
     pip install datatable && \
     pip install sympy && \
     # flask is used by agents in the simulation competitions.
