@@ -188,7 +188,8 @@ RUN pip install mpld3 && \
     pip install pyldavis && \
     pip install mlxtend && \
     pip install altair && \
-    pip install pystan && \
+    # b/183944405 pystan 3.x is not compatible with fbprophet.
+    pip install pystan==2.19.1.1 && \
     pip install ImageHash && \
     pip install ecos && \
     pip install CVXcanon && \
