@@ -1,4 +1,4 @@
-ARG BASE_TAG=m64
+ARG BASE_TAG=m66
 ARG TENSORFLOW_VERSION=2.4.1
 
 FROM gcr.io/kaggle-images/python-tensorflow-whl:${TENSORFLOW_VERSION}-py37 as tensorflow_whl
