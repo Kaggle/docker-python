@@ -1,4 +1,4 @@
-FROM nvidia/cuda:10.2-cudnn7-devel-ubuntu18.04 AS nvidia
+FROM nvidia/cuda:11.0-cudnn8-devel-ubuntu18.04 AS nvidia
 FROM gcr.io/deeplearning-platform-release/base-cpu:m66
 
 # Avoid interactive configuration prompts/dialogs during apt-get.
@@ -17,11 +17,9 @@ RUN sed -i 's/deb https:\/\/developer.download.nvidia.com/deb http:\/\/developer
 
 # Ensure the cuda libraries are compatible with the GPU image.
 # TODO(b/120050292): Use templating to keep in sync.
-ENV CUDA_MAJOR_VERSION=10
-ENV CUDA_MINOR_VERSION=2
-ENV CUDA_PATCH_VERSION=89
-ENV CUDA_VERSION=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION.$CUDA_PATCH_VERSION
-ENV CUDA_PKG_VERSION=$CUDA_MAJOR_VERSION-$CUDA_MINOR_VERSION=$CUDA_VERSION-1
+ENV CUDA_MAJOR_VERSION=11
+ENV CUDA_MINOR_VERSION=0
+ENV CUDA_VERSION=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION
 LABEL com.nvidia.volumes.needed="nvidia_driver"
 LABEL com.nvidia.cuda.version="${CUDA_VERSION}"
 ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
@@ -35,19 +33,19 @@ ENV NVIDIA_VISIBLE_DEVICES=all
 ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
 ENV NVIDIA_REQUIRE_CUDA="cuda>=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION"
 RUN apt-get update && apt-get install -y --no-install-recommends \
-      cuda-cupti-$CUDA_PKG_VERSION \
-      cuda-cudart-$CUDA_PKG_VERSION \
-      cuda-cudart-dev-$CUDA_PKG_VERSION \
-      cuda-libraries-$CUDA_PKG_VERSION \
-      cuda-libraries-dev-$CUDA_PKG_VERSION \
-      cuda-nvml-dev-$CUDA_PKG_VERSION \
-      cuda-minimal-build-$CUDA_PKG_VERSION \
-      cuda-command-line-tools-$CUDA_PKG_VERSION \
-      libcudnn7=7.6.5.32-1+cuda$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION \
-      libcudnn7-dev=7.6.5.32-1+cuda$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION \
-      libnccl2=2.5.6-1+cuda$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION \
-      libnccl-dev=2.5.6-1+cuda$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
-    ln -s /usr/local/cuda-$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION /usr/local/cuda && \
+      cuda-cupti-$CUDA_VERSION \
+      cuda-cudart-$CUDA_VERSION \
+      cuda-cudart-dev-$CUDA_VERSION \
+      cuda-libraries-$CUDA_VERSION \
+      cuda-libraries-dev-$CUDA_VERSION \
+      cuda-nvml-dev-$CUDA_VERSION \
+      cuda-minimal-build-$CUDA_VERSION \
+      cuda-command-line-tools-$CUDA_VERSION \
+      libcudnn8=8.0.4.30-1+cuda$CUDA_VERSION \
+      libcudnn8-dev=8.0.4.30-1+cuda$CUDA_VERSION \
+      libnccl2=2.7.8-1+cuda$CUDA_VERSION \
+      libnccl-dev=2.7.8-1+cuda$CUDA_VERSION && \
+    ln -s /usr/local/cuda-$CUDA_VERSION /usr/local/cuda && \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1
 
 RUN pip install --upgrade pip
@@ -101,7 +99,7 @@ ENV TF_NEED_CUDA=1
 ENV TF_CUDA_VERSION=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION
 # 3.7 (K80), 6.0 (P100), 7.0 (V100), 7.5 (T4): https://developer.nvidia.com/cuda-gpus
 ENV TF_CUDA_COMPUTE_CAPABILITIES=3.7,6.0,7.0,7.5
-ENV TF_CUDNN_VERSION=7
+ENV TF_CUDNN_VERSION=8
 ENV TF_NCCL_VERSION=2
 ENV NCCL_INSTALL_PATH=/usr/
 
