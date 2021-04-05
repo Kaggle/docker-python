@@ -24,7 +24,6 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     apt-get install -y libboost-dev libboost-program-options-dev libboost-system-dev libboost-thread-dev libboost-math-dev libboost-test-dev libboost-python-dev libboost-filesystem-dev zlib1g-dev && \
     # b/182601974: ssh client was removed from the base image but is required for packages such as stable-baselines.
     apt-get install -y openssh-client && \
-    pip install --upgrade pip && \
     /tmp/clean-layer.sh
 
 # Make sure the dynamic linker finds the right libstdc++
