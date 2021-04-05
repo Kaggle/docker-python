@@ -1,7 +1,7 @@
 ARG BASE_TAG=m66
 ARG TENSORFLOW_VERSION=2.4.1
 
-FROM gcr.io/kaggle-images/python-tensorflow-whl:${TENSORFLOW_VERSION}-py37 as tensorflow_whl
+FROM gcr.io/kaggle-images/python-tensorflow-whl:${TENSORFLOW_VERSION}-py37-2 as tensorflow_whl
 FROM gcr.io/deeplearning-platform-release/base-cpu:${BASE_TAG}
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
@@ -81,7 +81,7 @@ RUN apt-get install -y libfreetype6-dev && \
     pip install wordcloud && \
     pip install xgboost && \
     # Pinned to match GPU version. Update version together.
-    pip install lightgbm==3.1.1 && \
+    pip install lightgbm==3.2.0 && \
     pip install pydot && \
     pip install keras && \
     pip install keras-tuner && \
@@ -406,8 +406,7 @@ RUN pip install flashtext && \
     pip install dlib && \
     pip install kaggle-environments && \
     pip install geopandas && \
-    # b/175638062 remove pin once we update to cuDNN 8.x
-    pip install nnabla==1.13.0 && \
+    pip install nnabla && \
     pip install vowpalwabbit && \
     # papermill can replace nbconvert for executing notebooks
     pip install papermill && \
