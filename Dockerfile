@@ -227,6 +227,7 @@ RUN pip install mpld3 && \
     pip install lightfm && \
     pip install folium && \
     pip install scikit-plot && \
+    pip install orbit-ml && \
     # dipy requires the optional fury dependency for visualizations.
     pip install fury dipy && \
     pip install plotnine && \
