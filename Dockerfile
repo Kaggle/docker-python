@@ -77,6 +77,8 @@ RUN pip install /tmp/tfa_cpu/tensorflow*.whl && \
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
     pip install gensim && \
+    # b/184748065 remove pin to nltk once fix has been provided for the pytest production dependency.
+    pip install nltk==3.5 && \
     pip install textblob && \
     pip install wordcloud && \
     pip install xgboost && \
