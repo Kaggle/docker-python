@@ -304,17 +304,14 @@ RUN pip install bleach && \
     pip install decorator && \
     pip install entrypoints && \
     pip install html5lib && \
-    # Latest version breaks nbconvert: https://github.com/ipython/ipykernel/issues/422
-    pip install ipykernel==5.1.1 && \
+    pip install ipykernel && \
     pip install ipython && \
     pip install ipython-genutils && \
     pip install ipywidgets && \
     pip install isoweek && \
-    # Lastest version breaks ipython. https://github.com/ipython/ipython/issues/12740
-    pip install jedi==0.17.2 && \
+    pip install jedi && \
     pip install Jinja2 && \
     pip install jsonschema && \
-    pip install jupyter && \
     pip install jupyter-client && \
     pip install jupyter-console && \
     pip install jupyter-core && \
@@ -322,7 +319,8 @@ RUN pip install bleach && \
     pip install mistune && \
     pip install nbconvert && \
     pip install nbformat && \
-    pip install notebook==5.5.0 && \
+    pip install notebook && \
+    pip install papermill && \
     pip install olefile && \
     pip install kornia && \
     pip install pandas_summary && \
@@ -342,9 +340,7 @@ RUN pip install bleach && \
     pip install qtconsole && \
     pip install six && \
     pip install terminado && \
-    # Latest version (6.0) of tornado breaks Jupyter notebook:
-    # https://github.com/jupyter/notebook/issues/4439
-    pip install tornado==5.0.2 && \
+    pip install tornado && \
     pip install tqdm && \
     pip install traitlets && \
     pip install wcwidth && \
@@ -411,7 +407,6 @@ RUN pip install flashtext && \
     pip install nnabla && \
     pip install vowpalwabbit && \
     # papermill can replace nbconvert for executing notebooks
-    pip install papermill && \
     pip install cloud-tpu-client && \
     pip install tensorflow-cloud && \
     pip install tensorflow-datasets && \
