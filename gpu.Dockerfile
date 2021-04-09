@@ -77,7 +77,7 @@ RUN pip uninstall -y lightgbm && \
     echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd && \
     /tmp/clean-layer.sh
 
-# Install JAX
+# Install JAX (Keep JAX version in sync with CPU image)
 RUN  pip install jax==0.2.12 jaxlib==0.1.64+cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION -f https://storage.googleapis.com/jax-releases/jax_releases.html && \
      /tmp/clean-layer.sh
 
