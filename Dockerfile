@@ -352,6 +352,8 @@ RUN pip install bleach && \
     pip install feather-format && \
     pip install fastai && \
     pip install allennlp && \
+    # https://b.corp.google.com/issues/184685619#comment9: 3.9.0 is causing a major performance degradation with spacy 2.3.5
+    pip install importlib-metadata==3.4.0 && \
     python -m spacy download en && python -m spacy download en_core_web_lg && \
     apt-get install -y ffmpeg && \
     /tmp/clean-layer.sh
