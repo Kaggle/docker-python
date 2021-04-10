@@ -420,6 +420,8 @@ RUN pip install flashtext && \
     # pycrypto is used by competitions team.
     pip install pycrypto && \
     pip install easyocr && \
+    # Keep JAX version in sync with GPU image.
+    pip install jax==0.2.12 jaxlib==0.1.64 && \
     /tmp/clean-layer.sh
 
 # Download base easyocr models.
