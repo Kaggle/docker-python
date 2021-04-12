@@ -423,7 +423,7 @@ RUN pip install flashtext && \
     # Keep JAX version in sync with GPU image.
     pip install jax==0.2.12 jaxlib==0.1.64 && \
     # ipympl adds interactive widget support for matplotlib
-    pip install ipympl && \
+    pip install ipympl==0.7.0 && \
     /tmp/clean-layer.sh
 
 # Download base easyocr models.
