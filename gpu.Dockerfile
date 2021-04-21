@@ -1,7 +1,7 @@
 ARG BASE_TAG=staging
 
-FROM nvidia/cuda:10.2-cudnn7-devel-ubuntu18.04 AS nvidia
-FROM gcr.io/kaggle-images/python-tensorflow-whl:2.4.1-py37 as tensorflow_whl
+FROM nvidia/cuda:11.0-cudnn8-devel-ubuntu18.04 AS nvidia
+FROM gcr.io/kaggle-images/python-tensorflow-whl:2.4.1-py37-2 as tensorflow_whl
 FROM gcr.io/kaggle-images/python:${BASE_TAG}
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
@@ -15,11 +15,9 @@ RUN sed -i 's/deb https:\/\/developer.download.nvidia.com/deb http:\/\/developer
 
 # Ensure the cuda libraries are compatible with the custom Tensorflow wheels.
 # TODO(b/120050292): Use templating to keep in sync or COPY installed binaries from it.
-ENV CUDA_MAJOR_VERSION=10
-ENV CUDA_MINOR_VERSION=2
-ENV CUDA_PATCH_VERSION=89
-ENV CUDA_VERSION=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION.$CUDA_PATCH_VERSION
-ENV CUDA_PKG_VERSION=$CUDA_MAJOR_VERSION-$CUDA_MINOR_VERSION=$CUDA_VERSION-1
+ENV CUDA_MAJOR_VERSION=11
+ENV CUDA_MINOR_VERSION=0
+ENV CUDA_VERSION=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION
 LABEL com.nvidia.volumes.needed="nvidia_driver"
 LABEL com.nvidia.cuda.version="${CUDA_VERSION}"
 ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:/opt/bin:${PATH}
@@ -34,19 +32,19 @@ ENV NVIDIA_VISIBLE_DEVICES=all
 ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
 ENV NVIDIA_REQUIRE_CUDA="cuda>=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION"
 RUN apt-get update && apt-get install -y --no-install-recommends \
-      cuda-cupti-$CUDA_PKG_VERSION \
-      cuda-cudart-$CUDA_PKG_VERSION \
-      cuda-cudart-dev-$CUDA_PKG_VERSION \
-      cuda-libraries-$CUDA_PKG_VERSION \
-      cuda-libraries-dev-$CUDA_PKG_VERSION \
-      cuda-nvml-dev-$CUDA_PKG_VERSION \
-      cuda-minimal-build-$CUDA_PKG_VERSION \
-      cuda-command-line-tools-$CUDA_PKG_VERSION \
-      libcudnn7=7.6.5.32-1+cuda$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION \
-      libcudnn7-dev=7.6.5.32-1+cuda$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION \
-      libnccl2=2.5.6-1+cuda$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION \
-      libnccl-dev=2.5.6-1+cuda$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
-    ln -s /usr/local/cuda-$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION /usr/local/cuda && \
+      cuda-cupti-$CUDA_VERSION \
+      cuda-cudart-$CUDA_VERSION \
+      cuda-cudart-dev-$CUDA_VERSION \
+      cuda-libraries-$CUDA_VERSION \
+      cuda-libraries-dev-$CUDA_VERSION \
+      cuda-nvml-dev-$CUDA_VERSION \
+      cuda-minimal-build-$CUDA_VERSION \
+      cuda-command-line-tools-$CUDA_VERSION \
+      libcudnn8=8.0.4.30-1+cuda$CUDA_VERSION \
+      libcudnn8-dev=8.0.4.30-1+cuda$CUDA_VERSION \
+      libnccl2=2.7.8-1+cuda$CUDA_VERSION \
+      libnccl-dev=2.7.8-1+cuda$CUDA_VERSION && \
+    ln -s /usr/local/cuda-$CUDA_VERSION /usr/local/cuda && \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1 && \
     /tmp/clean-layer.sh
 
@@ -69,7 +67,7 @@ RUN pip uninstall -y lightgbm && \
     cd /usr/local/src && \
     git clone --recursive https://github.com/microsoft/LightGBM && \
     cd LightGBM && \
-    git checkout tags/v3.1.1 && \
+    git checkout tags/v3.2.0 && \
     mkdir build && cd build && \
     cmake -DUSE_GPU=1 -DOpenCL_LIBRARY=/usr/local/cuda/lib64/libOpenCL.so -DOpenCL_INCLUDE_DIR=/usr/local/cuda/include/ .. && \
     make -j$(nproc) && \
@@ -79,8 +77,8 @@ RUN pip uninstall -y lightgbm && \
     echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd && \
     /tmp/clean-layer.sh
 
-# Install JAX
-RUN  pip install jax==0.2.6 jaxlib==0.1.57+cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION -f https://storage.googleapis.com/jax-releases/jax_releases.html && \
+# Install JAX (Keep JAX version in sync with CPU image)
+RUN  pip install jax==0.2.12 jaxlib==0.1.64+cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION -f https://storage.googleapis.com/jax-releases/jax_releases.html && \
      /tmp/clean-layer.sh
 
 # Reinstall packages with a separate version for GPU support.
@@ -102,8 +100,7 @@ RUN pip install /tmp/tfa_gpu/tensorflow*.whl && \
 RUN pip install pycuda && \
     pip install cupy-cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
     pip install pynvrtc && \
-    # b/175638062 remove pin once we update to cuDNN 8.x
-    pip install nnabla-ext-cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION==1.13.0 && \
+    pip install nnabla-ext-cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
     /tmp/clean-layer.sh
 
 # Re-add TensorBoard Jupyter extension patch

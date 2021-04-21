@@ -1,7 +1,7 @@
-ARG BASE_TAG=m64
+ARG BASE_TAG=m66
 ARG TENSORFLOW_VERSION=2.4.1
 
-FROM gcr.io/kaggle-images/python-tensorflow-whl:${TENSORFLOW_VERSION}-py37 as tensorflow_whl
+FROM gcr.io/kaggle-images/python-tensorflow-whl:${TENSORFLOW_VERSION}-py37-2 as tensorflow_whl
 FROM gcr.io/deeplearning-platform-release/base-cpu:${BASE_TAG}
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
@@ -24,7 +24,6 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     apt-get install -y libboost-dev libboost-program-options-dev libboost-system-dev libboost-thread-dev libboost-math-dev libboost-test-dev libboost-python-dev libboost-filesystem-dev zlib1g-dev && \
     # b/182601974: ssh client was removed from the base image but is required for packages such as stable-baselines.
     apt-get install -y openssh-client && \
-    pip install --upgrade pip && \
     /tmp/clean-layer.sh
 
 # Make sure the dynamic linker finds the right libstdc++
@@ -82,7 +81,7 @@ RUN apt-get install -y libfreetype6-dev && \
     pip install wordcloud && \
     pip install xgboost && \
     # Pinned to match GPU version. Update version together.
-    pip install lightgbm==3.1.1 && \
+    pip install lightgbm==3.2.0 && \
     pip install pydot && \
     pip install keras && \
     pip install keras-tuner && \
@@ -188,7 +187,8 @@ RUN pip install mpld3 && \
     pip install pyldavis && \
     pip install mlxtend && \
     pip install altair && \
-    pip install pystan && \
+    # b/183944405 pystan 3.x is not compatible with fbprophet.
+    pip install pystan==2.19.1.1 && \
     pip install ImageHash && \
     pip install ecos && \
     pip install CVXcanon && \
@@ -276,6 +276,8 @@ RUN pip install --upgrade cython && \
     pip install google-cloud-language==2.* && \
     pip install google-cloud-videointelligence==2.* && \
     pip install google-cloud-vision==2.* && \
+    # b/183041606#comment5: the Kaggle data proxy doesn't support these APIs. If the library is missing, it falls back to using a regular BigQuery query to fetch data.
+    pip uninstall -y google-cloud-bigquery-storage && \
     # After launch this should be installed from pip
     pip install git+https://github.com/googleapis/python-aiplatform.git@mb-release && \ 
     pip install ortools && \
@@ -300,17 +302,14 @@ RUN pip install bleach && \
     pip install decorator && \
     pip install entrypoints && \
     pip install html5lib && \
-    # Latest version breaks nbconvert: https://github.com/ipython/ipykernel/issues/422
-    pip install ipykernel==5.1.1 && \
+    pip install ipykernel && \
     pip install ipython && \
     pip install ipython-genutils && \
     pip install ipywidgets && \
     pip install isoweek && \
-    # Lastest version breaks ipython. https://github.com/ipython/ipython/issues/12740
-    pip install jedi==0.17.2 && \
+    pip install jedi && \
     pip install Jinja2 && \
     pip install jsonschema && \
-    pip install jupyter && \
     pip install jupyter-client && \
     pip install jupyter-console && \
     pip install jupyter-core && \
@@ -318,7 +317,8 @@ RUN pip install bleach && \
     pip install mistune && \
     pip install nbconvert && \
     pip install nbformat && \
-    pip install notebook==5.5.0 && \
+    pip install notebook && \
+    pip install papermill && \
     pip install olefile && \
     pip install kornia && \
     pip install pandas_summary && \
@@ -338,9 +338,7 @@ RUN pip install bleach && \
     pip install qtconsole && \
     pip install six && \
     pip install terminado && \
-    # Latest version (6.0) of tornado breaks Jupyter notebook:
-    # https://github.com/jupyter/notebook/issues/4439
-    pip install tornado==5.0.2 && \
+    pip install tornado && \
     pip install tqdm && \
     pip install traitlets && \
     pip install wcwidth && \
@@ -350,6 +348,8 @@ RUN pip install bleach && \
     pip install feather-format && \
     pip install fastai && \
     pip install allennlp && \
+    # https://b.corp.google.com/issues/184685619#comment9: 3.9.0 is causing a major performance degradation with spacy 2.3.5
+    pip install importlib-metadata==3.4.0 && \
     python -m spacy download en && python -m spacy download en_core_web_lg && \
     apt-get install -y ffmpeg && \
     /tmp/clean-layer.sh
@@ -404,11 +404,9 @@ RUN pip install flashtext && \
     pip install dlib && \
     pip install kaggle-environments && \
     pip install geopandas && \
-    # b/175638062 remove pin once we update to cuDNN 8.x
-    pip install nnabla==1.13.0 && \
+    pip install nnabla && \
     pip install vowpalwabbit && \
     # papermill can replace nbconvert for executing notebooks
-    pip install papermill && \
     pip install cloud-tpu-client && \
     pip install tensorflow-cloud && \
     pip install tensorflow-datasets && \
@@ -422,14 +420,21 @@ RUN pip install flashtext && \
     # pycrypto is used by competitions team.
     pip install pycrypto && \
     pip install easyocr && \
+    # Keep JAX version in sync with GPU image.
+    pip install jax==0.2.12 jaxlib==0.1.64 && \
+    # ipympl adds interactive widget support for matplotlib
+    pip install ipympl==0.7.0 && \
     /tmp/clean-layer.sh
 
 # Download base easyocr models.
 # https://github.com/JaidedAI/EasyOCR#usage
 RUN mkdir -p /root/.EasyOCR/model && \
-    wget --no-verbose "https://github.com/JaidedAI/EasyOCR/releases/download/pre-v1.1.6/latin.zip" -O /root/.EasyOCR/model/latin.zip && \
+    wget --no-verbose "https://github.com/JaidedAI/EasyOCR/releases/download/v1.3/latin_g2.zip" -O /root/.EasyOCR/model/latin.zip && \
     unzip /root/.EasyOCR/model/latin.zip -d /root/.EasyOCR/model/ && \
     rm /root/.EasyOCR/model/latin.zip && \
+    wget --no-verbose "https://github.com/JaidedAI/EasyOCR/releases/download/v1.3/english_g2.zip" -O /root/.EasyOCR/model/english.zip && \
+    unzip /root/.EasyOCR/model/english.zip -d /root/.EasyOCR/model/ && \
+    rm /root/.EasyOCR/model/english.zip && \
     wget --no-verbose "https://github.com/JaidedAI/EasyOCR/releases/download/pre-v1.1.6/craft_mlt_25k.zip" -O /root/.EasyOCR/model/craft_mlt_25k.zip && \
     unzip /root/.EasyOCR/model/craft_mlt_25k.zip -d /root/.EasyOCR/model/ && \
     rm /root/.EasyOCR/model/craft_mlt_25k.zip && \
@@ -438,7 +443,7 @@ RUN mkdir -p /root/.EasyOCR/model && \
 # Tesseract and some associated utility packages
 RUN apt-get install tesseract-ocr -y && \
     pip install pytesseract && \
-    pip install wand==0.5.3 && \
+    pip install wand && \
     pip install pdf2image && \
     pip install PyPDF && \
     pip install pyocr && \
