@@ -18,6 +18,7 @@ RUN sed -i 's/deb https:\/\/developer.download.nvidia.com/deb http:\/\/developer
 ENV CUDA_MAJOR_VERSION=11
 ENV CUDA_MINOR_VERSION=0
 ENV CUDA_VERSION=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION
+ENV CUDNN_VERSION=8.0.4
 LABEL com.nvidia.volumes.needed="nvidia_driver"
 LABEL com.nvidia.cuda.version="${CUDA_VERSION}"
 ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:/opt/bin:${PATH}
@@ -40,8 +41,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       cuda-nvml-dev-$CUDA_VERSION \
       cuda-minimal-build-$CUDA_VERSION \
       cuda-command-line-tools-$CUDA_VERSION \
-      libcudnn8=8.0.4.30-1+cuda$CUDA_VERSION \
-      libcudnn8-dev=8.0.4.30-1+cuda$CUDA_VERSION \
+      libcudnn8=$CUDNN_VERSION.30-1+cuda$CUDA_VERSION \
+      libcudnn8-dev=$CUDNN_VERSION.30-1+cuda$CUDA_VERSION \
       libnccl2=2.7.8-1+cuda$CUDA_VERSION \
       libnccl-dev=2.7.8-1+cuda$CUDA_VERSION && \
     ln -s /usr/local/cuda-$CUDA_VERSION /usr/local/cuda && \
@@ -59,7 +60,7 @@ RUN apt-get install -y ocl-icd-libopencl1 clinfo libboost-all-dev && \
 # However, because this image is based on the CPU image, this isn't possible but better
 # to put them at the top of this file to minize conflicts.
 RUN conda remove --force -y pytorch torchvision torchaudio cpuonly && \
-    conda install "pytorch=1.7" "torchvision=0.8" "torchaudio=0.7" "torchtext=0.8" "cudf=0.16" "cuml=0.16" cudatoolkit=$CUDA_VERSION && \
+    conda install "pytorch=1.7" "torchvision=0.8" "torchaudio=0.7" "torchtext=0.8" "cudf=0.16" "cuml=0.16" cudatoolkit=$CUDA_VERSION cudnn==$CUDNN_VERSION && \
     /tmp/clean-layer.sh
 
 # Install LightGBM with GPU
