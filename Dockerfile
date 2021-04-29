@@ -506,7 +506,9 @@ ADD patches/imagemagick-policy.xml /etc/ImageMagick-6/policy.xml
 RUN jupyter-nbextension disable nb_conda --py --sys-prefix && \
     jupyter-serverextension disable nb_conda --py --sys-prefix && \
     python -m nb_conda_kernels.install --disable
-    
+
+# Adds 6s to startup time and we don't use this notebook extension.
+# See https://b.corp.google.com/issues/186672816#comment9
 RUN jupyter-serverextension disable caip_notebooks_serverextension
 
 # Set backend for matplotlib
