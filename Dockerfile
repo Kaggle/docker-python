@@ -506,6 +506,8 @@ ADD patches/imagemagick-policy.xml /etc/ImageMagick-6/policy.xml
 RUN jupyter-nbextension disable nb_conda --py --sys-prefix && \
     jupyter-serverextension disable nb_conda --py --sys-prefix && \
     python -m nb_conda_kernels.install --disable
+    
+RUN jupyter-serverextension disable caip_notebooks_serverextension
 
 # Set backend for matplotlib
 ENV MPLBACKEND "agg"
