@@ -94,7 +94,7 @@ if [[ -n "$PACKAGE_NAME" ]]; then
     echo "Package: $PACKAGE_NAME"
     CMDS=("python /tools/pip_list_versions.py $PACKAGE_NAME | sort")
 else
-    CMDS=("pip freeze" 'cat /etc/os-release | grep -oP "PRETTY_NAME=\"\K([^\"]*)"' "uname -r" "dpkg --list | awk '{print \$2\"==\"\$3}'")
+    CMDS=("pip list --format=freeze" 'cat /etc/os-release | grep -oP "PRETTY_NAME=\"\K([^\"]*)"' "uname -r" "dpkg --list | awk '{print \$2\"==\"\$3}'")
 fi
 
 for cmd in "${CMDS[@]}"; do
