@@ -350,7 +350,7 @@ RUN pip install bleach && \
     pip install allennlp && \
     # https://b.corp.google.com/issues/184685619#comment9: 3.9.0 is causing a major performance degradation with spacy 2.3.5
     pip install importlib-metadata==3.4.0 && \
-    python -m spacy download en && python -m spacy download en_core_web_lg && \
+    python -m spacy download en_core_web_sm && python -m spacy download en_core_web_lg && \
     apt-get install -y ffmpeg && \
     /tmp/clean-layer.sh
 
@@ -386,6 +386,9 @@ RUN pip install flashtext && \
     pip install https://github.com/hbasria/ggpy/archive/0.11.5.zip && \
     pip install cesium && \
     pip install rgf_python && \
+    # b/185992410: onnx is a dependency of pytext, but the version 1.9.0 breaks pytext test.
+    # Remove this installation when pytext fixes the problem.
+    pip install onnx==1.8.1 && \
     # b/145404107: latest version force specific version of numpy and torch.
     pip install pytext-nlp==0.1.2 && \
     pip install tsfresh && \
@@ -424,6 +427,7 @@ RUN pip install flashtext && \
     pip install jax==0.2.12 jaxlib==0.1.64 && \
     # ipympl adds interactive widget support for matplotlib
     pip install ipympl==0.7.0 && \
+    pip install pandarallel && \
     /tmp/clean-layer.sh
 
 # Download base easyocr models.
