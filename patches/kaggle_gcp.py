@@ -198,7 +198,7 @@ def monkeypatch_init(client_klass, kaggle_kernel_credentials):
         if specified_credentials is None:
             Log.info("No credentials specified, using KaggleKernelCredentials.")
             kwargs['credentials'] = kaggle_kernel_credentials
-            return client_init(self, *args, **kwargs)
+        return client_init(self, *args, **kwargs)
 
     if (not has_been_monkeypatched(client_klass.init)):
         client_klass.init = patched_init
@@ -340,7 +340,7 @@ def init_ucaip():
     kaggle_kernel_credentials = KaggleKernelCredentials(target=GcpTarget.CLOUDAI)
 
     # Patch the ucaip init method, this flows down to all ucaip services
-    monkeypatch_init(aiplatform.initializer.global_config, kaggle_kernel_credentials)
+    monkeypatch_init(aiplatform, kaggle_kernel_credentials)
 
 def init_video_intelligence():
     from google.cloud import videointelligence
