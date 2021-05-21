@@ -191,7 +191,7 @@ def init_bigquery():
 # eg
 # from google.cloud import aiplatform
 # aiplatform.init(args)
-def monkeypatch_aiploatform_init(aiplatform_klass, kaggle_kernel_credentials):
+def monkeypatch_aiplatform_init(aiplatform_klass, kaggle_kernel_credentials):
     aiplatform_init = aiplatform_klass.init
     def patched_init(self, *args, **kwargs):
         specified_credentials = kwargs.get('credentials')
