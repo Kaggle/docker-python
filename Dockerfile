@@ -363,6 +363,13 @@ RUN pip install bleach && \
     ###########
 
 RUN pip install flashtext && \
+    apt-get -y install sudo && \
+    # Additional Libs for Cuda Toolkit
+    apt-get -y install libboost-all-dev && \
+    apt-get -y install libgl1-mesa-dev && \
+    apt-get -y install libglu1-mesa libsm-dev && \
+    # Update the dockerfile for preinstalled cuda toolkit
+    DEBIAN_FRONTEND=noninteractive apt-get -y install cuda && \
     pip install wandb && \
     pip install marisa-trie && \
     pip install pyemd && \
