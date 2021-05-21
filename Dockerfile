@@ -362,11 +362,7 @@ RUN pip install bleach && \
     #
     ###########
 
-RUN apt-get install sudo -y && \
-    sudo apt-get update && \
-    DEBIAN_FRONTEND=noninteractive sudo apt-get -y install cuda && \
-    conda install -y gdown && \
-    pip install flashtext && \
+RUN pip install flashtext && \
     pip install wandb && \
     pip install marisa-trie && \
     pip install pyemd && \
@@ -432,6 +428,10 @@ RUN apt-get install sudo -y && \
     # ipympl adds interactive widget support for matplotlib
     pip install ipympl==0.7.0 && \
     pip install pandarallel && \
+    apt-get install sudo -y && \
+    sudo apt-get update && \
+    DEBIAN_FRONTEND=noninteractive sudo apt-get -y install cuda && \
+    conda install -y gdown && \
     /tmp/clean-layer.sh
 
 # Download base easyocr models.
