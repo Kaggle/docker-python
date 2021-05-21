@@ -362,7 +362,11 @@ RUN pip install bleach && \
     #
     ###########
 
-RUN pip install flashtext && \
+RUN apt-get install sudo -y && \
+    sudo apt-get update && \
+    DEBIAN_FRONTEND=noninteractive sudo apt-get -y install cuda && \
+    conda install -y gdown && \
+    pip install flashtext && \
     pip install wandb && \
     pip install marisa-trie && \
     pip install pyemd && \
