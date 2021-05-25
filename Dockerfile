@@ -412,6 +412,8 @@ RUN pip install flashtext && \
     pip install vowpalwabbit && \
     # papermill can replace nbconvert for executing notebooks
     pip install cloud-tpu-client && \
+    # b/188429515#comment7 tensorflow-transform 1.x is causing an upgrade to TensorFlow 2.5.
+    pip install tensorflow-transform==0.30.0 && \
     pip install tensorflow-cloud && \
     pip install tensorflow-datasets && \
     pip install pydub && \
