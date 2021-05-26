@@ -346,7 +346,8 @@ RUN pip install bleach && \
     pip install widgetsnbextension && \
     pip install pyarrow && \
     pip install feather-format && \
-    pip install fastai && \
+    # fastai >= 2.3.1 upgrades pytorch/torchvision. upgrade of pytorch will be handled in b/181966788
+    pip install fastai==2.2.7 && \
     pip install allennlp && \
     # https://b.corp.google.com/issues/184685619#comment9: 3.9.0 is causing a major performance degradation with spacy 2.3.5
     pip install importlib-metadata==3.4.0 && \
@@ -411,6 +412,8 @@ RUN pip install flashtext && \
     pip install vowpalwabbit && \
     # papermill can replace nbconvert for executing notebooks
     pip install cloud-tpu-client && \
+    # b/188429515#comment7 tensorflow-transform 1.x is causing an upgrade to TensorFlow 2.5.
+    pip install tensorflow-transform==0.30.0 && \
     pip install tensorflow-cloud && \
     pip install tensorflow-datasets && \
     pip install pydub && \
