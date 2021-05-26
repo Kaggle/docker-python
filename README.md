@@ -27,7 +27,7 @@ If you the first step above doesn't work for your use case, [open an issue](http
     1. For changes specific to the GPU image, update the [gpu.Dockerfile](gpu.Dockerfile).
     1. Otherwise, update the [Dockerfile](Dockerfile).
 1. Follow the instructions below to build a new image.
-1. Add tests for your new package. See this [example](https://github.com/Kaggle/docker-python/blob/master/tests/test_fastai.py).
+1. Add tests for your new package. See this [example](https://github.com/Kaggle/docker-python/blob/main/tests/test_fastai.py).
 1. Follow the instructions below to test the new image.
 1. Open a PR on this repo and you are all set!
 
