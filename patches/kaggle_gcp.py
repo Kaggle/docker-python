@@ -193,12 +193,12 @@ def init_bigquery():
 # aiplatform.init(args)
 def monkeypatch_aiplatform_init(aiplatform_klass, kaggle_kernel_credentials):
     aiplatform_init = aiplatform_klass.init
-    def patched_init(self, *args, **kwargs):
+    def patched_init(*args, **kwargs):
         specified_credentials = kwargs.get('credentials')
         if specified_credentials is None:
             Log.info("No credentials specified, using KaggleKernelCredentials.")
             kwargs['credentials'] = kaggle_kernel_credentials
-        return aiplatform_init(self, *args, **kwargs)
+        return aiplatform_init(*args, **kwargs)
 
     if (not has_been_monkeypatched(aiplatform_klass.init)):
         aiplatform_klass.init = patched_init
