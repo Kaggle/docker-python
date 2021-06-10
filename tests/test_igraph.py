@@ -8,5 +8,5 @@ class TestIgraph(unittest.TestCase):
         # Create a graph with 10 vertices & 2 children each.
         g2 = Graph.Tree(n=10, children=2) 
        
-        self.assertEquals(9, len(g2.get_edgelist()))
+        self.assertEqual(9, len(g2.get_edgelist()))
 
