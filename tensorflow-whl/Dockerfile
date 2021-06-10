@@ -1,5 +1,5 @@
 FROM nvidia/cuda:11.0-cudnn8-devel-ubuntu18.04 AS nvidia
-FROM gcr.io/deeplearning-platform-release/base-cpu:m66
+FROM gcr.io/deeplearning-platform-release/base-cpu:m71
 
 # Avoid interactive configuration prompts/dialogs during apt-get.
 ENV DEBIAN_FRONTEND=noninteractive
