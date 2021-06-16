@@ -365,6 +365,7 @@ RUN pip install bleach && \
 
 RUN pip install flashtext && \
     pip install wandb && \
+    pip install vaex && \
     pip install marisa-trie && \
     pip install pyemd && \
     pip install pyupset && \
