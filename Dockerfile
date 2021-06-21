@@ -194,7 +194,8 @@ RUN pip install mpld3 && \
     pip install CVXcanon && \
     # b/179264579 cvxpy 1.1.8 requires numpy >= 1.20
     pip install cvxpy==1.1.7 && \
-    pip install fancyimpute && \
+    # b/184083722 remove pin after upgrading to TensorFlow 2.5
+    pip install fancyimpute==0.5.5 && \
     pip install pymc3 && \
     pip install imagecodecs && \
     pip install tifffile && \
