@@ -1,7 +1,6 @@
 ARG BASE_TAG=staging
 
 FROM nvidia/cuda:11.0-cudnn8-devel-ubuntu18.04 AS nvidia
-FROM gcr.io/kaggle-images/python-tensorflow-whl:2.4.1-py37-2 as tensorflow_whl
 FROM gcr.io/kaggle-images/python:${BASE_TAG}
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
@@ -82,18 +81,10 @@ RUN  pip install jax==0.2.12 jaxlib==0.1.64+cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_V
      /tmp/clean-layer.sh
 
 # Reinstall packages with a separate version for GPU support.
-COPY --from=tensorflow_whl /tmp/tensorflow_gpu/*.whl /tmp/tensorflow_gpu/
 RUN pip uninstall -y tensorflow && \
-    pip install /tmp/tensorflow_gpu/tensorflow*.whl && \
-    rm -rf /tmp/tensorflow_gpu && \
+    pip install tensorflow-gpu==2.4.1 && \
     pip uninstall -y mxnet && \
     pip install mxnet-cu$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
-    /tmp/clean-layer.sh
-
- # Reinstall TensorFlow addons (TFA) with GPU support.
-COPY --from=tensorflow_whl /tmp/tfa_gpu/*.whl /tmp/tfa_gpu/
-RUN pip install /tmp/tfa_gpu/tensorflow*.whl && \
-    rm -rf /tmp/tfa_gpu/ && \
     /tmp/clean-layer.sh
 
 # Install GPU-only packages
