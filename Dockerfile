@@ -3,6 +3,10 @@ ARG TENSORFLOW_VERSION=2.4.1
 
 FROM gcr.io/deeplearning-platform-release/base-cpu:${BASE_TAG}
 
+# We need to redefine TENSORFLOW_VERSION here to get the default ARG value defined above the FROM instruction.
+# See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
+ARG TENSORFLOW_VERSION
+
 ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 ADD patches/template_conf.json /opt/kaggle/conf.json
@@ -55,7 +59,7 @@ RUN pip install seaborn python-dateutil dask && \
     pip install -f https://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o && \
     /tmp/clean-layer.sh
 
-RUN pip install tensorflow==$TENSORFLOW_VERSION && \
+RUN pip install tensorflow==${TENSORFLOW_VERSION} && \
     pip install tensorflow-gcs-config==2.1.7 && \
     pip install tensorflow-addons==0.12.1 && \
     /tmp/clean-layer.sh
@@ -499,9 +503,6 @@ RUN jupyter-nbextension disable nb_conda --py --sys-prefix && \
 # Set backend for matplotlib
 ENV MPLBACKEND "agg"
 
-# We need to redefine TENSORFLOW_VERSION here to get the default ARG value defined above the FROM instruction.
-# See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
-ARG TENSORFLOW_VERSION
 ARG GIT_COMMIT=unknown
 ARG BUILD_DATE=unknown
 
