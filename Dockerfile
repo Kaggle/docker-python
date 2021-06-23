@@ -330,6 +330,7 @@ RUN pip install bleach && \
     # Install openslide and its python binding
     apt-get install -y openslide-tools && \
     pip install openslide-python && \
+    pip install parse && \
     pip install ptyprocess && \
     pip install Pygments && \
     pip install pyparsing && \
