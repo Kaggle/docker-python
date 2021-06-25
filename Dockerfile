@@ -60,7 +60,7 @@ RUN pip install seaborn python-dateutil dask && \
     /tmp/clean-layer.sh
 
 RUN pip install tensorflow==${TENSORFLOW_VERSION} && \
-    pip install tensorflow-gcs-config==2.1.7 && \
+    pip install tensorflow-gcs-config==2.4.0 && \
     pip install tensorflow-addons==0.12.1 && \
     /tmp/clean-layer.sh
 
