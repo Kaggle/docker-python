@@ -1,8 +1,11 @@
 ARG BASE_TAG=m73
 ARG TENSORFLOW_VERSION=2.4.1
 
-FROM gcr.io/kaggle-images/python-tensorflow-whl:${TENSORFLOW_VERSION}-py37-2 as tensorflow_whl
 FROM gcr.io/deeplearning-platform-release/base-cpu:${BASE_TAG}
+
+# We need to redefine TENSORFLOW_VERSION here to get the default ARG value defined above the FROM instruction.
+# See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
+ARG TENSORFLOW_VERSION
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
@@ -56,22 +59,9 @@ RUN pip install seaborn python-dateutil dask && \
     pip install -f https://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o && \
     /tmp/clean-layer.sh
 
-# Install tensorflow from a pre-built wheel
-COPY --from=tensorflow_whl /tmp/tensorflow_cpu/*.whl /tmp/tensorflow_cpu/
-RUN pip install /tmp/tensorflow_cpu/tensorflow*.whl && \
-    rm -rf /tmp/tensorflow_cpu && \
-    /tmp/clean-layer.sh
-
-# Install tensorflow-gcs-config from a pre-built wheel
-COPY --from=tensorflow_whl /tmp/tensorflow_gcs_config/*.whl /tmp/tensorflow_gcs_config/
-RUN pip install /tmp/tensorflow_gcs_config/tensorflow*.whl && \
-    rm -rf /tmp/tensorflow_gcs_config && \
-    /tmp/clean-layer.sh
-
-# Install TensorFlow addons (TFA).
-COPY --from=tensorflow_whl /tmp/tfa_cpu/*.whl /tmp/tfa_cpu/
-RUN pip install /tmp/tfa_cpu/tensorflow*.whl && \
-    rm -rf /tmp/tfa_cpu/ && \
+RUN pip install tensorflow==${TENSORFLOW_VERSION} && \
+    pip install tensorflow-gcs-config==2.4.0 && \
+    pip install tensorflow-addons==0.12.1 && \
     /tmp/clean-layer.sh
 
 RUN apt-get install -y libfreetype6-dev && \
@@ -513,9 +503,6 @@ RUN jupyter-nbextension disable nb_conda --py --sys-prefix && \
 # Set backend for matplotlib
 ENV MPLBACKEND "agg"
 
-# We need to redefine TENSORFLOW_VERSION here to get the default ARG value defined above the FROM instruction.
-# See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
-ARG TENSORFLOW_VERSION
 ARG GIT_COMMIT=unknown
 ARG BUILD_DATE=unknown
 
