@@ -66,7 +66,7 @@ RUN pip uninstall -y lightgbm && \
     cd /usr/local/src && \
     git clone --recursive https://github.com/microsoft/LightGBM && \
     cd LightGBM && \
-    git checkout tags/v3.2.0 && \
+    git checkout tags/v3.2.1 && \
     mkdir build && cd build && \
     cmake -DUSE_GPU=1 -DOpenCL_LIBRARY=/usr/local/cuda/lib64/libOpenCL.so -DOpenCL_INCLUDE_DIR=/usr/local/cuda/include/ .. && \
     make -j$(nproc) && \
