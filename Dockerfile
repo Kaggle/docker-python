@@ -16,8 +16,8 @@ RUN apt-get update && \
     apt-get install apt-transport-https && \
     /tmp/clean-layer.sh
 
-    # Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
-    # as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
+# Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
+# as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
 RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list && \
     apt-get update && \
     # Needed by vowpalwabbit & lightGBM (GPU build).
@@ -346,13 +346,13 @@ RUN pip install bleach && \
     apt-get install -y ffmpeg && \
     /tmp/clean-layer.sh
 
-    ###########
-    #
-    #      NEW CONTRIBUTORS:
-    # Please add new pip/apt installs in this block. Don't forget a "&& \" at the end
-    # of all non-final lines. Thanks!
-    #
-    ###########
+###########
+#
+#      NEW CONTRIBUTORS:
+# Please add new pip/apt installs in this block. Don't forget a "&& \" at the end
+# of all non-final lines. Thanks!
+#
+###########
 
 RUN pip install flashtext && \
     pip install wandb && \
@@ -421,6 +421,7 @@ RUN pip install flashtext && \
     # ipympl adds interactive widget support for matplotlib
     pip install ipympl==0.7.0 && \
     pip install pandarallel && \
+    pip install dataprep && \
     /tmp/clean-layer.sh
 
 # Download base easyocr models.
@@ -453,7 +454,7 @@ ENV PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/
 ENV MKL_THREADING_LAYER=GNU
 
 # Temporary fixes and patches
-    # Temporary patch for Dask getting downgraded, which breaks Keras
+# Temporary patch for Dask getting downgraded, which breaks Keras
 RUN pip install --upgrade dask && \
     # Stop jupyter nbconvert trying to rewrite its folder hierarchy
     mkdir -p /root/.jupyter && touch /root/.jupyter/jupyter_nbconvert_config.py && touch /root/.jupyter/migrated && \
