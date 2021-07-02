@@ -57,8 +57,9 @@ RUN apt-get install -y ocl-icd-libopencl1 clinfo libboost-all-dev && \
 # the remaining pip commands: https://www.anaconda.com/using-pip-in-a-conda-environment/
 # However, because this image is based on the CPU image, this isn't possible but better
 # to put them at the top of this file to minize conflicts.
-RUN conda remove --force -y pytorch torchvision torchaudio cpuonly && \
-    conda install "pytorch=1.7" "torchvision=0.8" "torchaudio=0.7" "torchtext=0.8" "cudf=0.16" "cuml=0.16" cudatoolkit=$CUDA_VERSION && \
+RUN conda remove --force -y pytorch torchvision torchaudio torchtext cpuonly && \
+    conda install "pytorch=1.7" "torchvision=0.8" "torchaudio=0.7" "torchtext=0.8" cudatoolkit=$CUDA_VERSION && \
+    conda install "cudf=21.06" "cuml=21.06" && \
     /tmp/clean-layer.sh
 
 # Install LightGBM with GPU
@@ -89,7 +90,6 @@ RUN pip uninstall -y tensorflow && \
 
 # Install GPU-only packages
 RUN pip install pycuda && \
-    pip install cupy-cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
     pip install pynvrtc && \
     # b/190622765 latest version is causing issue. nnabla fixed it in https://github.com/sony/nnabla/issues/892, waiting for new release before we can remove this pin.
     pip install pynvml==8.0.4 && \
