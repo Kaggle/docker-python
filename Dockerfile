@@ -1,5 +1,5 @@
 ARG BASE_TAG=m73
-ARG TENSORFLOW_VERSION=2.4.1
+ARG TENSORFLOW_VERSION=2.5.0
 
 FROM gcr.io/deeplearning-platform-release/base-cpu:${BASE_TAG}
 
@@ -60,8 +60,8 @@ RUN pip install seaborn python-dateutil dask && \
     /tmp/clean-layer.sh
 
 RUN pip install tensorflow==${TENSORFLOW_VERSION} && \
-    pip install tensorflow-gcs-config==2.4.0 && \
-    pip install tensorflow-addons==0.12.1 && \
+    pip install tensorflow-gcs-config==${TENSORFLOW_VERSION} && \
+    pip install tensorflow-addons==0.13.0 && \
     /tmp/clean-layer.sh
 
 RUN apt-get install -y libfreetype6-dev && \

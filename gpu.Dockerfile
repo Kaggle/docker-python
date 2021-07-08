@@ -83,7 +83,7 @@ RUN pip install jax==0.2.16 jaxlib==0.1.68+cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VE
 
 # Reinstall packages with a separate version for GPU support.
 RUN pip uninstall -y tensorflow && \
-    pip install tensorflow-gpu==2.4.1 && \
+    pip install tensorflow-gpu==2.5.0 && \
     pip uninstall -y mxnet && \
     pip install mxnet-cu$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
     /tmp/clean-layer.sh
