@@ -174,7 +174,8 @@ RUN pip install mpld3 && \
     pip install s2sphere && \
     pip install bayesian-optimization && \
     pip install matplotlib-venn && \
-    pip install pyldavis && \
+    # b/184083722 pyldavis >= 3.3 requires numpy >= 1.20.0 but TensorFlow 2.4.1 / 2.5.0 requires 1.19.2
+    pip install pyldavis==3.2.2 && \
     pip install mlxtend && \
     pip install altair && \
     # b/183944405 pystan 3.x is not compatible with fbprophet.
