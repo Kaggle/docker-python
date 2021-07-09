@@ -174,7 +174,8 @@ RUN pip install mpld3 && \
     pip install s2sphere && \
     pip install bayesian-optimization && \
     pip install matplotlib-venn && \
-    pip install pyldavis && \
+    # b/184083722 pyldavis >= 3.3 requires numpy >= 1.20.0 but TensorFlow 2.4.1 / 2.5.0 requires 1.19.2
+    pip install pyldavis==3.2.2 && \
     pip install mlxtend && \
     pip install altair && \
     # b/183944405 pystan 3.x is not compatible with fbprophet.
@@ -182,10 +183,6 @@ RUN pip install mpld3 && \
     pip install ImageHash && \
     pip install ecos && \
     pip install CVXcanon && \
-    # b/179264579 cvxpy 1.1.8 requires numpy >= 1.20
-    pip install cvxpy==1.1.7 && \
-    # b/184083722 remove pin after upgrading to TensorFlow 2.5
-    pip install fancyimpute==0.5.5 && \
     pip install pymc3 && \
     pip install imagecodecs && \
     pip install tifffile && \
