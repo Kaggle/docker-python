@@ -73,7 +73,6 @@ RUN apt-get install -y libfreetype6-dev && \
     # Pinned to match GPU version. Update version together.
     pip install lightgbm==3.2.1 && \
     pip install pydot && \
-    pip install keras && \
     pip install keras-tuner && \
     pip install flake8 && \
     # Pinned because it breaks theano test with the latest version (b/178107003).
@@ -248,10 +247,6 @@ RUN pip install tensorpack && \
 RUN pip install --upgrade cython && \
     pip install --upgrade cysignals && \
     pip install pyfasttext && \
-    # ktext has an explicit dependency on Keras 2.2.4 which is not
-    # compatible with TensorFlow 2.0 (support was added in Keras 2.3.0).
-    # Add the package back once it is fixed upstream.
-    # pip install ktext && \
     pip install fasttext && \
     apt-get install -y libhunspell-dev && pip install hunspell && \
     pip install annoy && \
@@ -450,7 +445,7 @@ ENV PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/
 ENV MKL_THREADING_LAYER=GNU
 
 # Temporary fixes and patches
-    # Temporary patch for Dask getting downgraded, which breaks Keras
+# Temporary patch for Dask getting downgraded, which breaks Keras
 RUN pip install --upgrade dask && \
     # Stop jupyter nbconvert trying to rewrite its folder hierarchy
     mkdir -p /root/.jupyter && touch /root/.jupyter/jupyter_nbconvert_config.py && touch /root/.jupyter/migrated && \
