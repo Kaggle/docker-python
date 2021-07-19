@@ -409,7 +409,7 @@ RUN pip install flashtext && \
     pip install pycrypto && \
     pip install easyocr && \
     # Keep JAX version in sync with GPU image.
-    pip install jax==0.2.12 jaxlib==0.1.64 && \
+    pip install jax==0.2.16 jaxlib==0.1.68 && \
     # ipympl adds interactive widget support for matplotlib
     pip install ipympl==0.7.0 && \
     pip install pandarallel && \
