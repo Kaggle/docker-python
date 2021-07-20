@@ -27,7 +27,8 @@ pipeline {
       steps {
         sh '''#!/bin/bash
           set -exo pipefail
-
+          
+          whoami
           ./build | ts
           ./push ${PRETEST_TAG}
         '''
