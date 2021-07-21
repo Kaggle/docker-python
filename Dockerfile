@@ -370,11 +370,6 @@ RUN pip install flashtext && \
     pip install https://github.com/hbasria/ggpy/archive/0.11.5.zip && \
     pip install cesium && \
     pip install rgf_python && \
-    # b/185992410: onnx is a dependency of pytext, but the version 1.9.0 breaks pytext test.
-    # Remove this installation when pytext fixes the problem.
-    pip install onnx==1.8.1 && \
-    # b/145404107: latest version force specific version of numpy and torch.
-    pip install pytext-nlp==0.1.2 && \
     pip install tsfresh && \
     pip install pykalman && \
     pip install optuna && \
