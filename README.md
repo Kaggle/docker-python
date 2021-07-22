@@ -75,16 +75,3 @@ docker run --runtime nvidia --rm -it gcr.io/kaggle-gpu-images/python /bin/bash
 ```
 
 To ensure your container can access the GPU, follow the instructions posted [here](https://github.com/Kaggle/docker-python/issues/361#issuecomment-448093930).
-
-## Tensorflow custom pre-built wheel
-
-A Tensorflow custom pre-built wheel is used mainly for:
-
-* Faster build time: Building tensorflow from sources takes ~1h. Keeping this process outside the main build allows faster iterations when working on our Dockerfiles.
-
-Building Tensorflow from sources:
-
-* Increase performance: When building from sources, we can leverage CPU specific optimizations
-* Is required: Tensorflow with GPU support must be built from sources
-
-The [Dockerfile](tensorflow-whl/Dockerfile) and the [instructions](tensorflow-whl/README.md) can be found in the [tensorflow-whl folder/](tensorflow-whl/).
