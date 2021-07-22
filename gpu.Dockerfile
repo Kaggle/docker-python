@@ -12,8 +12,6 @@ COPY --from=nvidia /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d/cuda.gpg
 # See b/142337634#comment28
 RUN sed -i 's/deb https:\/\/developer.download.nvidia.com/deb http:\/\/developer.download.nvidia.com/' /etc/apt/sources.list.d/*.list
 
-# Ensure the cuda libraries are compatible with the custom Tensorflow wheels.
-# TODO(b/120050292): Use templating to keep in sync or COPY installed binaries from it.
 ENV CUDA_MAJOR_VERSION=11
 ENV CUDA_MINOR_VERSION=0
 ENV CUDA_VERSION=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION
@@ -82,9 +80,7 @@ RUN pip install jax==0.2.16 jaxlib==0.1.68+cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VE
     /tmp/clean-layer.sh
 
 # Reinstall packages with a separate version for GPU support.
-RUN pip uninstall -y tensorflow && \
-    pip install tensorflow-gpu==2.4.1 && \
-    pip uninstall -y mxnet && \
+RUN pip uninstall -y mxnet && \
     pip install mxnet-cu$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
     /tmp/clean-layer.sh
 
