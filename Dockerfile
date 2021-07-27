@@ -70,6 +70,8 @@ RUN apt-get install -y libfreetype6-dev && \
     pip install textblob && \
     pip install wordcloud && \
     pip install xgboost && \
+    pip install hdbscan && \
+    pip install pyclustering && \
     # Pinned to match GPU version. Update version together.
     pip install lightgbm==3.2.1 && \
     pip install pydot && \
