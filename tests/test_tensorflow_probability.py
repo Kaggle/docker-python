@@ -1,0 +1,10 @@
+import unittest
+
+import tensorflow_probability as tfp
+
+
+class TestTensorFlowProbability(unittest.TestCase):
+    def test_distribution(self):
+        tfd = tfp.distributions
+        dist = tfd.Bernoulli(logits=[-1, 1, 1])
+        self.assertEqual('Bernoulli', dist.name)
