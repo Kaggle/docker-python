@@ -40,13 +40,14 @@ ENV PROJ_LIB=/opt/conda/share/proj
 # Using the same global consistent ordered list of channels
 RUN conda config --add channels conda-forge && \
     conda config --add channels nvidia && \
-    conda config --add channels pytorch && \
     conda config --add channels rapidsai && \
     # ^ rapidsai is the highest priority channel, default lowest, conda-forge 2nd lowest.
     # b/182405233 pyproj 3.x is not compatible with basemap 1.2.1
     # b/161473620#comment7 pin required to prevent resolver from picking pysal 1.x., pysal 2.2.x is also downloading data on import.
     conda install basemap cartopy imagemagick pyproj "pysal==2.1.0" && \
-    conda install "pytorch=1.7" "torchvision=0.8" "torchaudio=0.7" "torchtext=0.8" cpuonly && \
+    /tmp/clean-layer.sh
+
+RUN pip install torch==1.7.1+cpu torchvision==0.8.2+cpu torchaudio==0.7.2 torchtext==0.8.1 -f https://download.pytorch.org/whl/torch_stable.html && \
     /tmp/clean-layer.sh
 
 # The anaconda base image includes outdated versions of these packages. Update them to include the latest version.

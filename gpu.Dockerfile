@@ -60,6 +60,11 @@ RUN conda remove --force -y pytorch torchvision torchaudio torchtext cpuonly && 
     conda install "cudf=21.06" "cuml=21.06" && \
     /tmp/clean-layer.sh
 
+# Install Pytorch and torchvision with GPU support.
+# Note: torchtext and torchaudio do not require a separate package.
+RUN pip install torch==1.7.1+cu110 torchvision==0.8.2+cu110 -f https://download.pytorch.org/whl/torch_stable.html && \
+    /tmp/clean-layer.sh
+
 # Install LightGBM with GPU
 RUN pip uninstall -y lightgbm && \
     cd /usr/local/src && \
