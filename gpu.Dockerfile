@@ -60,7 +60,7 @@ RUN conda install cudf=21.06 cuml=21.06 cudatoolkit=$CUDA_VERSION && \
 
 # Install Pytorch and torchvision with GPU support.
 # Note: torchtext and torchaudio do not require a separate GPU package.
-RUN pip install torch==1.7.1+cu110 torchvision==0.8.2+cu110 -f https://download.pytorch.org/whl/torch_stable.html && \
+RUN pip install torch==1.7.1+cu$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION torchvision==0.8.2+cu$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION -f https://download.pytorch.org/whl/torch_stable.html && \
     /tmp/clean-layer.sh
 
 # Install LightGBM with GPU
