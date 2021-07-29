@@ -62,6 +62,7 @@ RUN pip install seaborn python-dateutil dask python-igraph && \
 RUN pip install tensorflow==${TENSORFLOW_VERSION} && \
     pip install tensorflow-gcs-config==2.4.0 && \
     pip install tensorflow-addons==0.12.1 && \
+    pip install tensorflow_probability==0.12.2 && \
     /tmp/clean-layer.sh
 
 RUN apt-get install -y libfreetype6-dev && \
