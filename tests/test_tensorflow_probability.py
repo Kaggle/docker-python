@@ -1,5 +1,7 @@
 import unittest
 
+# b/194837139 importing tensorflow before tfp was trigerring an error. Adding this import to prevent regression.
+import tensorflow
 import tensorflow_probability as tfp
 
 
