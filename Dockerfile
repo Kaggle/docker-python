@@ -43,7 +43,7 @@ RUN conda config --add channels conda-forge && \
     conda config --add channels rapidsai && \
     # ^ rapidsai is the highest priority channel, default lowest, conda-forge 2nd lowest.
     # b/161473620#comment7 pin required to prevent resolver from picking pysal 1.x., pysal 2.2.x is also downloading data on import.
-    conda install cartopy=0.19 imagemagick=7.0 pyproj==3.1.0 pysal==2.1.0 && \
+    conda install cartopy=0.19 imagemagick=7.0 pyproj==3.1.0 pysal==2.1.0 mkl blas && \
     /tmp/clean-layer.sh
 
 RUN pip install torch==1.7.1+cpu torchvision==0.8.2+cpu torchaudio==0.7.2 torchtext==0.8.1 -f https://download.pytorch.org/whl/torch_stable.html && \
