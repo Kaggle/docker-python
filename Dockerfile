@@ -1,4 +1,4 @@
-ARG BASE_TAG=m75
+ARG BASE_TAG=m78
 ARG TENSORFLOW_VERSION=2.4.1
 
 FROM gcr.io/deeplearning-platform-release/base-cpu:${BASE_TAG}
