@@ -56,7 +56,7 @@ RUN apt-get install -y ocl-icd-libopencl1 clinfo libboost-all-dev && \
 # the remaining pip commands: https://www.anaconda.com/using-pip-in-a-conda-environment/
 # However, because this image is based on the CPU image, this isn't possible but better
 # to put them at the top of this file to minize conflicts.
-RUN conda install cudf=21.06 cuml=21.06 cudatoolkit=$CUDA_VERSION && \
+RUN conda install cudf=21.08 cuml=21.08 cudatoolkit=$CUDA_VERSION && \
     /tmp/clean-layer.sh
 
 # Install Pytorch and torchvision with GPU support.
