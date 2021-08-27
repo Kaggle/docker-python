@@ -11,13 +11,8 @@ ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 ADD patches/template_conf.json /opt/kaggle/conf.json
 
-# This is necessary for apt to access HTTPS sources
-RUN apt-get update && \
-    apt-get install apt-transport-https && \
-    /tmp/clean-layer.sh
-
-    # Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
-    # as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
+# Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
+# as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
 RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list && \
     apt-get update && \
     # Needed by vowpalwabbit & lightGBM (GPU build).
@@ -30,7 +25,7 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     /tmp/clean-layer.sh
 
 # Make sure the dynamic linker finds the right libstdc++
-ENV LD_LIBRARY_PATH=/opt/conda/lib
+ENV LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:/opt/conda/lib
 # b/128333086: Set PROJ_LIB to points to the proj4 cartographic library.
 ENV PROJ_LIB=/opt/conda/share/proj
 

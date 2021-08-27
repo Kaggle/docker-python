@@ -9,8 +9,6 @@ ADD clean-layer.sh  /tmp/clean-layer.sh
 COPY --from=nvidia /etc/apt/sources.list.d/cuda.list /etc/apt/sources.list.d/
 COPY --from=nvidia /etc/apt/sources.list.d/nvidia-ml.list /etc/apt/sources.list.d/
 COPY --from=nvidia /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d/cuda.gpg
-# See b/142337634#comment28
-RUN sed -i 's/deb https:\/\/developer.download.nvidia.com/deb http:\/\/developer.download.nvidia.com/' /etc/apt/sources.list.d/*.list
 
 ENV CUDA_MAJOR_VERSION=11
 ENV CUDA_MINOR_VERSION=0
