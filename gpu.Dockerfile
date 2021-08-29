@@ -90,6 +90,9 @@ RUN pip uninstall -y mxnet && \
 # Install GPU-only packages
 RUN pip install pycuda && \
     pip install pynvrtc && \
+    pip install tensorflow-gpu==1.15.0 && \
+    pip install keras==2.3.0 && \
+    pip install bert4keras==0.7.7 && \
     # b/190622765 latest version is causing issue. nnabla fixed it in https://github.com/sony/nnabla/issues/892, waiting for new release before we can remove this pin.
     pip install pynvml==8.0.4 && \
     pip install nnabla-ext-cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
