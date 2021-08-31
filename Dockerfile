@@ -62,7 +62,8 @@ RUN pip install tensorflow==${TENSORFLOW_VERSION} && \
 
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
-    pip install gensim && \
+    # b/198300835 kornia 4.1.0 is not compatible with our version of numpy.
+    pip install gensim==4.0.1 && \
     pip install textblob && \
     pip install wordcloud && \
     pip install xgboost && \
@@ -299,7 +300,8 @@ RUN pip install bleach && \
     pip install notebook && \
     pip install papermill && \
     pip install olefile && \
-    pip install kornia && \
+    # b/198300835 kornia 0.5.10 is not compatible with our version of numpy.
+    pip install kornia==0.5.8 && \
     pip install pandas_summary && \
     pip install pandocfilters && \
     pip install pexpect && \
