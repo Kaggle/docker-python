@@ -32,20 +32,18 @@ ENV PROJ_LIB=/opt/conda/share/proj
 # Install conda packages not available on pip.
 # When using pip in a conda environment, conda commands should be ran first and then
 # the remaining pip commands: https://www.anaconda.com/using-pip-in-a-conda-environment/
-# Using the same global consistent ordered list of channels
-RUN conda config --add channels conda-forge && \
-    conda config --add channels nvidia && \
+RUN conda config --add channels nvidia && \
     conda config --add channels rapidsai && \
-    # ^ rapidsai is the highest priority channel, default lowest, conda-forge 2nd lowest.
-    conda install mkl blas && \
-    # b/161473620#comment7 pin required to prevent resolver from picking pysal 1.x., pysal 2.2.x is also downloading data on import.
-    conda install cartopy=0.19 imagemagick=7.0 pyproj==3.1.0 pysal==2.1.0 && \
+    # Base image channel order: conda-forge (highest priority), defaults.
+    # End state: rapidsai (highest priority), nvidia, conda-forge, defaults.
+    conda install mkl cartopy=0.19 imagemagick=7.1 pyproj==3.1.0 && \
     /tmp/clean-layer.sh
 
 RUN pip install torch==1.7.1+cpu torchvision==0.8.2+cpu torchaudio==0.7.2 torchtext==0.8.1 -f https://download.pytorch.org/whl/torch_stable.html && \
     /tmp/clean-layer.sh
 
-RUN pip install seaborn python-dateutil dask python-igraph && \
+RUN pip install pysal && \
+    pip install seaborn python-dateutil dask python-igraph && \
     pip install pyyaml joblib husl geopy ml_metrics mne pyshp && \
     pip install pandas && \
     # Install h2o from source.
