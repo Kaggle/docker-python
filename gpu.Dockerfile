@@ -77,7 +77,7 @@ RUN pip uninstall -y lightgbm && \
     /tmp/clean-layer.sh
 
 # Install JAX (Keep JAX version in sync with CPU image)
-RUN pip install jax==0.2.16 jaxlib==0.1.68+cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION -f https://storage.googleapis.com/jax-releases/jax_releases.html && \
+RUN pip install jax[cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION]==0.2.19 -f https://storage.googleapis.com/jax-releases/jax_releases.html && \
     /tmp/clean-layer.sh
 
 # Reinstall packages with a separate version for GPU support.
