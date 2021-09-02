@@ -25,7 +25,7 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     /tmp/clean-layer.sh
 
 # Make sure the dynamic linker finds the right libstdc++
-ENV LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:/opt/conda/lib
+ENV LD_LIBRARY_PATH=/opt/conda/lib
 # b/128333086: Set PROJ_LIB to points to the proj4 cartographic library.
 ENV PROJ_LIB=/opt/conda/share/proj
 
@@ -391,7 +391,9 @@ RUN pip install flashtext && \
     pip install tensorflow-datasets && \
     pip install pydub && \
     pip install pydegensac && \
-    pip install pytorch-lightning && \
+    # b/198635596 latest versions of torchmetrics & pytorch-lightning are failing at runtime.
+    pip install torchmetrics==0.5.0 && \
+    pip install pytorch-lightning==1.4.4 && \
     pip install datatable && \
     pip install sympy && \
     # flask is used by agents in the simulation competitions.
