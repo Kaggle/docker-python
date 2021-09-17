@@ -20,96 +20,105 @@ pipeline {
   }
 
   stages {
-    parallel {
-      stage('CPU') {
-        stages {
-          stage('Docker CPU Build') {
-            options {
-              timeout(time: 120, unit: 'MINUTES')
-            }
-            steps {
-              sh '''#!/bin/bash
-                set -exo pipefail
-
-                ./build | ts
-                ./push ${PRETEST_TAG}
-              '''
-            }
-          }
-          stage('Test CPU Image') {
-            options {
-              timeout(time: 5, unit: 'MINUTES')
-            }
-            steps {
-              sh '''#!/bin/bash
-                set -exo pipefail
-
-                date
-                docker pull gcr.io/kaggle-images/python:${PRETEST_TAG}
-                ./test --image gcr.io/kaggle-images/python:${PRETEST_TAG}
-              '''
-            }
-          }
-          stage('CPU Diff') {
-            steps {
-              sh '''#!/bin/bash
-              set -exo pipefail
-
-              docker pull gcr.io/kaggle-images/python:${PRETEST_TAG}
-              ./diff --target gcr.io/kaggle-images/python:${PRETEST_TAG}
-            '''
-            }
-          }
-        }
+    stage('Clean Images') {
+      steps {
+        sh '''#!/bin/bash
+          set -exo pipefail
+          # Remove images (dangling or not) created more than 120h (5 days ago) to prevent disk from filling up.
+          docker image prune --all --force --filter "until=120h" --filter "label=kaggle-lang=python"
+          # Remove any dangling images (no tags).
+          # All builds for the same branch uses the same tag. This means a subsequent build for the same branch
+          # will untag the previously built image which is safe to do. Builds for a single branch are performed
+          # serially.
+          docker image prune -f
+        '''
       }
-      stage('GPU') {
-        agent { label 'ephemeral-linux-gpu' }
-        stages {      
-          stage('Docker GPU Build') {
-            options {
-              timeout(time: 60, unit: 'MINUTES')
+    }
+    stage('Build/Test/Diff') {
+      parallel {
+        stage('CPU') {
+          stages {
+            stage('Build CPU Image') {
+              options {
+                timeout(time: 120, unit: 'MINUTES')
+              }
+              steps {
+                sh '''#!/bin/bash
+                  set -exo pipefail
+
+                  ./build | ts
+                  ./push ${PRETEST_TAG}
+                '''
+              }
             }
-            steps {
-              sh '''#!/bin/bash
-                set -exo pipefail
-                # Remove images (dangling or not) created more than 120h (5 days ago) to prevent disk from filling up.
-                docker image prune --all --force --filter "until=120h" --filter "label=kaggle-lang=python"
-                # Remove any dangling images (no tags).
-                # All builds for the same branch uses the same tag. This means a subsequent build for the same branch
-                # will untag the previously built image which is safe to do. Builds for a single branch are performed
-                # serially.
-                docker image prune -f
-                ./build --gpu --base-image-tag ${PRETEST_TAG} | ts
-                ./push --gpu ${PRETEST_TAG}
-              '''
+            stage('Test CPU Image') {
+              options {
+                timeout(time: 5, unit: 'MINUTES')
+              }
+              steps {
+                sh '''#!/bin/bash
+                  set -exo pipefail
+
+                  date
+                  docker pull gcr.io/kaggle-images/python:${PRETEST_TAG}
+                  ./test --image gcr.io/kaggle-images/python:${PRETEST_TAG}
+                '''
+              }
             }
-          }
-          stage('Test GPU Image') {
-            options {
-              timeout(time: 20, unit: 'MINUTES')
-            }
-            steps {
-              sh '''#!/bin/bash
+            stage('Diff CPU image') {
+              steps {
+                sh '''#!/bin/bash
                 set -exo pipefail
 
-                date
-                docker pull gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
-                ./test --gpu --image gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
+                docker pull gcr.io/kaggle-images/python:${PRETEST_TAG}
+                ./diff --target gcr.io/kaggle-images/python:${PRETEST_TAG}
               '''
-            }
-          }
-          stage('GPU Diff') {
-            steps {
-              sh '''#!/bin/bash
-              set -exo pipefail
-
-              docker pull gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
-              ./diff --gpu --target gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
-            '''
+              }
             }
           }
         }
-      } 
+        stage('GPU') {
+          agent { label 'ephemeral-linux-gpu' }
+          stages {      
+            stage('Build GPU Image') {
+              options {
+                timeout(time: 60, unit: 'MINUTES')
+              }
+              steps {
+                sh '''#!/bin/bash
+                  set -exo pipefail
+                  ./build --gpu | ts
+                  ./push --gpu ${PRETEST_TAG}
+                '''
+              }
+            }
+            stage('Test GPU Image') {
+              options {
+                timeout(time: 20, unit: 'MINUTES')
+              }
+              steps {
+                sh '''#!/bin/bash
+                  set -exo pipefail
+
+                  date
+                  docker pull gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
+                  ./test --gpu --image gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
+                '''
+              }
+            }
+            stage('Diff GPU Image') {
+              steps {
+                sh '''#!/bin/bash
+                set -exo pipefail
+
+                docker pull gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
+                ./diff --gpu --target gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
+              '''
+              }
+            }
+          }
+        } 
+      }
     }
 
     stage('Label CPU/GPU Staging Images') {
