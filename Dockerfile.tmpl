@@ -1,9 +1,7 @@
-ARG BASE_TAG=m78
-
 {{ if eq .Accelerator "gpu" }}
-FROM gcr.io/deeplearning-platform-release/tf2-gpu.2-6:${BASE_TAG}
+FROM gcr.io/deeplearning-platform-release/tf2-gpu.2-6:m78
 {{ else }}
-FROM gcr.io/deeplearning-platform-release/tf2-cpu.2-6:${BASE_TAG}
+FROM gcr.io/deeplearning-platform-release/tf2-cpu.2-6:m78
 {{ end }}
 # Keep these variables in sync if base image is updated.
 ENV TENSORFLOW_VERSION=2.6.0
