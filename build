@@ -15,6 +15,7 @@ EOF
 
 CACHE_FLAG='--no-cache'
 DOCKERFILE='Dockerfile'
+ACCELERATOR='none'
 IMAGE_TAG='kaggle/python-build'
 BUILD_ARGS=''
 
@@ -27,6 +28,7 @@ while :; do
         -g|--gpu)
             IMAGE_TAG='kaggle/python-gpu-build'
             DOCKERFILE='gpu.Dockerfile'
+            ACCELERATOR='gpu'
             ;;
         -c|--use-cache)
             CACHE_FLAG=''
@@ -57,8 +59,22 @@ BUILD_ARGS+=" --build-arg BUILD_DATE=$(date '+%Y%m%d-%H%M%S')"
 
 readonly CACHE_FLAG
 readonly DOCKERFILE
+readonly ACCELERATOR
 readonly IMAGE_TAG
 readonly BUILD_ARGS
 
+
+SRCDIR=$(dirname "${BASH_SOURCE[0]}")
+DOCKERFILE_OUTDIR="${SRCDIR}/.generated"
+mkdir -p $DOCKERFILE_OUTDIR
+DOCKERFILE_PATH="$DOCKERFILE_OUTDIR/$DOCKERFILE"
+
+# Generate Dockerfile from template.
+echo "Generating Dockerfile from template..."
+docker run --rm -v $PWD:/input:ro gcr.io/kaggle-images/go-renderizer:latest --ACCELERATOR=$ACCELERATOR /input/Dockerfile.tmpl > $DOCKERFILE_PATH
+echo "==================== $DOCKERFILE START ===================="
+cat $DOCKERFILE_PATH
+echo "==================== $DOCKERFILE  END  ===================="
+
 set -x
-docker build --rm --pull $CACHE_FLAG -t "$IMAGE_TAG" -f "$DOCKERFILE" $BUILD_ARGS .
+docker build --rm --pull $CACHE_FLAG -t "$IMAGE_TAG" -f "$DOCKERFILE_PATH" $BUILD_ARGS .
