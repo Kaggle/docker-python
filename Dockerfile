@@ -378,6 +378,7 @@ RUN pip install flashtext && \
     pip install qgrid && \
     pip install bqplot && \
     pip install earthengine-api && \
+    pip install datasets && \
     pip install transformers && \
     pip install dlib && \
     pip install kaggle-environments && \
