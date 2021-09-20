@@ -49,7 +49,7 @@ RUN conda install cudf=21.08 cuml=21.08 cudatoolkit=$CUDA_MAJOR_VERSION.$CUDA_MI
 
 # Install PyTorch
 {{ if eq .Accelerator "gpu" }}
-RUN pip install torch==1.7.1+cu$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION torchvision==0.8.2+cu$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION -f https://download.pytorch.org/whl/torch_stable.html && \
+RUN pip install torch==1.7.1+cu$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION torchvision==0.8.2+cu$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION torchaudio==0.7.2 torchtext==0.8.1 -f https://download.pytorch.org/whl/torch_stable.html && \
     /tmp/clean-layer.sh
 {{ else }}
 RUN pip install torch==1.7.1+cpu torchvision==0.8.2+cpu torchaudio==0.7.2 torchtext==0.8.1 -f https://download.pytorch.org/whl/torch_stable.html && \
