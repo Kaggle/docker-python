@@ -1,12 +1,15 @@
 {{ if eq .Accelerator "gpu" }}
 FROM gcr.io/deeplearning-platform-release/tf2-gpu.2-6:m78
+ENV CUDA_MAJOR_VERSION=11
+ENV CUDA_MINOR_VERSION=0
 {{ else }}
 FROM gcr.io/deeplearning-platform-release/tf2-cpu.2-6:m78
 {{ end }}
 # Keep these variables in sync if base image is updated.
 ENV TENSORFLOW_VERSION=2.6.0
-ENV CUDA_MAJOR_VERSION=11
-ENV CUDA_MINOR_VERSION=0
+# Disable pesky logs like: KMP_AFFINITY: pid 6121 tid 6121 thread 0 bound to OS proc set 0 
+# See: https://stackoverflow.com/questions/57385766/disable-tensorflow-log-information
+ENV KMP_WARNINGS=0
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
