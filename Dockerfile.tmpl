@@ -2,9 +2,6 @@
 FROM gcr.io/deeplearning-platform-release/tf2-gpu.2-6:m78
 ENV CUDA_MAJOR_VERSION=11
 ENV CUDA_MINOR_VERSION=0
-# b/200968891 Keeps horovod once torch is upgraded.
-RUN pip uninstall -y horovod && \
-    /tmp/clean-layer.sh
 {{ else }}
 FROM gcr.io/deeplearning-platform-release/tf2-cpu.2-6:m78
 {{ end }}
@@ -17,6 +14,12 @@ ENV KMP_WARNINGS=0
 ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 ADD patches/template_conf.json /opt/kaggle/conf.json
+
+{{ if eq .Accelerator "gpu" }}
+# b/200968891 Keeps horovod once torch is upgraded.
+RUN pip uninstall -y horovod && \
+    /tmp/clean-layer.sh
+{{ end }}
 
 # Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
 # as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
