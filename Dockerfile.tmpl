@@ -71,7 +71,7 @@ ENV LIGHTGBM_VERSION=3.2.1
 # Install OpenCL & libboost (required by LightGBM GPU version)
 RUN apt-get install -y ocl-icd-libopencl1 clinfo libboost-all-dev && \
     mkdir -p /etc/OpenCL/vendors && \
-    echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd && \pip uninstall -y lightgbm && \
+    echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd && \
     cd /usr/local/src && \
     git clone --recursive https://github.com/microsoft/LightGBM && \
     cd LightGBM && \
