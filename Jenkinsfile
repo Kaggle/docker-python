@@ -20,46 +20,7 @@ pipeline {
   }
 
   stages {
-    stage('Docker CPU Build') {
-      options {
-        timeout(time: 120, unit: 'MINUTES')
-      }
-      steps {
-        sh '''#!/bin/bash
-          set -exo pipefail
-
-          ./build | ts
-          ./push ${PRETEST_TAG}
-        '''
-      }
-    }
-
-    stage('Test CPU Image') {
-      options {
-        timeout(time: 5, unit: 'MINUTES')
-      }
-      steps {
-        sh '''#!/bin/bash
-          set -exo pipefail
-
-          date
-          docker pull gcr.io/kaggle-images/python:${PRETEST_TAG}
-          ./test --image gcr.io/kaggle-images/python:${PRETEST_TAG}
-        '''
-      }
-    }
-    
-    stage('Docker GPU Build') {
-      // A GPU is not required to build this image. However, in our current setup,
-      // the default runtime is set to nvidia (as opposed to runc) and there
-      // is no option to specify a runtime for the `docker build` command.
-      //
-      // TODO(rosbo) don't set `nvidia` as the default runtime and use the
-      // `--runtime=nvidia` flag for the `docker run` command when GPU support is needed.
-      agent { label 'ephemeral-linux-gpu' }
-      options {
-        timeout(time: 60, unit: 'MINUTES')
-      }
+    stage('Clean Images') {
       steps {
         sh '''#!/bin/bash
           set -exo pipefail
@@ -70,51 +31,93 @@ pipeline {
           # will untag the previously built image which is safe to do. Builds for a single branch are performed
           # serially.
           docker image prune -f
-          ./build --gpu --base-image-tag ${PRETEST_TAG} | ts
-          ./push --gpu ${PRETEST_TAG}
         '''
       }
     }
-
-    stage('Test GPU Image') {
-      agent { label 'ephemeral-linux-gpu' }
-      options {
-        timeout(time: 20, unit: 'MINUTES')
-      }
-      steps {
-        sh '''#!/bin/bash
-          set -exo pipefail
-
-          date
-          docker pull gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
-          ./test --gpu --image gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
-        '''
-      }
-    }
-
-    stage('Package Versions') {
+    stage('Build/Test/Diff') {
       parallel {
-        stage('CPU Diff') {
-          steps {
-            sh '''#!/bin/bash
-            set -exo pipefail
+        stage('CPU') {
+          stages {
+            stage('Build CPU Image') {
+              options {
+                timeout(time: 120, unit: 'MINUTES')
+              }
+              steps {
+                sh '''#!/bin/bash
+                  set -exo pipefail
 
-            docker pull gcr.io/kaggle-images/python:${PRETEST_TAG}
-            ./diff --target gcr.io/kaggle-images/python:${PRETEST_TAG}
-          '''
+                  ./build | ts
+                  ./push ${PRETEST_TAG}
+                '''
+              }
+            }
+            stage('Test CPU Image') {
+              options {
+                timeout(time: 5, unit: 'MINUTES')
+              }
+              steps {
+                sh '''#!/bin/bash
+                  set -exo pipefail
+
+                  date
+                  docker pull gcr.io/kaggle-images/python:${PRETEST_TAG}
+                  ./test --image gcr.io/kaggle-images/python:${PRETEST_TAG}
+                '''
+              }
+            }
+            stage('Diff CPU image') {
+              steps {
+                sh '''#!/bin/bash
+                set -exo pipefail
+
+                docker pull gcr.io/kaggle-images/python:${PRETEST_TAG}
+                ./diff --target gcr.io/kaggle-images/python:${PRETEST_TAG}
+              '''
+              }
+            }
           }
         }
-        stage('GPU Diff') {
+        stage('GPU') {
           agent { label 'ephemeral-linux-gpu' }
-          steps {
-            sh '''#!/bin/bash
-            set -exo pipefail
+          stages {      
+            stage('Build GPU Image') {
+              options {
+                timeout(time: 120, unit: 'MINUTES')
+              }
+              steps {
+                sh '''#!/bin/bash
+                  set -exo pipefail
+                  ./build --gpu | ts
+                  ./push --gpu ${PRETEST_TAG}
+                '''
+              }
+            }
+            stage('Test GPU Image') {
+              options {
+                timeout(time: 20, unit: 'MINUTES')
+              }
+              steps {
+                sh '''#!/bin/bash
+                  set -exo pipefail
 
-            docker pull gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
-            ./diff --gpu --target gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
-          '''
+                  date
+                  docker pull gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
+                  ./test --gpu --image gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
+                '''
+              }
+            }
+            stage('Diff GPU Image') {
+              steps {
+                sh '''#!/bin/bash
+                set -exo pipefail
+
+                docker pull gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
+                ./diff --gpu --target gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
+              '''
+              }
+            }
           }
-        }
+        } 
       }
     }
 

@@ -1,15 +1,25 @@
-ARG BASE_TAG=m78
-ARG TENSORFLOW_VERSION=2.4.1
-
-FROM gcr.io/deeplearning-platform-release/base-cpu:${BASE_TAG}
-
-# We need to redefine TENSORFLOW_VERSION here to get the default ARG value defined above the FROM instruction.
-# See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
-ARG TENSORFLOW_VERSION
+{{ if eq .Accelerator "gpu" }}
+FROM gcr.io/deeplearning-platform-release/tf2-gpu.2-6:m78
+ENV CUDA_MAJOR_VERSION=11
+ENV CUDA_MINOR_VERSION=0
+{{ else }}
+FROM gcr.io/deeplearning-platform-release/tf2-cpu.2-6:m78
+{{ end }}
+# Keep these variables in sync if base image is updated.
+ENV TENSORFLOW_VERSION=2.6.0
+# Disable pesky logs like: KMP_AFFINITY: pid 6121 tid 6121 thread 0 bound to OS proc set 0 
+# See: https://stackoverflow.com/questions/57385766/disable-tensorflow-log-information
+ENV KMP_WARNINGS=0
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 ADD patches/template_conf.json /opt/kaggle/conf.json
+
+{{ if eq .Accelerator "gpu" }}
+# b/200968891 Keeps horovod once torch is upgraded.
+RUN pip uninstall -y horovod && \
+    /tmp/clean-layer.sh
+{{ end }}
 
 # Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
 # as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
@@ -24,8 +34,6 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     apt-get install -y openssh-client && \
     /tmp/clean-layer.sh
 
-# Make sure the dynamic linker finds the right libstdc++
-ENV LD_LIBRARY_PATH=/opt/conda/lib
 # b/128333086: Set PROJ_LIB to points to the proj4 cartographic library.
 ENV PROJ_LIB=/opt/conda/share/proj
 
@@ -39,8 +47,71 @@ RUN conda config --add channels nvidia && \
     conda install mkl cartopy=0.19 imagemagick=7.1 pyproj==3.1.0 && \
     /tmp/clean-layer.sh
 
+{{ if eq .Accelerator "gpu" }}
+RUN conda install cudf=21.08 cuml=21.08 cudatoolkit=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
+    /tmp/clean-layer.sh
+{{ end }}
+
+# Install PyTorch
+{{ if eq .Accelerator "gpu" }}
+RUN pip install torch==1.7.1+cu$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION torchvision==0.8.2+cu$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION torchaudio==0.7.2 torchtext==0.8.1 -f https://download.pytorch.org/whl/torch_stable.html && \
+    /tmp/clean-layer.sh
+{{ else }}
 RUN pip install torch==1.7.1+cpu torchvision==0.8.2+cpu torchaudio==0.7.2 torchtext==0.8.1 -f https://download.pytorch.org/whl/torch_stable.html && \
     /tmp/clean-layer.sh
+{{ end }}
+
+# Install LightGBM
+ENV LIGHTGBM_VERSION=3.2.1
+{{ if eq .Accelerator "gpu" }}
+# Install OpenCL & libboost (required by LightGBM GPU version)
+RUN apt-get install -y ocl-icd-libopencl1 clinfo libboost-all-dev && \
+    mkdir -p /etc/OpenCL/vendors && \
+    echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd && \
+    cd /usr/local/src && \
+    git clone --recursive https://github.com/microsoft/LightGBM && \
+    cd LightGBM && \
+    git checkout tags/v$LIGHTGBM_VERSION && \
+    mkdir build && cd build && \
+    cmake -DUSE_GPU=1 -DOpenCL_LIBRARY=/usr/local/cuda/lib64/libOpenCL.so -DOpenCL_INCLUDE_DIR=/usr/local/cuda/include/ .. && \
+    make -j$(nproc) && \
+    cd /usr/local/src/LightGBM/python-package && \
+    python setup.py install --precompile && \
+    /tmp/clean-layer.sh
+{{ else }}
+RUN pip install lightgbm==$LIGHTGBM_VERSION && \
+    /tmp/clean-layer.sh
+{{ end }}
+
+# Install JAX
+ENV JAX_VERSION=0.2.19
+{{ if eq .Accelerator "gpu" }}
+RUN pip install jax[cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION]==$JAX_VERSION -f https://storage.googleapis.com/jax-releases/jax_releases.html && \
+    /tmp/clean-layer.sh
+{{ else }}
+RUN pip install jax[cpu]==$JAX_VERSION && \
+    /tmp/clean-layer.sh
+{{ end }}
+
+# Install mxnet
+{{ if eq .Accelerator "gpu" }}
+RUN pip install mxnet-cu$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
+    /tmp/clean-layer.sh
+{{ else }}
+RUN pip install mxnet && \
+    /tmp/clean-layer.sh
+{{ end}}
+
+# Install GPU specific packages
+{{ if eq .Accelerator "gpu" }}
+# Install GPU-only packages
+RUN pip install pycuda && \
+    pip install pynvrtc && \
+    # b/190622765 latest version is causing issue. nnabla fixed it in https://github.com/sony/nnabla/issues/892, waiting for new release before we can remove this pin.
+    pip install pynvml==8.0.4 && \
+    pip install nnabla-ext-cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
+    /tmp/clean-layer.sh
+{{ end }}
 
 RUN pip install pysal && \
     pip install seaborn python-dateutil dask python-igraph && \
@@ -50,12 +121,8 @@ RUN pip install pysal && \
     # Use `conda install -c h2oai h2o` once Python 3.7 version is released to conda.
     apt-get install -y default-jre-headless && \
     pip install -f https://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o && \
-    /tmp/clean-layer.sh
-
-RUN pip install tensorflow==${TENSORFLOW_VERSION} && \
-    pip install tensorflow-gcs-config==2.4.0 && \
-    pip install tensorflow-addons==0.12.1 && \
-    pip install tensorflow_probability==0.12.2 && \
+    pip install tensorflow-gcs-config==2.6.0 && \
+    pip install tensorflow-addons==0.14.0 && \
     /tmp/clean-layer.sh
 
 RUN apt-get install -y libfreetype6-dev && \
@@ -65,10 +132,7 @@ RUN apt-get install -y libfreetype6-dev && \
     pip install textblob && \
     pip install wordcloud && \
     pip install xgboost && \
-    # Pinned to match GPU version. Update version together.
-    pip install lightgbm==3.2.1 && \
     pip install pydot && \
-    pip install keras-tuner && \
     pip install flake8 && \
     # Pinned because it breaks theano test with the latest version (b/178107003).
     pip install theano-pymc==1.0.11 && \
@@ -99,7 +163,6 @@ RUN apt-get install -y libfreetype6-dev && \
     /tmp/clean-layer.sh
 
 RUN pip install ibis-framework && \
-    pip install mxnet && \
     pip install gluonnlp && \
     pip install gluoncv && \
     /tmp/clean-layer.sh
@@ -384,11 +447,6 @@ RUN pip install flashtext && \
     pip install geopandas && \
     pip install nnabla && \
     pip install vowpalwabbit && \
-    # papermill can replace nbconvert for executing notebooks
-    pip install cloud-tpu-client && \
-    # b/188429515#comment7 tensorflow-cloud >= 0.1.14 installs tensorflow-transform which install apache-beam which downgrades the google.cloud library to 1.x.
-    pip install tensorflow-cloud==0.1.13 && \
-    pip install tensorflow-datasets && \
     pip install pydub && \
     pip install pydegensac && \
     # b/198635596 latest versions of torchmetrics & pytorch-lightning are failing at runtime.
@@ -401,8 +459,6 @@ RUN pip install flashtext && \
     # pycrypto is used by competitions team.
     pip install pycrypto && \
     pip install easyocr && \
-    # Keep JAX version in sync with GPU image.
-    pip install jax[cpu]==0.2.19 && \
     # ipympl adds interactive widget support for matplotlib
     pip install ipympl==0.7.0 && \
     pip install pandarallel && \
