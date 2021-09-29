@@ -508,14 +508,6 @@ RUN pip install --upgrade dask && \
     ln -sf /usr/lib/x86_64-linux-gnu/libpixman-1.so.0.34.0 /opt/conda/lib/libpixman-1.so.0.38.0 && \
     /tmp/clean-layer.sh
 
-# gcloud SDK https://cloud.google.com/sdk/docs/quickstart-debian-ubuntu
-RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" \
-    | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
-    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
-    apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - && \
-    apt-get update -y && apt-get install google-cloud-sdk -y && \
-    /tmp/clean-layer.sh
-
 # Add BigQuery client proxy settings
 ENV PYTHONUSERBASE "/root/.local"
 ADD patches/kaggle_gcp.py /root/.local/lib/python3.7/site-packages/kaggle_gcp.py
