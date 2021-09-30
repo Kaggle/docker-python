@@ -1,12 +1,29 @@
+ARG BASE_IMAGE_REPO
+ARG BASE_IMAGE_TAG
+ARG CPU_BASE_IMAGE_NAME
+ARG GPU_BASE_IMAGE_NAME
+ARG LIGHTGBM_VERSION
+ARG TORCH_VERSION
+ARG TORCHVISION_VERSION
+
 {{ if eq .Accelerator "gpu" }}
-FROM gcr.io/deeplearning-platform-release/tf2-gpu.2-6:m80
+FROM gcr.io/kaggle-images/python-lightgbm-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_TAG}-${LIGHTGBM_VERSION} AS lightgbm_whl
+FROM gcr.io/kaggle-images/python-torch-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_TAG}-${TORCH_VERSION} AS torch_whl
+FROM ${BASE_IMAGE_REPO}/${GPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 ENV CUDA_MAJOR_VERSION=11
 ENV CUDA_MINOR_VERSION=0
 {{ else }}
-FROM gcr.io/deeplearning-platform-release/tf2-cpu.2-6:m80
+FROM ${BASE_IMAGE_REPO}/${CPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 {{ end }}
 # Keep these variables in sync if base image is updated.
 ENV TENSORFLOW_VERSION=2.6.0
+
+# We need to redefine the ARG here to get the ARG value defined above the FROM instruction.
+# See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
+ARG LIGHTGBM_VERSION
+ARG TORCH_VERSION
+ARG TORCHVISION_VERSION
+
 # Disable pesky logs like: KMP_AFFINITY: pid 6121 tid 6121 thread 0 bound to OS proc set 0 
 # See: https://stackoverflow.com/questions/57385766/disable-tensorflow-log-information
 ENV KMP_WARNINGS=0
@@ -52,29 +69,24 @@ RUN conda install cudf=21.08 cuml=21.08 cudatoolkit=$CUDA_MAJOR_VERSION.$CUDA_MI
 
 # Install PyTorch
 {{ if eq .Accelerator "gpu" }}
-RUN pip install torch==1.7.1+cu$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION torchvision==0.8.2+cu$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION torchaudio==0.7.2 torchtext==0.8.1 -f https://download.pytorch.org/whl/torch_stable.html && \
+COPY --from=torch_whl /tmp/whl/*.whl /tmp/torch/
+RUN pip install /tmp/torch/*.whl torchaudio==0.9.1 torchtext==0.10.1 -f https://download.pytorch.org/whl/torch_stable.html && \
+    rm -rf /tmp/torch && \
     /tmp/clean-layer.sh
 {{ else }}
-RUN pip install torch==1.7.1+cpu torchvision==0.8.2+cpu torchaudio==0.7.2 torchtext==0.8.1 -f https://download.pytorch.org/whl/torch_stable.html && \
+RUN pip install torch==$TORCH_VERSION+cpu torchvision==$TORCHVISION_VERSION+cpu torchaudio==0.9.1 torchtext==0.10.1 -f https://download.pytorch.org/whl/torch_stable.html && \
     /tmp/clean-layer.sh
 {{ end }}
 
 # Install LightGBM
-ENV LIGHTGBM_VERSION=3.2.1
 {{ if eq .Accelerator "gpu" }}
+COPY --from=lightgbm_whl /tmp/whl/*.whl /tmp/lightgbm/
 # Install OpenCL (required by LightGBM GPU version)
 RUN apt-get install -y ocl-icd-libopencl1 clinfo && \
     mkdir -p /etc/OpenCL/vendors && \
     echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd && \
-    cd /usr/local/src && \
-    git clone --recursive https://github.com/microsoft/LightGBM && \
-    cd LightGBM && \
-    git checkout tags/v$LIGHTGBM_VERSION && \
-    mkdir build && cd build && \
-    cmake -DUSE_GPU=1 -DOpenCL_LIBRARY=/usr/local/cuda/lib64/libOpenCL.so -DOpenCL_INCLUDE_DIR=/usr/local/cuda/include/ .. && \
-    make -j$(nproc) && \
-    cd /usr/local/src/LightGBM/python-package && \
-    python setup.py install --precompile && \
+    pip install /tmp/lightgbm/*.whl && \
+    rm -rf /tmp/lightgbm && \
     /tmp/clean-layer.sh
 {{ else }}
 RUN pip install lightgbm==$LIGHTGBM_VERSION && \
@@ -386,8 +398,7 @@ RUN pip install bleach && \
     pip install widgetsnbextension && \
     pip install pyarrow && \
     pip install feather-format && \
-    # fastai >= 2.3.1 upgrades pytorch/torchvision. upgrade of pytorch will be handled in b/181966788
-    pip install fastai==2.2.7 && \
+    pip install fastai && \
     pip install allennlp && \
     # https://b.corp.google.com/issues/184685619#comment9: 3.9.0 is causing a major performance degradation with spacy 2.3.5
     pip install importlib-metadata==3.4.0 && \

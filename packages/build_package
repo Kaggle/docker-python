@@ -1,0 +1,150 @@
+#!/bin/bash
+set -e
+
+usage() {
+cat << EOF
+Usage: $0 [OPTIONS]
+Build a new package ".whl".
+
+Options:
+    -p, --package PACKAGE     Package to build (e.g. lightgbm).
+    -v, --version VERSION     Package version to build.
+    -b, --base-image IMAGE    Base image tag (e.g. m80).
+    -c, --use-cache           Use layer cache when building a new image.
+    -f, --force-rebuild       Rebuild the image regardless of whether it already exist on GCR.
+    -u, --push                Push image to GCR.
+    --build-arg ARG=VALUE     Build arguments to pass to the docker build command.
+EOF
+}
+
+PACKAGE=''
+PACKAGE_VERSION=''
+BASE_IMAGE=''
+DOCKERFILE=''
+CACHE_FLAG='--no-cache'
+FORCE_REBUILD=false
+PUSH_TO_GCR=false
+BUILD_ARGS=''
+
+while :; do
+    case "$1" in 
+        -h|--help)
+            usage
+            exit
+            ;;
+        -p|--package)
+            if [[ -z $2 ]]; then
+                usage
+                printf 'ERROR: No IMAGE specified after the %s flag.\n' "$1" >&2
+                exit 1
+            fi
+            PACKAGE=$2
+            DOCKERFILE="${PACKAGE}.Dockerfile"
+            shift # skip the flag value
+            ;;
+        -v|--version)
+            if [[ -z $2 ]]; then
+                usage
+                printf 'ERROR: No VERSION specified after the %s flag.\n' "$1" >&2
+                exit 1
+            fi
+            PACKAGE_VERSION=$2
+            shift # skip the flag value
+            ;;
+        -t|--base-image)
+            if [[ -z $2 ]]; then
+                usage
+                printf 'ERROR: No TAG specified after the %s flag.\n' "$1" >&2
+                exit 1
+            fi
+            BASE_IMAGE=$2
+            shift # skip the flag value
+            ;;
+        -c|--use-cache)
+            CACHE_FLAG=''
+            ;;
+        -f|--force-rebuild)
+            FORCE_REBUILD=true
+            ;;
+        -u|--push)
+            PUSH_TO_GCR=true
+            ;;
+        --build-arg)
+            if [[ -z $2 ]]; then
+                usage
+                printf 'ERROR: No ARG=VALUE specified after the %s flag.\n' "$1" >&2
+                exit 1
+            fi
+            BUILD_ARGS+=" $1 $2"
+            shift # skip the flag value
+            ;;
+        -?*)
+            usage
+            printf 'ERROR: Unknown option: %s\n' "$1" >&2
+            exit 1
+            ;;
+        *)            
+            break
+    esac
+
+    shift
+done
+
+readonly PACKAGE
+readonly PACKAGE_VERSION
+readonly BASE_IMAGE
+readonly DOCKERFILE
+readonly CACHE_FLAG
+readonly FORCE_REBUILD
+
+SRCDIR=$(dirname "${BASH_SOURCE[0]}")
+DOCKERFILE_PATH="$SRCDIR/$DOCKERFILE"
+
+if [[ -z "$PACKAGE_VERSION" ]]; then
+    printf 'ERROR: missing --version flag.\n'
+    exit 1
+fi
+
+if [[ -z "$BASE_IMAGE" ]]; then
+    printf 'ERROR: missing --base-image flag.\n'
+    exit 1
+fi
+
+if [[ -z "$DOCKERFILE" ]]; then
+    printf 'ERROR: missing --package flag.\n'
+    exit 1
+fi
+
+# Keep only `tf2-gpu.2-6:m80` in `gcr.io/deeplearning-platform-release/tf2-gpu.2-6:m80` 
+TAG=${BASE_IMAGE/gcr.io\/deeplearning-platform-release\//}
+# Replace the `:` in `tf2-gpu.2-6:m80` by `-`
+TAG=${TAG/:/-}
+# Append the package version
+TAG=$TAG-$PACKAGE_VERSION
+# Add the gcr repo.
+TAG=gcr.io/kaggle-images/python-$PACKAGE-whl:$TAG
+
+SHOULD_BUILD=true
+if ! $FORCE_REBUILD; then
+    echo "Checking if $TAG exists..."
+    docker pull $TAG && SHOULD_BUILD=false
+fi
+
+if $SHOULD_BUILD; then
+    echo "Building $TAG..."
+    docker build --rm --pull $BUILD_ARGS \
+        $CACHE_FLAG \
+        -t $TAG \
+        -f "$DOCKERFILE_PATH" \
+        --build-arg BASE_IMAGE=$BASE_IMAGE \
+        --build-arg PACKAGE_VERSION=$PACKAGE_VERSION \
+        $SRCDIR
+    
+    if $PUSH_TO_GCR; then
+        echo "Pushing $TAG to GCR..."
+        docker push $TAG
+    fi
+else
+    echo "Skipping build. $TAG already exists."
+    echo "Use --force-rebuild if you want to build a new version anyway."
+fi

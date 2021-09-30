@@ -34,6 +34,36 @@ pipeline {
         '''
       }
     }
+    stage('Pre-build Packages from Source') {
+      parallel {
+        stage('torch') {
+          options {
+            timeout(time: 120, unit: 'MINUTES')
+          }
+          steps {
+            sh '''#!/bin/bash
+              set -exo pipefail
+              source config.txt
+              cd packages/
+              ./build_package --base-image $BASE_IMAGE_REPO/$GPU_BASE_IMAGE_NAME:$BASE_IMAGE_TAG --package torch --version $TORCH_VERSION --build-arg TORCHVISION_VERSION=$TORCHVISION_VERSION --push
+            '''
+          }
+        }
+        stage('lightgbm') {
+          options {
+            timeout(time: 10, unit: 'MINUTES')
+          }
+          steps {
+            sh '''#!/bin/bash
+              set -exo pipefail
+              source config.txt
+              cd packages/
+              ./build_package --base-image $BASE_IMAGE_REPO/$GPU_BASE_IMAGE_NAME:$BASE_IMAGE_TAG --package lightgbm --version $LIGHTGBM_VERSION --push
+            '''
+          }
+        }
+      }
+    }
     stage('Build/Test/Diff') {
       parallel {
         stage('CPU') {
@@ -79,7 +109,7 @@ pipeline {
         }
         stage('GPU') {
           agent { label 'ephemeral-linux-gpu' }
-          stages {      
+          stages {  
             stage('Build GPU Image') {
               options {
                 timeout(time: 120, unit: 'MINUTES')
