@@ -45,7 +45,13 @@ pipeline {
               set -exo pipefail
               source config.txt
               cd packages/
-              ./build_package --base-image $BASE_IMAGE_REPO/$GPU_BASE_IMAGE_NAME:$BASE_IMAGE_TAG --package torch --version $TORCH_VERSION --build-arg TORCHVISION_VERSION=$TORCHVISION_VERSION --push
+              ./build_package --base-image $BASE_IMAGE_REPO/$GPU_BASE_IMAGE_NAME:$BASE_IMAGE_TAG \
+                --package torch \
+                --version $TORCH_VERSION \
+                --build-arg TORCHAUDIO_VERSION=$TORCHAUDIO_VERSION \
+                --build-arg TORCHTEXT_VERSION=$TORCHTEXT_VERSION \
+                --build-arg TORCHVISION_VERSION=$TORCHVISION_VERSION \
+                --push
             '''
           }
         }

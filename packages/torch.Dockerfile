@@ -3,6 +3,8 @@ ARG BASE_IMAGE
 FROM ${BASE_IMAGE} AS builder
 
 ARG PACKAGE_VERSION
+ARG TORCHAUDIO_VERSION
+ARG TORCHTEXT_VERSION
 ARG TORCHVISION_VERSION
 
 # TORCHVISION_VERSION is mandatory
@@ -26,12 +28,35 @@ RUN cd /usr/local/src && \
     git submodule update --init --recursive --jobs 0 && \
     python setup.py bdist_wheel
 
-# Build torchvision.
-# Instructions: https://github.com/pytorch/vision/tree/main#installation
-
-# Install torch which is required before we can build torchvision.
+# Install torch which is required before we can build other torch* packages.
 RUN pip install /usr/local/src/pytorch/dist/*.whl
 
+# Build torchaudio
+# Instructions: https://github.com/pytorch/audio#from-source
+# See comment above for PYTORCH_BUILD_VERSION.
+ENV BUILD_VERSION=$TORCHAUDIO_VERSION
+RUN cd /usr/local/src && \
+    git clone https://github.com/pytorch/audio && \
+    cd audio && \
+    git checkout tags/v$TORCHAUDIO_VERSION && \
+    git submodule sync && \
+    git submodule update --init --recursive --jobs 0 && \
+    python setup.py bdist_wheel
+
+# Build torchtext
+# Instructions: https://github.com/pytorch/text#building-from-source
+# See comment above for PYTORCH_BUILD_VERSION.
+ENV BUILD_VERSION=$TORCHTEXT_VERSION
+RUN cd /usr/local/src && \
+    git clone https://github.com/pytorch/text && \
+    cd text && \
+    git checkout tags/v$TORCHTEXT_VERSION && \
+    git submodule sync && \
+    git submodule update --init --recursive --jobs 0 && \
+    python setup.py bdist_wheel
+
+# Build torchvision.
+# Instructions: https://github.com/pytorch/vision/tree/main#installation
 # See comment above for PYTORCH_BUILD_VERSION.
 ENV BUILD_VERSION=$TORCHVISION_VERSION
 RUN cd /usr/local/src && \
@@ -46,6 +71,8 @@ FROM alpine:latest
 
 RUN mkdir -p /tmp/whl/
 COPY --from=builder /usr/local/src/pytorch/dist/*.whl /tmp/whl
+COPY --from=builder /usr/local/src/audio/dist/*.whl /tmp/whl
+COPY --from=builder /usr/local/src/text/dist/*.whl /tmp/whl
 COPY --from=builder /usr/local/src/vision/dist/*.whl /tmp/whl
 
 # Print out the built .whl file.

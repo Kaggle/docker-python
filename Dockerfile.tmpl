@@ -4,6 +4,8 @@ ARG CPU_BASE_IMAGE_NAME
 ARG GPU_BASE_IMAGE_NAME
 ARG LIGHTGBM_VERSION
 ARG TORCH_VERSION
+ARG TORCHAUDIO_VERSION
+ARG TORCHTEXT_VERSION
 ARG TORCHVISION_VERSION
 
 {{ if eq .Accelerator "gpu" }}
@@ -22,6 +24,8 @@ ENV TENSORFLOW_VERSION=2.6.0
 # See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
 ARG LIGHTGBM_VERSION
 ARG TORCH_VERSION
+ARG TORCHAUDIO_VERSION
+ARG TORCHTEXT_VERSION
 ARG TORCHVISION_VERSION
 
 # Disable pesky logs like: KMP_AFFINITY: pid 6121 tid 6121 thread 0 bound to OS proc set 0 
@@ -73,11 +77,11 @@ RUN conda install cudf=21.08 cuml=21.08 cudatoolkit=$CUDA_MAJOR_VERSION.$CUDA_MI
 # Install PyTorch
 {{ if eq .Accelerator "gpu" }}
 COPY --from=torch_whl /tmp/whl/*.whl /tmp/torch/
-RUN pip install /tmp/torch/*.whl torchaudio==0.9.1 torchtext==0.10.1 -f https://download.pytorch.org/whl/torch_stable.html && \
+RUN pip install /tmp/torch/*.whl && \
     rm -rf /tmp/torch && \
     /tmp/clean-layer.sh
 {{ else }}
-RUN pip install torch==$TORCH_VERSION+cpu torchvision==$TORCHVISION_VERSION+cpu torchaudio==0.9.1 torchtext==0.10.1 -f https://download.pytorch.org/whl/torch_stable.html && \
+RUN pip install torch==$TORCH_VERSION+cpu torchvision==$TORCHVISION_VERSION+cpu torchaudio==$TORCHAUDIO_VERSION torchtext==$TORCHTEXT_VERSION -f https://download.pytorch.org/whl/torch_stable.html && \
     /tmp/clean-layer.sh
 {{ end }}
 
