@@ -47,12 +47,6 @@ ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 ADD patches/template_conf.json /opt/kaggle/conf.json
 
-{{ if eq .Accelerator "gpu" }}
-# b/200968891 Keeps horovod once torch is upgraded.
-RUN pip uninstall -y horovod && \
-    /tmp/clean-layer.sh
-{{ end }}
-
 # Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
 # as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
 RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list && \
