@@ -473,9 +473,8 @@ RUN pip install flashtext && \
     pip install vowpalwabbit && \
     pip install pydub && \
     pip install pydegensac && \
-    # b/198635596 latest versions of torchmetrics & pytorch-lightning are failing at runtime.
-    pip install torchmetrics==0.5.0 && \
-    pip install pytorch-lightning==1.4.4 && \
+    pip install torchmetrics && \
+    pip install pytorch-lightning && \
     pip install datatable && \
     pip install sympy && \
     # flask is used by agents in the simulation competitions.
