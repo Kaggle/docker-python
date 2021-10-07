@@ -20,20 +20,6 @@ pipeline {
   }
 
   stages {
-    stage('Clean Images') {
-      steps {
-        sh '''#!/bin/bash
-          set -exo pipefail
-          # Remove images (dangling or not) created more than 120h (5 days ago) to prevent disk from filling up.
-          docker image prune --all --force --filter "until=120h" --filter "label=kaggle-lang=python"
-          # Remove any dangling images (no tags).
-          # All builds for the same branch uses the same tag. This means a subsequent build for the same branch
-          # will untag the previously built image which is safe to do. Builds for a single branch are performed
-          # serially.
-          docker image prune -f
-        '''
-      }
-    }
     stage('Pre-build Packages from Source') {
       parallel {
         stage('torch') {
@@ -123,6 +109,15 @@ pipeline {
               steps {
                 sh '''#!/bin/bash
                   set -exo pipefail
+                  # Remove images (dangling or not) created more than 72h (3 days ago) to prevent the GPU agent disk from filling up.
+                  # Note: CPU agents are ephemeral and do not need to have their disk cleaned up.
+                  docker image prune --all --force --filter "until=72h" --filter "label=kaggle-lang=python"
+                  # Remove any dangling images (no tags).
+                  # All builds for the same branch uses the same tag. This means a subsequent build for the same branch
+                  # will untag the previously built image which is safe to do. Builds for a single branch are performed
+                  # serially.
+                  docker image prune -f
+                  
                   ./build --gpu | ts
                   ./push --gpu ${PRETEST_TAG}
                 '''
