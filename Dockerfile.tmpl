@@ -14,6 +14,8 @@ FROM gcr.io/kaggle-images/python-torch-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_T
 FROM ${BASE_IMAGE_REPO}/${GPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 ENV CUDA_MAJOR_VERSION=11
 ENV CUDA_MINOR_VERSION=0
+# NVIDIA binaries from the host are mounted to /opt/bin.
+ENV PATH=/opt/bin:${PATH}
 {{ else }}
 FROM ${BASE_IMAGE_REPO}/${CPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 {{ end }}
