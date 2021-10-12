@@ -9,12 +9,12 @@ Build a new Python Docker image.
 Options:
     -g, --gpu                 Build an image with GPU support.
     -c, --use-cache           Use layer cache when building a new image.
-    -b, --base-image-tag TAG  Base image tag. Defaults to value defined in DOCKERFILE.
 EOF
 }
 
 CACHE_FLAG='--no-cache'
 DOCKERFILE='Dockerfile'
+ACCELERATOR='none'
 IMAGE_TAG='kaggle/python-build'
 BUILD_ARGS=''
 
@@ -27,18 +27,10 @@ while :; do
         -g|--gpu)
             IMAGE_TAG='kaggle/python-gpu-build'
             DOCKERFILE='gpu.Dockerfile'
+            ACCELERATOR='gpu'
             ;;
         -c|--use-cache)
             CACHE_FLAG=''
-            ;;
-        -b|--base-image-tag)
-            if [[ -z $2 ]]; then
-                usage
-                printf 'ERROR: No TAG specified after the %s flag.\n' "$1" >&2
-                exit
-            fi
-            BUILD_ARGS="--build-arg BASE_TAG=$2"
-            shift # skip the flag value
             ;;
         -?*)
             usage
@@ -55,10 +47,28 @@ done
 BUILD_ARGS+=" --build-arg GIT_COMMIT=$(git rev-parse HEAD)"
 BUILD_ARGS+=" --build-arg BUILD_DATE=$(date '+%Y%m%d-%H%M%S')"
 
+# Read build args from config.txt file.
+SRCDIR=$(dirname "${BASH_SOURCE[0]}")
+for l in `cat ${SRCDIR}/config.txt`; do
+    BUILD_ARGS+=" --build-arg $l"
+done
+
 readonly CACHE_FLAG
 readonly DOCKERFILE
+readonly ACCELERATOR
 readonly IMAGE_TAG
 readonly BUILD_ARGS
 
+DOCKERFILE_OUTDIR="${SRCDIR}/.generated"
+mkdir -p $DOCKERFILE_OUTDIR
+DOCKERFILE_PATH="$DOCKERFILE_OUTDIR/$DOCKERFILE"
+
+# Generate Dockerfile from template.
+echo "Generating Dockerfile from template..."
+docker run --rm -v $PWD:/input:ro gcr.io/kaggle-images/go-renderizer:latest --ACCELERATOR=$ACCELERATOR /input/Dockerfile.tmpl > $DOCKERFILE_PATH
+echo "==================== $DOCKERFILE START ===================="
+cat $DOCKERFILE_PATH
+echo "==================== $DOCKERFILE  END  ===================="
+
 set -x
-docker build --rm --pull $CACHE_FLAG -t "$IMAGE_TAG" -f "$DOCKERFILE" $BUILD_ARGS .
+docker build --rm --pull $CACHE_FLAG -t "$IMAGE_TAG" -f "$DOCKERFILE_PATH" $BUILD_ARGS .
