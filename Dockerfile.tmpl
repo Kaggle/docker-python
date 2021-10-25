@@ -16,6 +16,9 @@ ENV CUDA_MAJOR_VERSION=11
 ENV CUDA_MINOR_VERSION=0
 # NVIDIA binaries from the host are mounted to /opt/bin.
 ENV PATH=/opt/bin:${PATH}
+# Add CUDA stubs to LD_LIBRARY_PATH to support building the GPU image on a CPU machine.
+ENV LD_LIBRARY_PATH_NO_STUBS="$LD_LIBRARY_PATH"
+ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda/lib64/stubs"
 {{ else }}
 FROM ${BASE_IMAGE_REPO}/${CPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 {{ end }}
@@ -563,3 +566,6 @@ LABEL kaggle-lang=python
 
 # Correlate current release with the git hash inside the kernel editor by running `!cat /etc/git_commit`.
 RUN echo "$GIT_COMMIT" > /etc/git_commit && echo "$BUILD_DATE" > /etc/build_date
+
+# Remove the CUDA stubs.
+ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH_NO_STUBS"
