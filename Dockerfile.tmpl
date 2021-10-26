@@ -16,6 +16,10 @@ ENV CUDA_MAJOR_VERSION=11
 ENV CUDA_MINOR_VERSION=0
 # NVIDIA binaries from the host are mounted to /opt/bin.
 ENV PATH=/opt/bin:${PATH}
+# Add CUDA stubs to LD_LIBRARY_PATH to support building the GPU image on a CPU machine.
+ENV LD_LIBRARY_PATH_NO_STUBS="$LD_LIBRARY_PATH"
+ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda/lib64/stubs"
+RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1
 {{ else }}
 FROM ${BASE_IMAGE_REPO}/${CPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 {{ end }}
@@ -37,9 +41,6 @@ ENV KMP_WARNINGS=0
 ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 ADD patches/template_conf.json /opt/kaggle/conf.json
-
-# Adds the libcuda.so to LD_LIBRARY_PATH which is necessary for the GPU mxnet package.
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/compat
 
 {{ if eq .Accelerator "gpu" }}
 # b/200968891 Keeps horovod once torch is upgraded.
@@ -566,3 +567,6 @@ LABEL kaggle-lang=python
 
 # Correlate current release with the git hash inside the kernel editor by running `!cat /etc/git_commit`.
 RUN echo "$GIT_COMMIT" > /etc/git_commit && echo "$BUILD_DATE" > /etc/build_date
+
+# Remove the CUDA stubs.
+ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH_NO_STUBS"
