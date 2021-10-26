@@ -19,6 +19,7 @@ ENV PATH=/opt/bin:${PATH}
 # Add CUDA stubs to LD_LIBRARY_PATH to support building the GPU image on a CPU machine.
 ENV LD_LIBRARY_PATH_NO_STUBS="$LD_LIBRARY_PATH"
 ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda/lib64/stubs"
+RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1
 {{ else }}
 FROM ${BASE_IMAGE_REPO}/${CPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 {{ end }}
