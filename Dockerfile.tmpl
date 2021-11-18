@@ -460,7 +460,8 @@ RUN pip install flashtext && \
     pip install plotly_express && \
     pip install albumentations && \
     pip install catalyst && \
-    pip install osmnx && \
+    # b/206990323 osmx 1.1.2 requires numpy >= 1.21 which we don't want. 
+    pip install osmnx==1.1.1 && \
     apt-get -y install libspatialindex-dev && \
     pip install pytorch-ignite && \
     pip install qgrid && \
