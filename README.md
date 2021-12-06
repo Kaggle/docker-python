@@ -2,18 +2,12 @@
 
 [Kaggle Notebooks](https://www.kaggle.com/notebooks) allow users to run a Python Notebook in the cloud against our competitions and datasets without having to download data or set up their environment.
 
-This repository includes our Dockerfiles for building the [CPU-only](Dockerfile) and [GPU](gpu.Dockerfile) image that runs Python Notebooks on Kaggle.
+This repository includes the [Dockerfile](Dockerfile.tmpl) for building the CPU-only and GPU image that runs Python Notebooks on Kaggle.
 
-Our Python Docker images are stored on Google Container Registry at:
+Our Python Docker images are stored on the Google Container Registry at:
 
 * CPU-only: [gcr.io/kaggle-images/python](https://gcr.io/kaggle-images/python)
 * GPU: [gcr.io/kaggle-gpu-images/python](https://gcr.io/kaggle-gpu-images/python)
-
-Note: The base image for the GPU image is our CPU-only image. The [gpu.Dockerfile](gpu.Dockerfile) adds a few extra layers to install GPU related libraries and packages (cuda, libcudnn, pycuda etc.) and reinstall packages with specific GPU builds (torch, tensorflow and a few mores).
-
-## Getting started
-
-To get started with this image, read our [guide](https://medium.com/@kaggleteam/how-to-get-started-with-data-science-in-containers-6ed48cb08266) to using it yourself, or browse [Kaggle Notebooks](https://www.kaggle.com/notebooks) for ideas.
 
 ## Requesting new packages
 
@@ -23,9 +17,7 @@ If you the first step above doesn't work for your use case, [open an issue](http
 
 ## Opening a pull request
 
-1. Update the *Dockerfile*
-    1. For changes specific to the GPU image, update the [gpu.Dockerfile](gpu.Dockerfile).
-    1. Otherwise, update the [Dockerfile](Dockerfile).
+1. Edit the [Dockerfile](Dockerfile.tmpl).
 1. Follow the instructions below to build a new image.
 1. Add tests for your new package. See this [example](https://github.com/Kaggle/docker-python/blob/main/tests/test_fastai.py).
 1. Follow the instructions below to test the new image.
