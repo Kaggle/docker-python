@@ -189,8 +189,7 @@ RUN pip install ibis-framework && \
     /tmp/clean-layer.sh
 
 RUN pip install scipy && \
-    # b/176817038 avoid upgrade to 0.24 which is causing issues with hep-ml package.
-    pip install scikit-learn==0.23.2 && \
+    pip install scikit-learn && \
     # HDF5 support
     pip install h5py && \
     pip install biopython && \
