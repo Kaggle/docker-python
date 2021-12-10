@@ -104,12 +104,11 @@ RUN pip install lightgbm==$LIGHTGBM_VERSION && \
 {{ end }}
 
 # Install JAX
-ENV JAX_VERSION=0.2.19
 {{ if eq .Accelerator "gpu" }}
-RUN pip install jax[cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION]==$JAX_VERSION -f https://storage.googleapis.com/jax-releases/jax_releases.html && \
+RUN pip install jax[cuda] -f https://storage.googleapis.com/jax-releases/jax_releases.html && \
     /tmp/clean-layer.sh
 {{ else }}
-RUN pip install jax[cpu]==$JAX_VERSION && \
+RUN pip install jax[cpu] && \
     /tmp/clean-layer.sh
 {{ end }}
 
