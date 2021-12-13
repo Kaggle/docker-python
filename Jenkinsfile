@@ -162,6 +162,16 @@ pipeline {
         '''
       }
     }
+
+    stage('Delete Old Unversioned Images') {
+      steps {
+        sh '''#!/bin/bash
+          set -exo pipefail
+          gcloud container images list-tags gcr.io/kaggle-images/python --filter="NOT tags:v* AND timestamp.datetime < -P6M" --format='get(digest)' --limit 100 | xargs -I {} gcloud container images delete gcr.io/kaggle-images/python@{} --quiet --force-delete-tags
+          gcloud container images list-tags gcr.io/kaggle-private-byod/python --filter="NOT tags:v* AND timestamp.datetime < -P6M" --format='get(digest)' --limit 100 | xargs -I {} gcloud container images delete gcr.io/kaggle-private-byod/python@{} --quiet --force-delete-tags
+        '''
+      }
+    }
   }
 
   post {

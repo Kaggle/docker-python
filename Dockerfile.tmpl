@@ -104,12 +104,11 @@ RUN pip install lightgbm==$LIGHTGBM_VERSION && \
 {{ end }}
 
 # Install JAX
-ENV JAX_VERSION=0.2.19
 {{ if eq .Accelerator "gpu" }}
-RUN pip install jax[cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION]==$JAX_VERSION -f https://storage.googleapis.com/jax-releases/jax_releases.html && \
+RUN pip install jax[cuda] -f https://storage.googleapis.com/jax-releases/jax_releases.html && \
     /tmp/clean-layer.sh
 {{ else }}
-RUN pip install jax[cpu]==$JAX_VERSION && \
+RUN pip install jax[cpu] && \
     /tmp/clean-layer.sh
 {{ end }}
 
@@ -127,8 +126,7 @@ RUN pip install mxnet && \
 # Install GPU-only packages
 RUN pip install pycuda && \
     pip install pynvrtc && \
-    # b/190622765 latest version is causing issue. nnabla fixed it in https://github.com/sony/nnabla/issues/892, waiting for new release before we can remove this pin.
-    pip install pynvml==8.0.4 && \
+    pip install pynvml && \
     pip install nnabla-ext-cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
     /tmp/clean-layer.sh
 {{ end }}
@@ -137,6 +135,7 @@ RUN pip install pysal && \
     pip install seaborn python-dateutil dask python-igraph && \
     pip install pyyaml joblib husl geopy ml_metrics mne pyshp && \
     pip install pandas && \
+    pip install flax && \
     # Install h2o from source.
     # Use `conda install -c h2oai h2o` once Python 3.7 version is released to conda.
     apt-get install -y default-jre-headless && \
@@ -187,8 +186,7 @@ RUN pip install ibis-framework && \
     /tmp/clean-layer.sh
 
 RUN pip install scipy && \
-    # b/176817038 avoid upgrade to 0.24 which is causing issues with hep-ml package.
-    pip install scikit-learn==0.23.2 && \
+    pip install scikit-learn && \
     # HDF5 support
     pip install h5py && \
     pip install biopython && \
@@ -238,8 +236,6 @@ RUN pip install mpld3 && \
     pip install haversine && \
     pip install toolz cytoolz && \
     pip install plotly && \
-    # b/206631257: hyperopt requires py4j >= 0.2.6 requires py4j but doesn't list it as a dependency. Remove once hyperopt properly list it.
-    pip install py4j && \
     pip install hyperopt && \
     pip install fitter && \
     pip install langid && \
@@ -459,7 +455,8 @@ RUN pip install flashtext && \
     pip install plotly_express && \
     pip install albumentations && \
     pip install catalyst && \
-    pip install osmnx && \
+    # b/206990323 osmx 1.1.2 requires numpy >= 1.21 which we don't want. 
+    pip install osmnx==1.1.1 && \
     apt-get -y install libspatialindex-dev && \
     pip install pytorch-ignite && \
     pip install qgrid && \
@@ -473,9 +470,8 @@ RUN pip install flashtext && \
     pip install vowpalwabbit && \
     pip install pydub && \
     pip install pydegensac && \
-    # b/198635596 latest versions of torchmetrics & pytorch-lightning are failing at runtime.
-    pip install torchmetrics==0.5.0 && \
-    pip install pytorch-lightning==1.4.4 && \
+    pip install torchmetrics && \
+    pip install pytorch-lightning && \
     pip install datatable && \
     pip install sympy && \
     # flask is used by agents in the simulation competitions.
@@ -572,5 +568,7 @@ LABEL kaggle-lang=python
 # Correlate current release with the git hash inside the kernel editor by running `!cat /etc/git_commit`.
 RUN echo "$GIT_COMMIT" > /etc/git_commit && echo "$BUILD_DATE" > /etc/build_date
 
+{{ if eq .Accelerator "gpu" }}
 # Remove the CUDA stubs.
 ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH_NO_STUBS"
+{{ end }}
