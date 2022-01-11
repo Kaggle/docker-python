@@ -433,6 +433,8 @@ RUN pip install bleach && \
 
 RUN pip install flashtext && \
     pip install wandb && \
+    # b/214080882 blake3 0.3.0 is not compatible with vaex.
+    pip install blake3==0.2.1 && \
     pip install vaex && \
     pip install marisa-trie && \
     pip install pyemd && \
