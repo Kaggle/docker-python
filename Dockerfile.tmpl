@@ -461,8 +461,6 @@ RUN pip install flashtext && \
     # b/205704651 remove install cmd for matrixprofile after version > 1.1.10 is released.
     pip install git+https://github.com/matrix-profile-foundation/matrixprofile.git@6bea7d4445284dbd9700a097974ef6d4613fbca7 && \
     pip install tsfresh && \
-    # b/204442455 unpin once tsfresh is compatible with latest version of statsmodels.
-    pip install statsmodels==0.12.2 && \
     pip install pykalman && \
     pip install optuna && \
     pip install plotly_express && \
