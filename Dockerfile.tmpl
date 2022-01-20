@@ -114,7 +114,7 @@ RUN pip install lightgbm==$LIGHTGBM_VERSION && \
 
 # Install JAX
 {{ if eq .Accelerator "gpu" }}
-RUN pip install jax[cuda] -f https://storage.googleapis.com/jax-releases/jax_releases.html && \
+RUN pip install jax[cuda11_cudnn805] -f https://storage.googleapis.com/jax-releases/jax_releases.html && \
     /tmp/clean-layer.sh
 {{ else }}
 RUN pip install jax[cpu] && \
