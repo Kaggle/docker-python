@@ -72,7 +72,8 @@ RUN conda config --add channels nvidia && \
     conda config --add channels rapidsai && \
     # Base image channel order: conda-forge (highest priority), defaults.
     # End state: rapidsai (highest priority), nvidia, conda-forge, defaults.
-    conda install mkl cartopy=0.19 imagemagick=7.1 pyproj==3.1.0 && \
+    # b/216162758 Pin mkl which last version breaks spacy.
+    conda install mkl=2021.4.0 cartopy=0.19 imagemagick=7.1 pyproj==3.1.0 && \
     /tmp/clean-layer.sh
 
 {{ if eq .Accelerator "gpu" }}
@@ -130,6 +131,15 @@ RUN pip install mxnet-cu$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
     /tmp/clean-layer.sh
 {{ else }}
 RUN pip install mxnet && \
+    /tmp/clean-layer.sh
+{{ end}}
+
+# Install spacy
+{{ if eq .Accelerator "gpu" }}
+RUN pip install spacy[cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION] && \
+    /tmp/clean-layer.sh
+{{ else }}
+RUN pip install spacy && \
     /tmp/clean-layer.sh
 {{ end}}
 
