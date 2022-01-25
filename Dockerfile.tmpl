@@ -24,7 +24,7 @@ RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/lib
 FROM ${BASE_IMAGE_REPO}/${CPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 {{ end }}
 # Keep these variables in sync if base image is updated.
-ENV TENSORFLOW_VERSION=2.6.0
+ENV TENSORFLOW_VERSION=2.6.2
 
 # We need to redefine the ARG here to get the ARG value defined above the FROM instruction.
 # See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
@@ -77,6 +77,15 @@ RUN conda install cudf=21.10 cuml=21.10 cudatoolkit=$CUDA_MAJOR_VERSION.$CUDA_MI
     /tmp/clean-layer.sh
 {{ end }}
 
+# Install implicit
+{{ if eq .Accelerator "gpu" }}
+RUN conda install implicit implicit-proc=*=gpu && \
+    /tmp/clean-layer.sh
+{{ else }}
+RUN conda install implicit && \
+    /tmp/clean-layer.sh
+{{ end}}
+
 # Install PyTorch
 {{ if eq .Accelerator "gpu" }}
 COPY --from=torch_whl /tmp/whl/*.whl /tmp/torch/
@@ -104,12 +113,11 @@ RUN pip install lightgbm==$LIGHTGBM_VERSION && \
 {{ end }}
 
 # Install JAX
-ENV JAX_VERSION=0.2.19
 {{ if eq .Accelerator "gpu" }}
-RUN pip install jax[cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION]==$JAX_VERSION -f https://storage.googleapis.com/jax-releases/jax_releases.html && \
+RUN pip install jax[cuda11_cudnn805] -f https://storage.googleapis.com/jax-releases/jax_releases.html && \
     /tmp/clean-layer.sh
 {{ else }}
-RUN pip install jax[cpu]==$JAX_VERSION && \
+RUN pip install jax[cpu] && \
     /tmp/clean-layer.sh
 {{ end }}
 
@@ -127,8 +135,7 @@ RUN pip install mxnet && \
 # Install GPU-only packages
 RUN pip install pycuda && \
     pip install pynvrtc && \
-    # b/190622765 latest version is causing issue. nnabla fixed it in https://github.com/sony/nnabla/issues/892, waiting for new release before we can remove this pin.
-    pip install pynvml==8.0.4 && \
+    pip install pynvml && \
     pip install nnabla-ext-cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
     /tmp/clean-layer.sh
 {{ end }}
@@ -185,12 +192,13 @@ RUN apt-get install -y libfreetype6-dev && \
 
 RUN pip install ibis-framework && \
     pip install gluonnlp && \
+    # b/212703016 4.5.4.62 segfault with readtext.
+    pip install opencv-contrib-python==4.5.4.60 opencv-python==4.5.4.60 && \
     pip install gluoncv && \
     /tmp/clean-layer.sh
 
 RUN pip install scipy && \
-    # b/176817038 avoid upgrade to 0.24 which is causing issues with hep-ml package.
-    pip install scikit-learn==0.23.2 && \
+    pip install scikit-learn && \
     # HDF5 support
     pip install h5py && \
     pip install biopython && \
@@ -209,7 +217,7 @@ RUN pip install scipy && \
     apt-get install -y graphviz && pip install graphviz && \
     # Pandoc is a dependency of deap
     apt-get install -y pandoc && \
-    pip install git+git://github.com/scikit-learn-contrib/py-earth.git@issue191 && \
+    pip install git+https://github.com/scikit-learn-contrib/py-earth.git@issue191 && \
     pip install essentia && \
     /tmp/clean-layer.sh
 
@@ -240,8 +248,6 @@ RUN pip install mpld3 && \
     pip install haversine && \
     pip install toolz cytoolz && \
     pip install plotly && \
-    # b/206631257: hyperopt requires py4j >= 0.2.6 requires py4j but doesn't list it as a dependency. Remove once hyperopt properly list it.
-    pip install py4j && \
     pip install hyperopt && \
     pip install fitter && \
     pip install langid && \
@@ -302,7 +308,6 @@ RUN pip install mpld3 && \
     pip install pymongo && \
     pip install geoplot && \
     pip install eli5 && \
-    pip install implicit && \
     pip install kaggle && \
     /tmp/clean-layer.sh
 
@@ -428,6 +433,8 @@ RUN pip install bleach && \
 
 RUN pip install flashtext && \
     pip install wandb && \
+    # b/214080882 blake3 0.3.0 is not compatible with vaex.
+    pip install blake3==0.2.1 && \
     pip install vaex && \
     pip install marisa-trie && \
     pip install pyemd && \
@@ -452,10 +459,8 @@ RUN pip install flashtext && \
     pip install cesium && \
     pip install rgf_python && \
     # b/205704651 remove install cmd for matrixprofile after version > 1.1.10 is released.
-    pip install git+git://github.com/matrix-profile-foundation/matrixprofile.git@6bea7d4445284dbd9700a097974ef6d4613fbca7 && \
+    pip install git+https://github.com/matrix-profile-foundation/matrixprofile.git@6bea7d4445284dbd9700a097974ef6d4613fbca7 && \
     pip install tsfresh && \
-    # b/204442455 unpin once tsfresh is compatible with latest version of statsmodels.
-    pip install statsmodels==0.12.2 && \
     pip install pykalman && \
     pip install optuna && \
     pip install plotly_express && \
@@ -476,9 +481,9 @@ RUN pip install flashtext && \
     pip install vowpalwabbit && \
     pip install pydub && \
     pip install pydegensac && \
-    # b/198635596 latest versions of torchmetrics & pytorch-lightning are failing at runtime.
-    pip install torchmetrics==0.5.0 && \
-    pip install pytorch-lightning==1.4.4 && \
+    # b/215182966 torchmetrics 0.7.0 is causing an issue with pytorch-lightning.
+    pip install torchmetrics==0.6.2 && \
+    pip install pytorch-lightning && \
     pip install datatable && \
     pip install sympy && \
     # flask is used by agents in the simulation competitions.

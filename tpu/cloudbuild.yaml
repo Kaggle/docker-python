@@ -1,0 +1,41 @@
+steps:
+- id: 'build-tensorflow-whl'
+  name: 'gcr.io/cloud-builders/docker'
+  args:
+  - build
+  - --rm
+  - --tag=gcr.io/kaggle-images/python-tpu-tensorflow-whl:$BUILD_ID
+  - --file=tensorflow.Dockerfile
+  - --build-arg=BASE_IMAGE_TAG=$_BASE_IMAGE_TAG
+  - .
+
+# TODO(b/152075195): Build JAX & Pytorch TPU enabled packages.
+
+- id: 'build-tpu-image'
+  waitFor: ['build-tensorflow-whl']
+  name: 'gcr.io/cloud-builders/docker'
+  args:
+  - build
+  - --rm
+  - --tag=gcr.io/kaggle-images/python-tpu:$BUILD_ID
+  - --file=Dockerfile
+  - --build-arg=BASE_IMAGE_TAG=$_BASE_IMAGE_TAG
+  - --build-arg=LIBTPU_IMAGE_TAG=$_LIBTPU_IMAGE_TAG
+  - --build-arg=TENSORFLOW_WHL_IMAGE_TAG=$BUILD_ID
+  - .
+
+options:
+  machineType: E2_HIGHCPU_32
+  diskSizeGb: 1000
+
+timeout: 86400s
+
+substitutions:
+  _BASE_IMAGE_TAG: v107
+  _LIBTPU_IMAGE_TAG: libtpu_1.1.0_RC00
+
+images:
+- gcr.io/kaggle-images/python-tpu:$BUILD_ID
+- gcr.io/kaggle-images/python-tpu-tensorflow-whl:$BUILD_ID
+
+tags: ['python', 'tpu']

@@ -1,4 +1,6 @@
 import unittest
+
+import os
 import time
 
 import jax.numpy as np
@@ -16,3 +18,7 @@ class TestJAX(unittest.TestCase):
         grad_tanh = grad(self.tanh)
         ag = grad_tanh(1.0)
         self.assertEqual(0.4199743, ag)
+
+    def test_backend(self):
+        expected_backend = 'cpu' if len(os.environ.get('CUDA_VERSION', '')) == 0 else 'gpu'
+
