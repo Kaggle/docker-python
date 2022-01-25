@@ -21,6 +21,7 @@ class TestLightgbm(unittest.TestCase):
             'feature_fraction': 0.9,
             'bagging_fraction': 0.8,
             'bagging_freq': 5,
+            'force_row_wise': True,
             'verbose': 0
         }
 
@@ -46,6 +47,7 @@ class TestLightgbm(unittest.TestCase):
             'feature_fraction': 0.9,
             'bagging_fraction': 0.8,
             'bagging_freq': 5,
+            'force_row_wise': True,
             'verbose': 1,
             'device': 'gpu'
         }

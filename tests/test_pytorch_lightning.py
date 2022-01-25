@@ -23,10 +23,10 @@ class LitDataModule(pl.LightningDataModule):
         self.valid_ds = TensorDataset(X_valid, y_valid)
 
     def train_dataloader(self):
-        return DataLoader(self.train_ds, batch_size=self.batch_size, shuffle=True)
+        return DataLoader(self.train_ds, batch_size=self.batch_size, shuffle=True, num_workers=1)
 
     def val_dataloader(self):
-        return DataLoader(self.valid_ds, batch_size=self.batch_size, shuffle=False)
+        return DataLoader(self.valid_ds, batch_size=self.batch_size, shuffle=False, num_workers=1)
 
 
 class LitClassifier(pl.LightningModule):
@@ -54,7 +54,6 @@ class LitClassifier(pl.LightningModule):
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=1e-2)
 
-
 class TestPytorchLightning(unittest.TestCase):
 
     def test_version(self):
@@ -64,5 +63,8 @@ class TestPytorchLightning(unittest.TestCase):
         dm = LitDataModule()
         model = LitClassifier()
         trainer = pl.Trainer(gpus=None, max_epochs=1)
-        result = trainer.fit(model, datamodule=dm)
-        self.assertTrue(result)
+        trainer.fit(model, datamodule=dm)
+
+        self.assertIn("train_loss", trainer.logged_metrics)
+        self.assertIn("val_loss", trainer.logged_metrics)
+        

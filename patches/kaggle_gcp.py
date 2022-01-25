@@ -88,10 +88,8 @@ class KaggleKernelWithProjetCredentials(KaggleKernelCredentials):
 class _DataProxyConnection(Connection):
     """Custom Connection class used to proxy the BigQuery client to Kaggle's data proxy."""
 
-    API_BASE_URL = os.getenv("KAGGLE_DATA_PROXY_URL")
-
-    def __init__(self, client):
-        super().__init__(client)
+    def __init__(self, client, **kwargs):
+        super().__init__(client, **kwargs)
         self.extra_headers["X-KAGGLE-PROXY-DATA"] = os.getenv(
             "KAGGLE_DATA_PROXY_TOKEN")
 
@@ -117,13 +115,14 @@ class PublicBigqueryClient(bigquery.client.Client):
 
     def __init__(self, *args, **kwargs):
         data_proxy_project = os.getenv("KAGGLE_DATA_PROXY_PROJECT")
+        default_api_endpoint = os.getenv("KAGGLE_DATA_PROXY_URL")
         anon_credentials = credentials.AnonymousCredentials()
         anon_credentials.refresh = lambda *args: None
         super().__init__(
             project=data_proxy_project, credentials=anon_credentials, *args, **kwargs
         )
         # TODO: Remove this once https://github.com/googleapis/google-cloud-python/issues/7122 is implemented.
-        self._connection = _DataProxyConnection(self)
+        self._connection = _DataProxyConnection(self, api_endpoint=default_api_endpoint)
 
 def has_been_monkeypatched(method):
     return "kaggle_gcp" in inspect.getsourcefile(method)
@@ -187,6 +186,23 @@ def init_bigquery():
         bigquery.Client = lambda *args, **kwargs:  monkeypatch_bq(
             bq_client, *args, **kwargs)
     return bigquery
+
+# Monkey patch for aiplatform init 
+# eg
+# from google.cloud import aiplatform
+# aiplatform.init(args)
+def monkeypatch_aiplatform_init(aiplatform_klass, kaggle_kernel_credentials):
+    aiplatform_init = aiplatform_klass.init
+    def patched_init(*args, **kwargs):
+        specified_credentials = kwargs.get('credentials')
+        if specified_credentials is None:
+            Log.info("No credentials specified, using KaggleKernelCredentials.")
+            kwargs['credentials'] = kaggle_kernel_credentials
+        return aiplatform_init(*args, **kwargs)
+
+    if (not has_been_monkeypatched(aiplatform_klass.init)):
+        aiplatform_klass.init = patched_init
+        Log.info("aiplatform.init patched")
 
 def monkeypatch_client(client_klass, kaggle_kernel_credentials):
     client_init = client_klass.__init__
@@ -310,6 +326,22 @@ def init_natural_language():
     monkeypatch_client(language.LanguageServiceAsyncClient, kernel_credentials)
     return language
 
+def init_ucaip():
+    from google.cloud import aiplatform
+    if not is_user_secrets_token_set():
+        return
+
+    from kaggle_gcp import get_integrations
+    if not get_integrations().has_cloudai():
+        return
+
+    from kaggle_secrets import GcpTarget
+    from kaggle_gcp import KaggleKernelCredentials
+    kaggle_kernel_credentials = KaggleKernelCredentials(target=GcpTarget.CLOUDAI)
+
+    # Patch the ucaip init method, this flows down to all ucaip services
+    monkeypatch_aiplatform_init(aiplatform, kaggle_kernel_credentials)
+
 def init_video_intelligence():
     from google.cloud import videointelligence
     if not is_user_secrets_token_set():
@@ -353,6 +385,7 @@ def init():
     init_natural_language()
     init_video_intelligence()
     init_vision()
+    init_ucaip()
 
 # We need to initialize the monkeypatching of the client libraries
 # here since there is a circular dependency between our import hook version

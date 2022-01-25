@@ -12,5 +12,5 @@ class TestNumpy(unittest.TestCase):
     # Numpy must be linked to the MKL. (Occasionally, a third-party package will muck up the installation
     # and numpy will be reinstalled with an OpenBLAS backing.)
     def test_mkl(self):
-        # This will throw an exception if the MKL is not linked correctly.
-        get_info("blas_mkl")
+        # This will throw an exception if the MKL is not linked correctly or return an empty dict.
+        self.assertTrue(get_info("blas_mkl"))
