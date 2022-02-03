@@ -315,6 +315,7 @@ RUN pip install mpld3 && \
     pip install folium && \
     pip install scikit-plot && \
     # dipy requires the optional fury dependency for visualizations.
+    # b/217761018 pinned fury to fix test
     pip install fury==0.7.1 dipy && \
     pip install plotnine && \
     pip install scikit-surprise && \
