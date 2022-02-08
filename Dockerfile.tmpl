@@ -39,7 +39,7 @@ ARG TORCHVISION_VERSION
 ENV KMP_WARNINGS=0
 # Also make the KMP logs noverbose.
 # https://stackoverflow.com/questions/70250304/stop-tensorflow-from-printing-warning-message
-ENV KMP_AFFINITY="granularity=fine,noverbose,compact,1,0"
+ENV KMP_SETTINGS=false
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
