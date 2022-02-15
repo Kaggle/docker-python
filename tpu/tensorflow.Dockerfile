@@ -17,7 +17,7 @@ RUN cd /usr/local/src && \
     pip install keras_applications --no-deps && \
     pip install keras_preprocessing --no-deps
 
-# Create a TensorFlow wheel for CPU
+# Create a TensorFlow wheel for TPU
 RUN cd /usr/local/src/tensorflow && \
     cat /dev/null | ./configure && \
     bazel build \
@@ -32,7 +32,22 @@ RUN cd /usr/local/src/tensorflow && \
 RUN cd /usr/local/src/tensorflow && \
     bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg
 
-# TODO(b/152075195): Will likely need to install custom build for TFA & tensorflow-gcs-config
+# Build TensorFlow addons library against TensorFlow CPU.
+#RUN cd /usr/local/src/ && \
+#    git clone https://github.com/tensorflow/addons && \
+#    cd addons && \
+#    git checkout tags/v0.12.1 && \
+#    python ./configure.py && \
+#    bazel build --enable_runfiles build_pip_pkg && \
+#    bazel-bin/build_pip_pkg /tmp/tfa_cpu && \
+#    bazel clean
+
+# Build tensorflow_gcs_config library against TensorFlow CPU.
+#ADD tensorflow-gcs-config /usr/local/src/tensorflow_gcs_config/
+#RUN cd /usr/local/src/tensorflow_gcs_config && \
+#    apt-get install -y libcurl4-openssl-dev && \
+#    python setup.py bdist_wheel -d /tmp/tensorflow_gcs_config && \
+#    bazel clean
 
 # Use multi-stage builds to minimize image output size.
 FROM alpine:latest
