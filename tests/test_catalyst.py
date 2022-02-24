@@ -141,7 +141,7 @@ class TestCatalyst(unittest.TestCase):
             logdir=logdir,
             num_epochs=num_epochs,
             verbose=False,
-            callbacks=[CheckpointCallback(save_best=True, use_runner_logdir=True)]
+            callbacks=[CheckpointCallback(save_best=True)]
         )
         
         with open('./logs/_metrics.json') as f:
