@@ -302,6 +302,8 @@ RUN pip install mpld3 && \
     pip install sklearn-pandas && \
     pip install stemming && \
     pip install fbprophet && \
+    # b/227040197 Remove pin once panel (dependency of holoviews & geoviews) supports Jinja2 >= 3.1
+    pip install Jinja2==3.0.3 && \
     pip install holoviews && \
     pip install geoviews && \
     pip install hypertools && \
