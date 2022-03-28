@@ -212,6 +212,8 @@ RUN pip install ibis-framework && \
 
 RUN pip install scipy && \
     pip install scikit-learn && \
+    # Scikit-learn accelerated library for x86 
+    pip install scikit-learn-intelex && \
     # HDF5 support
     pip install h5py && \
     pip install biopython && \
