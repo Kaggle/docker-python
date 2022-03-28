@@ -396,7 +396,8 @@ RUN pip install bleach && \
     pip install jupyter-core && \
     pip install MarkupSafe && \
     pip install mistune && \
-    pip install nbconvert && \
+    # b/227194111 install latest version of nbconvert until the base image includes nbconvert >= 6.4.5
+    pip install --upgrade nbconvert && \
     pip install nbformat && \
     pip install notebook && \
     pip install papermill && \
