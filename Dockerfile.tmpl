@@ -395,6 +395,7 @@ RUN pip install bleach && \
     pip install jupyter-client && \
     pip install jupyter-console && \
     pip install jupyter-core && \
+    pip install jupyterlab-lsp && \
     pip install MarkupSafe && \
     pip install mistune && \
     # b/227194111 install latest version of nbconvert until the base image includes nbconvert >= 6.4.5
@@ -402,6 +403,7 @@ RUN pip install bleach && \
     pip install nbformat && \
     pip install notebook && \
     pip install papermill && \
+    pip install python-lsp-server[all] && \
     pip install olefile && \
     # b/198300835 kornia 0.5.10 is not compatible with our version of numpy.
     pip install kornia==0.5.8 && \

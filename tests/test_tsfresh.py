@@ -12,7 +12,7 @@ class TestTsFresh(unittest.TestCase):
             'time': np.array([0,1,2,0,1,2]),
             'x': np.array([3,4,5,7,8,10])
         })
-        extracted_features = extract_features(ts, column_id='id', column_sort='time')
+        extracted_features = extract_features(ts, column_id='id', column_sort='time', n_jobs=1)
         self.assertEqual(2, len(extracted_features))
 
 
