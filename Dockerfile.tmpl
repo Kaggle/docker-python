@@ -72,8 +72,7 @@ RUN conda config --add channels nvidia && \
     conda config --add channels rapidsai && \
     # Base image channel order: conda-forge (highest priority), defaults.
     # End state: rapidsai (highest priority), nvidia, conda-forge, defaults.
-    # b/216162758 Pin mkl which last version breaks spacy.
-    conda install mkl=2021.4.0 cartopy=0.19 imagemagick=7.1 pyproj==3.1.0 && \
+    conda install mkl cartopy=0.19 imagemagick=7.1 pyproj==3.1.0 && \
     /tmp/clean-layer.sh
 
 {{ if eq .Accelerator "gpu" }}
