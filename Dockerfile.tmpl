@@ -25,8 +25,6 @@ RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/lib
 {{ else }}
 FROM ${BASE_IMAGE_REPO}/${CPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 {{ end }}
-# Keep these variables in sync if base image is updated.
-ENV TENSORFLOW_VERSION=2.6.4
 
 # We need to redefine the ARG here to get the ARG value defined above the FROM instruction.
 # See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
@@ -35,6 +33,9 @@ ARG TORCH_VERSION
 ARG TORCHAUDIO_VERSION
 ARG TORCHTEXT_VERSION
 ARG TORCHVISION_VERSION
+ARG TENSORFLOW_VERSION
+
+ENV TENSORFLOW_VERSION=${TENSORFLOW_VERSION}
 
 # Disable pesky logs like: KMP_AFFINITY: pid 6121 tid 6121 thread 0 bound to OS proc set 0 
 # See: https://stackoverflow.com/questions/57385766/disable-tensorflow-log-information
@@ -78,7 +79,6 @@ RUN conda config --add channels nvidia && \
     /tmp/clean-layer.sh
 
 {{ if eq .Accelerator "gpu" }}
-
 # b/232247930: uninstall pyarrow to avoid double installation with the GPU specific version.
 RUN pip uninstall -y pyarrow && \
     conda install cudf=21.10 cuml=21.10 cudatoolkit=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
@@ -132,7 +132,8 @@ RUN pip install jax[cpu] && \
 
 # Install mxnet
 {{ if eq .Accelerator "gpu" }}
-RUN pip install mxnet-cu$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
+# No specific package for 11.3 minor versions, using 11.2 instead.
+RUN pip install mxnet-cu${CUDA_MAJOR_VERSION}2 && \
     /tmp/clean-layer.sh
 {{ else }}
 RUN pip install mxnet && \
@@ -154,7 +155,8 @@ RUN pip install spacy && \
 RUN pip install pycuda && \
     pip install pynvrtc && \
     pip install pynvml && \
-    pip install nnabla-ext-cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
+    # No specific package for 11.x minor versions.
+    pip install nnabla-ext-cuda${CUDA_MAJOR_VERSION}0 && \
     /tmp/clean-layer.sh
 {{ end }}
 
@@ -167,8 +169,8 @@ RUN pip install pysal && \
     # Use `conda install -c h2oai h2o` once Python 3.7 version is released to conda.
     apt-get install -y default-jre-headless && \
     pip install -f https://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o && \
-    pip install tensorflow-gcs-config==2.6.0 && \
-    pip install tensorflow-addons==0.14.0 && \
+    pip install tensorflow-gcs-config==2.8.0 && \
+    pip install tensorflow-addons==0.16.1 && \
     /tmp/clean-layer.sh
 
 RUN apt-get install -y libfreetype6-dev && \
@@ -205,7 +207,6 @@ RUN apt-get install -y libfreetype6-dev && \
     vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
     # Stop-words
     pip install stop-words && \
-    pip install scikit-image && \
     /tmp/clean-layer.sh
 
 RUN pip install ibis-framework && \
