@@ -41,6 +41,8 @@ RUN cd /usr/local/src && \
     git checkout tags/v$TORCHAUDIO_VERSION && \
     git submodule sync && \
     git submodule update --init --recursive --jobs 0 && \
+    # TODO(b/215031404#comment4) Remove after upgrade next release (0.11.1)
+    sed s?https://zlib.net/zlib-1.2.11.tar.gz?https://sourceforge.net/projects/libpng/files/zlib/1.2.11/zlib-1.2.11.tar.gz? third_party/zlib/CMakeLists.txt && \
     python setup.py bdist_wheel
 
 # Build torchtext
