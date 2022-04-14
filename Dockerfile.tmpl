@@ -162,8 +162,8 @@ RUN pip install pysal && \
     # Use `conda install -c h2oai h2o` once Python 3.7 version is released to conda.
     apt-get install -y default-jre-headless && \
     pip install -f https://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o && \
-    pip install tensorflow-gcs-config==2.6.0 && \
-    pip install tensorflow-addons==0.14.0 && \
+    pip install tensorflow-gcs-config==$TENSORFLOW_VERSION && \
+    pip install tensorflow-addons==0.16.1 && \
     /tmp/clean-layer.sh
 
 RUN apt-get install -y libfreetype6-dev && \
