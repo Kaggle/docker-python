@@ -76,7 +76,7 @@ RUN conda config --add channels nvidia && \
     /tmp/clean-layer.sh
 
 {{ if eq .Accelerator "gpu" }}
-RUN conda install cudf=22.04 cuml=22.04 cudatoolkit=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
+RUN conda install cudf=21.10 cuml=21.10 cudatoolkit=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
     /tmp/clean-layer.sh
 {{ end }}
 
