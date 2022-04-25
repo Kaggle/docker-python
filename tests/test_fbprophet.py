@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 import pandas as pd
 
-from fbprophet import Prophet
+from prophet import Prophet
 
 class TestFbProphet(unittest.TestCase):
     def test_fit(self):
