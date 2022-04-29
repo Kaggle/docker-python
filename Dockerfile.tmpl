@@ -55,7 +55,7 @@ RUN pip uninstall -y horovod && \
 # b/230864778: Temporarily swap the NVIDIA GPG key. Remove once new base image with new GPG key is released.
 RUN rm /etc/apt/sources.list.d/cuda.list && \
     apt-key del 7fa2af80 && \
-    apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/7fa2af80.pub && \
+    apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/7fa2af80.pub
 {{ end }}
 
 # Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
