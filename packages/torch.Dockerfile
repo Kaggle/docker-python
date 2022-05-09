@@ -6,12 +6,15 @@ ARG PACKAGE_VERSION
 ARG TORCHAUDIO_VERSION
 ARG TORCHTEXT_VERSION
 ARG TORCHVISION_VERSION
+ARG CUDA_MAJOR_VERSION
+ARG CUDA_MINOR_VERSION
 
 # TORCHVISION_VERSION is mandatory
 RUN test -n "$TORCHVISION_VERSION"
 
 # Build instructions: https://github.com/pytorch/pytorch#from-source
 RUN conda install astunparse numpy ninja pyyaml mkl mkl-include setuptools==59.5.0 cmake cffi typing_extensions future six requests dataclasses
+RUN conda install -c pytorch magma-cuda${CUDA_MAJOR_VERSION}${CUDA_MINOR_VERSION}
 
 # By default, it uses the version from version.txt which includes the `a0` (alpha zero) suffix and part of the git hash.
 # This causes dependency conflicts like these: https://paste.googleplex.com/4786486378496000

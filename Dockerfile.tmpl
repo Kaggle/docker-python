@@ -12,8 +12,10 @@ ARG TORCHVISION_VERSION
 FROM gcr.io/kaggle-images/python-lightgbm-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_TAG}-${LIGHTGBM_VERSION} AS lightgbm_whl
 FROM gcr.io/kaggle-images/python-torch-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_TAG}-${TORCH_VERSION} AS torch_whl
 FROM ${BASE_IMAGE_REPO}/${GPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
-ENV CUDA_MAJOR_VERSION=11
-ENV CUDA_MINOR_VERSION=0
+ARG CUDA_MAJOR_VERSION
+ARG CUDA_MINOR_VERSION
+ENV CUDA_MAJOR_VERSION=${CUDA_MAJOR_VERSION}
+ENV CUDA_MINOR_VERSION=${CUDA_MINOR_VERSION}
 # NVIDIA binaries from the host are mounted to /opt/bin.
 ENV PATH=/opt/bin:${PATH}
 # Add CUDA stubs to LD_LIBRARY_PATH to support building the GPU image on a CPU machine.
@@ -99,7 +101,8 @@ RUN conda install implicit && \
 # Install PyTorch
 {{ if eq .Accelerator "gpu" }}
 COPY --from=torch_whl /tmp/whl/*.whl /tmp/torch/
-RUN pip install /tmp/torch/*.whl && \
+RUN conda install -c pytorch magma-cuda${CUDA_MAJOR_VERSION}${CUDA_MINOR_VERSION} && \
+    pip install /tmp/torch/*.whl && \
     rm -rf /tmp/torch && \
     /tmp/clean-layer.sh
 {{ else }}
