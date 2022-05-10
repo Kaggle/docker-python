@@ -37,6 +37,8 @@ pipeline {
                 --build-arg TORCHAUDIO_VERSION=$TORCHAUDIO_VERSION \
                 --build-arg TORCHTEXT_VERSION=$TORCHTEXT_VERSION \
                 --build-arg TORCHVISION_VERSION=$TORCHVISION_VERSION \
+                --build-arg CUDA_MAJOR_VERSION=$CUDA_MAJOR_VERSION \
+                --build-arg CUDA_MINOR_VERSION=$CUDA_MINOR_VERSION \
                 --push
             '''
           }

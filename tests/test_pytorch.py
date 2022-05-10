@@ -16,6 +16,14 @@ class TestPyTorch(unittest.TestCase):
         linear_torch(data_torch)
 
     @gpu_test
+    def test_linalg(self):
+        A = torch.randn(3, 3).t().to('cuda')
+        B = torch.randn(3).t().to('cuda')
+
+        result = torch.linalg.solve(A, B)
+        self.assertEqual(3, result.shape[0])
+
+    @gpu_test
     def test_gpu_computation(self):
         cuda = torch.device('cuda')  
         a = torch.tensor([1., 2.], device=cuda)
