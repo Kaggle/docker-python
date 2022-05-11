@@ -106,7 +106,7 @@ RUN conda install -c pytorch magma-cuda${CUDA_MAJOR_VERSION}${CUDA_MINOR_VERSION
     rm -rf /tmp/torch && \
     /tmp/clean-layer.sh
 {{ else }}
-RUN pip install torch==$TORCH_VERSION+cpu torchvision==$TORCHVISION_VERSION+cpu torchaudio==$TORCHAUDIO_VERSION torchtext==$TORCHTEXT_VERSION -f https://download.pytorch.org/whl/torch_stable.html && \
+RUN pip install torch==$TORCH_VERSION+cpu torchvision==$TORCHVISION_VERSION+cpu torchaudio==$TORCHAUDIO_VERSION+cpu torchtext==$TORCHTEXT_VERSION -f https://download.pytorch.org/whl/torch_stable.html && \
     /tmp/clean-layer.sh
 {{ end }}
 
@@ -497,7 +497,8 @@ RUN pip install flashtext && \
     pip install bqplot && \
     pip install earthengine-api && \
     pip install transformers && \
-    pip install datasets && \
+    # b/232247930 >= 2.2.0 requires pyarrow >= 6.0.0 which conflicts with dependencies for rapidsai 0.21.*
+    pip install datasets==2.1.0 && \
     pip install dlib && \
     pip install kaggle-environments && \
     pip install geopandas && \
