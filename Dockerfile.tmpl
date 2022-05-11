@@ -85,7 +85,12 @@ RUN conda config --add channels nvidia && \
     /tmp/clean-layer.sh
 
 {{ if eq .Accelerator "gpu" }}
-RUN conda install cudf=21.10 cuml=21.10 cudatoolkit=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
+RUN conda install cudf=21.12 cuml=21.12 cudatoolkit=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
+    /tmp/clean-layer.sh
+
+# b/232247930#comment6 installs an older version of pyarrow (double install).
+RUN pip uninstall -y pyarrow && \
+    pip install pyarrow==7.0.0 && \
     /tmp/clean-layer.sh
 {{ end }}
 
