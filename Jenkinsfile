@@ -150,7 +150,34 @@ pipeline {
               }
             }
           }
-        } 
+        }
+        stage('TPU VM') {
+          stages {
+            stage('Build Tensorflow TPU Image') {
+              options {
+                timeout(time: 120, unit: 'MINUTES')
+              }
+              steps {
+                sh '''#!/bin/bash
+                  set -exo pipefail
+
+                  ./tpu/build | ts
+                  ./push --tpu ${PRETEST_TAG}
+                '''
+              }
+            }
+          }
+          stage('Diff TPU VM Image') {
+              steps {
+                sh '''#!/bin/bash
+                set -exo pipefail
+
+                docker pull gcr.io/kaggle-private-byod/python-tpuvm:${PRETEST_TAG}
+                ./diff --tpu --target gcr.io/kaggle-private-byod/python-tpuvm:${PRETEST_TAG}
+              '''
+              }
+            }
+        }
       }
     }
 
@@ -161,6 +188,7 @@ pipeline {
 
           gcloud container images add-tag gcr.io/kaggle-images/python:${PRETEST_TAG} gcr.io/kaggle-images/python:${STAGING_TAG}
           gcloud container images add-tag gcr.io/kaggle-private-byod/python:${PRETEST_TAG} gcr.io/kaggle-private-byod/python:${STAGING_TAG}
+          gcloud container images add-tag gcr.io/kaggle-private-byod/python-tpuvm:${PRETEST_TAG} gcr.io/kaggle-private-byod/python-tpuvm:${STAGING_TAG}
         '''
       }
     }

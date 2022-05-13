@@ -32,6 +32,10 @@ while :; do
             BASE_IMAGE_TAG='gcr.io/kaggle-private-byod/python:latest'
             TARGET_IMAGE_TAG='kaggle/python-gpu-build'
             ;;
+        -x|--tpu)
+            BASE_IMAGE_TAG='gcr.io/kaggle-private-byod/python-tpuvm:latest'
+            TARGET_IMAGE_TAG='kaggle/python-tpuvm-build'
+            ;;
         -b|--base)
             if [[ -z "$2" ]]; then
                 usage

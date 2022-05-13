@@ -8,6 +8,7 @@ Push a newly-built image with the given LABEL to gcr.io and DockerHub.
 
 Options:
     -g, --gpu                   Push the image with GPU support.
+    -t, --tpu                   Push the image with GPU support.
     -s, --source-image IMAGE    Tag for the source image. 
 EOF
 }
@@ -25,6 +26,10 @@ while :; do
         -g|--gpu)
             SOURCE_IMAGE_TAG='kaggle/python-gpu-build:latest'
             TARGET_IMAGE='gcr.io/kaggle-private-byod/python'
+            ;;
+        -t|--tpu)
+            SOURCE_IMAGE_TAG='kaggle/python-tpuvm-build:latest'
+            TARGET_IMAGE='gcr.io/kaggle-private-byod/python-tpuvm'
             ;;
         -s|--source-image)
             if [[ -z $2 ]]; then
