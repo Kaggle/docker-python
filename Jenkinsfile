@@ -166,8 +166,7 @@ pipeline {
                 '''
               }
             }
-          }
-          stage('Diff TPU VM Image') {
+            stage('Diff TPU VM Image') {
               steps {
                 sh '''#!/bin/bash
                 set -exo pipefail
@@ -177,6 +176,7 @@ pipeline {
               '''
               }
             }
+          }
         }
       }
     }
