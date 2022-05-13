@@ -12,8 +12,10 @@ ARG TORCHVISION_VERSION
 FROM gcr.io/kaggle-images/python-lightgbm-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_TAG}-${LIGHTGBM_VERSION} AS lightgbm_whl
 FROM gcr.io/kaggle-images/python-torch-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_TAG}-${TORCH_VERSION} AS torch_whl
 FROM ${BASE_IMAGE_REPO}/${GPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
-ENV CUDA_MAJOR_VERSION=11
-ENV CUDA_MINOR_VERSION=0
+ARG CUDA_MAJOR_VERSION
+ARG CUDA_MINOR_VERSION
+ENV CUDA_MAJOR_VERSION=${CUDA_MAJOR_VERSION}
+ENV CUDA_MINOR_VERSION=${CUDA_MINOR_VERSION}
 # NVIDIA binaries from the host are mounted to /opt/bin.
 ENV PATH=/opt/bin:${PATH}
 # Add CUDA stubs to LD_LIBRARY_PATH to support building the GPU image on a CPU machine.
@@ -51,6 +53,13 @@ RUN pip uninstall -y horovod && \
     /tmp/clean-layer.sh
 {{ end }}
 
+{{ if eq .Accelerator "gpu" }}
+# b/230864778: Temporarily swap the NVIDIA GPG key. Remove once new base image with new GPG key is released.
+RUN rm /etc/apt/sources.list.d/cuda.list && \
+    apt-key del 7fa2af80 && \
+    apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/7fa2af80.pub
+{{ end }}
+
 # Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
 # as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
 RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list && \
@@ -72,8 +81,7 @@ RUN conda config --add channels nvidia && \
     conda config --add channels rapidsai && \
     # Base image channel order: conda-forge (highest priority), defaults.
     # End state: rapidsai (highest priority), nvidia, conda-forge, defaults.
-    # b/216162758 Pin mkl which last version breaks spacy.
-    conda install mkl=2021.4.0 cartopy=0.19 imagemagick=7.1 pyproj==3.1.0 && \
+    conda install mkl cartopy=0.19 imagemagick=7.1 pyproj==3.1.0 && \
     /tmp/clean-layer.sh
 
 {{ if eq .Accelerator "gpu" }}
@@ -93,11 +101,12 @@ RUN conda install implicit && \
 # Install PyTorch
 {{ if eq .Accelerator "gpu" }}
 COPY --from=torch_whl /tmp/whl/*.whl /tmp/torch/
-RUN pip install /tmp/torch/*.whl && \
+RUN conda install -c pytorch magma-cuda${CUDA_MAJOR_VERSION}${CUDA_MINOR_VERSION} && \
+    pip install /tmp/torch/*.whl && \
     rm -rf /tmp/torch && \
     /tmp/clean-layer.sh
 {{ else }}
-RUN pip install torch==$TORCH_VERSION+cpu torchvision==$TORCHVISION_VERSION+cpu torchaudio==$TORCHAUDIO_VERSION torchtext==$TORCHTEXT_VERSION -f https://download.pytorch.org/whl/torch_stable.html && \
+RUN pip install torch==$TORCH_VERSION+cpu torchvision==$TORCHVISION_VERSION+cpu torchaudio==$TORCHAUDIO_VERSION+cpu torchtext==$TORCHTEXT_VERSION -f https://download.pytorch.org/whl/torch_stable.html && \
     /tmp/clean-layer.sh
 {{ end }}
 
@@ -155,7 +164,7 @@ RUN pip install pycuda && \
 
 RUN pip install pysal && \
     pip install seaborn python-dateutil dask python-igraph && \
-    pip install pyyaml joblib husl geopy ml_metrics mne pyshp && \
+    pip install pyyaml joblib husl geopy mne pyshp && \
     pip install pandas && \
     pip install flax && \
     # Install h2o from source.
@@ -212,6 +221,8 @@ RUN pip install ibis-framework && \
 
 RUN pip install scipy && \
     pip install scikit-learn && \
+    # Scikit-learn accelerated library for x86 
+    pip install scikit-learn-intelex && \
     # HDF5 support
     pip install h5py && \
     pip install biopython && \
@@ -277,8 +288,6 @@ RUN pip install mpld3 && \
     pip install pyldavis==3.2.2 && \
     pip install mlxtend && \
     pip install altair && \
-    # b/183944405 pystan 3.x is not compatible with fbprophet.
-    pip install pystan==2.19.1.1 && \
     pip install ImageHash && \
     pip install ecos && \
     pip install CVXcanon && \
@@ -301,7 +310,7 @@ RUN pip install mpld3 && \
     pip install pyexcel-ods && \
     pip install sklearn-pandas && \
     pip install stemming && \
-    pip install fbprophet && \
+    pip install prophet && \
     pip install holoviews && \
     pip install geoviews && \
     pip install hypertools && \
@@ -314,9 +323,7 @@ RUN pip install mpld3 && \
     pip install lightfm && \
     pip install folium && \
     pip install scikit-plot && \
-    # dipy requires the optional fury dependency for visualizations.
-    # b/217761018 pinned fury to fix test
-    pip install fury==0.7.1 dipy && \
+    pip install fury dipy && \
     pip install plotnine && \
     pip install scikit-surprise && \
     pip install pymongo && \
@@ -391,17 +398,19 @@ RUN pip install bleach && \
     pip install ipywidgets && \
     pip install isoweek && \
     pip install jedi && \
-    pip install Jinja2 && \
     pip install jsonschema && \
     pip install jupyter-client && \
     pip install jupyter-console && \
     pip install jupyter-core && \
+    pip install jupyterlab-lsp && \
     pip install MarkupSafe && \
     pip install mistune && \
-    pip install nbconvert && \
+    # b/227194111 install latest version of nbconvert until the base image includes nbconvert >= 6.4.5
+    pip install --upgrade nbconvert Jinja2 && \
     pip install nbformat && \
     pip install notebook && \
     pip install papermill && \
+    pip install python-lsp-server[all] && \
     pip install olefile && \
     # b/198300835 kornia 0.5.10 is not compatible with our version of numpy.
     pip install kornia==0.5.8 && \
@@ -488,6 +497,8 @@ RUN pip install flashtext && \
     pip install bqplot && \
     pip install earthengine-api && \
     pip install transformers && \
+    # b/232247930 >= 2.2.0 requires pyarrow >= 6.0.0 which conflicts with dependencies for rapidsai 0.21.*
+    pip install datasets==2.1.0 && \
     pip install dlib && \
     pip install kaggle-environments && \
     pip install geopandas && \
@@ -495,8 +506,7 @@ RUN pip install flashtext && \
     pip install vowpalwabbit && \
     pip install pydub && \
     pip install pydegensac && \
-    # b/215182966 torchmetrics 0.7.0 is causing an issue with pytorch-lightning.
-    pip install torchmetrics==0.6.2 && \
+    pip install torchmetrics && \
     pip install pytorch-lightning && \
     pip install datatable && \
     pip install sympy && \
