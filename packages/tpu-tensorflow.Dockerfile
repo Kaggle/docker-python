@@ -2,6 +2,8 @@ ARG BASE_IMAGE_TAG
 
 FROM gcr.io/kaggle-images/python:${BASE_IMAGE_TAG} AS builder
 
+ARG PACKAGE_VERSION
+
 # Use Bazelisk to ensure the proper bazel version is used.
 RUN cd /usr/local/src && \
     wget --no-verbose "https://github.com/bazelbuild/bazelisk/releases/download/v1.11.0/bazelisk-linux-amd64" && \
