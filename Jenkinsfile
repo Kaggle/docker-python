@@ -56,6 +56,22 @@ pipeline {
             '''
           }
         }
+        stage('tensorflow TPU') {
+          options {
+            timeout(time: 180, unit: 'MINUTES')
+          }
+          steps {
+            sh '''#!/bin/bash
+              set -exo pipefail
+              source tpu/config.txt
+              cd packages/
+              ./build_package --base-image gcr.io/kaggle-images/python:${BASE_IMAGE_TAG} \
+                --package tpu-tensorflow \
+                --version $TENSORFLOW_VERSION \
+                --push
+            '''
+          }
+        }
       }
     }
     stage('Build/Test/Diff') {
@@ -155,7 +171,7 @@ pipeline {
           stages {
             stage('Build Tensorflow TPU Image') {
               options {
-                timeout(time: 120, unit: 'MINUTES')
+                timeout(time: 20, unit: 'MINUTES')
               }
               steps {
                 sh '''#!/bin/bash

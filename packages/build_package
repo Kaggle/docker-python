@@ -117,6 +117,8 @@ fi
 
 # Keep only `tf2-gpu.2-6:m80` in `gcr.io/deeplearning-platform-release/tf2-gpu.2-6:m80` 
 TAG=${BASE_IMAGE/gcr.io\/deeplearning-platform-release\//}
+# Keep only `python:v108` in `gcr.io/kaggle-images/python:v108`
+TAG=${TAG/gcr.io\/kaggle-images\//}
 # Replace the `:` in `tf2-gpu.2-6:m80` by `-`
 TAG=${TAG/:/-}
 # Append the package version

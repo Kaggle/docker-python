@@ -12,8 +12,6 @@ EOF
 }
 
 CACHE_FLAG='--no-cache'
-TENSORFLOW_DOCKERFILE='tensorflow.Dockerfile'
-TENSORFLOW_IMAGE_TAG='kaggle/python-tpuvm-tensorflow-build'
 DOCKERFILE='Dockerfile'
 IMAGE_TAG='kaggle/python-tpuvm-build'
 BUILD_ARGS=''
@@ -49,15 +47,11 @@ for l in `cat ${SRCDIR}/config.txt`; do
 done
 
 readonly CACHE_FLAG
-readonly TENSORFLOW_DOCKERFILE
-readonly TENSORFLOW_IMAGE_TAG
 readonly DOCKERFILE
 readonly IMAGE_TAG
 readonly BUILD_ARGS
 
-TENSORFLOW_DOCKERFILE_PATH="$SRCDIR/$TENSORFLOW_DOCKERFILE"
 DOCKERFILE_PATH="$SRCDIR/$DOCKERFILE"
 
 set -x
-docker build --rm --pull $CACHE_FLAG -t "$TENSORFLOW_IMAGE_TAG" -f "$TENSORFLOW_DOCKERFILE_PATH" $BUILD_ARGS .
 docker build --rm --pull $CACHE_FLAG -t "$IMAGE_TAG" -f "$DOCKERFILE_PATH" $BUILD_ARGS .

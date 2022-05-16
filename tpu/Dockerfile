@@ -1,9 +1,9 @@
 ARG BASE_IMAGE_TAG
 ARG LIBTPU_IMAGE_TAG
-ARG TENSORFLOW_WHL_IMAGE_TAG
+ARG TENSORFLOW_VERSION
 
 FROM gcr.io/cloud-tpu-v2-images/libtpu:${LIBTPU_IMAGE_TAG} as libtpu
-FROM gcr.io/kaggle-images/python-tpu-tensorflow-whl:${TENSORFLOW_WHL_IMAGE_TAG} AS tensorflow_whl
+FROM gcr.io/kaggle-images/python-tpu-tensorflow-whl:python-${BASE_IMAGE_TAG}-${TENSORFLOW_VERSION} AS tensorflow_whl
 FROM gcr.io/kaggle-images/python:${BASE_IMAGE_TAG}
 
 ENV ISTPUVM=1

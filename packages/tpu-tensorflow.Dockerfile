@@ -1,6 +1,6 @@
-ARG BASE_IMAGE_TAG
+ARG BASE_IMAGE
 
-FROM gcr.io/kaggle-images/python:${BASE_IMAGE_TAG} AS builder
+FROM ${BASE_IMAGE} AS builder
 
 ARG PACKAGE_VERSION
 
@@ -14,7 +14,7 @@ RUN cd /usr/local/src && \
 RUN cd /usr/local/src && \
     git clone https://github.com/tensorflow/tensorflow && \
     cd tensorflow && \
-    git checkout tags/v${TENSORFLOW_VERSION} && \
+    git checkout tags/v${PACKAGE_VERSION} && \
     # TODO(rosbo): Is it really needed?
     pip install keras_applications --no-deps && \
     pip install keras_preprocessing --no-deps
