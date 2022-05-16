@@ -1,0 +1,57 @@
+#!/bin/bash
+set -e
+
+usage() {
+cat << EOF
+Usage: $0 [OPTIONS]
+Build a new Python TPU 1VM Docker image.
+
+Options:
+    -c, --use-cache           Use layer cache when building a new image.
+EOF
+}
+
+CACHE_FLAG='--no-cache'
+DOCKERFILE='Dockerfile'
+IMAGE_TAG='kaggle/python-tpuvm-build'
+BUILD_ARGS=''
+
+while :; do
+    case "$1" in 
+        -h|--help)
+            usage
+            exit
+            ;;
+        -c|--use-cache)
+            CACHE_FLAG=''
+            ;;
+        -?*)
+            usage
+            printf 'ERROR: Unknown option: %s\n' "$1" >&2
+            exit
+            ;;
+        *)            
+            break
+    esac
+
+    shift
+done
+
+BUILD_ARGS+=" --build-arg GIT_COMMIT=$(git rev-parse HEAD)"
+BUILD_ARGS+=" --build-arg BUILD_DATE=$(date '+%Y%m%d-%H%M%S')"
+
+# Read build args from config.txt file.
+SRCDIR=$(dirname "${BASH_SOURCE[0]}")
+for l in `cat ${SRCDIR}/config.txt`; do
+    BUILD_ARGS+=" --build-arg $l"
+done
+
+readonly CACHE_FLAG
+readonly DOCKERFILE
+readonly IMAGE_TAG
+readonly BUILD_ARGS
+
+DOCKERFILE_PATH="$SRCDIR/$DOCKERFILE"
+
+set -x
+docker build --rm --pull $CACHE_FLAG -t "$IMAGE_TAG" -f "$DOCKERFILE_PATH" $BUILD_ARGS .

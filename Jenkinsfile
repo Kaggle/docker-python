@@ -56,6 +56,22 @@ pipeline {
             '''
           }
         }
+        stage('tensorflow TPU') {
+          options {
+            timeout(time: 180, unit: 'MINUTES')
+          }
+          steps {
+            sh '''#!/bin/bash
+              set -exo pipefail
+              source tpu/config.txt
+              cd packages/
+              ./build_package --base-image gcr.io/kaggle-images/python:${BASE_IMAGE_TAG} \
+                --package tpu-tensorflow \
+                --version $TENSORFLOW_VERSION \
+                --push
+            '''
+          }
+        }
       }
     }
     stage('Build/Test/Diff') {
@@ -150,7 +166,34 @@ pipeline {
               }
             }
           }
-        } 
+        }
+        stage('TPU VM') {
+          stages {
+            stage('Build Tensorflow TPU Image') {
+              options {
+                timeout(time: 20, unit: 'MINUTES')
+              }
+              steps {
+                sh '''#!/bin/bash
+                  set -exo pipefail
+
+                  ./tpu/build | ts
+                  ./push --tpu ${PRETEST_TAG}
+                '''
+              }
+            }
+            stage('Diff TPU VM Image') {
+              steps {
+                sh '''#!/bin/bash
+                set -exo pipefail
+
+                docker pull gcr.io/kaggle-private-byod/python-tpuvm:${PRETEST_TAG}
+                ./diff --tpu --target gcr.io/kaggle-private-byod/python-tpuvm:${PRETEST_TAG}
+              '''
+              }
+            }
+          }
+        }
       }
     }
 
@@ -161,6 +204,7 @@ pipeline {
 
           gcloud container images add-tag gcr.io/kaggle-images/python:${PRETEST_TAG} gcr.io/kaggle-images/python:${STAGING_TAG}
           gcloud container images add-tag gcr.io/kaggle-private-byod/python:${PRETEST_TAG} gcr.io/kaggle-private-byod/python:${STAGING_TAG}
+          gcloud container images add-tag gcr.io/kaggle-private-byod/python-tpuvm:${PRETEST_TAG} gcr.io/kaggle-private-byod/python-tpuvm:${STAGING_TAG}
         '''
       }
     }
