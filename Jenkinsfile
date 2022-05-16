@@ -58,7 +58,7 @@ pipeline {
         }
         stage('tensorflow TPU') {
           options {
-            timeout(time: 180, unit: 'MINUTES')
+            timeout(time: 360, unit: 'MINUTES')
           }
           steps {
             sh '''#!/bin/bash
