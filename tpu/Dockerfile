@@ -1,11 +1,14 @@
 ARG BASE_IMAGE_TAG
 ARG LIBTPU_IMAGE_TAG
 ARG TENSORFLOW_VERSION
-ARG TORCH_VERSION
 
 FROM gcr.io/cloud-tpu-v2-images/libtpu:${LIBTPU_IMAGE_TAG} as libtpu
 FROM gcr.io/kaggle-images/python-tpu-tensorflow-whl:python-${BASE_IMAGE_TAG}-${TENSORFLOW_VERSION} AS tensorflow_whl
 FROM gcr.io/kaggle-images/python:${BASE_IMAGE_TAG}
+
+# We need to define the ARG here to get the ARG below the FROM statement to access it within this build context
+# See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
+ARG TORCH_VERSION
 
 ENV ISTPUVM=1
 
@@ -19,7 +22,8 @@ RUN pip install /tmp/tensorflow_pkg/tensorflow*.whl && \
 # https://cloud.google.com/tpu/docs/pytorch-xla-ug-tpu-vm#changing_pytorch_version
 RUN pip uninstall -y torch && \
     pip install torch==${TORCH_VERSION} && \
-    pip install torch_xla[tpuvm] -f https://storage.googleapis.com/tpu-pytorch/wheels/tpuvm/torch_xla-${TORCH_VERSION}-cp37-cp37m-linux_x86_64.whl && \
+    # The URL doesn't include patch version. i.e. must use 1.11 instead of 1.11.0
+    pip install torch_xla[tpuvm] -f https://storage.googleapis.com/tpu-pytorch/wheels/tpuvm/torch_xla-${TORCH_VERSION%.*}-cp37-cp37m-linux_x86_64.whl && \
     /tmp/clean-layer.sh
 
 # https://cloud.google.com/tpu/docs/jax-quickstart-tpu-vm#install_jax_on_your_cloud_tpu_vm
