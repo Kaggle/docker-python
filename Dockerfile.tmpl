@@ -26,7 +26,7 @@ RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/lib
 FROM ${BASE_IMAGE_REPO}/${CPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 {{ end }}
 # Keep these variables in sync if base image is updated.
-ENV TENSORFLOW_VERSION=2.6.2
+ENV TENSORFLOW_VERSION=2.6.4
 
 # We need to redefine the ARG here to get the ARG value defined above the FROM instruction.
 # See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
@@ -51,13 +51,6 @@ ADD patches/template_conf.json /opt/kaggle/conf.json
 # b/200968891 Keeps horovod once torch is upgraded.
 RUN pip uninstall -y horovod && \
     /tmp/clean-layer.sh
-{{ end }}
-
-{{ if eq .Accelerator "gpu" }}
-# b/230864778: Temporarily swap the NVIDIA GPG key. Remove once new base image with new GPG key is released.
-RUN rm /etc/apt/sources.list.d/cuda.list && \
-    apt-key del 7fa2af80 && \
-    apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/7fa2af80.pub
 {{ end }}
 
 # Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
@@ -405,8 +398,6 @@ RUN pip install bleach && \
     pip install jupyterlab-lsp && \
     pip install MarkupSafe && \
     pip install mistune && \
-    # b/227194111 install latest version of nbconvert until the base image includes nbconvert >= 6.4.5
-    pip install --upgrade nbconvert Jinja2 && \
     pip install nbformat && \
     pip install notebook && \
     pip install papermill && \
