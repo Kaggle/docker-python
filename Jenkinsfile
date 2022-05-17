@@ -180,10 +180,13 @@ pipeline {
                   # Login to docker to get access to gcr.io/cloud-tpu-v2-images/libtpu
                   # SA: jenkins-test@kaggle-playground-170215.iam.gserviceaccount.com
                   # To grant access to a SA, start a TPU VM with that SA once.
+                  # Disable echo to avoid printing sensitive tokens:
+                  set +x
                   METADATA=http://metadata.google.internal/computeMetadata/v1
                   SVC_ACCT=$METADATA/instance/service-accounts/default
                   ACCESS_TOKEN=$(/usr/bin/curl -s -H 'Metadata-Flavor: Google' $SVC_ACCT/token | cut -d'"' -f 4)
                   docker login --username oauth2accesstoken --password $ACCESS_TOKEN https://gcr.io
+                  set -x
 
                   ./tpu/build | ts
                   ./push --tpu ${PRETEST_TAG}
