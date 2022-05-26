@@ -33,6 +33,11 @@ RUN pip install "jax[tpu]>=0.2.16" -f https://storage.googleapis.com/jax-release
     cp $DEFAULT_LIBTPU $JAX_LIBTPU && \
     /tmp/clean-layer.sh
 
-# Monkey-patch JAX & PYTORCH to load the correct libtpu.so when they are imported:
+# Monkey-patch TF, JAX & PYTORCH to load the correct libtpu.so when they are imported:
 RUN sed -i "s|^\(\(.*\)libtpu.configure_library_path.*\)|\1\n\2os.environ['TPU_LIBRARY_PATH'] = '${PYTORCH_LIBTPU}'|" /opt/conda/lib/python3.7/site-packages/torch_xla/__init__.py && \
-    sed -i "s|^\(\(.*\)libtpu.configure_library_path.*\)|\1\n\2os.environ['TPU_LIBRARY_PATH'] = '${JAX_LIBTPU}'|" /opt/conda/lib/python3.7/site-packages/jax/_src/cloud_tpu_init.py
+    sed -i "s|^\(\(.*\)libtpu.configure_library_path.*\)|\1\n\2os.environ['TPU_LIBRARY_PATH'] = '${JAX_LIBTPU}'|" /opt/conda/lib/python3.7/site-packages/jax/_src/cloud_tpu_init.py && \
+    sed -i "1s/^/from jax._src.cloud_tpu_init import cloud_tpu_init\ncloud_tpu_init()\n/" /opt/conda/lib/python3.7/site-packages/tensorflow/__init__.py
+
+# Set these env vars so that they don't produce errs calling the metadata server to load them:
+ENV TPU_ACCELERATOR_TYPE=v3-8
+ENV TPU_PROCESS_ADDRESSES=local
