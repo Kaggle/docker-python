@@ -26,7 +26,8 @@ RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/lib
 FROM ${BASE_IMAGE_REPO}/${CPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 {{ end }}
 # Keep these variables in sync if base image is updated.
-ENV TENSORFLOW_VERSION=2.6.4
+# TODO(rosbo): Still 2.9.0 rc2. Wait for the 2.9.1
+ENV TENSORFLOW_VERSION=2.9.0
 
 # We need to redefine the ARG here to get the ARG value defined above the FROM instruction.
 # See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
@@ -132,7 +133,8 @@ RUN pip install jax[cpu] && \
 
 # Install mxnet
 {{ if eq .Accelerator "gpu" }}
-RUN pip install mxnet-cu$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
+# No specific package for 11.3 minor versions, using 11.2 instead.
+RUN pip install mxnet-cu$112 && \
     /tmp/clean-layer.sh
 {{ else }}
 RUN pip install mxnet && \
@@ -154,7 +156,8 @@ RUN pip install spacy && \
 RUN pip install pycuda && \
     pip install pynvrtc && \
     pip install pynvml && \
-    pip install nnabla-ext-cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
+    # No specific package for 11.x minor versions.
+    pip install nnabla-ext-cuda$110 && \
     /tmp/clean-layer.sh
 {{ end }}
 
@@ -167,8 +170,9 @@ RUN pip install pysal && \
     # Use `conda install -c h2oai h2o` once Python 3.7 version is released to conda.
     apt-get install -y default-jre-headless && \
     pip install -f https://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o && \
-    pip install tensorflow-gcs-config==2.6.0 && \
-    pip install tensorflow-addons==0.14.0 && \
+    pip install tensorflow-gcs-config==${TENSORFLOW_VERSION} && \
+    # TODO(b/207851560) Upgrade to 0.17.1 once the base image with TensorFlow 2.9.1 is out.
+    pip install tensorflow-addons==0.17.0 && \
     /tmp/clean-layer.sh
 
 RUN apt-get install -y libfreetype6-dev && \

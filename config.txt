@@ -1,7 +1,7 @@
 BASE_IMAGE_REPO=gcr.io/deeplearning-platform-release
 BASE_IMAGE_TAG=m94
-CPU_BASE_IMAGE_NAME=tf2-cpu.2-6
-GPU_BASE_IMAGE_NAME=tf2-gpu.2-6
+CPU_BASE_IMAGE_NAME=tf2-cpu.2-9
+GPU_BASE_IMAGE_NAME=tf2-gpu.2-9
 LIGHTGBM_VERSION=3.3.2
 TORCH_VERSION=1.11.0
 # TODO(b/215031404#comment4) Remove zlib sed command after upgrade to >= 0.11.1
