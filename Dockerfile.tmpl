@@ -528,6 +528,9 @@ RUN mkdir -p /root/.EasyOCR/model && \
     rm /root/.EasyOCR/model/craft_mlt_25k.zip && \
     /tmp/clean-layer.sh
 
+# Add 7z support
+RUN apt-get install -y p7zip-full
+
 # Tesseract and some associated utility packages
 RUN apt-get install tesseract-ocr -y && \
     pip install pytesseract && \
