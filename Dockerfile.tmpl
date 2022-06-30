@@ -275,7 +275,8 @@ RUN pip install mpld3 && \
     pip install trueskill && \
     # Useful data exploration libraries (for missing data and generating reports)
     pip install missingno && \
-    pip install pandas-profiling && \
+    # https://github.com/ydataai/pandas-profiling/issues/1001#issuecomment-1162516723
+    pip install pandas-profiling>=3.1 && \
     pip install s2sphere && \
     pip install bayesian-optimization && \
     pip install matplotlib-venn && \
