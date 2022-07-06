@@ -13,7 +13,7 @@ ARG CUDA_MINOR_VERSION
 RUN test -n "$TORCHVISION_VERSION"
 
 # Build instructions: https://github.com/pytorch/pytorch#from-source
-RUN conda install astunparse numpy ninja pyyaml mkl mkl-include setuptools==59.5.0 cmake cffi typing_extensions future six requests dataclasses
+RUN conda install astunparse numpy ninja pyyaml mkl mkl-include setuptools cmake cffi typing_extensions future six requests dataclasses
 RUN conda install -c pytorch magma-cuda${CUDA_MAJOR_VERSION}${CUDA_MINOR_VERSION}
 
 # By default, it uses the version from version.txt which includes the `a0` (alpha zero) suffix and part of the git hash.
@@ -44,8 +44,6 @@ RUN cd /usr/local/src && \
     git checkout tags/v$TORCHAUDIO_VERSION && \
     git submodule sync && \
     git submodule update --init --recursive --jobs 0 && \
-    # TODO(b/215031404#comment4) Remove after upgrade next release (0.11.1)
-    sed -i s?https://zlib.net/zlib-1.2.11.tar.gz?https://sourceforge.net/projects/libpng/files/zlib/1.2.11/zlib-1.2.11.tar.gz? third_party/zlib/CMakeLists.txt && \
     python setup.py bdist_wheel
 
 # Build torchtext
