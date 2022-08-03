@@ -8,6 +8,9 @@ ARG TORCHAUDIO_VERSION
 ARG TORCHTEXT_VERSION
 ARG TORCHVISION_VERSION
 
+# Ensures shared libraries installed with conda can be found by the dynamic link loader.
+ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/conda/lib"
+
 {{ if eq .Accelerator "gpu" }}
 FROM gcr.io/kaggle-images/python-lightgbm-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_TAG}-${LIGHTGBM_VERSION} AS lightgbm_whl
 FROM gcr.io/kaggle-images/python-torch-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_TAG}-${TORCH_VERSION} AS torch_whl
