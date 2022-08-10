@@ -176,6 +176,7 @@ RUN pip install pysal && \
     pip install tensorflow-gcs-config==${TENSORFLOW_VERSION} && \
     # TODO(b/207851560) Upgrade to 0.17.1 once the base image with TensorFlow 2.9.1 is out.
     pip install tensorflow-addons==0.17.0 && \
+    pip install tensorflow_decision_forests==0.2.0 && \
     /tmp/clean-layer.sh
 
 RUN apt-get install -y libfreetype6-dev && \
