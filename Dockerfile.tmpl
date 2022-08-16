@@ -141,7 +141,7 @@ RUN pip install jax[cpu] && \
 # Install mxnet
 {{ if eq .Accelerator "gpu" }}
 # No specific package for 11.3 minor versions, using 11.2 instead.
-RUN pip install mxnet-cu$112 && \
+RUN pip install mxnet-cu112 && \
     /tmp/clean-layer.sh
 {{ else }}
 RUN pip install mxnet && \
