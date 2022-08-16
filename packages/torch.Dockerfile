@@ -23,6 +23,7 @@ ENV PYTORCH_BUILD_NUMBER=1
 
 # Ensures shared libraries installed with conda can be found by the dynamic link loader.
 # For PyTorch, we need specifically mkl.
+ENV LIBRARY_PATH="$LIBRARY_PATH:/opt/conda/lib"
 ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/conda/lib"
 ENV TORCH_CUDA_ARCH_LIST="3.7;6.0;7.0+PTX;7.5+PTX"
 ENV FORCE_CUDA=1
