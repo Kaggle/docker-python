@@ -42,7 +42,10 @@ RUN pip install /usr/local/src/pytorch/dist/*.whl
 # Instructions: https://github.com/pytorch/audio#from-source
 # See comment above for PYTORCH_BUILD_VERSION.
 ENV BUILD_VERSION=$TORCHAUDIO_VERSION
-RUN cd /usr/local/src && \
+RUN sudo apt-get update && \
+    # ncurses.h is required for this install
+    sudo apt-get install libncurses-dev && \
+    cd /usr/local/src && \
     git clone https://github.com/pytorch/audio && \
     cd audio && \
     git checkout tags/v$TORCHAUDIO_VERSION && \
