@@ -17,7 +17,7 @@ FROM ${BASE_IMAGE_REPO}/${CPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 {{ end }}
 
 # Ensures shared libraries installed with conda can be found by the dynamic link loader.
-ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/conda/lib"
+ENV LIBRARY_PATH="$LIBRARY_PATH:/opt/conda/lib"
 
 {{ if eq .Accelerator "gpu" }}
 ARG CUDA_MAJOR_VERSION
