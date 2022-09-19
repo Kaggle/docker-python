@@ -402,7 +402,8 @@ RUN pip install bleach && \
     pip install ipykernel && \
     pip install ipython && \
     pip install ipython-genutils && \
-    pip install ipywidgets && \
+    # Fix qgrid by pinning ipywidgets https://github.com/quantopian/qgrid/issues/376
+    pip install ipywidgets==7.7.1 && \
     pip install isoweek && \
     pip install jedi && \
     pip install jsonschema && \
@@ -445,7 +446,9 @@ RUN pip install bleach && \
     pip install pyarrow && \
     pip install feather-format && \
     pip install fastai && \
-    pip install allennlp && \
+    # allennlp is in maintenance mode https://github.com/allenai/allennlp
+    # It downgrades the Pytorch install to 1.11.
+    #pip install allennlp && \
     pip install importlib-metadata && \
     python -m spacy download en_core_web_sm && python -m spacy download en_core_web_lg && \
     apt-get install -y ffmpeg && \
@@ -504,7 +507,10 @@ RUN pip install flashtext && \
     pip install transformers && \
     # b/232247930 >= 2.2.0 requires pyarrow >= 6.0.0 which conflicts with dependencies for rapidsai 0.21.*
     pip install datasets==2.1.0 && \
-    pip install dlib && \
+    # dlib has a libmkl incompatibility:
+    # test_dlib_face_detector (test_dlib.TestDLib) ... INTEL MKL ERROR: /opt/conda/bin/../lib/libmkl_avx512.so.2: undefined symbol: mkl_sparse_optimize_bsr_trsm_i8.
+    # Intel MKL FATAL ERROR: Cannot load libmkl_avx512.so.2 or libmkl_def.so.2.
+    #pip install dlib && \
     pip install kaggle-environments && \
     pip install geopandas && \
     pip install nnabla && \

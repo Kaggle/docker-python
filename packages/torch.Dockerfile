@@ -45,6 +45,8 @@ ENV BUILD_VERSION=$TORCHAUDIO_VERSION
 RUN sudo apt-get update && \
     # ncurses.h is required for this install
     sudo apt-get install libncurses-dev && \
+    # Fixing the build: https://github.com/pytorch/audio/issues/666#issuecomment-635928685
+    conda install -c conda-forge ncurses && \
     cd /usr/local/src && \
     git clone https://github.com/pytorch/audio && \
     cd audio && \
