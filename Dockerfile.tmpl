@@ -34,7 +34,7 @@ RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/lib
 {{ end }}
 
 # Keep these variables in sync if base image is updated.
-ENV TENSORFLOW_VERSION=2.9.1
+ENV TENSORFLOW_VERSION=2.9.2
 
 # We need to redefine the ARG here to get the ARG value defined above the FROM instruction.
 # See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
@@ -177,7 +177,7 @@ RUN pip install pysal && \
     # Use `conda install -c h2oai h2o` once Python 3.7 version is released to conda.
     apt-get install -y default-jre-headless && \
     pip install -f https://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o && \
-    pip install tensorflow-gcs-config==${TENSORFLOW_VERSION} && \
+    pip install "tensorflow-gcs-config<=${TENSORFLOW_VERSION}" && \
     # TODO(b/207851560) Upgrade to 0.17.1 once the base image with TensorFlow 2.9.1 is out.
     pip install tensorflow-addons==0.17.1 && \
     pip install tensorflow_decision_forests==0.2.7 && \
@@ -496,7 +496,8 @@ RUN pip install flashtext && \
     pip install optuna && \
     pip install plotly_express && \
     pip install albumentations && \
-    pip install catalyst && \
+    # Breaks protobuf compatibiilty in newer versions:
+    pip install catalyst tensorboardX==2.5.1 && \
     # b/206990323 osmx 1.1.2 requires numpy >= 1.21 which we don't want. 
     pip install osmnx==1.1.1 && \
     apt-get -y install libspatialindex-dev && \
@@ -513,7 +514,8 @@ RUN pip install flashtext && \
     #pip install dlib && \
     pip install kaggle-environments && \
     pip install geopandas && \
-    pip install nnabla && \
+    # Breaks protobuf compatibiilty:
+    #pip install nnabla && \
     pip install vowpalwabbit && \
     pip install pydub && \
     pip install pydegensac && \
