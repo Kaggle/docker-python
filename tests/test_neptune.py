@@ -18,5 +18,3 @@ class TestNeptune(unittest.TestCase):
         run["baz"].log(42)
         self.assertTrue("foo" in run.get_structure())
         self.assertTrue("baz" in run.get_structure())
-
-
