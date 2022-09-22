@@ -13,7 +13,7 @@ class TestNeptune(unittest.TestCase):
         self.assertIsNotNone(neptune.__version__)
 
     def test_init_offline_run(self):
-        run = neptune.init(mode="offline")
+        run = neptune.init_run(mode="offline")
         run["foo"] = "bar"
         run["baz"].log(42)
         self.assertTrue("foo" in run.get_structure())
