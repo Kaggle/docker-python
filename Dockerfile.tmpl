@@ -36,7 +36,7 @@ ARG TORCHAUDIO_VERSION
 ARG TORCHTEXT_VERSION
 ARG TORCHVISION_VERSION
 
-# Disable pesky logs like: KMP_AFFINITY: pid 6121 tid 6121 thread 0 bound to OS proc set 0 
+# Disable pesky logs like: KMP_AFFINITY: pid 6121 tid 6121 thread 0 bound to OS proc set 0
 # See: https://stackoverflow.com/questions/57385766/disable-tensorflow-log-information
 ENV KMP_WARNINGS=0
 # Also make the KMP logs noverbose.
@@ -217,7 +217,7 @@ RUN pip install ibis-framework && \
 
 RUN pip install scipy && \
     pip install scikit-learn && \
-    # Scikit-learn accelerated library for x86 
+    # Scikit-learn accelerated library for x86
     pip install scikit-learn-intelex && \
     # HDF5 support
     pip install h5py && \
@@ -328,7 +328,7 @@ RUN pip install mpld3 && \
     pip install kaggle && \
     /tmp/clean-layer.sh
 
-RUN pip install tensorpack && \   
+RUN pip install tensorpack && \
     # Add google PAIR-code Facets
     cd /opt/ && git clone https://github.com/PAIR-code/facets && cd facets/ && jupyter nbextension install facets-dist/ --user && \
     export PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/ && \
@@ -365,7 +365,7 @@ RUN pip install --upgrade cython && \
     # b/183041606#comment5: the Kaggle data proxy doesn't support these APIs. If the library is missing, it falls back to using a regular BigQuery query to fetch data.
     pip uninstall -y google-cloud-bigquery-storage && \
     # After launch this should be installed from pip
-    pip install git+https://github.com/googleapis/python-aiplatform.git@mb-release && \ 
+    pip install git+https://github.com/googleapis/python-aiplatform.git@mb-release && \
     pip install ortools && \
     pip install scattertext && \
     # Pandas data reader
@@ -449,6 +449,7 @@ RUN pip install bleach && \
     ###########
 
 RUN pip install flashtext && \
+    pip install neptune-client\
     pip install wandb && \
     # b/214080882 blake3 0.3.0 is not compatible with vaex.
     pip install blake3==0.2.1 && \
@@ -483,7 +484,7 @@ RUN pip install flashtext && \
     pip install plotly_express && \
     pip install albumentations && \
     pip install catalyst && \
-    # b/206990323 osmx 1.1.2 requires numpy >= 1.21 which we don't want. 
+    # b/206990323 osmx 1.1.2 requires numpy >= 1.21 which we don't want.
     pip install osmnx==1.1.1 && \
     apt-get -y install libspatialindex-dev && \
     pip install pytorch-ignite && \
