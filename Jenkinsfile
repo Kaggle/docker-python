@@ -122,7 +122,7 @@ pipeline {
           stages {  
             stage('Build GPU Image') {
               options {
-                timeout(time: 720, unit: 'MINUTES')
+                timeout(time: 4324, unit: 'MINUTES')
               }
               steps {
                 sh '''#!/bin/bash
