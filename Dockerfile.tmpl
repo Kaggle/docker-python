@@ -89,7 +89,8 @@ RUN conda config --add channels nvidia && \
 
 # b/232247930: uninstall pyarrow to avoid double installation with the GPU specific version.
 RUN pip uninstall -y pyarrow && \
-    conda install cudf=21.12 cuml=21.12 cudatoolkit=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
+    conda install -c conda-forge mamba && \
+    mamba install cudf=21.12 cuml=21.12 cudatoolkit=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
     /tmp/clean-layer.sh
 {{ end }}
 
