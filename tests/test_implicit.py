@@ -28,5 +28,11 @@ class TestImplicit(unittest.TestCase):
         model.fit(counts, show_progress=False)
         rows, cols = model.item_factors, model.user_factors
 
-        assert not np.isnan(np.sum(cols.to_numpy()))
-        assert not np.isnan(np.sum(rows.to_numpy()))
+        assert not np.isnan(np.sum(tonumpy(cols))
+        assert not np.isnan(np.sum(tonumpy(rows))
+
+
+def tonumpy(x):
+    if hasattr(x, 'to_numpy'):
+        return x.to_numpy()
+    return x
