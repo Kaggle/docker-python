@@ -28,8 +28,8 @@ class TestImplicit(unittest.TestCase):
         model.fit(counts, show_progress=False)
         rows, cols = model.item_factors, model.user_factors
 
-        assert not np.isnan(np.sum(tonumpy(cols))
-        assert not np.isnan(np.sum(tonumpy(rows))
+        assert not np.isnan(np.sum(tonumpy(cols)))
+        assert not np.isnan(np.sum(tonumpy(rows)))
 
 
 def tonumpy(x):
