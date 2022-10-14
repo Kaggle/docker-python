@@ -10,9 +10,11 @@ ENV ISTPUVM=1
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 ADD patches/template_conf.json /opt/kaggle/conf.json
 
-# Tensorflow install:
-RUN pip install https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/tensorflow/tf-${TENSORFLOW_VERSION}/tensorflow-${TENSORFLOW_VERSION}-cp38-cp38-linux_x86_64.whl && \
-    curl --output /lib/libtpu.so https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/libtpu/1.3.0/libtpu.so
+# Tensorflow wheel:
+# When tensorflow is compatible with being installed alongside JAX/Pytorch then we no longer need to include the wheel and can install it directly.
+# RUN pip install https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/tensorflow/tf-${TENSORFLOW_VERSION}/tensorflow-${TENSORFLOW_VERSION}-cp38-cp38-linux_x86_64.whl
+RUN mkdir -p /lib/wheels && curl --output /lib/wheels/tensorflow-${TENSORFLOW_VERSION}-cp38-cp38-linux_x86_64.whl https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/tensorflow/tf-${TENSORFLOW_VERSION}/tensorflow-${TENSORFLOW_VERSION}-cp38-cp38-linux_x86_64.whl
+RUN curl --output /lib/libtpu.so https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/libtpu/1.3.0/libtpu.so
 
 # LIBTPU installed here:
 ENV PIP_LIBTPU=/usr/local/lib/python3.8/site-packages/libtpu/libtpu.so
@@ -20,16 +22,16 @@ ENV DEFAULT_LIBTPU=/lib/libtpu.so
 ENV PYTORCH_LIBTPU=/lib/torch-libtpu.so
 ENV JAX_LIBTPU=/lib/jax-libtpu.so
 
+# Install JAX & related packages
 # https://cloud.google.com/tpu/docs/jax-quickstart-tpu-vm#install_jax_on_your_cloud_tpu_vm
-RUN pip install "jax[tpu]==0.3.10" -f https://storage.googleapis.com/jax-releases/libtpu_releases.html
+RUN pip install "jax[tpu]==0.3.10" -f https://storage.googleapis.com/jax-releases/libtpu_releases.html trax flax optax elegy git+https://github.com/deepmind/dm-haiku jraph distrax
 
 RUN cp $PIP_LIBTPU $JAX_LIBTPU
 
+# Install Pytorch & related packages
 # https://cloud.google.com/tpu/docs/pytorch-xla-ug-tpu-vm#changing_pytorch_version
-RUN pip install torch==${TORCH_VERSION}
-  
 # The URL doesn't include patch version. i.e. must use 1.11 instead of 1.11.0
-RUN pip install torch_xla[tpuvm] -f https://storage.googleapis.com/tpu-pytorch/wheels/tpuvm/torch_xla-${TORCH_VERSION%.*}-cp38-cp38-linux_x86_64.whl
+RUN pip install torch==${TORCH_VERSION} torch_xla[tpuvm] -f https://storage.googleapis.com/tpu-pytorch/wheels/tpuvm/torch_xla-${TORCH_VERSION%.*}-cp38-cp38-linux_x86_64.whl torchvision==0.12.0 torchtext==0.12.0 torchaudio==0.11.0
 
 RUN cp $PIP_LIBTPU $PYTORCH_LIBTPU
 
@@ -39,6 +41,9 @@ RUN sed -i "s|^\(\(.*\)libtpu.configure_library_path.*\)|\1\n\2os.environ['TPU_L
 
 # Packages needed by the Notebook editor:
 RUN pip install papermill jupyterlab python-lsp-server[all] jupyterlab-lsp
+
+# Additional useful packages should be added here:
+RUN pip install pandas
 
 # Set these env vars so that they don't produce errs calling the metadata server to load them:
 ENV TPU_ACCELERATOR_TYPE=v3-8
