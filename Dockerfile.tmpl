@@ -497,6 +497,8 @@ RUN pip install flashtext && \
     pip install optuna && \
     pip install plotly_express && \
     pip install albumentations && \
+    # b/254245259 catalyst requires accelerate but it breaks with the version 0.13.1
+    pip install accelerate==0.12.0 && \
     # Breaks protobuf compatibiilty in newer versions:
     pip install catalyst tensorboardX==2.5.1 && \
     # b/206990323 osmx 1.1.2 requires numpy >= 1.21 which we don't want. 
@@ -533,6 +535,8 @@ RUN pip install flashtext && \
     pip install ipympl==0.7.0 && \
     pip install pandarallel && \
     pip install onnx && \
+    pip install tables && \
+    pip install openpyxl && \
     /tmp/clean-layer.sh
 
 # Download base easyocr models.

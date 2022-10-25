@@ -56,22 +56,6 @@ pipeline {
             '''
           }
         }
-        stage('tensorflow TPU') {
-          options {
-            timeout(time: 240, unit: 'MINUTES')
-          }
-          steps {
-            sh '''#!/bin/bash
-              set -exo pipefail
-              source tpu/config.txt
-              cd packages/
-              ./build_package --base-image gcr.io/kaggle-images/python:${BASE_IMAGE_TAG} \
-                --package tpu-tensorflow \
-                --version $TENSORFLOW_VERSION \
-                --push
-            '''
-          }
-        }
       }
     }
     stage('Build/Test/Diff') {
@@ -142,17 +126,37 @@ pipeline {
               }
             }
             stage('Test GPU Image') {
-              options {
-                timeout(time: 20, unit: 'MINUTES')
-              }
-              steps {
-                sh '''#!/bin/bash
-                  set -exo pipefail
+              stages {
+                stage('Test on P100') {
+                  agent { label 'ephemeral-linux-gpu' }
+                  options {
+                    timeout(time: 20, unit: 'MINUTES')
+                  }
+                  steps {
+                    sh '''#!/bin/bash
+                      set -exo pipefail
 
-                  date
-                  docker pull gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
-                  ./test --gpu --image gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
-                '''
+                      date
+                      docker pull gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
+                      ./test --gpu --image gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
+                    '''
+                  }
+                }
+                stage('Test on T4x2') {
+                  agent { label 'ephemeral-linux-gpu-t4x2' }
+                  options {
+                    timeout(time: 20, unit: 'MINUTES')
+                  }
+                  steps {
+                    sh '''#!/bin/bash
+                      set -exo pipefail
+
+                      date
+                      docker pull gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
+                      ./test --gpu --image gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
+                    '''
+                  }
+                }
               }
             }
             stage('Diff GPU Image') {
@@ -171,22 +175,11 @@ pipeline {
           stages {
             stage('Build Tensorflow TPU Image') {
               options {
-                timeout(time: 20, unit: 'MINUTES')
+                timeout(time: 60, unit: 'MINUTES')
               }
               steps {
                 sh '''#!/bin/bash
                   set -exo pipefail
-
-                  # Login to docker to get access to gcr.io/cloud-tpu-v2-images/libtpu
-                  # SA: jenkins-test@kaggle-playground-170215.iam.gserviceaccount.com
-                  # To grant access to a SA, start a TPU VM with that SA once.
-                  # Disable echo to avoid printing sensitive tokens:
-                  set +x
-                  METADATA=http://metadata.google.internal/computeMetadata/v1
-                  SVC_ACCT=$METADATA/instance/service-accounts/default
-                  ACCESS_TOKEN=$(/usr/bin/curl -s -H 'Metadata-Flavor: Google' $SVC_ACCT/token | cut -d'"' -f 4)
-                  docker login --username oauth2accesstoken --password $ACCESS_TOKEN https://gcr.io
-                  set -x
 
                   ./tpu/build | ts
                   ./push --tpu ${PRETEST_TAG}
