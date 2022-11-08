@@ -113,8 +113,8 @@ RUN conda install -c pytorch magma-cuda${CUDA_MAJOR_VERSION}${CUDA_MINOR_VERSION
     # which makes sure that libomp is loaded when these libraries are loaded.
     conda install -y openmp && \
     pip install patchelf && \
-    patchelf --add-needed libomp.so.5 /opt/conda/lib/python3.7/site-packages/torchtext/lib/libtorchtext.so && \
-    patchelf --add-needed libomp.so.5 /opt/conda/lib/python3.7/site-packages/torchaudio/lib/libtorchaudio.so && \
+    patchelf --add-needed libomp.so /opt/conda/lib/python3.7/site-packages/torchtext/lib/libtorchtext.so && \
+    patchelf --add-needed libomp.so /opt/conda/lib/python3.7/site-packages/torchaudio/lib/libtorchaudio.so && \
     rm -rf /tmp/torch && \
     /tmp/clean-layer.sh
 {{ else }}
