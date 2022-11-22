@@ -80,16 +80,16 @@ ENV PROJ_LIB=/opt/conda/share/proj
 # the remaining pip commands: https://www.anaconda.com/using-pip-in-a-conda-environment/
 RUN conda config --add channels nvidia && \
     conda config --add channels rapidsai && \
+    conda install -c conda-forge mamba && \
     # Base image channel order: conda-forge (highest priority), defaults.
     # End state: rapidsai (highest priority), nvidia, conda-forge, defaults.
-    conda install mkl cartopy=0.19 imagemagick=7.1 pyproj==3.1.0 && \
+    mamba install mkl cartopy=0.19 imagemagick=7.1 pyproj==3.1.0 && \
     /tmp/clean-layer.sh
 
 {{ if eq .Accelerator "gpu" }}
 
 # b/232247930: uninstall pyarrow to avoid double installation with the GPU specific version.
 RUN pip uninstall -y pyarrow && \
-    conda install -c conda-forge mamba && \
     mamba install -y cudf cuml && \
     # b/255757999: Force switch the cudatoolkit version back to the existing installation so it is compatible with pytorch
     conda remove -y --force cudatoolkit=11.2.72 && mamba install --channel https://conda.anaconda.org/conda-forge/linux-64 cudatoolkit=11.2.2 && \
@@ -98,22 +98,22 @@ RUN pip uninstall -y pyarrow && \
 
 # Install implicit
 {{ if eq .Accelerator "gpu" }}
-RUN conda install implicit implicit-proc=*=gpu && \
+RUN mamba install implicit implicit-proc=*=gpu && \
     /tmp/clean-layer.sh
 {{ else }}
-RUN conda install implicit && \
+RUN mamba install implicit && \
     /tmp/clean-layer.sh
 {{ end}}
 
 # Install PyTorch
 {{ if eq .Accelerator "gpu" }}
 COPY --from=torch_whl /tmp/whl/*.whl /tmp/torch/
-RUN conda install -c pytorch magma-cuda${CUDA_MAJOR_VERSION}${CUDA_MINOR_VERSION} && \
+RUN mamba install -c pytorch magma-cuda${CUDA_MAJOR_VERSION}${CUDA_MINOR_VERSION} && \
     pip install /tmp/torch/*.whl && \
     # b/255757999 openmp (libomp.so) is an dependency of libtorchtext and libtorchaudio but
     # the built from source versions don't seem to properly link it in. This forces the dep
     # which makes sure that libomp is loaded when these libraries are loaded.
-    conda install -y openmp && \
+    mamba install -y openmp && \
     pip install patchelf && \
     patchelf --add-needed libomp.so /opt/conda/lib/python3.7/site-packages/torchtext/lib/libtorchtext.so && \
     patchelf --add-needed libomp.so /opt/conda/lib/python3.7/site-packages/torchaudio/lib/libtorchaudio.so && \
