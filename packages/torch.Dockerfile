@@ -12,9 +12,17 @@ ARG CUDA_MINOR_VERSION
 # TORCHVISION_VERSION is mandatory
 RUN test -n "$TORCHVISION_VERSION"
 
+# Use mamba to speed up conda installs
+RUN conda install -c conda-forge mamba
+
+# Install cudf/cuml so that cudatoolkit upgrades are included in the pytorch build
+RUN conda config --add channels nvidia && \
+    conda config --add channels rapidsai
+RUN mamba install -y cudf cuml
+
 # Build instructions: https://github.com/pytorch/pytorch#from-source
-RUN conda install astunparse numpy ninja pyyaml mkl mkl-include setuptools cmake cffi typing_extensions future six requests dataclasses
-RUN conda install -c pytorch magma-cuda${CUDA_MAJOR_VERSION}${CUDA_MINOR_VERSION}
+RUN mamba install astunparse numpy ninja pyyaml mkl mkl-include setuptools cmake cffi typing_extensions future six requests dataclasses
+RUN mamba install -c pytorch magma-cuda${CUDA_MAJOR_VERSION}${CUDA_MINOR_VERSION}
 
 # By default, it uses the version from version.txt which includes the `a0` (alpha zero) suffix and part of the git hash.
 # This causes dependency conflicts like these: https://paste.googleplex.com/4786486378496000
@@ -46,7 +54,7 @@ RUN sudo apt-get update && \
     # ncurses.h is required for this install
     sudo apt-get install libncurses-dev && \
     # Fixing the build: https://github.com/pytorch/audio/issues/666#issuecomment-635928685
-    conda install -c conda-forge ncurses && \
+    mamba install -c conda-forge ncurses && \
     cd /usr/local/src && \
     git clone https://github.com/pytorch/audio && \
     cd audio && \
