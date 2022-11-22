@@ -13,8 +13,11 @@ ADD patches/template_conf.json /opt/kaggle/conf.json
 # Tensorflow wheel:
 # When tensorflow is compatible with being installed alongside JAX/Pytorch then we no longer need to include the wheel and can install it directly.
 # RUN pip install https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/tensorflow/tf-${TENSORFLOW_VERSION}/tensorflow-${TENSORFLOW_VERSION}-cp38-cp38-linux_x86_64.whl
+# To install offline:
+# pip install --no-index --find-links /lib/wheels/sources /lib/wheels/tensorflow-2.9.1-cp38-cp38-linux_x86_64.whl
 RUN mkdir -p /lib/wheels && curl --output /lib/wheels/tensorflow-${TENSORFLOW_VERSION}-cp38-cp38-linux_x86_64.whl https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/tensorflow/tf-${TENSORFLOW_VERSION}/tensorflow-${TENSORFLOW_VERSION}-cp38-cp38-linux_x86_64.whl
 RUN curl --output /lib/libtpu.so https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/libtpu/1.3.0/libtpu.so
+RUN pip download -d /lib/wheels/sources /lib/wheels/tensorflow-${TENSORFLOW_VERSION}-cp38-cp38-linux_x86_64.whl
 
 # LIBTPU installed here:
 ENV PIP_LIBTPU=/usr/local/lib/python3.8/site-packages/libtpu/libtpu.so
