@@ -91,8 +91,6 @@ RUN conda config --add channels nvidia && \
 # b/232247930: uninstall pyarrow to avoid double installation with the GPU specific version.
 RUN pip uninstall -y pyarrow && \
     mamba install -y cudf cuml && \
-    # b/255757999: Force switch the cudatoolkit version back to the existing installation so it is compatible with pytorch
-    conda remove -y --force cudatoolkit=11.2.72 && mamba install --channel https://conda.anaconda.org/conda-forge/linux-64 cudatoolkit=11.2.2 && \
     /tmp/clean-layer.sh
 {{ end }}
 
