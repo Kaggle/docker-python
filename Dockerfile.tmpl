@@ -148,6 +148,12 @@ RUN pip install spacy && \
     /tmp/clean-layer.sh
 {{ end}}
 
+{{ if eq .Accelerator "gpu" }}
+
+RUN conda install autokeras && \
+    /tmp/clean-layer.sh
+{{ end }}
+
 # Install GPU specific packages
 {{ if eq .Accelerator "gpu" }}
 # Install GPU-only packages
