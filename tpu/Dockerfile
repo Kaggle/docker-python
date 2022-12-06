@@ -14,6 +14,22 @@ ENV ISTPUVM=1
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 ADD patches/template_conf.json /opt/kaggle/conf.json
 
+# Add BigQuery client proxy settings, kaggle secrets etc.
+ENV PYTHONUSERBASE "/root/.local"
+ADD patches/kaggle_secrets.py /root/.local/lib/python3.8/site-packages/kaggle_secrets.py
+ADD patches/kaggle_session.py /root/.local/lib/python3.8/site-packages/kaggle_session.py
+ADD patches/kaggle_web_client.py /root/.local/lib/python3.8/site-packages/kaggle_web_client.py
+ADD patches/kaggle_datasets.py /root/.local/lib/python3.8/site-packages/kaggle_datasets.py
+
+# Disable GCP integrations for now
+# ADD patches/kaggle_gcp.py /root/.local/lib/python3.8/site-packages/kaggle_gcp.py
+
+# Disable logging to file (why do we need this?)
+# ADD patches/log.py /root/.local/lib/python3.8/site-packages/log.py
+
+# sitecustomize adds significant latency to ipython kernel startup and should only be added if needed
+# ADD patches/sitecustomize.py /root/.local/lib/python3.8/site-packages/sitecustomize.py
+
 # Tensorflow wheel:
 # When tensorflow is compatible with being installed alongside JAX/Pytorch then we no longer need to include the wheel and can install it directly.
 # RUN pip install https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/tensorflow/tf-${TENSORFLOW_VERSION}/tensorflow-${TENSORFLOW_VERSION}-cp38-cp38-linux_x86_64.whl
