@@ -239,6 +239,7 @@ RUN pip install scipy && \
     apt-get install -y pandoc && \
     pip install git+https://github.com/scikit-learn-contrib/py-earth.git@issue191 && \
     pip install essentia && \
+    apt-get install -y git-lfs && \
     /tmp/clean-layer.sh
 
 # vtk with dependencies
