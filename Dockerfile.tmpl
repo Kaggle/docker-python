@@ -218,7 +218,8 @@ RUN pip install ibis-framework && \
 RUN pip install scipy && \
     pip install scikit-learn && \
     # Scikit-learn accelerated library for x86 
-    pip install scikit-learn-intelex && \
+    # TODO(b/262387811#4) Unpin when the package is fixed.
+    pip install scikit-learn-intelex==2021.7.1 && \
     # HDF5 support
     pip install h5py && \
     pip install biopython && \
