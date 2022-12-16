@@ -102,6 +102,7 @@ pipeline {
           }
         }
         stage('GPU') {
+          agent { label 'jenkins-cd-agent-linux-gpu-p100' }
           stages {
             stage('Build GPU Image') {
               agent { label 'jenkins-cd-agent-linux-gpu-p100' }
