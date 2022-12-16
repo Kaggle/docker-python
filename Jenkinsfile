@@ -102,7 +102,7 @@ pipeline {
           }
         }
         stage('GPU') {
-          stages {  
+          stages {
             stage('Build GPU Image') {
               agent { label 'jenkins-cd-agent-linux-gpu-p100' }
               options {
@@ -126,7 +126,7 @@ pipeline {
               }
             }
             stage('Test GPU Image') {
-              stages {
+              parallel {
                 stage('Test on P100') {
                   agent { label 'jenkins-cd-agent-linux-gpu-p100' }
                   options {
