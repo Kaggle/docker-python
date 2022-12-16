@@ -21,11 +21,11 @@ pipeline {
 
   stages {
     stage('Build/Test/Diff') {
-      parallel {
+      stages {
         stage('GPU') {
           stages {
             stage('Test GPU Image') {
-              stages {
+              parallel {
                 stage('Test on P100') {
                   agent { label 'jenkins-cd-agent-linux-gpu-p100' }
                   options {
