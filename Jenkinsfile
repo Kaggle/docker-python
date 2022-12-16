@@ -77,16 +77,18 @@ pipeline {
             }
             stage('Test CPU Image') {
               options {
-                timeout(time: 10, unit: 'MINUTES')
+                timeout(time: 20, unit: 'MINUTES')
               }
               steps {
-                sh '''#!/bin/bash
-                  set -exo pipefail
+                retry(3) {
+                  sh '''#!/bin/bash
+                    set -exo pipefail
 
-                  date
-                  docker pull gcr.io/kaggle-images/python:${PRETEST_TAG}
-                  ./test --image gcr.io/kaggle-images/python:${PRETEST_TAG}
-                '''
+                    date
+                    docker pull gcr.io/kaggle-images/python:${PRETEST_TAG}
+                    ./test --image gcr.io/kaggle-images/python:${PRETEST_TAG}
+                  '''
+                }
               }
             }
             stage('Diff CPU image') {
@@ -130,16 +132,18 @@ pipeline {
                 stage('Test on P100') {
                   agent { label 'ephemeral-linux-gpu' }
                   options {
-                    timeout(time: 20, unit: 'MINUTES')
+                    timeout(time: 30, unit: 'MINUTES')
                   }
                   steps {
-                    sh '''#!/bin/bash
-                      set -exo pipefail
+                    retry(3) {
+                      sh '''#!/bin/bash
+                        set -exo pipefail
 
-                      date
-                      docker pull gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
-                      ./test --gpu --image gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
-                    '''
+                        date
+                        docker pull gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
+                        ./test --gpu --image gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
+                      '''
+                    }
                   }
                 }
                 stage('Test on T4x2') {
@@ -148,13 +152,15 @@ pipeline {
                     timeout(time: 30, unit: 'MINUTES')
                   }
                   steps {
-                    sh '''#!/bin/bash
-                      set -exo pipefail
+                    retry(3) {
+                      sh '''#!/bin/bash
+                        set -exo pipefail
 
-                      date
-                      docker pull gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
-                      ./test --gpu --image gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
-                    '''
+                        date
+                        docker pull gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
+                        ./test --gpu --image gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
+                      '''
+                    }
                   }
                 }
               }
