@@ -23,6 +23,7 @@ pipeline {
     stage('Build/Test/Diff') {
       stages {
         stage('GPU') {
+          agent { label 'jenkins-cd-agent-linux-gpu-p100' }
           stages {
             stage('Test GPU Image') {
               parallel {
