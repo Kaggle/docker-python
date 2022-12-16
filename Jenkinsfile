@@ -126,7 +126,7 @@ pipeline {
               }
             }
             stage('Test GPU Image') {
-              parallel {
+              stages {
                 stage('Test on P100') {
                   agent { label 'jenkins-cd-agent-linux-gpu-p100' }
                   options {
