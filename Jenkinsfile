@@ -104,9 +104,9 @@ pipeline {
           }
         }
         stage('GPU') {
-          agent { label 'ephemeral-linux-gpu' }
-          stages {  
+          stages {
             stage('Build GPU Image') {
+              agent { label 'jenkins-cd-agent-linux-gpu-p100' }
               options {
                 timeout(time: 180, unit: 'MINUTES')
               }
@@ -130,7 +130,7 @@ pipeline {
             stage('Test GPU Image') {
               stages {
                 stage('Test on P100') {
-                  agent { label 'ephemeral-linux-gpu' }
+                  agent { label 'jenkins-cd-agent-linux-gpu-p100' }
                   options {
                     timeout(time: 30, unit: 'MINUTES')
                   }
