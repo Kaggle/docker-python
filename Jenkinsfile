@@ -23,12 +23,12 @@ pipeline {
     stage('Build/Test/Diff') {
       stages {
         stage('GPU') {
-          agent { label 'jenkins-cd-agent-linux-gpu-p100' }
+          agent { label 'ephemeral-linux-gpu-p100' }
           stages {
             stage('Test GPU Image') {
               parallel {
                 stage('Test on P100') {
-                  agent { label 'jenkins-cd-agent-linux-gpu-p100' }
+                  agent { label 'ephemeral-linux-gpu-p100' }
                   options {
                     timeout(time: 20, unit: 'MINUTES')
                   }
