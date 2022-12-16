@@ -23,12 +23,11 @@ pipeline {
     stage('Build/Test/Diff') {
       parallel {
         stage('GPU') {
-          agent { label 'ephemeral-linux-gpu' }
           stages {
             stage('Test GPU Image') {
               stages {
                 stage('Test on P100') {
-                  agent { label 'ephemeral-linux-gpu' }
+                  agent { label 'jenkins-cd-agent-linux-gpu-p100' }
                   options {
                     timeout(time: 20, unit: 'MINUTES')
                   }
@@ -66,33 +65,6 @@ pipeline {
 
                 docker pull gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
                 ./diff --gpu --target gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
-              '''
-              }
-            }
-          }
-        }
-        stage('TPU VM') {
-          stages {
-            stage('Build Tensorflow TPU Image') {
-              options {
-                timeout(time: 60, unit: 'MINUTES')
-              }
-              steps {
-                sh '''#!/bin/bash
-                  set -exo pipefail
-
-                  ./tpu/build | ts
-                  ./push --tpu ${PRETEST_TAG}
-                '''
-              }
-            }
-            stage('Diff TPU VM Image') {
-              steps {
-                sh '''#!/bin/bash
-                set -exo pipefail
-
-                docker pull gcr.io/kaggle-private-byod/python-tpuvm:${PRETEST_TAG}
-                ./diff --tpu --target gcr.io/kaggle-private-byod/python-tpuvm:${PRETEST_TAG}
               '''
               }
             }
