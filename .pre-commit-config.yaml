@@ -39,9 +39,8 @@ repos:
       - id: mdformat
         additional_dependencies:
           - mdformat-gfm
-          - mdformat-black
+          # - mdformat-black
           - mdformat_frontmatter
-        exclude: CHANGELOG.md
 
   - repo: https://github.com/asottile/yesqa
     rev: v1.4.0
@@ -49,7 +48,7 @@ repos:
       - id: yesqa
 
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: 'v0.0.226'
+    rev: v0.0.226
     hooks:
       - id: ruff
         # Respect `exclude` and `extend-exclude` settings.
