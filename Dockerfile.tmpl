@@ -260,85 +260,85 @@ RUN apt-get install -y libgl1-mesa-glx && \
     pip install xvfbwrapper && \
     /tmp/clean-layer.sh
 
-RUN pip install mpld3 && \
-    pip install gpxpy && \
-    pip install arrow && \
-    pip install nilearn && \
-    pip install nibabel && \
-    pip install pronouncing && \
-    pip install markovify && \
-    pip install imgaug && \
-    pip install preprocessing && \
-    pip install path.py && \
-    pip install Geohash && \
+RUN pip install mpld3 \
+        gpxpy \
+        arrow \
+        nilearn \
+        nibabel \
+        pronouncing \
+        markovify \
+        imgaug \
+        preprocessing \
+        path.py \
+        Geohash && \
     # https://github.com/vinsci/geohash/issues/4
     sed -i -- 's/geohash/.geohash/g' /opt/conda/lib/python3.7/site-packages/Geohash/__init__.py && \
-    pip install deap && \
-    pip install tpot && \
-    pip install scikit-optimize && \
-    pip install haversine && \
-    pip install toolz cytoolz && \
-    pip install plotly && \
-    pip install hyperopt && \
-    pip install fitter && \
-    pip install langid && \
-    # Delorean. Useful for dealing with datetime
-    pip install delorean && \
-    pip install trueskill && \
-    # Useful data exploration libraries (for missing data and generating reports)
-    pip install missingno && \
-    pip install pandas-profiling && \
-    pip install s2sphere && \
-    pip install bayesian-optimization && \
-    pip install matplotlib-venn && \
-    # b/184083722 pyldavis >= 3.3 requires numpy >= 1.20.0 but TensorFlow 2.4.1 / 2.5.0 requires 1.19.2
-    pip install pyldavis==3.2.2 && \
-    pip install mlxtend && \
-    pip install altair && \
-    pip install ImageHash && \
-    pip install ecos && \
-    pip install CVXcanon && \
-    pip install pymc3 && \
-    pip install imagecodecs && \
-    pip install tifffile && \
-    pip install spectral && \
-    pip install descartes && \
-    pip install geojson && \
-    pip install pydicom && \
-    pip install wavio && \
-    pip install SimpleITK && \
-    pip install hmmlearn && \
-    pip install bayespy && \
-    pip install gplearn && \
-    pip install PyAstronomy && \
-    pip install squarify && \
-    pip install fuzzywuzzy && \
-    pip install python-louvain && \
-    pip install pyexcel-ods && \
-    pip install sklearn-pandas && \
-    pip install stemming && \
-    # b/266272046 prophet 1.1.2 breaks the test
-    pip install prophet==1.1.1 && \
-    pip install holoviews && \
-    pip install geoviews && \
-    pip install hypertools && \
-    pip install py_stringsimjoin && \
-    pip install mlens && \
-    pip install scikit-multilearn && \
-    pip install cleverhans && \
-    pip install leven && \
-    pip install catboost && \
-    pip install lightfm && \
-    pip install folium && \
-    pip install scikit-plot && \
-    pip install fury dipy && \
-    pip install plotnine && \
-    pip install scikit-surprise && \
-    pip install pymongo && \
-    pip install geoplot && \
-    pip install eli5 && \
-    pip install kaggle && \
-    pip install mock && \
+    pip install deap \
+        tpot \
+        scikit-optimize \
+        haversine \
+        toolz cytoolz \
+        plotly \
+        hyperopt \
+        fitter \
+        langid \
+        # Delorean. Useful for dealing with datetime
+        delorean \
+        trueskill \
+        # Useful data exploration libraries (for missing data and generating reports)
+        missingno \
+        pandas-profiling \
+        s2sphere \
+        bayesian-optimization \
+        matplotlib-venn \
+        # b/184083722 pyldavis >= 3.3 requires numpy >= 1.20.0 but TensorFlow 2.4.1 / 2.5.0 requires 1.19.2
+        pyldavis==3.2.2 \
+        mlxtend \
+        altair \
+        ImageHash \
+        ecos \
+        CVXcanon \
+        pymc3 \
+        imagecodecs \
+        tifffile \
+        spectral \
+        descartes \
+        geojson \
+        pydicom \
+        wavio \
+        SimpleITK \
+        hmmlearn \
+        bayespy \
+        gplearn \
+        PyAstronomy \
+        squarify \
+        fuzzywuzzy \
+        python-louvain \
+        pyexcel-ods \
+        sklearn-pandas \
+        stemming \
+        # b/266272046 prophet 1.1.2 breaks the test
+        prophet==1.1.1 \
+        holoviews \
+        geoviews \
+        hypertools \
+        py_stringsimjoin \
+        mlens \
+        scikit-multilearn \
+        cleverhans \
+        leven \
+        catboost \
+        lightfm \
+        folium \
+        scikit-plot \
+        fury dipy \
+        plotnine \
+        scikit-surprise \
+        pymongo \
+        geoplot \
+        eli5 \
+        kaggle \
+        mock && \
     /tmp/clean-layer.sh
 
 RUN pip install tensorpack && \
