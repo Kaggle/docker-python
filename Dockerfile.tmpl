@@ -184,7 +184,7 @@ RUN pip install pysal \
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
     # b/198300835 kornia 4.1.0 is not compatible with our version of numpy.
-    pip install gensim==4.0.1 && \
+    pip install gensim==4.0.1 \
         textblob \
         wordcloud \
         xgboost \
