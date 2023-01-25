@@ -345,55 +345,52 @@ RUN pip install tensorpack && \
     # Add google PAIR-code Facets
     cd /opt/ && git clone https://github.com/PAIR-code/facets && cd facets/ && jupyter nbextension install facets-dist/ --user && \
     export PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/ && \
-    pip install pycountry && \
-    pip install iso3166 && \
-    pip install pydash && \
     pip install kmodes --no-dependencies && \
-    pip install librosa && \
-    pip install polyglot && \
-    pip install mmh3 && \
-    pip install fbpca && \
-    pip install sentencepiece && \
-    pip install cufflinks && \
-    pip install lime && \
-    pip install memory_profiler && \
+    pip install librosa \
+        polyglot \
+        mmh3 \
+        fbpca \
+        sentencepiece \
+        cufflinks \
+        lime \
+        memory_profiler && \
     /tmp/clean-layer.sh
 
 # install cython & cysignals before pyfasttext
-RUN pip install --upgrade cython && \
-    pip install --upgrade cysignals && \
-    pip install pyfasttext && \
-    pip install fasttext && \
+RUN pip install cython && \
+        cysignals \
+        pyfasttext \
+        fasttext && \
     apt-get install -y libhunspell-dev && pip install hunspell && \
-    pip install annoy && \
-    pip install category_encoders && \
-    # google-cloud-automl 2.0.0 introduced incompatible API changes, need to pin to 1.0.1
-    pip install google-cloud-automl==1.0.1 && \
-    pip install google-api-core==1.33.2 && \
-    pip install google-cloud-bigquery==2.2.0 && \
-    pip install google-cloud-storage && \
-    pip install google-cloud-translate==3.* && \
-    pip install google-cloud-language==2.* && \
-    pip install google-cloud-videointelligence==2.* && \
-    pip install google-cloud-vision==2.* && \
+    pip install annoy \
+        category_encoders \
+        # google-cloud-automl 2.0.0 introduced incompatible API changes, need to pin to 1.0.1
+        google-cloud-automl==1.0.1 \
+        google-api-core==1.33.2 \
+        google-cloud-bigquery==2.2.0 \
+        google-cloud-storage \
+        google-cloud-translate==3.* \
+        google-cloud-language==2.* \
+        google-cloud-videointelligence==2.* \
+        google-cloud-vision==2.* && \
     # b/183041606#comment5: the Kaggle data proxy doesn't support these APIs. If the library is missing, it falls back to using a regular BigQuery query to fetch data.
     pip uninstall -y google-cloud-bigquery-storage && \
     # After launch this should be installed from pip
-    pip install git+https://github.com/googleapis/python-aiplatform.git@mb-release && \
-    pip install ortools && \
-    pip install scattertext && \
-    # Pandas data reader
-    pip install pandas-datareader && \
-    pip install wordsegment && \
-    pip install wordbatch && \
-    pip install emoji && \
-    # Add Japanese morphological analysis engine
-    pip install janome && \
-    pip install wfdb && \
-    pip install vecstack && \
-    # yellowbrick machine learning visualization library
-    pip install yellowbrick && \
-    pip install mlcrate && \
+    pip install git+https://github.com/googleapis/python-aiplatform.git@mb-release \
+        ortools \
+        scattertext \
+        # Pandas data reader
+        pandas-datareader \
+        wordsegment \
+        wordbatch \
+        emoji \
+        # Add Japanese morphological analysis engine
+        janome \
+        wfdb \
+        vecstack \
+        # yellowbrick machine learning visualization library
+        yellowbrick \
+        mlcrate && \
     /tmp/clean-layer.sh
 
 RUN pip install bleach && \
