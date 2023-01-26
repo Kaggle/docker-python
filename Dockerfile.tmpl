@@ -106,7 +106,12 @@ RUN conda install -c pytorch magma-cuda${CUDA_MAJOR_VERSION}${CUDA_MINOR_VERSION
     rm -rf /tmp/torch && \
     /tmp/clean-layer.sh
 {{ else }}
-RUN pip install torch==$TORCH_VERSION+cpu torchvision==$TORCHVISION_VERSION+cpu torchaudio==$TORCHAUDIO_VERSION+cpu torchtext==$TORCHTEXT_VERSION -f https://download.pytorch.org/whl/torch_stable.html && \
+RUN pip install \
+        torch==$TORCH_VERSION+cpu \
+        torchvision==$TORCHVISION_VERSION+cpu \
+        torchaudio==$TORCHAUDIO_VERSION+cpu \
+        torchtext==$TORCHTEXT_VERSION \
+    -f https://download.pytorch.org/whl/torch_stable.html && \
     /tmp/clean-layer.sh
 {{ end }}
 
@@ -155,39 +160,39 @@ RUN pip install spacy && \
 # Install GPU specific packages
 {{ if eq .Accelerator "gpu" }}
 # Install GPU-only packages
-RUN pip install pycuda && \
-    pip install pynvrtc && \
-    pip install pynvml && \
-    pip install nnabla-ext-cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
+RUN pip install pycuda \
+        pynvrtc \
+        pynvml \
+        nnabla-ext-cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
     /tmp/clean-layer.sh
 {{ end }}
 
-RUN pip install pysal && \
-    pip install seaborn python-dateutil dask python-igraph && \
-    pip install pyyaml joblib husl geopy mne pyshp && \
-    pip install pandas && \
-    pip install flax && \
+RUN pip install pysal \
+        seaborn python-dateutil dask python-igraph \
+        pyyaml joblib husl geopy mne pyshp \
+        pandas \
+        flax && \
     # Install h2o from source.
     # Use `conda install -c h2oai h2o` once Python 3.7 version is released to conda.
     apt-get install -y default-jre-headless && \
-    pip install -f https://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o && \
-    pip install tensorflow-gcs-config==2.6.0 && \
-    pip install tensorflow-addons==0.14.0 && \
-    pip install tensorflow_decision_forests==0.2.0 && \
+    pip install -f https://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o \
+        tensorflow-gcs-config==2.6.0 \
+        tensorflow-addons==0.14.0 \
+        tensorflow_decision_forests==0.2.0 && \
     /tmp/clean-layer.sh
 
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
     # b/198300835 kornia 4.1.0 is not compatible with our version of numpy.
-    pip install gensim==4.0.1 && \
-    pip install textblob && \
-    pip install wordcloud && \
-    pip install xgboost && \
-    pip install pydot && \
-    # Pinned because it breaks theano test with the latest version (b/178107003).
-    pip install theano-pymc==1.0.11 && \
-    pip install python-Levenshtein && \
-    pip install hep_ml && \
+    pip install gensim==4.0.1 \
+        textblob \
+        wordcloud \
+        xgboost \
+        pydot \
+        # Pinned because it breaks theano test with the latest version (b/178107003).
+        theano-pymc==1.0.11 \
+        python-Levenshtein \
+        hep_ml && \
     # NLTK Project datasets
     mkdir -p /usr/share/nltk_data && \
     # NLTK Downloader no longer continues smoothly after an error, so we explicitly list
@@ -208,8 +213,8 @@ RUN apt-get install -y libfreetype6-dev && \
     twitter_samples udhr2 udhr unicode_samples universal_tagset universal_treebanks_v20 \
     vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
     # Stop-words
-    pip install stop-words && \
-    pip install scikit-image && \
+    pip install stop-words \
+        scikit-image && \
     /tmp/clean-layer.sh
 
 RUN pip install ibis-framework && \
@@ -219,31 +224,31 @@ RUN pip install ibis-framework && \
     pip install gluoncv && \
     /tmp/clean-layer.sh
 
-RUN pip install scipy && \
-    pip install scikit-learn && \
-    # Scikit-learn accelerated library for x86
-    # TODO(b/262387811#4) Unpin when the package is fixed.
-    pip install scikit-learn-intelex==2021.6.3 && \
-    # HDF5 support
-    pip install h5py && \
-    pip install biopython && \
-    # PUDB, for local debugging convenience
-    pip install pudb && \
-    pip install imbalanced-learn && \
-    # Profiling and other utilities
-    pip install line_profiler && \
-    pip install orderedmultidict && \
-    pip install smhasher && \
-    pip install bokeh && \
-    pip install numba && \
-    pip install datashader && \
-    # Boruta (python implementation)
-    pip install Boruta && \
+RUN pip install scipy \
+        scikit-learn \
+        # Scikit-learn accelerated library for x86
+        # TODO(b/262387811#4) Unpin when the package is fixed.
+        scikit-learn-intelex==2021.6.3 \
+        # HDF5 support
+        h5py \
+        biopython \
+        # PUDB, for local debugging convenience
+        pudb \
+        imbalanced-learn \
+        # Profiling and other utilities
+        line_profiler \
+        orderedmultidict \
+        smhasher \
+        bokeh \
+        numba \
+        datashader \
+        # Boruta (python implementation)
+        Boruta && \
     apt-get install -y graphviz && pip install graphviz && \
     # Pandoc is a dependency of deap
     apt-get install -y pandoc && \
-    pip install git+https://github.com/scikit-learn-contrib/py-earth.git@issue191 && \
-    pip install essentia && \
+    pip install git+https://github.com/scikit-learn-contrib/py-earth.git@issue191 \
+        essentia && \
     apt-get install -y git-lfs && \
     /tmp/clean-layer.sh
 
@@ -255,196 +260,193 @@ RUN apt-get install -y libgl1-mesa-glx && \
     pip install xvfbwrapper && \
     /tmp/clean-layer.sh
 
-RUN pip install mpld3 && \
-    pip install gpxpy && \
-    pip install arrow && \
-    pip install nilearn && \
-    pip install nibabel && \
-    pip install pronouncing && \
-    pip install markovify && \
-    pip install imgaug && \
-    pip install preprocessing && \
-    pip install path.py && \
-    pip install Geohash && \
+RUN pip install mpld3 \
+        gpxpy \
+        arrow \
+        nilearn \
+        nibabel \
+        pronouncing \
+        markovify \
+        imgaug \
+        preprocessing \
+        path.py \
+        Geohash && \
     # https://github.com/vinsci/geohash/issues/4
     sed -i -- 's/geohash/.geohash/g' /opt/conda/lib/python3.7/site-packages/Geohash/__init__.py && \
-    pip install deap && \
-    pip install tpot && \
-    pip install scikit-optimize && \
-    pip install haversine && \
-    pip install toolz cytoolz && \
-    pip install plotly && \
-    pip install hyperopt && \
-    pip install fitter && \
-    pip install langid && \
-    # Delorean. Useful for dealing with datetime
-    pip install delorean && \
-    pip install trueskill && \
-    # Useful data exploration libraries (for missing data and generating reports)
-    pip install missingno && \
-    pip install pandas-profiling && \
-    pip install s2sphere && \
-    pip install bayesian-optimization && \
-    pip install matplotlib-venn && \
-    # b/184083722 pyldavis >= 3.3 requires numpy >= 1.20.0 but TensorFlow 2.4.1 / 2.5.0 requires 1.19.2
-    pip install pyldavis==3.2.2 && \
-    pip install mlxtend && \
-    pip install altair && \
-    pip install ImageHash && \
-    pip install ecos && \
-    pip install CVXcanon && \
-    pip install pymc3 && \
-    pip install imagecodecs && \
-    pip install tifffile && \
-    pip install spectral && \
-    pip install descartes && \
-    pip install geojson && \
-    pip install pydicom && \
-    pip install wavio && \
-    pip install SimpleITK && \
-    pip install hmmlearn && \
-    pip install bayespy && \
-    pip install gplearn && \
-    pip install PyAstronomy && \
-    pip install squarify && \
-    pip install fuzzywuzzy && \
-    pip install python-louvain && \
-    pip install pyexcel-ods && \
-    pip install sklearn-pandas && \
-    pip install stemming && \
-    # b/266272046 prophet 1.1.2 breaks the test
-    pip install prophet==1.1.1 && \
-    pip install holoviews && \
-    pip install geoviews && \
-    pip install hypertools && \
-    pip install py_stringsimjoin && \
-    pip install mlens && \
-    pip install scikit-multilearn && \
-    pip install cleverhans && \
-    pip install leven && \
-    pip install catboost && \
-    pip install lightfm && \
-    pip install folium && \
-    pip install scikit-plot && \
-    pip install fury dipy && \
-    pip install plotnine && \
-    pip install scikit-surprise && \
-    pip install pymongo && \
-    pip install geoplot && \
-    pip install eli5 && \
-    pip install kaggle && \
-    pip install mock && \
+    pip install deap \
+        tpot \
+        scikit-optimize \
+        haversine \
+        toolz cytoolz \
+        plotly \
+        hyperopt \
+        fitter \
+        langid \
+        # Delorean. Useful for dealing with datetime
+        delorean \
+        trueskill \
+        # Useful data exploration libraries (for missing data and generating reports)
+        missingno \
+        pandas-profiling \
+        s2sphere \
+        bayesian-optimization \
+        matplotlib-venn \
+        # b/184083722 pyldavis >= 3.3 requires numpy >= 1.20.0 but TensorFlow 2.4.1 / 2.5.0 requires 1.19.2
+        pyldavis==3.2.2 \
+        mlxtend \
+        altair \
+        ImageHash \
+        ecos \
+        CVXcanon \
+        pymc3 \
+        imagecodecs \
+        tifffile \
+        spectral \
+        descartes \
+        geojson \
+        pydicom \
+        wavio \
+        SimpleITK \
+        hmmlearn \
+        bayespy \
+        gplearn \
+        PyAstronomy \
+        squarify \
+        fuzzywuzzy \
+        python-louvain \
+        pyexcel-ods \
+        sklearn-pandas \
+        stemming \
+        # b/266272046 prophet 1.1.2 breaks the test
+        prophet==1.1.1 \
+        holoviews \
+        geoviews \
+        hypertools \
+        py_stringsimjoin \
+        mlens \
+        scikit-multilearn \
+        cleverhans \
+        leven \
+        catboost \
+        lightfm \
+        folium \
+        scikit-plot \
+        fury dipy \
+        plotnine \
+        scikit-surprise \
+        pymongo \
+        geoplot \
+        eli5 \
+        kaggle \
+        mock && \
     /tmp/clean-layer.sh
 
 RUN pip install tensorpack && \
     # Add google PAIR-code Facets
     cd /opt/ && git clone https://github.com/PAIR-code/facets && cd facets/ && jupyter nbextension install facets-dist/ --user && \
     export PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/ && \
-    pip install pycountry && \
-    pip install iso3166 && \
-    pip install pydash && \
     pip install kmodes --no-dependencies && \
-    pip install librosa && \
-    pip install polyglot && \
-    pip install mmh3 && \
-    pip install fbpca && \
-    pip install sentencepiece && \
-    pip install cufflinks && \
-    pip install lime && \
-    pip install memory_profiler && \
+    pip install librosa \
+        polyglot \
+        mmh3 \
+        fbpca \
+        sentencepiece \
+        cufflinks \
+        lime \
+        memory_profiler && \
     /tmp/clean-layer.sh
 
 # install cython & cysignals before pyfasttext
-RUN pip install --upgrade cython && \
-    pip install --upgrade cysignals && \
-    pip install pyfasttext && \
-    pip install fasttext && \
+RUN pip install cython \
+        cysignals \
+        pyfasttext \
+        fasttext && \
     apt-get install -y libhunspell-dev && pip install hunspell && \
-    pip install annoy && \
-    pip install category_encoders && \
-    # google-cloud-automl 2.0.0 introduced incompatible API changes, need to pin to 1.0.1
-    pip install google-cloud-automl==1.0.1 && \
-    pip install google-api-core==1.33.2 && \
-    pip install google-cloud-bigquery==2.2.0 && \
-    pip install google-cloud-storage && \
-    pip install google-cloud-translate==3.* && \
-    pip install google-cloud-language==2.* && \
-    pip install google-cloud-videointelligence==2.* && \
-    pip install google-cloud-vision==2.* && \
+    pip install annoy \
+        category_encoders \
+        # google-cloud-automl 2.0.0 introduced incompatible API changes, need to pin to 1.0.1
+        google-cloud-automl==1.0.1 \
+        google-api-core==1.33.2 \
+        google-cloud-bigquery==2.2.0 \
+        google-cloud-storage \
+        google-cloud-translate==3.* \
+        google-cloud-language==2.* \
+        google-cloud-videointelligence==2.* \
+        google-cloud-vision==2.* && \
     # b/183041606#comment5: the Kaggle data proxy doesn't support these APIs. If the library is missing, it falls back to using a regular BigQuery query to fetch data.
     pip uninstall -y google-cloud-bigquery-storage && \
     # After launch this should be installed from pip
-    pip install git+https://github.com/googleapis/python-aiplatform.git@mb-release && \
-    pip install ortools && \
-    pip install scattertext && \
-    # Pandas data reader
-    pip install pandas-datareader && \
-    pip install wordsegment && \
-    pip install wordbatch && \
-    pip install emoji && \
-    # Add Japanese morphological analysis engine
-    pip install janome && \
-    pip install wfdb && \
-    pip install vecstack && \
-    # yellowbrick machine learning visualization library
-    pip install yellowbrick && \
-    pip install mlcrate && \
+    pip install git+https://github.com/googleapis/python-aiplatform.git@mb-release \
+        ortools \
+        scattertext \
+        # Pandas data reader
+        pandas-datareader \
+        wordsegment \
+        wordbatch \
+        emoji \
+        # Add Japanese morphological analysis engine
+        janome \
+        wfdb \
+        vecstack \
+        # yellowbrick machine learning visualization library
+        yellowbrick \
+        mlcrate && \
     /tmp/clean-layer.sh
 
-RUN pip install bleach && \
-    pip install certifi && \
-    pip install cycler && \
-    pip install decorator && \
-    pip install entrypoints && \
-    pip install html5lib && \
-    pip install ipykernel && \
-    pip install ipython && \
-    pip install ipython-genutils && \
-    pip install ipywidgets && \
-    pip install isoweek && \
-    pip install jedi && \
-    pip install jsonschema && \
-    pip install jupyter-client && \
-    pip install jupyter-console && \
-    pip install jupyter-core && \
-    pip install jupyterlab-lsp && \
-    pip install MarkupSafe && \
-    pip install mistune && \
-    pip install nbformat && \
-    pip install notebook && \
-    pip install papermill && \
-    pip install python-lsp-server[all] && \
-    pip install olefile && \
-    # b/198300835 kornia 0.5.10 is not compatible with our version of numpy.
-    pip install kornia==0.5.8 && \
-    pip install pandas_summary && \
-    pip install pandocfilters && \
-    pip install pexpect && \
-    pip install pickleshare && \
-    pip install Pillow && \
+RUN pip install bleach \
+        certifi \
+        cycler \
+        decorator \
+        entrypoints \
+        html5lib \
+        ipykernel \
+        ipython \
+        ipython-genutils \
+        ipywidgets \
+        isoweek \
+        jedi \
+        jsonschema \
+        jupyter-client \
+        jupyter-console \
+        jupyter-core \
+        jupyterlab-lsp \
+        MarkupSafe \
+        mistune \
+        nbformat \
+        notebook \
+        papermill \
+        python-lsp-server[all] \
+        olefile \
+        # b/198300835 kornia 0.5.10 is not compatible with our version of numpy.
+        kornia==0.5.8 \
+        pandas_summary \
+        pandocfilters \
+        pexpect \
+        pickleshare \
+        Pillow && \
     # Install openslide and its python binding
     apt-get install -y openslide-tools && \
-    pip install openslide-python && \
-    pip install ptyprocess && \
-    pip install Pygments && \
-    pip install pyparsing && \
-    pip install pytz && \
-    pip install PyYAML && \
-    pip install pyzmq && \
-    pip install qtconsole && \
-    pip install six && \
-    pip install terminado && \
-    pip install tornado && \
-    pip install tqdm && \
-    pip install traitlets && \
-    pip install wcwidth && \
-    pip install webencodings && \
-    pip install widgetsnbextension && \
-    pip install pyarrow && \
-    pip install feather-format && \
-    pip install fastai && \
-    pip install allennlp && \
-    pip install importlib-metadata && \
+    pip install openslide-python \
+        ptyprocess \
+        Pygments \
+        pyparsing \
+        pytz \
+        PyYAML \
+        pyzmq \
+        qtconsole \
+        six \
+        terminado \
+        tornado \
+        tqdm \
+        traitlets \
+        wcwidth \
+        webencodings \
+        widgetsnbextension \
+        pyarrow \
+        feather-format \
+        fastai \
+        allennlp \
+        importlib-metadata && \
     python -m spacy download en_core_web_sm && python -m spacy download en_core_web_lg && \
     apt-get install -y ffmpeg && \
     /tmp/clean-layer.sh
@@ -457,76 +459,76 @@ RUN pip install bleach && \
     #
     ###########
 
-RUN pip install flashtext && \
-    pip install wandb && \
-    # b/214080882 blake3 0.3.0 is not compatible with vaex.
-    pip install blake3==0.2.1 && \
-    pip install vaex && \
-    pip install marisa-trie && \
-    pip install pyemd && \
-    pip install pyupset && \
-    pip install pympler && \
-    pip install s3fs && \
-    pip install featuretools && \
-    pip install -e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper && \
-    pip install hpsklearn && \
-    pip install git+https://github.com/Kaggle/learntools && \
-    pip install kmapper && \
-    pip install shap && \
-    pip install ray && \
-    pip install gym && \
-    pip install pyarabic && \
-    pip install pandasql && \
-    pip install tensorflow_hub && \
-    pip install jieba  && \
-    # ggplot is broken and main repo does not merge and release https://github.com/yhat/ggpy/pull/668
-    pip install https://github.com/hbasria/ggpy/archive/0.11.5.zip && \
-    pip install cesium && \
-    pip install rgf_python && \
-    # b/205704651 remove install cmd for matrixprofile after version > 1.1.10 is released.
-    pip install git+https://github.com/matrix-profile-foundation/matrixprofile.git@6bea7d4445284dbd9700a097974ef6d4613fbca7 && \
-    pip install tsfresh && \
-    pip install pykalman && \
-    pip install optuna && \
-    pip install plotly_express && \
-    pip install albumentations && \
-    # b/254245259 catalyst requires accelerate but it breaks with the version 0.13.1
-    pip install accelerate==0.12.0 && \
-    pip install catalyst && \
-    # b/206990323 osmx 1.1.2 requires numpy >= 1.21 which we don't want.
-    pip install osmnx==1.1.1 && \
+RUN pip install flashtext \
+        wandb \
+        # b/214080882 blake3 0.3.0 is not compatible with vaex.
+        blake3==0.2.1 \
+        vaex \
+        marisa-trie \
+        pyemd \
+        pyupset \
+        pympler \
+        s3fs \
+        featuretools \
+        -e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper \
+        hpsklearn \
+        git+https://github.com/Kaggle/learntools \
+        kmapper \
+        shap \
+        ray \
+        gym \
+        pyarabic \
+        pandasql \
+        tensorflow_hub \
+        jieba  \
+        # ggplot is broken and main repo does not merge and release https://github.com/yhat/ggpy/pull/668
+        https://github.com/hbasria/ggpy/archive/0.11.5.zip \
+        cesium \
+        rgf_python \
+        # b/205704651 remove install cmd for matrixprofile after version > 1.1.10 is released.
+        git+https://github.com/matrix-profile-foundation/matrixprofile.git@6bea7d4445284dbd9700a097974ef6d4613fbca7 \
+        tsfresh \
+        pykalman \
+        optuna \
+        plotly_express \
+        albumentations \
+        # b/254245259 catalyst requires accelerate but it breaks with the version 0.13.1
+        accelerate==0.12.0 \
+        catalyst \
+        # b/206990323 osmx 1.1.2 requires numpy >= 1.21 which we don't want.
+        osmnx==1.1.1 && \
     apt-get -y install libspatialindex-dev && \
-    pip install pytorch-ignite && \
-    pip install qgrid && \
-    pip install bqplot && \
-    pip install earthengine-api && \
-    pip install transformers && \
-    # b/232247930 >= 2.2.0 requires pyarrow >= 6.0.0 which conflicts with dependencies for rapidsai 0.21.*
-    pip install datasets==2.1.0 && \
-    pip install dlib && \
-    pip install kaggle-environments && \
-    pip install geopandas && \
-    pip install nnabla && \
-    pip install vowpalwabbit && \
-    pip install pydub && \
-    pip install pydegensac && \
-    pip install torchmetrics && \
-    pip install pytorch-lightning && \
-    pip install datatable && \
-    pip install sympy && \
-    # flask is used by agents in the simulation competitions.
-    pip install flask && \
-    # pycrypto is used by competitions team.
-    pip install pycrypto && \
-    pip install easyocr && \
-    # ipympl adds interactive widget support for matplotlib
-    pip install ipympl==0.7.0 && \
-    pip install pandarallel && \
-    pip install onnx && \
-    pip install tables && \
-    pip install openpyxl && \
-    pip install timm && \
-    pip install pycolmap && \
+    pip install pytorch-ignite \
+        qgrid \
+        bqplot \
+        earthengine-api \
+        transformers \
+        # b/232247930 >= 2.2.0 requires pyarrow >= 6.0.0 which conflicts with dependencies for rapidsai 0.21.*
+        datasets==2.1.0 \
+        dlib \
+        kaggle-environments \
+        geopandas \
+        nnabla \
+        vowpalwabbit \
+        pydub \
+        pydegensac \
+        torchmetrics \
+        pytorch-lightning \
+        datatable \
+        sympy \
+        # flask is used by agents in the simulation competitions.
+        flask \
+        # pycrypto is used by competitions team.
+        pycrypto \
+        easyocr \
+        # ipympl adds interactive widget support for matplotlib
+        ipympl==0.7.0 \
+        pandarallel \
+        onnx \
+        tables \
+        openpyxl \
+        timm \
+        pycolmap && \
     /tmp/clean-layer.sh
 
 # Download base easyocr models.
@@ -545,11 +547,11 @@ RUN mkdir -p /root/.EasyOCR/model && \
 
 # Tesseract and some associated utility packages
 RUN apt-get install tesseract-ocr -y && \
-    pip install pytesseract && \
-    pip install wand && \
-    pip install pdf2image && \
-    pip install PyPDF && \
-    pip install pyocr && \
+    pip install pytesseract \
+        wand \
+        pdf2image \
+        PyPDF \
+        pyocr && \
     /tmp/clean-layer.sh
 ENV TESSERACT_PATH=/usr/bin/tesseract
 
