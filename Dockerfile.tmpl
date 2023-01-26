@@ -357,7 +357,7 @@ RUN pip install tensorpack && \
     /tmp/clean-layer.sh
 
 # install cython & cysignals before pyfasttext
-RUN pip install cython && \
+RUN pip install cython \
         cysignals \
         pyfasttext \
         fasttext && \
