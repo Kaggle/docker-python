@@ -1,2 +1,10 @@
 TENSORFLOW_VERSION=2.9.1
-TORCH_VERSION=1.11.0
+JAX_VERSION=0.3.10
+# Supports nightly
+TORCH_VERSION=1.10.0
+# https://github.com/pytorch/audio supports nightly
+TORCHAUDIO_VERSION=0.10.0
+# https://github.com/pytorch/text supports main
+TORCHTEXT_VERSION=0.11.0
+# https://github.com/pytorch/vision supports nightly
+TORCHVISION_VERSION=0.11.1
