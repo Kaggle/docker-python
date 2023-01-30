@@ -89,10 +89,11 @@ RUN conda config --add channels nvidia && \
 {{ if eq .Accelerator "gpu" }}
 
 # b/232247930: uninstall pyarrow to avoid double installation with the GPU specific version.
-RUN pip uninstall -y pyarrow && \
-    mamba install -y cudf cuml && \
-    /tmp/clean-layer.sh
-{{ end }}
+# b/267180053: RapidsAI (cudf/cuml) are not compatible with the latest tensorflow cudatoolkit version.
+# RUN pip uninstall -y pyarrow && \
+#    mamba install -y cudf cuml && \
+#    /tmp/clean-layer.sh
+# {{ end }}
 
 # Install implicit
 {{ if eq .Accelerator "gpu" }}
