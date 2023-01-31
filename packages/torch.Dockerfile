@@ -15,11 +15,6 @@ RUN test -n "$TORCHVISION_VERSION"
 # Use mamba to speed up conda installs
 RUN conda install -c conda-forge mamba
 
-# Install cudf/cuml so that cudatoolkit upgrades are included in the pytorch build
-RUN conda config --add channels nvidia && \
-    conda config --add channels rapidsai
-RUN mamba install -y cudf cuml
-
 # Build instructions: https://github.com/pytorch/pytorch#from-source
 RUN mamba install astunparse numpy ninja pyyaml mkl mkl-include setuptools cmake cffi typing_extensions future six requests dataclasses
 RUN mamba install -c pytorch magma-cuda${CUDA_MAJOR_VERSION}${CUDA_MINOR_VERSION}
@@ -40,7 +35,7 @@ RUN cd /usr/local/src && \
     cd pytorch && \
     git checkout tags/v$PACKAGE_VERSION && \
     git submodule sync && \
-    git submodule update --init --recursive --jobs 0 && \
+    git submodule update --init --recursive --jobs 1 && \
     python setup.py bdist_wheel
 
 # Install torch which is required before we can build other torch* packages.
@@ -60,7 +55,7 @@ RUN sudo apt-get update && \
     cd audio && \
     git checkout tags/v$TORCHAUDIO_VERSION && \
     git submodule sync && \
-    git submodule update --init --recursive --jobs 0 && \
+    git submodule update --init --recursive --jobs 1 && \
     python setup.py bdist_wheel
 
 # Build torchtext
@@ -72,7 +67,7 @@ RUN cd /usr/local/src && \
     cd text && \
     git checkout tags/v$TORCHTEXT_VERSION && \
     git submodule sync && \
-    git submodule update --init --recursive --jobs 0 && \
+    git submodule update --init --recursive --jobs 1 && \
     python setup.py bdist_wheel
 
 # Build torchvision.
