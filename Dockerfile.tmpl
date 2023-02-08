@@ -586,6 +586,11 @@ ADD patches/sitecustomize.py /root/.local/lib/python3.7/site-packages/sitecustom
 # Override default imagemagick policies
 ADD patches/imagemagick-policy.xml /etc/ImageMagick-6/policy.xml
 
+# Add Kaggle module resolver
+ADD patches/kaggle_module_resolver.py /opt/conda/lib/python3.7/site-packages/tensorflow_hub/kaggle_module_resolver.py
+RUN sed -i '/from tensorflow_hub import uncompressed_module_resolver/a from tensorflow_hub import kaggle_module_resolver' /opt/conda/lib/python3.7/site-packages/tensorflow_hub/config.py && \
+    sed -i '/_install_default_resolvers()/a \ \ registry.resolver.add_implementation(kaggle_module_resolver.KaggleFileResolver())' /opt/conda/lib/python3.7/site-packages/tensorflow_hub/config.py
+
 # TensorBoard Jupyter extension. Should be replaced with TensorBoard's provided magic once we have
 # worker tunneling support in place.
 # b/139212522 re-enable TensorBoard once solution for slowdown is implemented.
