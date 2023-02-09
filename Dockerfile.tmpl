@@ -10,7 +10,7 @@ ARG TORCHVISION_VERSION
 
 {{ if eq .Accelerator "gpu" }}
 FROM gcr.io/kaggle-images/python-lightgbm-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_TAG}-${LIGHTGBM_VERSION} AS lightgbm_whl
-FROM gcr.io/kaggle-images/python-torch-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_TAG}-${TORCH_VERSION} AS torch_whl
+#FROM gcr.io/kaggle-images/python-torch-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_TAG}-${TORCH_VERSION} AS torch_whl
 FROM ${BASE_IMAGE_REPO}/${GPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 {{ else }}
 FROM ${BASE_IMAGE_REPO}/${CPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
@@ -34,7 +34,7 @@ RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/lib
 {{ end }}
 
 # Keep these variables in sync if base image is updated.
-ENV TENSORFLOW_VERSION=2.9.2
+ENV TENSORFLOW_VERSION=2.11.0
 
 # We need to redefine the ARG here to get the ARG value defined above the FROM instruction.
 # See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
@@ -93,11 +93,10 @@ RUN conda config --add channels nvidia && \
 {{ if eq .Accelerator "gpu" }}
 
 # b/232247930: uninstall pyarrow to avoid double installation with the GPU specific version.
-# b/267180053: RapidsAI (cudf/cuml) are not compatible with the latest tensorflow cudatoolkit version.
-# RUN pip uninstall -y pyarrow && \
-#    mamba install -y cudf cuml && \
-#    /tmp/clean-layer.sh
-# {{ end }}
+RUN pip uninstall -y pyarrow && \
+    mamba install -y cudf cuml && \
+    /tmp/clean-layer.sh
+{{ end }}
 
 # Install implicit
 {{ if eq .Accelerator "gpu" }}
@@ -110,17 +109,17 @@ RUN mamba install implicit && \
 
 # Install PyTorch
 {{ if eq .Accelerator "gpu" }}
-COPY --from=torch_whl /tmp/whl/*.whl /tmp/torch/
+#COPY --from=torch_whl /tmp/whl/*.whl /tmp/torch/
 RUN mamba install -c pytorch magma-cuda${CUDA_MAJOR_VERSION}${CUDA_MINOR_VERSION} && \
-    pip install /tmp/torch/*.whl && \
+    #pip install /tmp/torch/*.whl && \
     # b/255757999 openmp (libomp.so) is an dependency of libtorchtext and libtorchaudio but
     # the built from source versions don't seem to properly link it in. This forces the dep
     # which makes sure that libomp is loaded when these libraries are loaded.
-    mamba install -y openmp && \
-    pip install patchelf && \
-    patchelf --add-needed libomp.so /opt/conda/lib/python3.7/site-packages/torchtext/lib/libtorchtext.so && \
-    patchelf --add-needed libomp.so /opt/conda/lib/python3.7/site-packages/torchaudio/lib/libtorchaudio.so && \
-    rm -rf /tmp/torch && \
+    pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 torchaudio==0.12.1 --extra-index-url https://download.pytorch.org/whl/cu113 && \
+    #pip install patchelf && \
+    #patchelf --add-needed libomp.so /opt/conda/lib/python3.7/site-packages/torchtext/lib/libtorchtext.so && \
+    #patchelf --add-needed libomp.so /opt/conda/lib/python3.7/site-packages/torchaudio/lib/libtorchaudio.so && \
+    #rm -rf /tmp/torch && \
     /tmp/clean-layer.sh
 {{ else }}
 RUN pip install \
@@ -376,22 +375,24 @@ RUN pip install tensorpack && \
     /tmp/clean-layer.sh
 
 # install cython & cysignals before pyfasttext
+RUN rm /opt/conda/lib/python3.7/site-packages/*/direct_url.json
 RUN pip install cython \
         cysignals \
         pyfasttext \
         fasttext && \
-    apt-get install -y libhunspell-dev && pip install hunspell && \
-    pip install annoy \
-        category_encoders \
+    apt-get install -y libhunspell-dev && pip install hunspell
+RUN pip install annoy \
+        category_encoders && \
+        # These should already be installed?
         # google-cloud-automl 2.0.0 introduced incompatible API changes, need to pin to 1.0.1
-        google-cloud-automl==1.0.1 \
-        google-api-core==1.33.2 \
-        google-cloud-bigquery==2.2.0 \
-        google-cloud-storage \
-        google-cloud-translate==3.* \
-        google-cloud-language==2.* \
-        google-cloud-videointelligence==2.* \
-        google-cloud-vision==2.* && \
+        #google-cloud-automl==1.0.1 \
+        #google-api-core==1.33.2 \
+        #google-cloud-bigquery==2.2.0 \
+        #google-cloud-storage \
+        #google-cloud-translate==3.* \
+        #google-cloud-language==2.* \
+        #google-cloud-videointelligence==2.* \
+        #google-cloud-vision==2.* && \
     # b/183041606#comment5: the Kaggle data proxy doesn't support these APIs. If the library is missing, it falls back to using a regular BigQuery query to fetch data.
     pip uninstall -y google-cloud-bigquery-storage && \
     # After launch this should be installed from pip
@@ -414,6 +415,7 @@ RUN pip install cython \
 
 
 # Fix qgrid by pinning ipywidgets https://github.com/quantopian/qgrid/issues/376
+#        allennlp \
 RUN pip install bleach \
         certifi \
         cycler \
@@ -466,11 +468,10 @@ RUN pip install bleach \
         pyarrow \
         feather-format \
         fastai \
-        allennlp \
-        importlib-metadata && \
-    python -m spacy download en_core_web_sm && python -m spacy download en_core_web_lg && \
-    apt-get install -y ffmpeg && \
-    /tmp/clean-layer.sh
+        importlib-metadata
+#RUN python -m spacy download en_core_web_sm && python -m spacy download en_core_web_lg && \
+#    apt-get install -y ffmpeg && \
+#    /tmp/clean-layer.sh
 
     ###########
     #
@@ -495,7 +496,7 @@ RUN pip install flashtext \
         pympler \
         s3fs \
         featuretools \
-        -e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper \
+        #-e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper \
         hpsklearn \
         git+https://github.com/Kaggle/learntools \
         kmapper \
@@ -526,7 +527,7 @@ RUN pip install flashtext \
     pip install pytorch-ignite \
         qgrid \
         bqplot \
-        earthengine-api \
+        #earthengine-api \
         transformers \
         # b/232247930 >= 2.2.0 requires pyarrow >= 6.0.0 which conflicts with dependencies for rapidsai 0.21.*
         datasets==2.1.0 \
