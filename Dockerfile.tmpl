@@ -197,7 +197,8 @@ RUN pip install pysal \
     pip install -f https://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o \
         "tensorflow-gcs-config<=${TENSORFLOW_VERSION}" \
         tensorflow-addons==0.17.1 \
-        tensorflow_decision_forests==0.2.7 && \
+        tensorflow_decision_forests==0.2.7 \
+        tensorflow_text==2.9.0 && \
     /tmp/clean-layer.sh
 
 RUN apt-get install -y libfreetype6-dev && \
