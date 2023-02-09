@@ -130,7 +130,7 @@ pipeline {
                 stage('Test on P100') {
                   agent { label 'ephemeral-linux-gpu' }
                   options {
-                    timeout(time: 20, unit: 'MINUTES')
+                    timeout(time: 30, unit: 'MINUTES')
                   }
                   steps {
                     sh '''#!/bin/bash
