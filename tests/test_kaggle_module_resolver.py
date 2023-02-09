@@ -13,7 +13,6 @@ from test.support import EnvironmentVarGuard
 class TestKaggleModuleResolver(unittest.TestCase):
     class HubHTTPHandler(BaseHTTPRequestHandler):
         def do_GET(self):
-            print("GETGETGET")
             self.send_response(200)
             self.send_header('Content-Type', 'application/gzip')
             self.end_headers()
