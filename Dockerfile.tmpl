@@ -12,6 +12,15 @@ ARG TORCHVISION_VERSION
 FROM gcr.io/kaggle-images/python-lightgbm-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_TAG}-${LIGHTGBM_VERSION} AS lightgbm_whl
 FROM gcr.io/kaggle-images/python-torch-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_TAG}-${TORCH_VERSION} AS torch_whl
 FROM ${BASE_IMAGE_REPO}/${GPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
+{{ else }}
+FROM ${BASE_IMAGE_REPO}/${CPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
+{{ end }}
+
+# Ensures shared libraries installed with conda can be found by the dynamic link loader.
+ENV LIBRARY_PATH="$LIBRARY_PATH:/opt/conda/lib"
+ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/conda/lib"
+
+{{ if eq .Accelerator "gpu" }}
 ARG CUDA_MAJOR_VERSION
 ARG CUDA_MINOR_VERSION
 ENV CUDA_MAJOR_VERSION=${CUDA_MAJOR_VERSION}
@@ -22,11 +31,10 @@ ENV PATH=/opt/bin:${PATH}
 ENV LD_LIBRARY_PATH_NO_STUBS="$LD_LIBRARY_PATH"
 ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda/lib64/stubs"
 RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1
-{{ else }}
-FROM ${BASE_IMAGE_REPO}/${CPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 {{ end }}
+
 # Keep these variables in sync if base image is updated.
-ENV TENSORFLOW_VERSION=2.6.4
+ENV TENSORFLOW_VERSION=2.9.2
 
 # We need to redefine the ARG here to get the ARG value defined above the FROM instruction.
 # See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
@@ -76,33 +84,42 @@ ENV PROJ_LIB=/opt/conda/share/proj
 # the remaining pip commands: https://www.anaconda.com/using-pip-in-a-conda-environment/
 RUN conda config --add channels nvidia && \
     conda config --add channels rapidsai && \
+    conda install -c conda-forge mamba && \
     # Base image channel order: conda-forge (highest priority), defaults.
     # End state: rapidsai (highest priority), nvidia, conda-forge, defaults.
-    conda install mkl cartopy=0.19 imagemagick=7.1 pyproj==3.1.0 && \
+    mamba install mkl cartopy=0.19 imagemagick=7.1 pyproj==3.1.0 && \
     /tmp/clean-layer.sh
 
 {{ if eq .Accelerator "gpu" }}
 
 # b/232247930: uninstall pyarrow to avoid double installation with the GPU specific version.
-RUN pip uninstall -y pyarrow && \
-    conda install cudf=21.10 cuml=21.10 cudatoolkit=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
-    /tmp/clean-layer.sh
-{{ end }}
+# b/267180053: RapidsAI (cudf/cuml) are not compatible with the latest tensorflow cudatoolkit version.
+# RUN pip uninstall -y pyarrow && \
+#    mamba install -y cudf cuml && \
+#    /tmp/clean-layer.sh
+# {{ end }}
 
 # Install implicit
 {{ if eq .Accelerator "gpu" }}
-RUN conda install implicit implicit-proc=*=gpu && \
+RUN mamba install implicit implicit-proc=*=gpu && \
     /tmp/clean-layer.sh
 {{ else }}
-RUN conda install implicit && \
+RUN mamba install implicit && \
     /tmp/clean-layer.sh
 {{ end}}
 
 # Install PyTorch
 {{ if eq .Accelerator "gpu" }}
 COPY --from=torch_whl /tmp/whl/*.whl /tmp/torch/
-RUN conda install -c pytorch magma-cuda${CUDA_MAJOR_VERSION}${CUDA_MINOR_VERSION} && \
+RUN mamba install -c pytorch magma-cuda${CUDA_MAJOR_VERSION}${CUDA_MINOR_VERSION} && \
     pip install /tmp/torch/*.whl && \
+    # b/255757999 openmp (libomp.so) is an dependency of libtorchtext and libtorchaudio but
+    # the built from source versions don't seem to properly link it in. This forces the dep
+    # which makes sure that libomp is loaded when these libraries are loaded.
+    mamba install -y openmp && \
+    pip install patchelf && \
+    patchelf --add-needed libomp.so /opt/conda/lib/python3.7/site-packages/torchtext/lib/libtorchtext.so && \
+    patchelf --add-needed libomp.so /opt/conda/lib/python3.7/site-packages/torchaudio/lib/libtorchaudio.so && \
     rm -rf /tmp/torch && \
     /tmp/clean-layer.sh
 {{ else }}
@@ -141,7 +158,8 @@ RUN pip install jax[cpu] && \
 
 # Install mxnet
 {{ if eq .Accelerator "gpu" }}
-RUN pip install mxnet-cu$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
+# No specific package for 11.3 minor versions, using 11.2 instead.
+RUN pip install mxnet-cu112 && \
     /tmp/clean-layer.sh
 {{ else }}
 RUN pip install mxnet && \
@@ -160,10 +178,11 @@ RUN pip install spacy && \
 # Install GPU specific packages
 {{ if eq .Accelerator "gpu" }}
 # Install GPU-only packages
+# No specific package for nnabla-ext-cuda 11.x minor versions.
 RUN pip install pycuda \
         pynvrtc \
         pynvml \
-        nnabla-ext-cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
+        nnabla-ext-cuda${CUDA_MAJOR_VERSION}0 && \
     /tmp/clean-layer.sh
 {{ end }}
 
@@ -176,9 +195,9 @@ RUN pip install pysal \
     # Use `conda install -c h2oai h2o` once Python 3.7 version is released to conda.
     apt-get install -y default-jre-headless && \
     pip install -f https://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o \
-        tensorflow-gcs-config==2.6.0 \
-        tensorflow-addons==0.14.0 \
-        tensorflow_decision_forests==0.2.0 && \
+        "tensorflow-gcs-config<=${TENSORFLOW_VERSION}" \
+        tensorflow-addons==0.17.1 \
+        tensorflow_decision_forests==0.2.7 && \
     /tmp/clean-layer.sh
 
 RUN apt-get install -y libfreetype6-dev && \
@@ -393,6 +412,8 @@ RUN pip install cython \
         mlcrate && \
     /tmp/clean-layer.sh
 
+
+# Fix qgrid by pinning ipywidgets https://github.com/quantopian/qgrid/issues/376
 RUN pip install bleach \
         certifi \
         cycler \
@@ -402,7 +423,7 @@ RUN pip install bleach \
         ipykernel \
         ipython \
         ipython-genutils \
-        ipywidgets \
+        ipywidgets==7.7.1 \
         isoweek \
         jedi \
         jsonschema \
@@ -459,6 +480,10 @@ RUN pip install bleach \
     #
     ###########
 
+# dlib has a libmkl incompatibility:
+# test_dlib_face_detector (test_dlib.TestDLib) ... INTEL MKL ERROR: /opt/conda/bin/../lib/libmkl_avx512.so.2: undefined symbol: mkl_sparse_optimize_bsr_trsm_i8.
+# Intel MKL FATAL ERROR: Cannot load libmkl_avx512.so.2 or libmkl_def.so.2.
+# nnabla breaks protobuf compatibiilty:
 RUN pip install flashtext \
         wandb \
         # b/214080882 blake3 0.3.0 is not compatible with vaex.
@@ -505,10 +530,8 @@ RUN pip install flashtext \
         transformers \
         # b/232247930 >= 2.2.0 requires pyarrow >= 6.0.0 which conflicts with dependencies for rapidsai 0.21.*
         datasets==2.1.0 \
-        dlib \
         kaggle-environments \
         geopandas \
-        nnabla \
         vowpalwabbit \
         pydub \
         pydegensac \
@@ -599,6 +622,9 @@ ADD patches/imagemagick-policy.xml /etc/ImageMagick-6/policy.xml
 RUN jupyter-nbextension disable nb_conda --py --sys-prefix && \
     jupyter-serverextension disable nb_conda --py --sys-prefix && \
     python -m nb_conda_kernels.install --disable
+
+# Force only one libcusolver
+RUN rm /opt/conda/bin/../lib/libcusolver.so.11 && ln -s /usr/local/cuda/lib64/libcusolver.so.11 /opt/conda/bin/../lib/libcusolver.so.11
 
 # Set backend for matplotlib
 ENV MPLBACKEND "agg"

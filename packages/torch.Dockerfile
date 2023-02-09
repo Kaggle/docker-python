@@ -12,15 +12,22 @@ ARG CUDA_MINOR_VERSION
 # TORCHVISION_VERSION is mandatory
 RUN test -n "$TORCHVISION_VERSION"
 
+# Use mamba to speed up conda installs
+RUN conda install -c conda-forge mamba
+
 # Build instructions: https://github.com/pytorch/pytorch#from-source
-RUN conda install astunparse numpy ninja pyyaml mkl mkl-include setuptools==59.5.0 cmake cffi typing_extensions future six requests dataclasses
-RUN conda install -c pytorch magma-cuda${CUDA_MAJOR_VERSION}${CUDA_MINOR_VERSION}
+RUN mamba install astunparse numpy ninja pyyaml mkl mkl-include setuptools cmake cffi typing_extensions future six requests dataclasses
+RUN mamba install -c pytorch magma-cuda${CUDA_MAJOR_VERSION}${CUDA_MINOR_VERSION}
 
 # By default, it uses the version from version.txt which includes the `a0` (alpha zero) suffix and part of the git hash.
 # This causes dependency conflicts like these: https://paste.googleplex.com/4786486378496000
 ENV PYTORCH_BUILD_VERSION=$PACKAGE_VERSION
 ENV PYTORCH_BUILD_NUMBER=1
 
+# Ensures shared libraries installed with conda can be found by the dynamic link loader.
+# For PyTorch, we need specifically mkl.
+ENV LIBRARY_PATH="$LIBRARY_PATH:/opt/conda/lib"
+ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/conda/lib"
 ENV TORCH_CUDA_ARCH_LIST="3.7;6.0;7.0+PTX;7.5+PTX"
 ENV FORCE_CUDA=1
 RUN cd /usr/local/src && \
@@ -28,7 +35,7 @@ RUN cd /usr/local/src && \
     cd pytorch && \
     git checkout tags/v$PACKAGE_VERSION && \
     git submodule sync && \
-    git submodule update --init --recursive --jobs 0 && \
+    git submodule update --init --recursive --jobs 1 && \
     python setup.py bdist_wheel
 
 # Install torch which is required before we can build other torch* packages.
@@ -38,14 +45,17 @@ RUN pip install /usr/local/src/pytorch/dist/*.whl
 # Instructions: https://github.com/pytorch/audio#from-source
 # See comment above for PYTORCH_BUILD_VERSION.
 ENV BUILD_VERSION=$TORCHAUDIO_VERSION
-RUN cd /usr/local/src && \
+RUN sudo apt-get update && \
+    # ncurses.h is required for this install
+    sudo apt-get install libncurses-dev && \
+    # Fixing the build: https://github.com/pytorch/audio/issues/666#issuecomment-635928685
+    mamba install -c conda-forge ncurses && \
+    cd /usr/local/src && \
     git clone https://github.com/pytorch/audio && \
     cd audio && \
     git checkout tags/v$TORCHAUDIO_VERSION && \
     git submodule sync && \
-    git submodule update --init --recursive --jobs 0 && \
-    # TODO(b/215031404#comment4) Remove after upgrade next release (0.11.1)
-    sed -i s?https://zlib.net/zlib-1.2.11.tar.gz?https://sourceforge.net/projects/libpng/files/zlib/1.2.11/zlib-1.2.11.tar.gz? third_party/zlib/CMakeLists.txt && \
+    git submodule update --init --recursive --jobs 1 && \
     python setup.py bdist_wheel
 
 # Build torchtext
@@ -57,7 +67,7 @@ RUN cd /usr/local/src && \
     cd text && \
     git checkout tags/v$TORCHTEXT_VERSION && \
     git submodule sync && \
-    git submodule update --init --recursive --jobs 0 && \
+    git submodule update --init --recursive --jobs 1 && \
     python setup.py bdist_wheel
 
 # Build torchvision.
