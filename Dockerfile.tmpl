@@ -115,7 +115,7 @@ RUN mamba install -c pytorch magma-cuda${CUDA_MAJOR_VERSION}${CUDA_MINOR_VERSION
     # b/255757999 openmp (libomp.so) is an dependency of libtorchtext and libtorchaudio but
     # the built from source versions don't seem to properly link it in. This forces the dep
     # which makes sure that libomp is loaded when these libraries are loaded.
-    pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 torchaudio==0.12.1 --extra-index-url https://download.pytorch.org/whl/cu113 && \
+    pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 torchaudio==0.12.1 torchtext==0.13.0 --extra-index-url https://download.pytorch.org/whl/cu113 && \
     #pip install patchelf && \
     #patchelf --add-needed libomp.so /opt/conda/lib/python3.7/site-packages/torchtext/lib/libtorchtext.so && \
     #patchelf --add-needed libomp.so /opt/conda/lib/python3.7/site-packages/torchaudio/lib/libtorchaudio.so && \
@@ -195,8 +195,9 @@ RUN pip install pysal \
     apt-get install -y default-jre-headless && \
     pip install -f https://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o \
         "tensorflow-gcs-config<=${TENSORFLOW_VERSION}" \
-        tensorflow-addons==0.17.1 \
-        tensorflow_decision_forests==0.2.7 && \
+        "tensorflow==${TENSORFLOW_VERSION}" \
+        tensorflow-addons \
+        tensorflow_decision_forests && \
     /tmp/clean-layer.sh
 
 RUN apt-get install -y libfreetype6-dev && \
@@ -374,8 +375,23 @@ RUN pip install tensorpack && \
         memory_profiler && \
     /tmp/clean-layer.sh
 
+
+
+
+# Remove files that can't be uninstalled normally:
+RUN rm /opt/conda/lib/python3.7/site-packages/google*/REQUESTED
+RUN rm /opt/conda/lib/python3.7/site-packages/google*/direct_url.json
+# google-cloud-automl 2.0.0 introduced incompatible API changes, need to pin to 1.0.1
+RUN pip install google-cloud-automl==1.0.1 \
+        google-api-core==1.33.2 \
+        google-cloud-bigquery==2.2.0 \
+        google-cloud-storage \
+        google-cloud-translate==3.* \
+        google-cloud-language==2.* \
+        google-cloud-videointelligence==2.* \
+        google-cloud-vision==2.* \
+        pip install protobuf==3.20.3
 # install cython & cysignals before pyfasttext
-RUN rm /opt/conda/lib/python3.7/site-packages/*/direct_url.json
 RUN pip install cython \
         cysignals \
         pyfasttext \
@@ -383,16 +399,6 @@ RUN pip install cython \
     apt-get install -y libhunspell-dev && pip install hunspell
 RUN pip install annoy \
         category_encoders && \
-        # These should already be installed?
-        # google-cloud-automl 2.0.0 introduced incompatible API changes, need to pin to 1.0.1
-        #google-cloud-automl==1.0.1 \
-        #google-api-core==1.33.2 \
-        #google-cloud-bigquery==2.2.0 \
-        #google-cloud-storage \
-        #google-cloud-translate==3.* \
-        #google-cloud-language==2.* \
-        #google-cloud-videointelligence==2.* \
-        #google-cloud-vision==2.* && \
     # b/183041606#comment5: the Kaggle data proxy doesn't support these APIs. If the library is missing, it falls back to using a regular BigQuery query to fetch data.
     pip uninstall -y google-cloud-bigquery-storage && \
     # After launch this should be installed from pip
@@ -469,9 +475,9 @@ RUN pip install bleach \
         feather-format \
         fastai \
         importlib-metadata
-#RUN python -m spacy download en_core_web_sm && python -m spacy download en_core_web_lg && \
-#    apt-get install -y ffmpeg && \
-#    /tmp/clean-layer.sh
+RUN python -m spacy download en_core_web_sm && python -m spacy download en_core_web_lg && \
+    apt-get install -y ffmpeg && \
+    /tmp/clean-layer.sh
 
     ###########
     #
@@ -496,7 +502,7 @@ RUN pip install flashtext \
         pympler \
         s3fs \
         featuretools \
-        #-e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper \
+        -e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper \
         hpsklearn \
         git+https://github.com/Kaggle/learntools \
         kmapper \
@@ -527,7 +533,7 @@ RUN pip install flashtext \
     pip install pytorch-ignite \
         qgrid \
         bqplot \
-        #earthengine-api \
+        earthengine-api \
         transformers \
         # b/232247930 >= 2.2.0 requires pyarrow >= 6.0.0 which conflicts with dependencies for rapidsai 0.21.*
         datasets==2.1.0 \
@@ -544,6 +550,8 @@ RUN pip install flashtext \
         flask \
         # pycrypto is used by competitions team.
         pycrypto \
+        # https://github.com/pycrypto/pycrypto/issues/327
+        'setuptools<58' \
         easyocr \
         # ipympl adds interactive widget support for matplotlib
         ipympl==0.7.0 \
