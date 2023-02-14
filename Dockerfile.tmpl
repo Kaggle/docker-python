@@ -381,16 +381,6 @@ RUN pip install tensorpack && \
 # Remove files that can't be uninstalled normally:
 RUN rm /opt/conda/lib/python3.7/site-packages/google*/REQUESTED
 RUN rm /opt/conda/lib/python3.7/site-packages/google*/direct_url.json
-# google-cloud-automl 2.0.0 introduced incompatible API changes, need to pin to 1.0.1
-RUN pip install google-cloud-automl==1.0.1 \
-        google-api-core==1.33.2 \
-        google-cloud-bigquery==2.2.0 \
-        google-cloud-storage \
-        google-cloud-translate==3.* \
-        google-cloud-language==2.* \
-        google-cloud-videointelligence==2.* \
-        google-cloud-vision==2.* \
-        protobuf==3.20.3
 # install cython & cysignals before pyfasttext
 RUN pip install cython \
         cysignals \
@@ -401,8 +391,18 @@ RUN pip install annoy \
         category_encoders && \
     # b/183041606#comment5: the Kaggle data proxy doesn't support these APIs. If the library is missing, it falls back to using a regular BigQuery query to fetch data.
     pip uninstall -y google-cloud-bigquery-storage && \
+    # google-cloud-automl 2.0.0 introduced incompatible API changes, need to pin to 1.0.1
     # After launch this should be installed from pip
     pip install git+https://github.com/googleapis/python-aiplatform.git@mb-release \
+        google-cloud-automl==1.0.1 \
+        google-api-core==1.33.2 \
+        google-cloud-bigquery==2.2.0 \
+        google-cloud-storage \
+        google-cloud-translate==3.* \
+        google-cloud-language==2.* \
+        google-cloud-videointelligence==2.* \
+        google-cloud-vision==2.* \
+        protobuf==3.20.3 \
         ortools \
         scattertext \
         # Pandas data reader
@@ -502,7 +502,7 @@ RUN pip install flashtext \
         pympler \
         s3fs \
         featuretools \
-        -e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper \
+        #-e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper \
         hpsklearn \
         git+https://github.com/Kaggle/learntools \
         kmapper \
@@ -529,8 +529,8 @@ RUN pip install flashtext \
         catalyst \
         # b/206990323 osmx 1.1.2 requires numpy >= 1.21 which we don't want.
         osmnx==1.1.1 && \
-    apt-get -y install libspatialindex-dev && \
-    pip install pytorch-ignite \
+    apt-get -y install libspatialindex-dev
+RUN pip install pytorch-ignite \
         qgrid \
         bqplot \
         earthengine-api \
@@ -549,9 +549,7 @@ RUN pip install flashtext \
         # flask is used by agents in the simulation competitions.
         flask \
         # pycrypto is used by competitions team.
-        pycrypto \
-        # https://github.com/pycrypto/pycrypto/issues/327
-        'setuptools<58' \
+        pycryptodome \
         easyocr \
         # ipympl adds interactive widget support for matplotlib
         ipympl==0.7.0 \
@@ -605,6 +603,8 @@ RUN pip install --upgrade dask && \
     # Temporary patch for broken libpixman 0.38 in conda-forge, symlink to system libpixman 0.34 untile conda package gets updated to 0.38.5 or higher.
     ln -sf /usr/lib/x86_64-linux-gnu/libpixman-1.so.0.34.0 /opt/conda/lib/libpixman-1.so.0.38.0 && \
     /tmp/clean-layer.sh
+
+RUN pip install setuptools==59.8.0 && pip install -e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper
 
 # Add BigQuery client proxy settings
 ENV PYTHONUSERBASE "/root/.local"
