@@ -115,7 +115,7 @@ RUN mamba install -c pytorch magma-cuda${CUDA_MAJOR_VERSION}${CUDA_MINOR_VERSION
     # b/255757999 openmp (libomp.so) is an dependency of libtorchtext and libtorchaudio but
     # the built from source versions don't seem to properly link it in. This forces the dep
     # which makes sure that libomp is loaded when these libraries are loaded.
-    pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 torchaudio==0.12.1 torchtext==0.13.0 --extra-index-url https://download.pytorch.org/whl/cu113 && \
+    mamba install pytorch==1.12.0 torchvision==0.13.0 torchaudio==0.12.0 torchtext cudatoolkit=11.3 -c pytorch && \
     #pip install patchelf && \
     #patchelf --add-needed libomp.so /opt/conda/lib/python3.7/site-packages/torchtext/lib/libtorchtext.so && \
     #patchelf --add-needed libomp.so /opt/conda/lib/python3.7/site-packages/torchaudio/lib/libtorchaudio.so && \
@@ -390,7 +390,7 @@ RUN pip install google-cloud-automl==1.0.1 \
         google-cloud-language==2.* \
         google-cloud-videointelligence==2.* \
         google-cloud-vision==2.* \
-        pip install protobuf==3.20.3
+        protobuf==3.20.3
 # install cython & cysignals before pyfasttext
 RUN pip install cython \
         cysignals \
