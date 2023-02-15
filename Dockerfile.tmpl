@@ -180,8 +180,7 @@ RUN pip install spacy && \
 # No specific package for nnabla-ext-cuda 11.x minor versions.
 RUN pip install pycuda \
         pynvrtc \
-        pynvml \
-        nnabla-ext-cuda${CUDA_MAJOR_VERSION}0 && \
+        pynvml && \
     /tmp/clean-layer.sh
 {{ end }}
 
