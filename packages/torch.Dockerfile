@@ -55,8 +55,10 @@ RUN sudo apt-get update && \
     cd audio && \
     git checkout tags/v$TORCHAUDIO_VERSION && \
     git submodule sync && \
-    git submodule update --init --recursive --jobs 1 && \
-    python setup.py bdist_wheel
+    git submodule update --init --recursive --jobs 1
+# https://github.com/pytorch/audio/issues/936#issuecomment-702990346
+RUN sed -i 's/set(envs/set(envs\n  "LIBS=-ltinfo"/' /usr/local/src/audio/third_party/sox/CMakeLists.txt 
+RUN cd /usr/local/src/audio && python setup.py bdist_wheel
 
 # Build torchtext
 # Instructions: https://github.com/pytorch/text#building-from-source

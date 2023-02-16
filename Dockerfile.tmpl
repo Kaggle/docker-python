@@ -10,7 +10,7 @@ ARG TORCHVISION_VERSION
 
 {{ if eq .Accelerator "gpu" }}
 FROM gcr.io/kaggle-images/python-lightgbm-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_TAG}-${LIGHTGBM_VERSION} AS lightgbm_whl
-#FROM gcr.io/kaggle-images/python-torch-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_TAG}-${TORCH_VERSION} AS torch_whl
+FROM gcr.io/kaggle-images/python-torch-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_TAG}-${TORCH_VERSION} AS torch_whl
 FROM ${BASE_IMAGE_REPO}/${GPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 {{ else }}
 FROM ${BASE_IMAGE_REPO}/${CPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
@@ -111,15 +111,13 @@ RUN mamba install implicit && \
 {{ if eq .Accelerator "gpu" }}
 #COPY --from=torch_whl /tmp/whl/*.whl /tmp/torch/
 RUN mamba install -c pytorch magma-cuda${CUDA_MAJOR_VERSION}${CUDA_MINOR_VERSION} && \
-    #pip install /tmp/torch/*.whl && \
+    pip install /tmp/torch/*.whl && \
     # b/255757999 openmp (libomp.so) is an dependency of libtorchtext and libtorchaudio but
-    # the built from source versions don't seem to properly link it in. This forces the dep
-    # which makes sure that libomp is loaded when these libraries are loaded.
-    mamba install pytorch==1.12.0 torchvision==0.13.0 torchaudio==0.12.0 torchtext cudatoolkit=11.3 -c pytorch && \
+    mamba install -y openmp && \
     #pip install patchelf && \
     #patchelf --add-needed libomp.so /opt/conda/lib/python3.7/site-packages/torchtext/lib/libtorchtext.so && \
     #patchelf --add-needed libomp.so /opt/conda/lib/python3.7/site-packages/torchaudio/lib/libtorchaudio.so && \
-    #rm -rf /tmp/torch && \
+    rm -rf /tmp/torch && \
     /tmp/clean-layer.sh
 {{ else }}
 RUN pip install \
