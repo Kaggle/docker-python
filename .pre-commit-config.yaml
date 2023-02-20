@@ -48,10 +48,7 @@ repos:
       - id: yesqa
 
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.0.226
+    rev: v0.0.240
     hooks:
       - id: ruff
-        # Respect `exclude` and `extend-exclude` settings.
-        args:
-          - "--fix"
-          - "--force-exclude"
+        args: ["--fix"]
