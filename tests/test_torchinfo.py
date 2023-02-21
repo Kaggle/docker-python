@@ -8,4 +8,4 @@ class TestTorchinfo(unittest.TestCase):
     def test_info(self):
         model = tnn.Linear(5,3)
         s = summary(model)
-        self.assertIn('Layer', s)
+        self.assertEqual(1, len(s.summary_list))
