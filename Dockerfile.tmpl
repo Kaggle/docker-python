@@ -538,6 +538,8 @@ RUN pip install pytorch-ignite \
         datasets==2.1.0 \
         kaggle-environments \
         geopandas \
+        # b/270162926 newer versions of shapely seem to break polygon data in geopandas
+        shapely==1.8 \
         vowpalwabbit \
         pydub \
         pydegensac \
