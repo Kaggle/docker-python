@@ -6,6 +6,6 @@ from torchinfo import summary
 
 class TestTorchinfo(unittest.TestCase):
     def test_info(self):
-        model = linear_torch = tnn.Linear(5,3)
+        model = tnn.Linear(5,3)
         s = summary(model)
         self.assertIn('Layer', s)
