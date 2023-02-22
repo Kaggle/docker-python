@@ -642,6 +642,9 @@ RUN jupyter-nbextension disable nb_conda --py --sys-prefix && \
 # Force only one libcusolver
 RUN rm /opt/conda/bin/../lib/libcusolver.so.11 && ln -s /usr/local/cuda/lib64/libcusolver.so.11 /opt/conda/bin/../lib/libcusolver.so.11
 
+# b/270147159 conda ships with a version of libtinfo which is missing version info causing warnings, replace it with a good version.
+RUN rm /opt/conda/lib/libtinfo.so.6 && ln -s /usr/lib/x86_64-linux-gnu/libtinfo.so.6 /opt/conda/lib/libtinfo.so.6
+
 # Set backend for matplotlib
 ENV MPLBACKEND "agg"
 
