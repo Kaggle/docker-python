@@ -12,15 +12,7 @@ ARG TORCHVISION_VERSION
 FROM gcr.io/kaggle-images/python-lightgbm-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_TAG}-${LIGHTGBM_VERSION} AS lightgbm_whl
 FROM gcr.io/kaggle-images/python-torch-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_TAG}-${TORCH_VERSION} AS torch_whl
 FROM ${BASE_IMAGE_REPO}/${GPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
-{{ else }}
-FROM ${BASE_IMAGE_REPO}/${CPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
-{{ end }}
 
-# Ensures shared libraries installed with conda can be found by the dynamic link loader.
-ENV LIBRARY_PATH="$LIBRARY_PATH:/opt/conda/lib"
-ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/conda/lib"
-
-{{ if eq .Accelerator "gpu" }}
 ARG CUDA_MAJOR_VERSION
 ARG CUDA_MINOR_VERSION
 ENV CUDA_MAJOR_VERSION=${CUDA_MAJOR_VERSION}
@@ -31,6 +23,8 @@ ENV PATH=/opt/bin:${PATH}
 ENV LD_LIBRARY_PATH_NO_STUBS="$LD_LIBRARY_PATH"
 ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda/lib64/stubs"
 RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1
+{{ else }}
+FROM ${BASE_IMAGE_REPO}/${CPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 {{ end }}
 
 # Keep these variables in sync if base image is updated.
