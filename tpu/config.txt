@@ -1,5 +1,5 @@
 TENSORFLOW_VERSION=2.9.1
-JAX_VERSION=0.3.10
+JAX_VERSION=0.4.4
 # Supports nightly
 TORCH_VERSION=1.10.0
 # https://github.com/pytorch/audio supports nightly
