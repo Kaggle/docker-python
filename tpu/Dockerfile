@@ -43,13 +43,10 @@ RUN pip download -d /lib/wheels/sources /lib/wheels/tensorflow-${TENSORFLOW_VERS
 ENV PIP_LIBTPU=/usr/local/lib/python3.8/site-packages/libtpu/libtpu.so
 ENV DEFAULT_LIBTPU=/lib/libtpu.so
 ENV PYTORCH_LIBTPU=/lib/torch-libtpu.so
-ENV JAX_LIBTPU=/lib/jax-libtpu.so
 
 # Install JAX & related packages
 # https://cloud.google.com/tpu/docs/jax-quickstart-tpu-vm#install_jax_on_your_cloud_tpu_vm
 RUN pip install jax[tpu]==${JAX_VERSION} -f https://storage.googleapis.com/jax-releases/libtpu_releases.html trax flax optax elegy git+https://github.com/deepmind/dm-haiku jraph distrax
-
-RUN cp $PIP_LIBTPU $JAX_LIBTPU
 
 # Install Pytorch & related packages
 # https://cloud.google.com/tpu/docs/pytorch-xla-ug-tpu-vm#changing_pytorch_version
@@ -58,9 +55,8 @@ RUN pip install torch==${TORCH_VERSION} torch_xla[tpuvm] -f https://storage.goog
 
 RUN cp $PIP_LIBTPU $PYTORCH_LIBTPU
 
-# Monkey-patch TF, JAX & PYTORCH to load the correct libtpu.so when they are imported:
-RUN sed -i "s|^\(\(.*\)libtpu.configure_library_path.*\)|\1\n\2os.environ['TPU_LIBRARY_PATH'] = '${PYTORCH_LIBTPU}'|" /usr/local/lib/python3.8/site-packages/torch_xla/__init__.py && \
-    sed -i "s|^\(\(.*\)libtpu.configure_library_path.*\)|\1\n\2os.environ['TPU_LIBRARY_PATH'] = '${JAX_LIBTPU}'|" /usr/local/lib/python3.8/site-packages/jax/_src/cloud_tpu_init.py
+# Monkey-patch PYTORCH to load the correct libtpu.so when they are imported:
+RUN sed -i "s|^\(\(.*\)libtpu.configure_library_path.*\)|\1\n\2os.environ['TPU_LIBRARY_PATH'] = '${PYTORCH_LIBTPU}'|" /usr/local/lib/python3.8/site-packages/torch_xla/__init__.py
 
 # Packages needed by the Notebook editor:
 RUN pip install papermill jupyterlab python-lsp-server[all] jupyterlab-lsp
