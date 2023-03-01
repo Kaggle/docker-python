@@ -38,6 +38,9 @@ ADD patches/kaggle_datasets.py /root/.local/lib/python3.8/site-packages/kaggle_d
 RUN mkdir -p /lib/wheels && curl --output /lib/wheels/tensorflow-${TENSORFLOW_VERSION}-cp38-cp38-linux_x86_64.whl https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/tensorflow/tf-${TENSORFLOW_VERSION}/tensorflow-${TENSORFLOW_VERSION}-cp38-cp38-linux_x86_64.whl
 RUN curl --output /lib/libtpu.so https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/libtpu/1.3.0/libtpu.so
 RUN pip download -d /lib/wheels/sources /lib/wheels/tensorflow-${TENSORFLOW_VERSION}-cp38-cp38-linux_x86_64.whl
+ADD patches/kaggle_module_resolver.py /lib/patches/kaggle_module_resolver.py
+ADD tpu/install_tf_tpu.sh /lib/install_tf_tpu.sh
+RUN chmod u+x /lib/install_tf_tpu.sh
 
 # LIBTPU installed here:
 ENV PIP_LIBTPU=/usr/local/lib/python3.8/site-packages/libtpu/libtpu.so
@@ -63,12 +66,6 @@ RUN pip install papermill jupyterlab python-lsp-server[all] jupyterlab-lsp
 
 # Additional useful packages should be added here:
 RUN pip install pandas
-
-# Add Kaggle module resolver
-# This has to be run *after* tensorflow is installed or it will get overwritten.
-#ADD patches/kaggle_module_resolver.py /usr/local/lib/python3.8/site-packages/tensorflow_hub/kaggle_module_resolver.py
-#RUN sed -i '/from tensorflow_hub import uncompressed_module_resolver/a from tensorflow_hub import kaggle_module_resolver' /usr/local/lib/python3.8/site-packages/tensorflow_hub/config.py && \
-#    sed -i '/_install_default_resolvers()/a \ \ registry.resolver.add_implementation(kaggle_module_resolver.KaggleFileResolver())' /usr/local/lib/python3.8/site-packages/tensorflow_hub/config.py
 
 # Set these env vars so that they don't produce errs calling the metadata server to load them:
 ENV TPU_ACCELERATOR_TYPE=v3-8
