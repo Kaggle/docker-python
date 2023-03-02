@@ -4,6 +4,7 @@ FROM python:3.8
 # See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
 ARG TORCH_VERSION
 ARG TENSORFLOW_VERSION
+ARG TF_LIBTPU_VERSION
 ARG JAX_VERSION
 ARG TORCHVISION_VERSION
 ARG TORCHTEXT_VERSION
@@ -31,26 +32,21 @@ ADD patches/kaggle_datasets.py /root/.local/lib/python3.8/site-packages/kaggle_d
 # ADD patches/sitecustomize.py /root/.local/lib/python3.8/site-packages/sitecustomize.py
 
 # Tensorflow wheel:
-# When tensorflow is compatible with being installed alongside JAX/Pytorch then we no longer need to include the wheel and can install it directly.
-# RUN pip install https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/tensorflow/tf-${TENSORFLOW_VERSION}/tensorflow-${TENSORFLOW_VERSION}-cp38-cp38-linux_x86_64.whl
-# To install offline:
-# pip install --no-index --find-links /lib/wheels/sources /lib/wheels/tensorflow-2.9.1-cp38-cp38-linux_x86_64.whl
-RUN mkdir -p /lib/wheels && curl --output /lib/wheels/tensorflow-${TENSORFLOW_VERSION}-cp38-cp38-linux_x86_64.whl https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/tensorflow/tf-${TENSORFLOW_VERSION}/tensorflow-${TENSORFLOW_VERSION}-cp38-cp38-linux_x86_64.whl
-RUN curl --output /lib/libtpu.so https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/libtpu/1.3.0/libtpu.so
-RUN pip download -d /lib/wheels/sources /lib/wheels/tensorflow-${TENSORFLOW_VERSION}-cp38-cp38-linux_x86_64.whl
-ADD patches/kaggle_module_resolver.py /lib/patches/kaggle_module_resolver.py
-ADD tpu/install_tf_tpu.sh /lib/install_tf_tpu.sh
-RUN chmod u+x /lib/install_tf_tpu.sh
+RUN pip install tensorflow_hub https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/tensorflow/tf-${TENSORFLOW_VERSION}/tensorflow-${TENSORFLOW_VERSION}-cp38-cp38-linux_x86_64.whl
+RUN curl --output /lib/libtpu.so https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/libtpu/${TF_LIBTPU_VERSION}/libtpu.so
+ADD patches/kaggle_module_resolver.py /usr/local/lib/python3.8/site-packages/tensorflow_hub/kaggle_module_resolver.py
+RUN sed -i '/from tensorflow_hub import uncompressed_module_resolver/a from tensorflow_hub import kaggle_module_resolver' /usr/local/lib/python3.8/site-packages/tensorflow_hub/config.py
+RUN sed -i '/_install_default_resolvers()/a \ \ registry.resolver.add_implementation(kaggle_module_resolver.KaggleFileResolver())' /usr/local/lib/python3.8/site-packages/tensorflow_hub/config.py
 
 # LIBTPU installed here:
 ENV PIP_LIBTPU=/usr/local/lib/python3.8/site-packages/libtpu/libtpu.so
-ENV DEFAULT_LIBTPU=/lib/libtpu.so
 ENV PYTORCH_LIBTPU=/lib/torch-libtpu.so
 
 # Install Pytorch & related packages
 # https://cloud.google.com/tpu/docs/pytorch-xla-ug-tpu-vm#changing_pytorch_version
 # The URL doesn't include patch version. i.e. must use 1.11 instead of 1.11.0
-RUN pip install torch==${TORCH_VERSION} torch_xla[tpuvm] -f https://storage.googleapis.com/tpu-pytorch/wheels/tpuvm/torch_xla-${TORCH_VERSION%.*}-cp38-cp38-linux_x86_64.whl torchvision==${TORCHVISION_VERSION} torchtext==${TORCHTEXT_VERSION} torchaudio==${TORCHAUDIO_VERSION}
+# We need to keep the numpy version the same as the installed tf one but compatible with other installs.
+RUN pip install numpy==1.24.2 torch==${TORCH_VERSION} torch_xla[tpuvm] -f https://storage.googleapis.com/tpu-pytorch/wheels/tpuvm/torch_xla-${TORCH_VERSION%.*}-cp38-cp38-linux_x86_64.whl torchvision==${TORCHVISION_VERSION} torchtext==${TORCHTEXT_VERSION} torchaudio==${TORCHAUDIO_VERSION}
 
 RUN cp $PIP_LIBTPU $PYTORCH_LIBTPU
 
@@ -59,7 +55,8 @@ RUN sed -i "s|^\(\(.*\)libtpu.configure_library_path.*\)|\1\n\2os.environ['TPU_L
 
 # Install JAX & related packages
 # https://cloud.google.com/tpu/docs/jax-quickstart-tpu-vm#install_jax_on_your_cloud_tpu_vm
-RUN pip install jax[tpu]==${JAX_VERSION} -f https://storage.googleapis.com/jax-releases/libtpu_releases.html trax flax optax elegy git+https://github.com/deepmind/dm-haiku jraph distrax
+# We need to keep the numpy version the same as the installed tf one but compatible with other installs.
+RUN pip install numpy==1.24.2 jax[tpu]==${JAX_VERSION} -f https://storage.googleapis.com/jax-releases/libtpu_releases.html trax flax optax elegy git+https://github.com/deepmind/dm-haiku jraph distrax
 
 # Packages needed by the Notebook editor:
 RUN pip install papermill jupyterlab python-lsp-server[all] jupyterlab-lsp
