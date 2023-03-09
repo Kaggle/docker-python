@@ -245,8 +245,7 @@ RUN pip install ibis-framework && \
 RUN pip install scipy \
         scikit-learn \
         # Scikit-learn accelerated library for x86
-        # TODO(b/262387811#4) Unpin when the package is fixed.
-        scikit-learn-intelex==2021.6.3 \
+        scikit-learn-intelex>=2023.0.1 \
         # HDF5 support
         h5py \
         biopython \
@@ -262,6 +261,7 @@ RUN pip install scipy \
         datashader \
         # Boruta (python implementation)
         Boruta && \
+
     apt-get install -y graphviz && pip install graphviz && \
     # Pandoc is a dependency of deap
     apt-get install -y pandoc && \
