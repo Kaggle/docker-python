@@ -419,7 +419,7 @@ RUN pip install annoy \
     /tmp/clean-layer.sh
 
 # b/273059949 The pre-installed nbconvert is slow on html conversions and has to be force-uninstalled.
-RUN !rm -rf /opt/conda/lib/python3.7/site-packages/nbconvert*
+RUN rm -rf /opt/conda/lib/python3.7/site-packages/nbconvert*
 
 # Fix qgrid by pinning ipywidgets https://github.com/quantopian/qgrid/issues/376
 #        allennlp \
