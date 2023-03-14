@@ -421,6 +421,7 @@ RUN pip install annoy \
 
 # Fix qgrid by pinning ipywidgets https://github.com/quantopian/qgrid/issues/376
 #        allennlp \
+# b/273059949 nbconvert has a speed regression past this version
 RUN pip install bleach \
         certifi \
         cycler \
@@ -442,7 +443,6 @@ RUN pip install bleach \
         mistune \
         nbformat \
         notebook \
-        # b/273059949 nbconvert has a speed regression past this version
         nbconvert<=7.0.0 \
         papermill \
         python-lsp-server[all] \
