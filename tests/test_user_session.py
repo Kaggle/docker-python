@@ -4,7 +4,7 @@ import threading
 import unittest
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from test.support import EnvironmentVarGuard
+from test.support.os_helper import EnvironmentVarGuard
 from urllib.parse import urlparse
 from kaggle_session import UserSessionClient
 from kaggle_web_client import (_KAGGLE_URL_BASE_ENV_VAR_NAME,

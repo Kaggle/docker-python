@@ -4,7 +4,7 @@ import inspect
 from unittest.mock import Mock, patch
 
 from kaggle_gcp import KaggleKernelCredentials, KaggleKernelWithProjetCredentials, init_translation_v2, init_translation_v3
-from test.support import EnvironmentVarGuard
+from test.support.os_helper import EnvironmentVarGuard
 from google.api_core import client_options
 from google.cloud import translate, translate_v2
 

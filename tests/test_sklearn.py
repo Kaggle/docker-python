@@ -12,7 +12,7 @@ class TestSklearn(unittest.TestCase):
         rf1.fit(X,y)
 
     def test_linearn_classifier(self):
-        boston = datasets.load_boston()
-        X, y = boston.data, boston.target
+        iris = datasets.load_iris()
+        X, y = iris.data, iris.target
         lr1 = LinearRegression()
         lr1.fit(X,y)

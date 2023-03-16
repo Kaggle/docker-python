@@ -75,6 +75,7 @@ RUN cd /usr/local/src && \
 # Build torchvision.
 # Instructions: https://github.com/pytorch/vision/tree/main#installation
 # See comment above for PYTORCH_BUILD_VERSION.
+ENV CUDA_HOME=/usr/local/cuda
 ENV BUILD_VERSION=$TORCHVISION_VERSION
 RUN cd /usr/local/src && \
     git clone --recursive https://github.com/pytorch/vision && \

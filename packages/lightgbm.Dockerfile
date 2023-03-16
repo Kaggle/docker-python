@@ -6,7 +6,7 @@ ARG PACKAGE_VERSION
 
 # Build instructions: https://lightgbm.readthedocs.io/en/latest/GPU-Tutorial.html#build-lightgbm
 RUN apt-get update && \
-    apt-get install -y build-essential cmake libboost-dev libboost-system-dev libboost-filesystem-dev ocl-icd-libopencl1 clinfo
+    apt-get install -y build-essential cmake libboost-dev libboost-system-dev libboost-filesystem-dev ocl-icd-libopencl1 clinfo opencl-headers
 
 RUN cd /usr/local/src && \
     git clone --recursive https://github.com/microsoft/LightGBM && \

@@ -4,7 +4,7 @@ import subprocess
 import threading
 import unittest
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from test.support import EnvironmentVarGuard
+from test.support.os_helper import EnvironmentVarGuard
 from urllib.parse import urlparse
 from datetime import datetime, timedelta
 import mock

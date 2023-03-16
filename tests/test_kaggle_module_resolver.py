@@ -7,7 +7,7 @@ import tensorflow as tf
 import tensorflow_hub as hub
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from test.support import EnvironmentVarGuard
+from test.support.os_helper import EnvironmentVarGuard
 
 
 class TestKaggleModuleResolver(unittest.TestCase):

@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import Mock, patch
 
 from kaggle_gcp import KaggleKernelCredentials, init_automl
-from test.support import EnvironmentVarGuard
+from test.support.os_helper import EnvironmentVarGuard
 from google.cloud import storage, automl_v1beta1, automl
 
 def _make_credentials():
