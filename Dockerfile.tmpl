@@ -201,7 +201,7 @@ RUN pip install pysal \
 
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
-    # b/198300835 kornia 4.1.0 is not compatible with our version of numpy.
+    # b/198300835 gensim 4.1.0 is not compatible with our version of numpy.
     pip install gensim==4.0.1 \
         textblob \
         wordcloud \
@@ -449,8 +449,7 @@ RUN pip install bleach \
         papermill \
         python-lsp-server[all] \
         olefile \
-        # b/198300835 kornia 0.5.10 is not compatible with our version of numpy.
-        kornia==0.5.8 \
+        kornia \
         pandas_summary \
         pandocfilters \
         pexpect \
