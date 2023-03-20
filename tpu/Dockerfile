@@ -64,6 +64,9 @@ RUN pip install papermill jupyterlab python-lsp-server[all] jupyterlab-lsp
 # Additional useful packages should be added here:
 RUN pip install pandas
 
+# Monkey-patch the default TPU to the local (TPU VM).
+RUN sed -i 's/def connect(tpu=None,/def connect(tpu="local",/' /usr/local/lib/python3.8/site-packages/tensorflow/python/distribute/cluster_resolver/tpu/tpu_cluster_resolver.py
+
 # Set these env vars so that they don't produce errs calling the metadata server to load them:
 ENV TPU_ACCELERATOR_TYPE=v3-8
 ENV TPU_PROCESS_ADDRESSES=local
