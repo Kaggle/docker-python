@@ -62,7 +62,7 @@ RUN pip install numpy==1.24.2 jax[tpu]==${JAX_VERSION} -f https://storage.google
 RUN pip install papermill jupyterlab python-lsp-server[all] jupyterlab-lsp
 
 # Additional useful packages should be added here:
-RUN pip install pandas
+RUN pip install pandas matplotlib
 
 # Monkey-patch the default TPU to the local (TPU VM).
 RUN sed -i 's/def connect(tpu=None,/def connect(tpu="local",/' /usr/local/lib/python3.8/site-packages/tensorflow/python/distribute/cluster_resolver/tpu/tpu_cluster_resolver.py
