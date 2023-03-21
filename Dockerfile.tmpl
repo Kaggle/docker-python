@@ -418,6 +418,7 @@ RUN pip install annoy \
     /tmp/clean-layer.sh
 
 # b/273059949 The pre-installed nbconvert is slow on html conversions and has to be force-uninstalled.
+# b/274619697 learntools also requires a specific nbconvert right now
 RUN rm -rf /opt/conda/lib/python3.7/site-packages/nbconvert*
 RUN rm -rf /opt/conda/lib/python3.7/site-packages/mistune*
 
@@ -444,7 +445,7 @@ RUN pip install bleach \
         mistune \
         nbformat \
         notebook \
-        "nbconvert<7" \
+        "nbconvert==6.4.5" \
         papermill \
         python-lsp-server[all] \
         olefile \
