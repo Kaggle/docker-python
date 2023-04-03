@@ -55,6 +55,10 @@ ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 ADD patches/template_conf.json /opt/kaggle/conf.json
 
+# b/276344496: Install specific version of boto3, because 1.26.103 is broken.
+RUN pip install boto3==1.26.100 && \
+    /tmp/clean-layer.sh
+
 {{ if eq .Accelerator "gpu" }}
 # b/200968891 Keeps horovod once torch is upgraded.
 RUN pip uninstall -y horovod && \
@@ -423,6 +427,7 @@ RUN pip install annoy \
     /tmp/clean-layer.sh
 
 # b/273059949 The pre-installed nbconvert is slow on html conversions and has to be force-uninstalled.
+# b/274619697 learntools also requires a specific nbconvert right now
 RUN rm -rf /opt/conda/lib/python3.7/site-packages/nbconvert*
 RUN rm -rf /opt/conda/lib/python3.7/site-packages/mistune*
 
@@ -449,12 +454,11 @@ RUN pip install bleach \
         mistune \
         nbformat \
         notebook \
-        "nbconvert<7" \
+        "nbconvert==6.4.5" \
         papermill \
         python-lsp-server[all] \
         olefile \
-        # b/198300835 kornia 0.5.10 is not compatible with our version of numpy.
-        kornia==0.5.8 \
+        kornia \
         pandas_summary \
         pandocfilters \
         pexpect \
