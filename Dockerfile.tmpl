@@ -25,6 +25,8 @@ ARG CUDA_MAJOR_VERSION
 ARG CUDA_MINOR_VERSION
 ENV CUDA_MAJOR_VERSION=${CUDA_MAJOR_VERSION}
 ENV CUDA_MINOR_VERSION=${CUDA_MINOR_VERSION}
+# Make sure we are on the right version of CUDA
+RUN update-alternatives --set cuda /usr/local/cuda-$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION
 # NVIDIA binaries from the host are mounted to /opt/bin.
 ENV PATH=/opt/bin:${PATH}
 # Add CUDA stubs to LD_LIBRARY_PATH to support building the GPU image on a CPU machine.

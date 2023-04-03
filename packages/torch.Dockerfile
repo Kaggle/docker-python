@@ -9,6 +9,9 @@ ARG TORCHVISION_VERSION
 ARG CUDA_MAJOR_VERSION
 ARG CUDA_MINOR_VERSION
 
+# Make sure we are on the right version of CUDA
+RUN update-alternatives --set cuda /usr/local/cuda-$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION
+
 # TORCHVISION_VERSION is mandatory
 RUN test -n "$TORCHVISION_VERSION"
 
