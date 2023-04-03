@@ -63,7 +63,7 @@ RUN pip install jax[tpu]==${JAX_VERSION} -f https://storage.googleapis.com/jax-r
     numpy==1.23.5
 
 # Packages needed by the Notebook editor:
-RUN pip install papermill jupyterlab python-lsp-server[all] jupyterlab-lsp
+RUN pip install papermill jupyterlab python-lsp-server[all] "jupyter-lsp==1.5.1"
 
 # Additional useful packages should be added here:
 RUN pip install pandas matplotlib
