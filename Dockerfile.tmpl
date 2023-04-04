@@ -152,7 +152,7 @@ RUN pip install lightgbm==$LIGHTGBM_VERSION && \
 
 # Install JAX
 {{ if eq .Accelerator "gpu" }}
-RUN pip install jax[cuda11_cudnn805] -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html && \
+RUN pip install "jax[cuda11_pip]" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html && \
     /tmp/clean-layer.sh
 {{ else }}
 RUN pip install jax[cpu] && \
@@ -660,6 +660,9 @@ RUN rm /opt/conda/bin/../lib/libcusolver.so.11 && ln -s /usr/local/cuda/lib64/li
 
 # b/270147159 conda ships with a version of libtinfo which is missing version info causing warnings, replace it with a good version.
 RUN rm /opt/conda/lib/libtinfo.so.6 && ln -s /usr/lib/x86_64-linux-gnu/libtinfo.so.6 /opt/conda/lib/libtinfo.so.6
+
+# b/276358430 fix Jupyter lsp freezing up the jupyter server
+RUN pip install "jupyter-lsp==1.5.1"
 
 # Set backend for matplotlib
 ENV MPLBACKEND "agg"
