@@ -430,8 +430,8 @@ RUN pip install annoy \
 
 # b/273059949 The pre-installed nbconvert is slow on html conversions and has to be force-uninstalled.
 # b/274619697 learntools also requires a specific nbconvert right now
-RUN rm -rf /opt/conda/lib/python3.7/site-packages/nbconvert*
-RUN rm -rf /opt/conda/lib/python3.7/site-packages/mistune*
+RUN rm -rf /opt/conda/lib/python3.10/site-packages/nbconvert*
+RUN rm -rf /opt/conda/lib/python3.10/site-packages/mistune*
 
 # Fix qgrid by pinning ipywidgets https://github.com/quantopian/qgrid/issues/376
 #        allennlp \
