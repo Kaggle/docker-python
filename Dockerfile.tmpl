@@ -159,16 +159,6 @@ RUN pip install jax[cpu] && \
     /tmp/clean-layer.sh
 {{ end }}
 
-# Install mxnet
-{{ if eq .Accelerator "gpu" }}
-# No specific package for 11.3 minor versions, using 11.2 instead.
-RUN pip install mxnet-cu112 && \
-    /tmp/clean-layer.sh
-{{ else }}
-RUN pip install mxnet && \
-    /tmp/clean-layer.sh
-{{ end}}
-
 # Install spacy
 {{ if eq .Accelerator "gpu" }}
 RUN pip install spacy[cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION] && \
@@ -240,10 +230,8 @@ RUN apt-get install -y libfreetype6-dev && \
     /tmp/clean-layer.sh
 
 RUN pip install ibis-framework && \
-    pip install gluonnlp && \
     # b/212703016 4.5.4.62 segfault with readtext.
     pip install opencv-contrib-python==4.5.4.60 opencv-python==4.5.4.60 && \
-    pip install gluoncv && \
     /tmp/clean-layer.sh
 
 RUN pip install scipy \
