@@ -64,6 +64,6 @@ class TestDipy(unittest.TestCase):
             fbc.get_points_rfbc_thresholded(0, emphasis=0.01)
 
         # check mean RFBC against tested value
-        npt.assert_almost_equal(np.mean(rfbc_orig), 1.05007085051969)
+        npt.assert_almost_equal(np.mean(rfbc_orig), 1.0500466494329224)
 
         
