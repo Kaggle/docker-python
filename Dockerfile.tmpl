@@ -120,9 +120,6 @@ RUN mamba install -c pytorch magma-cuda${CUDA_MAJOR_VERSION}${CUDA_MINOR_VERSION
     pip install /tmp/torch/*.whl && \
     # b/255757999 openmp (libomp.so) is an dependency of libtorchtext and libtorchaudio but
     mamba install -y openmp && \
-    #pip install patchelf && \
-    #patchelf --add-needed libomp.so /opt/conda/lib/python3.10/site-packages/torchtext/lib/libtorchtext.so && \
-    #patchelf --add-needed libomp.so /opt/conda/lib/python3.10/site-packages/torchaudio/lib/libtorchaudio.so && \
     rm -rf /tmp/torch && \
     /tmp/clean-layer.sh
 {{ else }}
@@ -197,7 +194,6 @@ RUN pip install pysal \
 
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
-    # b/198300835 kornia 4.1.0 is not compatible with our version of numpy.
     pip install gensim \
         textblob \
         wordcloud \
@@ -259,12 +255,6 @@ RUN pip install scipy \
     apt-get install -y pandoc && \
     pip install essentia
 
-# http://go/roole/git_clone_github.md
-#RUN git config --global --add url.https://github.com/.insteadOf git://github.com/ && \
-#     git clone git://github.com/scikit-learn-contrib/py-earth.git && \
-#        cd py-earth && \
-#        python setup.py install
-
 RUN apt-get install -y git-lfs && \
     /tmp/clean-layer.sh
 
@@ -287,8 +277,6 @@ RUN pip install mpld3 \
         preprocessing \
         path.py \
         Geohash && \
-    # https://github.com/vinsci/geohash/issues/4
-    #sed -i -- 's/geohash/.geohash/g' /opt/conda/lib/python3.10/site-packages/Geohash/__init__.py && \
     pip install deap \
         tpot \
         scikit-optimize \
@@ -343,7 +331,6 @@ RUN pip install mpld3 \
         cleverhans \
         leven \
         catboost \
-        #lightfm \
         folium \
         scikit-plot \
         fury dipy \
@@ -375,9 +362,6 @@ RUN pip install tensorpack && \
 
 
 
-# Remove files that can't be uninstalled normally:
-#RUN rm /opt/conda/lib/python3.10/site-packages/google*/REQUESTED
-#RUN rm /opt/conda/lib/python3.10/site-packages/google*/direct_url.json
 # install cython & cysignals before pyfasttext
 RUN pip install cython \
         cysignals \
@@ -476,7 +460,6 @@ RUN pip install bleach \
         pyarrow \
         feather-format \
         fastai
-#RUN pip install "importlib-metadata==6.0.0"
 RUN python -m spacy download en_core_web_sm && python -m spacy download en_core_web_lg && \
     apt-get install -y ffmpeg && \
     /tmp/clean-layer.sh
@@ -550,7 +533,6 @@ RUN pip install pytorch-ignite \
         pydegensac \
         torchmetrics \
         pytorch-lightning \
-        #datatable \
         sympy \
         # flask is used by agents in the simulation competitions.
         flask \
