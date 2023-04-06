@@ -25,6 +25,8 @@ ARG CUDA_MAJOR_VERSION
 ARG CUDA_MINOR_VERSION
 ENV CUDA_MAJOR_VERSION=${CUDA_MAJOR_VERSION}
 ENV CUDA_MINOR_VERSION=${CUDA_MINOR_VERSION}
+# Make sure we are on the right version of CUDA
+RUN update-alternatives --set cuda /usr/local/cuda-$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION
 # NVIDIA binaries from the host are mounted to /opt/bin.
 ENV PATH=/opt/bin:${PATH}
 # Add CUDA stubs to LD_LIBRARY_PATH to support building the GPU image on a CPU machine.
@@ -91,7 +93,7 @@ RUN conda config --add channels nvidia && \
     conda install -c conda-forge mamba && \
     # Base image channel order: conda-forge (highest priority), defaults.
     # End state: rapidsai (highest priority), nvidia, conda-forge, defaults.
-    mamba install mkl cartopy=0.19 imagemagick=7.1 pyproj==3.1.0 && \
+    mamba install mkl cartopy imagemagick pyproj && \
     /tmp/clean-layer.sh
 
 {{ if eq .Accelerator "gpu" }}
@@ -118,9 +120,6 @@ RUN mamba install -c pytorch magma-cuda${CUDA_MAJOR_VERSION}${CUDA_MINOR_VERSION
     pip install /tmp/torch/*.whl && \
     # b/255757999 openmp (libomp.so) is an dependency of libtorchtext and libtorchaudio but
     mamba install -y openmp && \
-    #pip install patchelf && \
-    #patchelf --add-needed libomp.so /opt/conda/lib/python3.7/site-packages/torchtext/lib/libtorchtext.so && \
-    #patchelf --add-needed libomp.so /opt/conda/lib/python3.7/site-packages/torchaudio/lib/libtorchaudio.so && \
     rm -rf /tmp/torch && \
     /tmp/clean-layer.sh
 {{ else }}
@@ -150,22 +149,12 @@ RUN pip install lightgbm==$LIGHTGBM_VERSION && \
 
 # Install JAX
 {{ if eq .Accelerator "gpu" }}
-RUN pip install jax[cuda11_cudnn805] -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html && \
+RUN pip install "jax[cuda11_cudnn82]" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html && \
     /tmp/clean-layer.sh
 {{ else }}
 RUN pip install jax[cpu] && \
     /tmp/clean-layer.sh
 {{ end }}
-
-# Install mxnet
-{{ if eq .Accelerator "gpu" }}
-# No specific package for 11.3 minor versions, using 11.2 instead.
-RUN pip install mxnet-cu112 && \
-    /tmp/clean-layer.sh
-{{ else }}
-RUN pip install mxnet && \
-    /tmp/clean-layer.sh
-{{ end}}
 
 # Install spacy
 {{ if eq .Accelerator "gpu" }}
@@ -210,8 +199,6 @@ RUN apt-get install -y libfreetype6-dev && \
         wordcloud \
         xgboost \
         pydot \
-        # Pinned because it breaks theano test with the latest version (b/178107003).
-        theano-pymc==1.0.11 \
         python-Levenshtein \
         hep_ml && \
     # NLTK Project datasets
@@ -239,10 +226,8 @@ RUN apt-get install -y libfreetype6-dev && \
     /tmp/clean-layer.sh
 
 RUN pip install ibis-framework && \
-    pip install gluonnlp && \
     # b/212703016 4.5.4.62 segfault with readtext.
     pip install opencv-contrib-python==4.5.4.60 opencv-python==4.5.4.60 && \
-    pip install gluoncv && \
     /tmp/clean-layer.sh
 
 RUN pip install scipy \
@@ -268,9 +253,9 @@ RUN pip install scipy \
     apt-get install -y graphviz && pip install graphviz && \
     # Pandoc is a dependency of deap
     apt-get install -y pandoc && \
-    pip install git+https://github.com/scikit-learn-contrib/py-earth.git@issue191 \
-        essentia && \
-    apt-get install -y git-lfs && \
+    pip install essentia
+
+RUN apt-get install -y git-lfs && \
     /tmp/clean-layer.sh
 
 # vtk with dependencies
@@ -292,8 +277,6 @@ RUN pip install mpld3 \
         preprocessing \
         path.py \
         Geohash && \
-    # https://github.com/vinsci/geohash/issues/4
-    sed -i -- 's/geohash/.geohash/g' /opt/conda/lib/python3.7/site-packages/Geohash/__init__.py && \
     pip install deap \
         tpot \
         scikit-optimize \
@@ -343,13 +326,11 @@ RUN pip install mpld3 \
         holoviews \
         geoviews \
         hypertools \
-        py_stringsimjoin \
         mlens \
         scikit-multilearn \
         cleverhans \
         leven \
         catboost \
-        lightfm \
         folium \
         scikit-plot \
         fury dipy \
@@ -362,6 +343,7 @@ RUN pip install mpld3 \
         mock && \
     /tmp/clean-layer.sh
 
+RUN rm -rf /opt/conda/lib/python3.10/site-packages/numpy-1.23.5.dist-info*
 RUN pip install tensorpack && \
     # Add google PAIR-code Facets
     cd /opt/ && git clone https://github.com/PAIR-code/facets && cd facets/ && jupyter nbextension install facets-dist/ --user && \
@@ -380,9 +362,6 @@ RUN pip install tensorpack && \
 
 
 
-# Remove files that can't be uninstalled normally:
-RUN rm /opt/conda/lib/python3.7/site-packages/google*/REQUESTED
-RUN rm /opt/conda/lib/python3.7/site-packages/google*/direct_url.json
 # install cython & cysignals before pyfasttext
 RUN pip install cython \
         cysignals \
@@ -398,7 +377,7 @@ RUN pip install annoy \
     pip install git+https://github.com/googleapis/python-aiplatform.git@mb-release \
         google-cloud-automl==1.0.1 \
         google-api-core==1.33.2 \
-        google-cloud-bigquery==2.2.0 \
+        google-cloud-bigquery \
         google-cloud-storage \
         google-cloud-translate==3.* \
         google-cloud-language==2.* \
@@ -423,8 +402,9 @@ RUN pip install annoy \
 
 # b/273059949 The pre-installed nbconvert is slow on html conversions and has to be force-uninstalled.
 # b/274619697 learntools also requires a specific nbconvert right now
-RUN rm -rf /opt/conda/lib/python3.7/site-packages/nbconvert*
-RUN rm -rf /opt/conda/lib/python3.7/site-packages/mistune*
+RUN rm -rf /opt/conda/lib/python3.10/site-packages/nbconvert*
+RUN rm -rf /opt/conda/lib/python3.10/site-packages/nbclient*
+RUN rm -rf /opt/conda/lib/python3.10/site-packages/mistune*
 
 # Fix qgrid by pinning ipywidgets https://github.com/quantopian/qgrid/issues/376
 #        allennlp \
@@ -479,8 +459,7 @@ RUN pip install bleach \
         widgetsnbextension \
         pyarrow \
         feather-format \
-        fastai \
-        importlib-metadata
+        fastai
 RUN python -m spacy download en_core_web_sm && python -m spacy download en_core_web_lg && \
     apt-get install -y ffmpeg && \
     /tmp/clean-layer.sh
@@ -492,6 +471,9 @@ RUN python -m spacy download en_core_web_sm && python -m spacy download en_core_
     # of all non-final lines. Thanks!
     #
     ###########
+
+RUN rm /opt/conda/lib/python3.10/site-packages/google*/direct_url.json
+RUN rm /opt/conda/lib/python3.10/site-packages/google*/REQUESTED
 
 # dlib has a libmkl incompatibility:
 # test_dlib_face_detector (test_dlib.TestDLib) ... INTEL MKL ERROR: /opt/conda/bin/../lib/libmkl_avx512.so.2: undefined symbol: mkl_sparse_optimize_bsr_trsm_i8.
@@ -524,8 +506,6 @@ RUN pip install flashtext \
         https://github.com/hbasria/ggpy/archive/0.11.5.zip \
         cesium \
         rgf_python \
-        # b/205704651 remove install cmd for matrixprofile after version > 1.1.10 is released.
-        git+https://github.com/matrix-profile-foundation/matrixprofile.git@6bea7d4445284dbd9700a097974ef6d4613fbca7 \
         tsfresh \
         pykalman \
         optuna \
@@ -547,14 +527,12 @@ RUN pip install pytorch-ignite \
         # b/271870650 1.13.0 installs pickle5 which breaks rgf_pythons tests
         kaggle-environments==1.12.0 \
         geopandas \
-        # b/270162926 newer versions of shapely seem to break polygon data in geopandas
-        shapely==1.8 \
+        "shapely<2" \
         vowpalwabbit \
         pydub \
         pydegensac \
         torchmetrics \
         pytorch-lightning \
-        datatable \
         sympy \
         # flask is used by agents in the simulation competitions.
         flask \
@@ -568,7 +546,6 @@ RUN pip install pytorch-ignite \
         tables \
         openpyxl \
         timm \
-        pycolmap \
         torchinfo && \
     /tmp/clean-layer.sh
 
@@ -608,7 +585,7 @@ RUN pip install --upgrade dask && \
     mkdir -p /root/.jupyter && touch /root/.jupyter/jupyter_nbconvert_config.py && touch /root/.jupyter/migrated && \
     mkdir -p /.jupyter && touch /.jupyter/jupyter_nbconvert_config.py && touch /.jupyter/migrated && \
     # Stop Matplotlib printing junk to the console on first load
-    sed -i "s/^.*Matplotlib is building the font cache using fc-list.*$/# Warning removed by Kaggle/g" /opt/conda/lib/python3.7/site-packages/matplotlib/font_manager.py && \
+    sed -i "s/^.*Matplotlib is building the font cache using fc-list.*$/# Warning removed by Kaggle/g" /opt/conda/lib/python3.10/site-packages/matplotlib/font_manager.py && \
     # Make matplotlib output in Jupyter notebooks display correctly
     mkdir -p /etc/ipython/ && echo "c = get_config(); c.IPKernelApp.matplotlib = 'inline'" > /etc/ipython/ipython_config.py && \
     # Temporary patch for broken libpixman 0.38 in conda-forge, symlink to system libpixman 0.34 untile conda package gets updated to 0.38.5 or higher.
@@ -619,20 +596,20 @@ RUN pip install setuptools==59.8.0 && pip install -e git+https://github.com/Sohi
 
 # Add BigQuery client proxy settings
 ENV PYTHONUSERBASE "/root/.local"
-ADD patches/kaggle_gcp.py /root/.local/lib/python3.7/site-packages/kaggle_gcp.py
-ADD patches/kaggle_secrets.py /root/.local/lib/python3.7/site-packages/kaggle_secrets.py
-ADD patches/kaggle_session.py /root/.local/lib/python3.7/site-packages/kaggle_session.py
-ADD patches/kaggle_web_client.py /root/.local/lib/python3.7/site-packages/kaggle_web_client.py
-ADD patches/kaggle_datasets.py /root/.local/lib/python3.7/site-packages/kaggle_datasets.py
-ADD patches/log.py /root/.local/lib/python3.7/site-packages/log.py
-ADD patches/sitecustomize.py /root/.local/lib/python3.7/site-packages/sitecustomize.py
+ADD patches/kaggle_gcp.py /root/.local/lib/python3.10/site-packages/kaggle_gcp.py
+ADD patches/kaggle_secrets.py /root/.local/lib/python3.10/site-packages/kaggle_secrets.py
+ADD patches/kaggle_session.py /root/.local/lib/python3.10/site-packages/kaggle_session.py
+ADD patches/kaggle_web_client.py /root/.local/lib/python3.10/site-packages/kaggle_web_client.py
+ADD patches/kaggle_datasets.py /root/.local/lib/python3.10/site-packages/kaggle_datasets.py
+ADD patches/log.py /root/.local/lib/python3.10/site-packages/log.py
+ADD patches/sitecustomize.py /root/.local/lib/python3.10/site-packages/sitecustomize.py
 # Override default imagemagick policies
 ADD patches/imagemagick-policy.xml /etc/ImageMagick-6/policy.xml
 
 # Add Kaggle module resolver
-ADD patches/kaggle_module_resolver.py /opt/conda/lib/python3.7/site-packages/tensorflow_hub/kaggle_module_resolver.py
-RUN sed -i '/from tensorflow_hub import uncompressed_module_resolver/a from tensorflow_hub import kaggle_module_resolver' /opt/conda/lib/python3.7/site-packages/tensorflow_hub/config.py && \
-    sed -i '/_install_default_resolvers()/a \ \ registry.resolver.add_implementation(kaggle_module_resolver.KaggleFileResolver())' /opt/conda/lib/python3.7/site-packages/tensorflow_hub/config.py
+ADD patches/kaggle_module_resolver.py /opt/conda/lib/python3.10/site-packages/tensorflow_hub/kaggle_module_resolver.py
+RUN sed -i '/from tensorflow_hub import uncompressed_module_resolver/a from tensorflow_hub import kaggle_module_resolver' /opt/conda/lib/python3.10/site-packages/tensorflow_hub/config.py && \
+    sed -i '/_install_default_resolvers()/a \ \ registry.resolver.add_implementation(kaggle_module_resolver.KaggleFileResolver())' /opt/conda/lib/python3.10/site-packages/tensorflow_hub/config.py
 
 # TensorBoard Jupyter extension. Should be replaced with TensorBoard's provided magic once we have
 # worker tunneling support in place.
@@ -641,18 +618,21 @@ RUN sed -i '/from tensorflow_hub import uncompressed_module_resolver/a from tens
 # RUN pip install jupyter_tensorboard && \
 #     jupyter serverextension enable jupyter_tensorboard && \
 #     jupyter tensorboard enable
-# ADD patches/tensorboard/notebook.py /opt/conda/lib/python3.7/site-packages/tensorboard/notebook.py
+# ADD patches/tensorboard/notebook.py /opt/conda/lib/python3.10/site-packages/tensorboard/notebook.py
 
 # Disable unnecessary jupyter extensions
-RUN jupyter-nbextension disable nb_conda --py --sys-prefix && \
-    jupyter-serverextension disable nb_conda --py --sys-prefix && \
-    python -m nb_conda_kernels.install --disable
+#RUN jupyter-nbextension disable nb_conda --py --sys-prefix && \
+#    jupyter-serverextension disable nb_conda --py --sys-prefix && \
+#    python -m nb_conda_kernels.install --disable
 
 # Force only one libcusolver
 RUN rm /opt/conda/bin/../lib/libcusolver.so.11 && ln -s /usr/local/cuda/lib64/libcusolver.so.11 /opt/conda/bin/../lib/libcusolver.so.11
 
 # b/270147159 conda ships with a version of libtinfo which is missing version info causing warnings, replace it with a good version.
 RUN rm /opt/conda/lib/libtinfo.so.6 && ln -s /usr/lib/x86_64-linux-gnu/libtinfo.so.6 /opt/conda/lib/libtinfo.so.6
+
+# b/276358430 fix Jupyter lsp freezing up the jupyter server
+RUN pip install "jupyter-lsp==1.5.1"
 
 # Set backend for matplotlib
 ENV MPLBACKEND "agg"

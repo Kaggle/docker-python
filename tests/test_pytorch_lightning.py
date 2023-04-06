@@ -62,7 +62,7 @@ class TestPytorchLightning(unittest.TestCase):
     def test_mnist(self):
         dm = LitDataModule()
         model = LitClassifier()
-        trainer = pl.Trainer(gpus=None, max_epochs=1)
+        trainer = pl.Trainer(max_epochs=1)
         trainer.fit(model, datamodule=dm)
 
         self.assertIn("train_loss", trainer.logged_metrics)

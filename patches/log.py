@@ -27,7 +27,7 @@ class _Logger(logging.Logger):
     # set expanded to include the current filename (".../log.py").
     # Copyright 2001-2015 by Vinay Sajip. All Rights Reserved.
     # License: https://github.com/python/cpython/blob/ce9e62544571e7ade7186697d5dd065fb4c5243f/LICENSE
-    def findCaller(self, stack_info=False):
+    def findCaller(self, stack_info=False, stacklevel=1):
         f = logging.currentframe()
         f = f.f_back
         rv = "(unknown file)", 0, "(unknown function)", None

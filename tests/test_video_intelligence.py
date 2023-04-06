@@ -4,7 +4,7 @@ import inspect
 from unittest.mock import Mock, patch
 
 from kaggle_gcp import KaggleKernelCredentials, init_video_intelligence
-from test.support import EnvironmentVarGuard
+from test.support.os_helper import EnvironmentVarGuard
 from google.cloud import videointelligence
 
 def _make_credentials():

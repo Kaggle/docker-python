@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import Mock
 
 from kaggle_gcp import KaggleKernelCredentials, init_gcs
-from test.support import EnvironmentVarGuard
+from test.support.os_helper import EnvironmentVarGuard
 from google.cloud import storage
 
 def _make_credentials():

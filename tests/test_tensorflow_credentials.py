@@ -3,7 +3,7 @@ import unittest
 import os
 import tensorflow_gcs_config
 from unittest.mock import patch
-from test.support import EnvironmentVarGuard
+from test.support.os_helper import EnvironmentVarGuard
 from kaggle_secrets import UserSecretsClient
 
 class TestTensorflowCredentials(unittest.TestCase):

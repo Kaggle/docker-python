@@ -3,10 +3,15 @@ ARG BASE_IMAGE
 FROM ${BASE_IMAGE} AS builder
 
 ARG PACKAGE_VERSION
+ARG CUDA_MAJOR_VERSION
+ARG CUDA_MINOR_VERSION
+
+# Make sure we are on the right version of CUDA
+RUN update-alternatives --set cuda /usr/local/cuda-$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION
 
 # Build instructions: https://lightgbm.readthedocs.io/en/latest/GPU-Tutorial.html#build-lightgbm
 RUN apt-get update && \
-    apt-get install -y build-essential cmake libboost-dev libboost-system-dev libboost-filesystem-dev ocl-icd-libopencl1 clinfo
+    apt-get install -y build-essential cmake libboost-dev libboost-system-dev libboost-filesystem-dev ocl-icd-libopencl1 clinfo opencl-headers
 
 RUN cd /usr/local/src && \
     git clone --recursive https://github.com/microsoft/LightGBM && \

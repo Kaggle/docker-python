@@ -52,7 +52,12 @@ pipeline {
               set -exo pipefail
               source config.txt
               cd packages/
-              ./build_package --base-image $BASE_IMAGE_REPO/$GPU_BASE_IMAGE_NAME:$BASE_IMAGE_TAG --package lightgbm --version $LIGHTGBM_VERSION --push
+              ./build_package --base-image $BASE_IMAGE_REPO/$GPU_BASE_IMAGE_NAME:$BASE_IMAGE_TAG \
+                --package lightgbm \
+                --version $LIGHTGBM_VERSION \
+                --build-arg CUDA_MAJOR_VERSION=$CUDA_MAJOR_VERSION \
+                --build-arg CUDA_MINOR_VERSION=$CUDA_MINOR_VERSION \
+                --push
             '''
           }
         }

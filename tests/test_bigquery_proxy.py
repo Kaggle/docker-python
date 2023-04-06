@@ -3,7 +3,7 @@ import os
 import json
 from unittest.mock import patch
 import threading
-from test.support import EnvironmentVarGuard
+from test.support.os_helper import EnvironmentVarGuard
 from urllib.parse import urlparse
 
 from http.server import BaseHTTPRequestHandler, HTTPServer

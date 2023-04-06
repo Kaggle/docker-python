@@ -3,6 +3,7 @@ import os
 from log import Log
 
 import sys
+import importlib.abc
 import importlib
 import importlib.machinery
 
