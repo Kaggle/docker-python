@@ -7,3 +7,4 @@ class TestImport(unittest.TestCase):
         import cleverhans
         import tensorflow_gcs_config
         import tensorflow_datasets
+        import segment_anything
