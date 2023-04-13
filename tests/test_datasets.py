@@ -39,7 +39,7 @@ class GcsDatasetsHTTPHandler(BaseHTTPRequestHandler):
 
 
 class TestDatasets(unittest.TestCase):
-    SERVER_ADDRESS = urlparse(os.getenv(_KAGGLE_URL_BASE_ENV_VAR_NAME, default="http://127.0.0.1:8001"))
+    SERVER_ADDRESS = urlparse(os.getenv(_KAGGLE_URL_BASE_ENV_VAR_NAME, default="http://127.0.0.1:0"))
 
     def _test_client(self, client_func, expected_path, expected_body, is_tpu=True, success=True, iap_token=False):
         _request = {}
