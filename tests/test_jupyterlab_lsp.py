@@ -2,7 +2,6 @@ import os
 import unittest
 
 from jupyter_server.serverapp import ServerApp
-import subprocess
 
 # Adapted from:
 # https://github.com/jupyter-lsp/jupyterlab-lsp/blob/ce76fab170feea506faf9ef47e4bd6a468c24313/python_packages/jupyter_lsp/jupyter_lsp/tests/test_extension.py
@@ -29,9 +28,4 @@ class TestJupyterLabLsp(unittest.TestCase):
                     found_lsp = True
 
         self.assertTrue(found_lsp, "didn't install the /lsp/ route")
-        app.stop()
-
-        strpid=subprocess.Popen("ps -ef | grep jupyter | grep 9999 | awk '{print $2}' | head -n 1", shell=True, stdout=subprocess.PIPE).stdout.read().decode("utf-8").strip()
-        if strpid != "":
-            pid=int(strpid)
-            os.kill(pid, 9)
+        os.kill(app.server_info()['pid'], 9)
