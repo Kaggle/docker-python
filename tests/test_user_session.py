@@ -55,6 +55,8 @@ class TestUserSessionClient(unittest.TestCase):
                 threading.Thread(target=httpd.serve_forever).start()
 
                 try:
+                    # Make sure this server is pointed to by clients (the port may have been dynamically chosen): 
+                    env.set(_KAGGLE_URL_BASE_ENV_VAR_NAME, "http://"+httpd.server_address[0]+":"+str(httpd.server_address[1]))
                     client_func()
                 finally:
                     httpd.shutdown()

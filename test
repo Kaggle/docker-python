@@ -100,7 +100,7 @@ fi
 docker run --rm -t --read-only --net=none \
     -e HOME=/tmp -e KAGGLE_DATA_PROXY_TOKEN=test-key \
     -e KAGGLE_USER_SECRETS_TOKEN_KEY=test-secrets-key \
-    -e KAGGLE_URL_BASE=http://127.0.0.1:8001 \
+    -e KAGGLE_URL_BASE=http://127.0.0.1:0 \
     -e KAGGLE_DATA_PROXY_URL=http://127.0.0.1:8000 \
     -e KAGGLE_DATA_PROXY_PROJECT=test \
     -e TF_FORCE_GPU_ALLOW_GROWTH=true \
