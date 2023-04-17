@@ -28,4 +28,4 @@ class TestJupyterLabLsp(unittest.TestCase):
                     found_lsp = True
 
         self.assertTrue(found_lsp, "didn't install the /lsp/ route")
-        os.kill(app.server_info()['pid'], 9)
+        app.stop()
