@@ -230,7 +230,7 @@ RUN pip install ibis-framework && \
     pip install opencv-contrib-python==4.5.4.60 opencv-python==4.5.4.60 && \
     /tmp/clean-layer.sh
 
-RUN pip install scipy \
+RUN pip install scipy>=1.10 \
         scikit-learn \
         # Scikit-learn accelerated library for x86
         scikit-learn-intelex>=2023.0.1 \
