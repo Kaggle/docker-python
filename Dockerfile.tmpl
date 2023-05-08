@@ -593,6 +593,8 @@ RUN pip install --upgrade dask && \
     mkdir -p /etc/ipython/ && echo "c = get_config(); c.IPKernelApp.matplotlib = 'inline'" > /etc/ipython/ipython_config.py && \
     # Temporary patch for broken libpixman 0.38 in conda-forge, symlink to system libpixman 0.34 untile conda package gets updated to 0.38.5 or higher.
     ln -sf /usr/lib/x86_64-linux-gnu/libpixman-1.so.0.34.0 /opt/conda/lib/libpixman-1.so.0.38.0 && \
+    # upgrade jupyter-server to version > 2.x
+    pip install --force-reinstall --no-deps jupyter_server>=2.* && \
     /tmp/clean-layer.sh
 
 RUN pip install setuptools==59.8.0 && pip install -e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper
