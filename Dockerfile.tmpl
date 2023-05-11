@@ -58,7 +58,7 @@ ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 ADD patches/template_conf.json /opt/kaggle/conf.json
 
 # b/276344496: Install specific version of boto3, because 1.26.103 is broken.
-RUN pip install --require-hashes boto3==1.26.100 && \
+RUN pip install --hash=sha256:b5be5bcffe17d70a72622f8ecbb428df7b11ef8d1facdfa984e94c6fc9fa301b boto3==1.26.100 && \
     /tmp/clean-layer.sh
 
 {{ if eq .Accelerator "gpu" }}
