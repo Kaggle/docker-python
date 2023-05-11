@@ -58,7 +58,7 @@ ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 ADD patches/template_conf.json /opt/kaggle/conf.json
 
 # b/276344496: Install specific version of boto3, because 1.26.103 is broken.
-RUN pip install boto3==1.26.100 && \
+RUN pip install --require-hashes boto3==1.26.100 && \
     /tmp/clean-layer.sh
 
 {{ if eq .Accelerator "gpu" }}
@@ -117,13 +117,13 @@ RUN mamba install implicit && \
 {{ if eq .Accelerator "gpu" }}
 COPY --from=torch_whl /tmp/whl/*.whl /tmp/torch/
 RUN mamba install -c pytorch magma-cuda${CUDA_MAJOR_VERSION}${CUDA_MINOR_VERSION} && \
-    pip install /tmp/torch/*.whl && \
+    pip install --require-hashes /tmp/torch/*.whl && \
     # b/255757999 openmp (libomp.so) is an dependency of libtorchtext and libtorchaudio but
     mamba install -y openmp && \
     rm -rf /tmp/torch && \
     /tmp/clean-layer.sh
 {{ else }}
-RUN pip install \
+RUN pip install --require-hashes \
         torch==$TORCH_VERSION+cpu \
         torchvision==$TORCHVISION_VERSION+cpu \
         torchaudio==$TORCHAUDIO_VERSION+cpu \
@@ -139,20 +139,20 @@ COPY --from=lightgbm_whl /tmp/whl/*.whl /tmp/lightgbm/
 RUN apt-get install -y ocl-icd-libopencl1 clinfo && \
     mkdir -p /etc/OpenCL/vendors && \
     echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd && \
-    pip install /tmp/lightgbm/*.whl && \
+    pip install --require-hashes /tmp/lightgbm/*.whl && \
     rm -rf /tmp/lightgbm && \
     /tmp/clean-layer.sh
 {{ else }}
-RUN pip install lightgbm==$LIGHTGBM_VERSION && \
+RUN pip install --require-hashes lightgbm==$LIGHTGBM_VERSION && \
     /tmp/clean-layer.sh
 {{ end }}
 
 # Install JAX
 {{ if eq .Accelerator "gpu" }}
-RUN pip install "jax[cuda11_cudnn82]" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html && \
+RUN pip install --require-hashes "jax[cuda11_cudnn82]" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html && \
     /tmp/clean-layer.sh
 {{ else }}
-RUN pip install jax[cpu] && \
+RUN pip install --require-hashes jax[cpu] && \
     /tmp/clean-layer.sh
 {{ end }}
 
@@ -161,7 +161,7 @@ RUN pip install jax[cpu] && \
 RUN mamba install -c conda-forge spacy cupy && \
     /tmp/clean-layer.sh
 {{ else }}
-RUN pip install spacy && \
+RUN pip install --require-hashes spacy && \
     /tmp/clean-layer.sh
 {{ end}}
 
@@ -169,13 +169,13 @@ RUN pip install spacy && \
 {{ if eq .Accelerator "gpu" }}
 # Install GPU-only packages
 # No specific package for nnabla-ext-cuda 11.x minor versions.
-RUN pip install pycuda \
+RUN pip install --require-hashes pycuda \
         pynvrtc \
         pynvml && \
     /tmp/clean-layer.sh
 {{ end }}
 
-RUN pip install pysal \
+RUN pip install --require-hashes pysal \
         seaborn python-dateutil dask python-igraph \
         pyyaml joblib husl geopy mne pyshp \
         pandas \
@@ -184,7 +184,7 @@ RUN pip install pysal \
     # Install h2o from source.
     # Use `conda install -c h2oai h2o` once Python 3.7 version is released to conda.
     apt-get install -y default-jre-headless && \
-    pip install -f https://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o \
+    pip install --require-hashes -f https://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o \
         "tensorflow-gcs-config<=${TENSORFLOW_VERSION}" \
         "tensorflow==${TENSORFLOW_VERSION}" \
         tensorflow-addons \
@@ -194,7 +194,7 @@ RUN pip install pysal \
 
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
-    pip install gensim \
+    pip install --require-hashes gensim \
         textblob \
         wordcloud \
         xgboost \
@@ -221,16 +221,16 @@ RUN apt-get install -y libfreetype6-dev && \
     twitter_samples udhr2 udhr unicode_samples universal_tagset universal_treebanks_v20 \
     vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
     # Stop-words
-    pip install stop-words \
+    pip install --require-hashes stop-words \
         scikit-image && \
     /tmp/clean-layer.sh
 
-RUN pip install ibis-framework && \
+RUN pip install --require-hashes ibis-framework && \
     # b/212703016 4.5.4.62 segfault with readtext.
-    pip install opencv-contrib-python==4.5.4.60 opencv-python==4.5.4.60 && \
+    pip install --require-hashes opencv-contrib-python==4.5.4.60 opencv-python==4.5.4.60 && \
     /tmp/clean-layer.sh
 
-RUN pip install scipy \
+RUN pip install --require-hashes scipy \
         scikit-learn \
         # Scikit-learn accelerated library for x86
         scikit-learn-intelex>=2023.0.1 \
@@ -250,23 +250,23 @@ RUN pip install scipy \
         # Boruta (python implementation)
         Boruta && \
 
-    apt-get install -y graphviz && pip install graphviz && \
+    apt-get install -y graphviz && pip install --require-hashes graphviz && \
     # Pandoc is a dependency of deap
     apt-get install -y pandoc && \
-    pip install essentia
+    pip install --require-hashes essentia
 
 RUN apt-get install -y git-lfs && \
     /tmp/clean-layer.sh
 
 # vtk with dependencies
 RUN apt-get install -y libgl1-mesa-glx && \
-    pip install vtk && \
+    pip install --require-hashes vtk && \
     # xvfbwrapper with dependencies
     apt-get install -y xvfb && \
-    pip install xvfbwrapper && \
+    pip install --require-hashes xvfbwrapper && \
     /tmp/clean-layer.sh
 
-RUN pip install mpld3 \
+RUN pip install --require-hashes mpld3 \
         gpxpy \
         arrow \
         nilearn \
@@ -277,7 +277,7 @@ RUN pip install mpld3 \
         preprocessing \
         path.py \
         Geohash && \
-    pip install deap \
+    pip install --require-hashes deap \
         tpot \
         scikit-optimize \
         haversine \
@@ -344,12 +344,12 @@ RUN pip install mpld3 \
     /tmp/clean-layer.sh
 
 RUN rm -rf /opt/conda/lib/python3.10/site-packages/numpy-1.23.5.dist-info*
-RUN pip install tensorpack && \
+RUN pip install --require-hashes tensorpack && \
     # Add google PAIR-code Facets
     cd /opt/ && git clone https://github.com/PAIR-code/facets && cd facets/ && jupyter nbextension install facets-dist/ --user && \
     export PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/ && \
-    pip install kmodes --no-dependencies && \
-    pip install librosa \
+    pip install --require-hashes kmodes --no-dependencies && \
+    pip install --require-hashes librosa \
         polyglot \
         mmh3 \
         fbpca \
@@ -363,18 +363,18 @@ RUN pip install tensorpack && \
 
 
 # install cython & cysignals before pyfasttext
-RUN pip install cython \
+RUN pip install --require-hashes cython \
         cysignals \
         pyfasttext \
         fasttext && \
-    apt-get install -y libhunspell-dev && pip install hunspell
-RUN pip install annoy \
+    apt-get install -y libhunspell-dev && pip install --require-hashes hunspell
+RUN pip install --require-hashes annoy \
         category_encoders && \
     # b/183041606#comment5: the Kaggle data proxy doesn't support these APIs. If the library is missing, it falls back to using a regular BigQuery query to fetch data.
     pip uninstall -y google-cloud-bigquery-storage && \
     # google-cloud-automl 2.0.0 introduced incompatible API changes, need to pin to 1.0.1
     # After launch this should be installed from pip
-    pip install git+https://github.com/googleapis/python-aiplatform.git@mb-release \
+    pip install --require-hashes git+https://github.com/googleapis/python-aiplatform.git@mb-release \
         google-cloud-automl==1.0.1 \
         google-api-core==1.33.2 \
         google-cloud-bigquery \
@@ -408,7 +408,7 @@ RUN rm -rf /opt/conda/lib/python3.10/site-packages/mistune*
 
 # Fix qgrid by pinning ipywidgets https://github.com/quantopian/qgrid/issues/376
 #        allennlp \
-RUN pip install bleach \
+RUN pip install --require-hashes bleach \
         certifi \
         cycler \
         decorator \
@@ -441,7 +441,7 @@ RUN pip install bleach \
         Pillow && \
     # Install openslide and its python binding
     apt-get install -y openslide-tools && \
-    pip install openslide-python \
+    pip install --require-hashes openslide-python \
         ptyprocess \
         Pygments \
         pyparsing \
@@ -479,7 +479,7 @@ RUN rm /opt/conda/lib/python3.10/site-packages/google*/REQUESTED
 # test_dlib_face_detector (test_dlib.TestDLib) ... INTEL MKL ERROR: /opt/conda/bin/../lib/libmkl_avx512.so.2: undefined symbol: mkl_sparse_optimize_bsr_trsm_i8.
 # Intel MKL FATAL ERROR: Cannot load libmkl_avx512.so.2 or libmkl_def.so.2.
 # nnabla breaks protobuf compatibiilty:
-RUN pip install flashtext \
+RUN pip install --require-hashes flashtext \
         wandb \
         # b/214080882 blake3 0.3.0 is not compatible with vaex.
         blake3==0.2.1 \
@@ -517,7 +517,7 @@ RUN pip install flashtext \
         # b/206990323 osmx 1.1.2 requires numpy >= 1.21 which we don't want.
         osmnx==1.1.1 && \
     apt-get -y install libspatialindex-dev
-RUN pip install pytorch-ignite \
+RUN pip install --require-hashes pytorch-ignite \
         qgrid \
         bqplot \
         earthengine-api \
@@ -546,7 +546,7 @@ RUN pip install pytorch-ignite \
         openpyxl \
         timm \
         torchinfo && \
-        pip install git+https://github.com/facebookresearch/segment-anything.git && \
+        pip install --require-hashes git+https://github.com/facebookresearch/segment-anything.git && \
     /tmp/clean-layer.sh
 
 # Install pycolmap for py3.10 (only the conda version works).
@@ -568,7 +568,7 @@ RUN mkdir -p /root/.EasyOCR/model && \
 
 # Tesseract and some associated utility packages
 RUN apt-get install tesseract-ocr -y && \
-    pip install pytesseract \
+    pip install --require-hashes pytesseract \
         wand \
         pdf2image \
         PyPDF \
@@ -583,7 +583,7 @@ ENV MKL_THREADING_LAYER=GNU
 
 # Temporary fixes and patches
 # Temporary patch for Dask getting downgraded, which breaks Keras
-RUN pip install --upgrade dask && \
+RUN pip install --require-hashes --upgrade dask && \
     # Stop jupyter nbconvert trying to rewrite its folder hierarchy
     mkdir -p /root/.jupyter && touch /root/.jupyter/jupyter_nbconvert_config.py && touch /root/.jupyter/migrated && \
     mkdir -p /.jupyter && touch /.jupyter/jupyter_nbconvert_config.py && touch /.jupyter/migrated && \
@@ -594,10 +594,10 @@ RUN pip install --upgrade dask && \
     # Temporary patch for broken libpixman 0.38 in conda-forge, symlink to system libpixman 0.34 untile conda package gets updated to 0.38.5 or higher.
     ln -sf /usr/lib/x86_64-linux-gnu/libpixman-1.so.0.34.0 /opt/conda/lib/libpixman-1.so.0.38.0 && \
     # upgrade jupyter-server to version > 2.x
-    pip install --force-reinstall --no-deps jupyter_server>=2.* && \
+    pip install --require-hashes --force-reinstall --no-deps jupyter_server>=2.* && \
     /tmp/clean-layer.sh
 
-RUN pip install setuptools==59.8.0 && pip install -e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper
+RUN pip install --require-hashes setuptools==59.8.0 && pip install --require-hashes -e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper
 
 # Add BigQuery client proxy settings
 ENV PYTHONUSERBASE "/root/.local"
@@ -620,7 +620,7 @@ RUN sed -i '/from tensorflow_hub import uncompressed_module_resolver/a from tens
 # worker tunneling support in place.
 # b/139212522 re-enable TensorBoard once solution for slowdown is implemented.
 # ENV JUPYTER_CONFIG_DIR "/root/.jupyter/"
-# RUN pip install jupyter_tensorboard && \
+# RUN pip install --require-hashes jupyter_tensorboard && \
 #     jupyter serverextension enable jupyter_tensorboard && \
 #     jupyter tensorboard enable
 # ADD patches/tensorboard/notebook.py /opt/conda/lib/python3.10/site-packages/tensorboard/notebook.py
@@ -637,7 +637,7 @@ RUN rm /opt/conda/bin/../lib/libcusolver.so.11 && ln -s /usr/local/cuda/lib64/li
 RUN rm /opt/conda/lib/libtinfo.so.6 && ln -s /usr/lib/x86_64-linux-gnu/libtinfo.so.6 /opt/conda/lib/libtinfo.so.6
 
 # b/276358430 fix Jupyter lsp freezing up the jupyter server
-RUN pip install "jupyter-lsp==1.5.1"
+RUN pip install --require-hashes "jupyter-lsp==1.5.1"
 
 # Set backend for matplotlib
 ENV MPLBACKEND "agg"
