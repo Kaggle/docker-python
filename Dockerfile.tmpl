@@ -320,8 +320,11 @@ RUN pip install mpld3 \
         python-louvain \
         pyexcel-ods \
         sklearn-pandas \
-        stemming \
-        prophet \
+        stemming \    
+        # b/266272046 prophet 1.1.2 breaks the test
+        prophet==1.1.1 \
+        # b/283847935 holidays 0.25 is broken
+        "holidays!=0.25" \
         holoviews \
         geoviews \
         hypertools \
