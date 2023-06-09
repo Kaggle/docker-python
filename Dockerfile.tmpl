@@ -322,8 +322,8 @@ RUN pip install mpld3 \
         stemming \
         # b/266272046 prophet 1.1.2 breaks the test
         prophet==1.1.1 \
-        # b/283847935 holidays 0.25 is broken
-        "holidays!=0.25" \
+        # b/283847935 holidays >0.24 is broken
+        "holidays==0.24" \
         holoviews \
         geoviews \
         hypertools \
