@@ -175,12 +175,15 @@ RUN pip install pycuda \
     /tmp/clean-layer.sh
 {{ end }}
 
-RUN pip install pysal \
+RUN JAXVER=$(pip freeze | grep -e "^jax==") && \
+    pip install pysal \
         seaborn python-dateutil dask python-igraph \
         pyyaml joblib husl geopy mne pyshp \
         pandas \
         polars \
-        flax && \
+        flax \
+        "${JAXVER}" && \
+
     # Install h2o from source.
     # Use `conda install -c h2oai h2o` once Python 3.7 version is released to conda.
     apt-get install -y default-jre-headless && \
