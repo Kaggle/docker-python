@@ -460,7 +460,7 @@ RUN pip install bleach \
         feather-format \
         fastai
 RUN python -m spacy download en_core_web_sm && python -m spacy download en_core_web_lg && \
-    apt-get install -y ffmpeg && \
+    apt-get update && apt-get install -y ffmpeg && \
     /tmp/clean-layer.sh
 
     ###########
