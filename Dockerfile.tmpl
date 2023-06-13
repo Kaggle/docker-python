@@ -407,6 +407,7 @@ RUN pip install annoy \
 RUN rm -rf /opt/conda/lib/python3.10/site-packages/nbconvert*
 RUN rm -rf /opt/conda/lib/python3.10/site-packages/nbclient*
 RUN rm -rf /opt/conda/lib/python3.10/site-packages/mistune*
+RUN rm -rf /opt/conda/lib/python3.10/site-packages/platformdirs*
 
 # Fix qgrid by pinning ipywidgets https://github.com/quantopian/qgrid/issues/376
 #        allennlp \
