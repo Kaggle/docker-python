@@ -53,6 +53,9 @@ ENV KMP_WARNINGS=0
 # https://stackoverflow.com/questions/70250304/stop-tensorflow-from-printing-warning-message
 ENV KMP_SETTINGS=false
 
+# Remove the pip as the root user warning.
+ENV PIP_ROOT_USER_ACTION=ignore
+
 ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 ADD patches/template_conf.json /opt/kaggle/conf.json
