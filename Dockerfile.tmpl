@@ -179,8 +179,7 @@ RUN pip install pycuda \
 {{ end }}
 
 RUN JAXVER=$(pip freeze | grep -e "^jax==") && \
-    pip install pysal \
-        seaborn python-dateutil dask python-igraph \
+    pip install seaborn python-dateutil dask python-igraph \
         pyyaml joblib husl geopy mne pyshp \
         pandas \
         polars \
