@@ -126,7 +126,7 @@ class TestBigQuery(unittest.TestCase):
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
         env.set('KAGGLE_KERNEL_INTEGRATIONS', 'BIGQUERY')
         with env:
-            with self.assertRaises(DefaultCredentialsError):
+            with self.assertRaises(OSError):
                 # TODO(vimota): Handle this case, either default to Kaggle Proxy or use some default project
                 # by the user or throw a custom exception.
                 client = bigquery.Client(client_options={"api_endpoint": TestBigQuery.API_BASE_URL})

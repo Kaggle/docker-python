@@ -96,7 +96,7 @@ RUN conda config --add channels nvidia && \
     conda install -c conda-forge mamba && \
     # Base image channel order: conda-forge (highest priority), defaults.
     # End state: rapidsai (highest priority), nvidia, conda-forge, defaults.
-    mamba install mkl cartopy imagemagick pyproj && \
+    mamba install mkl cartopy imagemagick pyproj "shapely<2" && \
     /tmp/clean-layer.sh
 
 {{ if eq .Accelerator "gpu" }}
@@ -197,6 +197,8 @@ RUN JAXVER=$(pip freeze | grep -e "^jax==") && \
         tensorflow_text && \
     /tmp/clean-layer.sh
 
+RUN pip install pysal
+
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
     pip install gensim \
@@ -269,6 +271,8 @@ RUN apt-get install -y libgl1-mesa-glx && \
     apt-get install -y xvfb && \
     pip install xvfbwrapper && \
     /tmp/clean-layer.sh
+
+RUN rm -rf /opt/conda/lib/python3.10/site-packages/Shapely-1.8.5.post1.dist-info/
 
 RUN pip install mpld3 \
         gpxpy \
