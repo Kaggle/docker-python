@@ -96,7 +96,7 @@ RUN conda config --add channels nvidia && \
     conda install -c conda-forge mamba && \
     # Base image channel order: conda-forge (highest priority), defaults.
     # End state: rapidsai (highest priority), nvidia, conda-forge, defaults.
-    mamba install mkl cartopy imagemagick pyproj "shapely<2" && \
+    mamba install -y mkl cartopy imagemagick pyproj "shapely<2" && \
     /tmp/clean-layer.sh
 
 {{ if eq .Accelerator "gpu" }}
@@ -109,17 +109,17 @@ RUN pip uninstall -y pyarrow && \
 
 # Install implicit
 {{ if eq .Accelerator "gpu" }}
-RUN mamba install implicit implicit-proc=*=gpu && \
+RUN mamba install -y implicit implicit-proc=*=gpu && \
     /tmp/clean-layer.sh
 {{ else }}
-RUN mamba install implicit && \
+RUN mamba install -y implicit && \
     /tmp/clean-layer.sh
 {{ end}}
 
 # Install PyTorch
 {{ if eq .Accelerator "gpu" }}
 COPY --from=torch_whl /tmp/whl/*.whl /tmp/torch/
-RUN mamba install -c pytorch magma-cuda${CUDA_MAJOR_VERSION}${CUDA_MINOR_VERSION} && \
+RUN mamba install -y -c pytorch magma-cuda${CUDA_MAJOR_VERSION}${CUDA_MINOR_VERSION} && \
     pip install /tmp/torch/*.whl && \
     # b/255757999 openmp (libomp.so) is an dependency of libtorchtext and libtorchaudio but
     mamba install -y openmp && \
@@ -161,7 +161,7 @@ RUN pip install jax[cpu] && \
 
 # Install spacy
 {{ if eq .Accelerator "gpu" }}
-RUN mamba install -c conda-forge spacy cupy && \
+RUN mamba install -y -c conda-forge spacy cupy && \
     /tmp/clean-layer.sh
 {{ else }}
 RUN pip install spacy && \
@@ -386,8 +386,9 @@ RUN pip install annoy \
         google-cloud-automl==1.0.1 \
         google-api-core==1.33.2 \
         google-cloud-bigquery \
-        google-cloud-storage \
-        google-cloud-translate==3.* \
+        google-cloud-storage && \
+    # Split these installations to avoid `pip._vendor.resolvelib.resolvers.ResolutionTooDeep: 200000`
+    pip install google-cloud-translate==3.* \
         google-cloud-language==2.* \
         google-cloud-videointelligence==2.* \
         google-cloud-vision==2.* \
