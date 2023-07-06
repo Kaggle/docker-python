@@ -522,8 +522,7 @@ RUN pip install flashtext \
         optuna \
         plotly_express \
         albumentations \
-        # b/254245259 catalyst requires accelerate but it breaks with the version 0.13.1
-        accelerate==0.12.0 \
+        accelerate \
         catalyst \
         # b/206990323 osmx 1.1.2 requires numpy >= 1.21 which we don't want.
         osmnx==1.1.1 && \

@@ -2,6 +2,7 @@ import unittest
 
 import torch
 from transformers import AdamW
+import transformers.pipelines # verify this import works
 
 
 class TestTransformers(unittest.TestCase):
