@@ -11,7 +11,7 @@ class TestKerasCV(unittest.TestCase):
             'efficientnetv2_b0_imagenet_classifier',
             load_weights=False, # load randomly initialized model from preset architecture with weights
         )
-        image = keras.utils.load_img('/input/tests/data/cat.jpg')
+        image = keras.utils.load_img('/input/tests/data/face.jpg')
         image = np.array(image)
         keras_cv.visualization.plot_image_gallery(
             [image], rows=1, cols=1, value_range=(0, 255), show=True, scale=4
