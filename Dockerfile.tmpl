@@ -526,7 +526,7 @@ RUN pip install flashtext \
         accelerate==0.12.0 \
         catalyst \
         # b/206990323 osmx 1.1.2 requires numpy >= 1.21 which we don't want.
-        osmnx==1.1.1 && \
+        osmnx==1.1.1 \
         keras-cv && \
     apt-get -y install libspatialindex-dev
 RUN pip install pytorch-ignite \
