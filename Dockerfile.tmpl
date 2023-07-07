@@ -527,7 +527,8 @@ RUN pip install flashtext \
         # https://github.com/catalyst-team/catalyst/issues/1440
         git+https://github.com/Philmod/catalyst.git@fix-fp16#egg=catalyst \
         # b/206990323 osmx 1.1.2 requires numpy >= 1.21 which we don't want.
-        osmnx==1.1.1 && \
+        osmnx==1.1.1 \
+        keras-cv && \
     apt-get -y install libspatialindex-dev
 RUN pip install pytorch-ignite \
         qgrid \
