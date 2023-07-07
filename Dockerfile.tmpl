@@ -523,7 +523,8 @@ RUN pip install flashtext \
         plotly_express \
         albumentations \
         accelerate \
-        # b/290207097 use main catalyst package when bug fixed
+        # b/290207097 switch back to the pip catalyst package when bug fixed
+        # https://github.com/catalyst-team/catalyst/issues/1440
         git+https://github.com/Philmod/catalyst.git@fix-fp16#egg=catalyst \
         # b/206990323 osmx 1.1.2 requires numpy >= 1.21 which we don't want.
         osmnx==1.1.1 && \
