@@ -522,12 +522,14 @@ RUN pip install flashtext \
         optuna \
         plotly_express \
         albumentations \
-        # b/254245259 catalyst requires accelerate but it breaks with the version 0.13.1
-        accelerate==0.12.0 \
-        catalyst \
+        accelerate \
+        # b/290207097 switch back to the pip catalyst package when bug fixed
+        # https://github.com/catalyst-team/catalyst/issues/1440
+        git+https://github.com/Philmod/catalyst.git@fix-fp16#egg=catalyst \
         # b/206990323 osmx 1.1.2 requires numpy >= 1.21 which we don't want.
         osmnx==1.1.1 \
-        keras-cv && \
+        # b/290392955 version 0.5.1 breaks the test
+        keras-cv==0.5.0 && \
     apt-get -y install libspatialindex-dev
 RUN pip install pytorch-ignite \
         qgrid \
