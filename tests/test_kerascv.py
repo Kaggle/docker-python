@@ -13,9 +13,6 @@ class TestKerasCV(unittest.TestCase):
         )
         image = keras.utils.load_img('/input/tests/data/face.jpg')
         image = np.array(image)
-        keras_cv.visualization.plot_image_gallery(
-            [image], rows=1, cols=1, value_range=(0, 255), show=True, scale=4
-        )
         predictions = classifier.predict(np.expand_dims(image, axis=0))
         top_classes = predictions[0].argsort(axis=-1)
         self.assertEqual(1000, len(top_classes))
