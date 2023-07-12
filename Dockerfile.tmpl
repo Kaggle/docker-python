@@ -653,6 +653,8 @@ RUN rm /opt/conda/lib/libtinfo.so.6 && ln -s /usr/lib/x86_64-linux-gnu/libtinfo.
 # b/276358430 fix Jupyter lsp freezing up the jupyter server
 RUN pip install "jupyter-lsp==1.5.1"
 
+RUN pip install "target-permutation-importances"
+
 # Set backend for matplotlib
 ENV MPLBACKEND "agg"
 
