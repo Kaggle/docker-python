@@ -64,4 +64,5 @@ class TestKerasCore(unittest.TestCase):
             callbacks=callbacks,
         )
         score = model.evaluate(x_test, y_test, verbose=0)
+        self.assertNotEqual(0, score)
 
