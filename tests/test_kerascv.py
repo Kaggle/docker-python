@@ -2,7 +2,7 @@ import unittest
 
 import json
 import keras_cv
-import keras
+import keras_core as keras
 import numpy as np
 
 class TestKerasCV(unittest.TestCase):
