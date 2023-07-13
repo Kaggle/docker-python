@@ -1,6 +1,5 @@
 import unittest
 
-import json
 import keras_cv
 import keras
 import numpy as np
