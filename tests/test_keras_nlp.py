@@ -6,6 +6,7 @@ import numpy as np
 
 class TestKerasNLP(unittest.TestCase):
     def test_inference(self):
+        # Example from https://keras.io/guides/keras_nlp/getting_started/
         classifier = keras_nlp.models.BertClassifier.from_preset(
             'bert_tiny_en_uncased_sst2',
             load_weights=False, # load randomly initialized model from preset architecture with weights
