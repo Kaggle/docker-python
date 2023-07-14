@@ -529,7 +529,8 @@ RUN pip install flashtext \
         # b/206990323 osmx 1.1.2 requires numpy >= 1.21 which we don't want.
         osmnx==1.1.1 \
         keras-core \
-        keras-cv && \
+        keras-cv \
+        keras-nlp && \
     apt-get -y install libspatialindex-dev
 RUN pip install pytorch-ignite \
         qgrid \
