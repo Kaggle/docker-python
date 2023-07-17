@@ -37,7 +37,7 @@ ENV PYTORCH_LIBTPU=/lib/torch-libtpu.so
 
 # Tensorflow wheel:
 RUN pip install tensorflow_hub https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/tensorflow/tf-${TENSORFLOW_VERSION}/tensorflow-${TENSORFLOW_VERSION}-cp38-cp38-linux_x86_64.whl \
-    tensorflow-addons tensorflow-probability tensorflow-io==0.32.0
+    tensorflow-addons tensorflow-probability tensorflow-io
 RUN curl --output /lib/libtpu.so https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/libtpu/${TF_LIBTPU_VERSION}/libtpu.so
 ADD patches/kaggle_module_resolver.py /usr/local/lib/python3.8/site-packages/tensorflow_hub/kaggle_module_resolver.py
 RUN sed -i '/from tensorflow_hub import uncompressed_module_resolver/a from tensorflow_hub import kaggle_module_resolver' /usr/local/lib/python3.8/site-packages/tensorflow_hub/config.py
@@ -47,16 +47,18 @@ RUN sed -i '/_install_default_resolvers()/a \ \ registry.resolver.add_implementa
 # https://cloud.google.com/tpu/docs/pytorch-xla-ug-tpu-vm#changing_pytorch_version
 # The URL doesn't include patch version. i.e. must use 1.11 instead of 1.11.0
 # We need to keep the numpy version the same as the installed tf one but compatible with other installs.
-RUN pip install torch==${TORCH_VERSION} https://storage.googleapis.com/tpu-pytorch/wheels/tpuvm/torch_xla-${TORCH_VERSION%.*}-cp38-cp38-linux_x86_64.whl torchvision==${TORCHVISION_VERSION} torchtext==${TORCHTEXT_VERSION} torchaudio==${TORCHAUDIO_VERSION} \
+RUN NUMPYVER=$(pip freeze | grep -e "^numpy==") && \
+    pip install torch==${TORCH_VERSION} https://storage.googleapis.com/tpu-pytorch/wheels/tpuvm/torch_xla-${TORCH_VERSION%.*}-cp38-cp38-linux_x86_64.whl torchvision==${TORCHVISION_VERSION} torchtext==${TORCHTEXT_VERSION} torchaudio==${TORCHAUDIO_VERSION} \
     https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/tensorflow/tf-${TENSORFLOW_VERSION}/tensorflow-${TENSORFLOW_VERSION}-cp38-cp38-linux_x86_64.whl \
-    numpy==1.23.5
+    "${NUMPYVER}"
 
 # Install JAX & related packages
 # https://cloud.google.com/tpu/docs/jax-quickstart-tpu-vm#install_jax_on_your_cloud_tpu_vm
 # We need to keep the numpy version the same as the installed tf one but compatible with other installs.
-RUN pip install jax[tpu]==${JAX_VERSION} -f https://storage.googleapis.com/jax-releases/libtpu_releases.html trax flax optax elegy git+https://github.com/deepmind/dm-haiku jraph distrax \
+RUN NUMPYVER=$(pip freeze | grep -e "^numpy==") && \
+    pip install jax[tpu]==${JAX_VERSION} -f https://storage.googleapis.com/jax-releases/libtpu_releases.html trax flax optax elegy git+https://github.com/deepmind/dm-haiku jraph distrax \
     https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/tensorflow/tf-${TENSORFLOW_VERSION}/tensorflow-${TENSORFLOW_VERSION}-cp38-cp38-linux_x86_64.whl \
-    numpy==1.23.5
+    "${NUMPYVER}"
 
 # Packages needed by the Notebook editor:
 RUN pip install papermill jupyterlab python-lsp-server[all] "jupyter-lsp==1.5.1"
