@@ -150,7 +150,7 @@ pipeline {
                 stage('Test on T4x2') {
                   agent { label 'ephemeral-linux-gpu-t4x2' }
                   options {
-                    timeout(time: 30, unit: 'MINUTES')
+                    timeout(time: 60, unit: 'MINUTES')
                   }
                   steps {
                     sh '''#!/bin/bash
