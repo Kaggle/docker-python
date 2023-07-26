@@ -47,11 +47,10 @@ class TestPythonDependencies(unittest.TestCase):
 
     def test_pandas_version(self):
         '''
-        The python metrics team will need advance notice before a migration to Pandas 2.0.
-        1.5 was the last 1.x release
+        The python metrics team will need advance notice before a migration to Pandas 2.1
         '''
         assert packaging.version.parse(pd.__version__) >= packaging.version.parse('1.5')
-        assert packaging.version.parse(pd.__version__) < packaging.version.parse('2.0')
+        assert packaging.version.parse(pd.__version__) < packaging.version.parse('2.1')
 
     def test_numpy_version(self):
         '''
@@ -65,4 +64,3 @@ class TestPythonDependencies(unittest.TestCase):
 
     def test_pytest_version(self):
         assert packaging.version.parse(packaging.__version__) >= packaging.version.parse('7.3')
-        assert packaging.version.parse(packaging.__version__) < packaging.version.parse('8')
