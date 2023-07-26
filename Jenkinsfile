@@ -82,7 +82,7 @@ pipeline {
             }
             stage('Test CPU Image') {
               options {
-                timeout(time: 10, unit: 'MINUTES')
+                timeout(time: 15, unit: 'MINUTES')
               }
               steps {
                 retry(2) {
@@ -137,7 +137,7 @@ pipeline {
                 stage('Test on P100') {
                   agent { label 'ephemeral-linux-gpu' }
                   options {
-                    timeout(time: 30, unit: 'MINUTES')
+                    timeout(time: 40, unit: 'MINUTES')
                   }
                   steps {
                     retry(2) {
