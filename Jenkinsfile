@@ -81,11 +81,11 @@ pipeline {
               }
             }
             stage('Test CPU Image') {
-              retry(2) {
-                options {
-                  timeout(time: 10, unit: 'MINUTES')
-                }
-                steps {
+              options {
+                timeout(time: 10, unit: 'MINUTES')
+              }
+              steps {
+                retry(2) {
                   sh '''#!/bin/bash
                     set -exo pipefail
 
@@ -135,12 +135,12 @@ pipeline {
             stage('Test GPU Image') {
               stages {
                 stage('Test on P100') {
-                  retry(2) {
-                    agent { label 'ephemeral-linux-gpu' }
-                    options {
-                      timeout(time: 30, unit: 'MINUTES')
-                    }
-                    steps {
+                  agent { label 'ephemeral-linux-gpu' }
+                  options {
+                    timeout(time: 30, unit: 'MINUTES')
+                  }
+                  steps {
+                    retry(2) {
                       sh '''#!/bin/bash
                         set -exo pipefail
 
@@ -152,12 +152,12 @@ pipeline {
                   }
                 }
                 stage('Test on T4x2') {
-                  retry(2) {
-                    agent { label 'ephemeral-linux-gpu-t4x2' }
-                    options {
-                      timeout(time: 60, unit: 'MINUTES')
-                    }
-                    steps {
+                  agent { label 'ephemeral-linux-gpu-t4x2' }
+                  options {
+                    timeout(time: 60, unit: 'MINUTES')
+                  }
+                  steps {
+                    retry(2) {
                       sh '''#!/bin/bash
                         set -exo pipefail
 
