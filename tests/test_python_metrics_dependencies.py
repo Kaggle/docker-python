@@ -1,7 +1,8 @@
 '''
 Verifies that the packages used by the Python metrics orchestrator have valid versions
 
-Please contact sohier@ or lipovetz@ if you need to push an update that would cause these tests to fail.
+Feel free to upgrade these libraries, but only after sohier@ or lipovetz@ have verified that the changes 
+won't cause problems for the metrics orchestrator.
 '''
 
 import subprocess
