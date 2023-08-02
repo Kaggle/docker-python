@@ -178,17 +178,17 @@ RUN pip install pycuda \
     /tmp/clean-layer.sh
 {{ end }}
 
+# Contact sohier@ or lipovetz@ before upgrading pandas past version 2.0
+# They will need to run tests in a private repo before a new pandas version is deployed
+# See tests/test_python_metrics_dependencies.py
+RUN pip install pandas==2.0
+
 RUN JAXVER=$(pip freeze | grep -e "^jax==") && \
     pip install seaborn python-dateutil dask igraph \
         pyyaml joblib husl geopy mne pyshp \
-        # Contact sohier@ or lipovetz@ before upgrading pandas past version 2.0
-        # They will need to run tests in a private repo before a new pandas version is deployed
-        # See tests/test_python_metrics_dependencies.py
-        pandas \
         polars \
         flax \
         "${JAXVER}" && \
-
     # Install h2o from source.
     # Use `conda install -c h2oai h2o` once Python 3.7 version is released to conda.
     apt-get install -y default-jre-headless && \
