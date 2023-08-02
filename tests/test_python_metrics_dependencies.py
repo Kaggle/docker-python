@@ -49,15 +49,19 @@ class TestPythonDependencies(unittest.TestCase):
         '''
         The python metrics team will need advance notice before a migration to Pandas 2.1
         '''
-        assert packaging.version.parse(pd.__version__) >= packaging.version.parse('1.5')
-        assert packaging.version.parse(pd.__version__) < packaging.version.parse('2.1')
+        if packaging.version.parse(pd.__version__) < packaging.version.parse('1.5'):
+            raise ValueError("Kaggle's python metrics team needs to run tests in a private repo before the pandas version can be changed.")
+        if packaging.version.parse(pd.__version__) > packaging.version.parse('2.0'):
+            raise ValueError("Kaggle's python metrics team needs to run tests in a private repo before the pandas version can be changed.")
 
     def test_numpy_version(self):
         '''
         Numpy tends to be pretty stable so we'll accept a wider range of versions.
         '''
-        assert packaging.version.parse(np.__version__) >= packaging.version.parse('1.23')
-        assert packaging.version.parse(np.__version__) < packaging.version.parse('1.30')
+        if packaging.version.parse(np.__version__) < packaging.version.parse('1.23'):
+            raise ValueError("Kaggle's python metrics team needs to run tests in a private repo before the numpy version can be changed.")
+        if packaging.version.parse(np.__version__) > packaging.version.parse('1.30'):
+            raise ValueError("Kaggle's python metrics team needs to run tests in a private repo before the numpy version can be changed.")
 
     def test_packaging_version(self):
         assert packaging.version.parse(packaging.__version__) >= packaging.version.parse('21.0')
