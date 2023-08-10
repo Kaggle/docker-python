@@ -31,7 +31,7 @@ ADD patches/kaggle_datasets.py /root/.local/lib/python3.8/site-packages/kaggle_d
 # sitecustomize adds significant latency to ipython kernel startup and should only be added if needed
 # ADD patches/sitecustomize.py /root/.local/lib/python3.8/site-packages/sitecustomize.py
 
-# Install them all the following together for maximum compatibility.
+# Install all the packages together for maximum compatibility.
 
 # Install Tensorflow.
 
