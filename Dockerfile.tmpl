@@ -74,7 +74,7 @@ RUN pip uninstall -y horovod && \
 RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
 
-# Use a fixed repo to stop intermittent failures due to flaky httpredir connections,
+# Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
 # as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
 RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list && \
     apt-get update && \
