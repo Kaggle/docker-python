@@ -109,7 +109,7 @@ RUN pip uninstall -y pyarrow && \
 
 # Install implicit
 {{ if eq .Accelerator "gpu" }}
-RUN mamba install -y implicit implicit-proc=*=gpu && \
+RUN pip install implicit && \
     /tmp/clean-layer.sh
 {{ else }}
 RUN mamba install -y implicit && \
