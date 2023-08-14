@@ -52,7 +52,7 @@ RUN pip install tensorflow_hub https://storage.googleapis.com/cloud-tpu-tpuvm-ar
     jax[tpu]==${JAX_VERSION} -f https://storage.googleapis.com/jax-releases/libtpu_releases.html trax flax optax elegy git+https://github.com/deepmind/dm-haiku jraph distrax \
     numpy==1.23.5 \
     papermill jupyterlab python-lsp-server[all] "jupyter-lsp==1.5.1" \
-    pandas matplotlib opencv-python-headless librosa scikit-learn
+    pandas matplotlib opencv-python-headless librosa scikit-learn accelerate diffusers transformers
 
 # Tensorflow libtpu:
 RUN curl --output /lib/libtpu.so https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/libtpu/${TF_LIBTPU_VERSION}/libtpu.so
