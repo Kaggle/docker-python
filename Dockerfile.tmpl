@@ -261,6 +261,10 @@ RUN pip install scipy \
     apt-get install -y pandoc && \
     pip install essentia
 
+# #1281 Install numba MVC support:
+RUN pip install ptxcompiler-cu11 cubinlinker-cu11 --extra-index-url=https://pypi.nvidia.com
+ENV NUMBA_CUDA_ENABLE_MINOR_VERSION_COMPATIBILITY=1
+
 RUN apt-get install -y git-lfs && \
     /tmp/clean-layer.sh
 
