@@ -113,6 +113,12 @@ RUN pip install spacy && \
 RUN pip uninstall -y pyarrow && \
     mamba install -y cudf cuml && \
     /tmp/clean-layer.sh
+
+# TODO(neshdev): Resolve pandas dependency another way
+RUN cat /opt/conda/lib/python3.10/site-packages/cudf/api/types.py \
+    | sed 's/^is_extension_type/# is_extension_type/g' \
+    | sed 's/^is_categorical/# is_categorical/g' \
+    > /opt/conda/lib/python3.10/site-packages/cudf/api/types.py
 {{ end }}
 
 # Install PyTorch
