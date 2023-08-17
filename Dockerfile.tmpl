@@ -99,6 +99,14 @@ RUN conda config --add channels nvidia && \
     mamba install -y mkl cartopy imagemagick pyproj "shapely<2" && \
     /tmp/clean-layer.sh
 
+# Install spacy
+{{ if eq .Accelerator "gpu" }}
+RUN mamba install -y -c conda-forge spacy cupy cuda-version=11.8 && \
+    /tmp/clean-layer.sh
+{{ else }}
+RUN pip install spacy && \
+    /tmp/clean-layer.sh
+{{ end}}
 {{ if eq .Accelerator "gpu" }}
 
 # b/232247930: uninstall pyarrow to avoid double installation with the GPU specific version.
@@ -126,6 +134,7 @@ RUN pip install \
     /tmp/clean-layer.sh
 {{ end }}
 
+
 # Install LightGBM
 {{ if eq .Accelerator "gpu" }}
 COPY --from=lightgbm_whl /tmp/whl/*.whl /tmp/lightgbm/
@@ -150,14 +159,6 @@ RUN pip install jax[cpu] && \
     /tmp/clean-layer.sh
 {{ end }}
 
-# Install spacy
-{{ if eq .Accelerator "gpu" }}
-RUN mamba install -y -c conda-forge spacy cupy && \
-    /tmp/clean-layer.sh
-{{ else }}
-RUN pip install spacy && \
-    /tmp/clean-layer.sh
-{{ end}}
 
 # Install GPU specific packages
 {{ if eq .Accelerator "gpu" }}
