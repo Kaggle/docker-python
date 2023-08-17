@@ -101,7 +101,7 @@ RUN conda config --add channels nvidia && \
 
 # Install spacy
 {{ if eq .Accelerator "gpu" }}
-RUN mamba install -y -c conda-forge spacy cupy cuda-version=11.8 && \
+RUN mamba install -y -c conda-forge spacy cupy cuda-version=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
     /tmp/clean-layer.sh
 {{ else }}
 RUN pip install spacy && \
@@ -133,7 +133,6 @@ RUN pip install \
     -f https://download.pytorch.org/whl/torch_stable.html && \
     /tmp/clean-layer.sh
 {{ end }}
-
 
 # Install LightGBM
 {{ if eq .Accelerator "gpu" }}
