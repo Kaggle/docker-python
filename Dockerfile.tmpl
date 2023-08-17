@@ -152,7 +152,8 @@ RUN pip install jax[cpu] && \
 
 # Install spacy
 {{ if eq .Accelerator "gpu" }}
-RUN mamba install -y -c conda-forge spacy cupy && \
+ENV CUDA_PATH=/usr/local/cuda-$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION
+RUN mamba install -y -c conda-forge spacy cupy cuda-version=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
     /tmp/clean-layer.sh
 {{ else }}
 RUN pip install spacy && \
