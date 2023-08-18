@@ -181,9 +181,10 @@ RUN JAXVER=$(pip freeze | grep -e "^jax==") && \
         pandas \
         polars \
         flax \
-        "${JAXVER}" && \
+        "${JAXVER}"
 
 RUN conda install -c h2oai h2o && /tmp/clean-layer.sh
+
 RUN pip install \
         "tensorflow-gcs-config<=${TENSORFLOW_VERSION}" \
         "tensorflow==${TENSORFLOW_VERSION}" \
