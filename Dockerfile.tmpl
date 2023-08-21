@@ -194,7 +194,7 @@ RUN pip install -f http://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html
 RUN pip install \
     "tensorflow-gcs-config<=${TENSORFLOW_VERSION}" \
     "tensorflow==${TENSORFLOW_VERSION}" \
-    "tensorflow==${TENSORFLOW_IO_VERSION}"\
+    "tensorflow-io==${TENSORFLOW_IO_VERSION}"\
     tensorflow-addons \
     tensorflow_decision_forests \
     tensorflow_text && \
