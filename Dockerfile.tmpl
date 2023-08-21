@@ -36,9 +36,9 @@ RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/lib
 {{ end }}
 
 # Keep these variables in sync if base image is updated.
-ENV TENSORFLOW_VERSION=2.12.0
+ENV TENSORFLOW_VERSION=2.13.0
 # See https://github.com/tensorflow/io#tensorflow-version-compatibility
-ENV TENSORFLOW_IO_VERSION=0.32.0
+ENV TENSORFLOW_IO_VERSION=0.33.0
 
 # We need to redefine the ARG here to get the ARG value defined above the FROM instruction.
 # See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
