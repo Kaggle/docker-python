@@ -37,6 +37,8 @@ RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/lib
 
 # Keep these variables in sync if base image is updated.
 ENV TENSORFLOW_VERSION=2.12.0
+# See https://github.com/tensorflow/io#tensorflow-version-compatibility
+ENV TENSORFLOW_IO_VERSION=0.32.0
 
 # We need to redefine the ARG here to get the ARG value defined above the FROM instruction.
 # See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
@@ -181,15 +183,18 @@ RUN JAXVER=$(pip freeze | grep -e "^jax==") && \
         pandas \
         polars \
         flax \
-        "${JAXVER}"
+        "${JAXVER}" && \
+    /tmp/clean-layer.sh
 
-RUN apt-get install -y default-jre
+RUN apt-get install -y default-jre && \
+    /tmp/clean-layer.sh
 
 RUN pip install -f http://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o && /tmp/clean-layer.sh
 
 RUN pip install \
         "tensorflow-gcs-config<=${TENSORFLOW_VERSION}" \
         "tensorflow==${TENSORFLOW_VERSION}" \
+        "tensorflow-io==${TENSORFLOW_IO_VERSION}"\
         tensorflow-addons \
         tensorflow_decision_forests \
         tensorflow_text && \
