@@ -661,6 +661,12 @@ RUN sed -i '/from tensorflow_hub import uncompressed_module_resolver/a from tens
 #    jupyter-serverextension disable nb_conda --py --sys-prefix && \
 #    python -m nb_conda_kernels.install --disable
 
+# Disable preloaded jupyter modules (they add to startup, and break when they are missing)
+RUN sed -i /bq_stats/d /etc/ipython/ipython_kernel_config.py && \
+    sed -i /beatrix/d /etc/ipython/ipython_kernel_config.py && \
+    sed -i /bigquery/d /etc/ipython/ipython_kernel_config.py && \
+    sed -i /sql/d /etc/ipython/ipython_kernel_config.py
+
 # Force only one libcusolver
 {{ if eq .Accelerator "gpu" }}
 RUN rm /opt/conda/bin/../lib/libcusolver.so.11 && ln -s /usr/local/cuda/lib64/libcusolver.so.11 /opt/conda/bin/../lib/libcusolver.so.11
