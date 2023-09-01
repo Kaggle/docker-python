@@ -548,8 +548,7 @@ RUN pip install pytorch-ignite \
         transformers \
         # b/232247930 >= 2.2.0 requires pyarrow >= 6.0.0 which conflicts with dependencies for rapidsai 0.21.*
         datasets==2.1.0 \
-        # b/271870650 1.13.0 installs pickle5 which breaks rgf_pythons tests
-        kaggle-environments==1.12.0 \
+        kaggle-environments \
         geopandas \
         "shapely<2" \
         vowpalwabbit \
