@@ -95,7 +95,8 @@ ENV PROJ_LIB=/opt/conda/share/proj
 # the remaining pip commands: https://www.anaconda.com/using-pip-in-a-conda-environment/
 RUN conda config --add channels nvidia && \
     conda config --add channels rapidsai && \
-    conda install -c conda-forge mamba && \
+    # b/299991198 remove curl/libcurl install once DLVM base image includes version >= 7.86
+    conda install -c conda-forge mamba curl libcurl && \
     # Base image channel order: conda-forge (highest priority), defaults.
     # End state: rapidsai (highest priority), nvidia, conda-forge, defaults.
     mamba install -y mkl cartopy imagemagick pyproj "shapely<2" && \
