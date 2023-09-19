@@ -90,6 +90,10 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
 # b/128333086: Set PROJ_LIB to points to the proj4 cartographic library.
 ENV PROJ_LIB=/opt/conda/share/proj
 
+# b/301018103: Install zstandard to avoid pesky warning from conda/mamba
+RUN pip install zstandard && \
+    /tmp/clean-layer.sh
+
 # Install conda packages not available on pip.
 # When using pip in a conda environment, conda commands should be ran first and then
 # the remaining pip commands: https://www.anaconda.com/using-pip-in-a-conda-environment/
