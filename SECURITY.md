@@ -9,4 +9,4 @@ Security updates are applied only to the latest release.
 If you have discovered a security vulnerability in this project, please report it privately. **Do not disclose it as a public issue.** This gives us time to work with you to fix the issue before public exposure, reducing the chance that the exploit will be used before a patch is released.
 Please disclose it at [security advisory](https://github.com/Kaggle/docker-python/security/advisories/new).
 
-This project is maintained by a team of volunteers on a reasonable-effort basis. As such, please give us at least 90 days to work on a fix before public exposure.
+The vulnerabilities will be addressed as soon as possible, with a maximum of 90 days before a public exposure.
