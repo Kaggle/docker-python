@@ -575,9 +575,6 @@ RUN pip install pytorch-ignite \
         pip install git+https://github.com/facebookresearch/segment-anything.git && \
     /tmp/clean-layer.sh
 
-# Install pycolmap for py3.10 (only the conda version works).
-RUN mamba install -y pycolmap
-
 # Download base easyocr models.
 # https://github.com/JaidedAI/EasyOCR#usage
 RUN mkdir -p /root/.EasyOCR/model && \
