@@ -1,7 +1,12 @@
-FROM python:3.8
+ARG BASE_IMAGE
+
+FROM $BASE_IMAGE
 
 # We need to define the ARG here to get the ARG below the FROM statement to access it within this build context
 # See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
+ARG PYTHON_WHEEL_VERSION
+ARG PYTHON_VERSION_PATH
+ARG LINUX_WHEEL_VERSION
 ARG TORCH_VERSION
 ARG TENSORFLOW_VERSION
 ARG TF_LIBTPU_VERSION
@@ -17,19 +22,19 @@ ADD patches/template_conf.json /opt/kaggle/conf.json
 
 # Add BigQuery client proxy settings, kaggle secrets etc.
 ENV PYTHONUSERBASE "/root/.local"
-ADD patches/kaggle_secrets.py /root/.local/lib/python3.8/site-packages/kaggle_secrets.py
-ADD patches/kaggle_session.py /root/.local/lib/python3.8/site-packages/kaggle_session.py
-ADD patches/kaggle_web_client.py /root/.local/lib/python3.8/site-packages/kaggle_web_client.py
-ADD patches/kaggle_datasets.py /root/.local/lib/python3.8/site-packages/kaggle_datasets.py
+ADD patches/kaggle_secrets.py /root/.local/lib/${PYTHON_VERSION_PATH}/site-packages/kaggle_secrets.py
+ADD patches/kaggle_session.py /root/.local/lib/${PYTHON_VERSION_PATH}/site-packages/kaggle_session.py
+ADD patches/kaggle_web_client.py /root/.local/lib/${PYTHON_VERSION_PATH}/site-packages/kaggle_web_client.py
+ADD patches/kaggle_datasets.py /root/.local/lib/${PYTHON_VERSION_PATH}/site-packages/kaggle_datasets.py
 
 # Disable GCP integrations for now
-# ADD patches/kaggle_gcp.py /root/.local/lib/python3.8/site-packages/kaggle_gcp.py
+# ADD patches/kaggle_gcp.py /root/.local/lib/${PYTHON_VERSION_PATH}/site-packages/kaggle_gcp.py
 
 # Disable logging to file (why do we need this?)
-# ADD patches/log.py /root/.local/lib/python3.8/site-packages/log.py
+# ADD patches/log.py /root/.local/lib/${PYTHON_VERSION_PATH}/site-packages/log.py
 
 # sitecustomize adds significant latency to ipython kernel startup and should only be added if needed
-# ADD patches/sitecustomize.py /root/.local/lib/python3.8/site-packages/sitecustomize.py
+# ADD patches/sitecustomize.py /root/.local/lib/${PYTHON_VERSION_PATH}/site-packages/sitecustomize.py
 
 # Install all the packages together for maximum compatibility.
 
@@ -47,8 +52,8 @@ ADD patches/kaggle_datasets.py /root/.local/lib/python3.8/site-packages/kaggle_d
 
 # Additional useful packages should be added here
 
-RUN pip install tensorflow_hub https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/tensorflow/tf-${TENSORFLOW_VERSION}/tensorflow-${TENSORFLOW_VERSION}-cp38-cp38-linux_x86_64.whl tensorflow-addons tensorflow-probability tensorflow-io \
-    torch==${TORCH_VERSION} https://storage.googleapis.com/tpu-pytorch/wheels/tpuvm/torch_xla-${TORCH_VERSION%.*}-cp38-cp38-linux_x86_64.whl torchvision==${TORCHVISION_VERSION} torchtext==${TORCHTEXT_VERSION} torchaudio==${TORCHAUDIO_VERSION} \
+RUN pip install tensorflow_hub https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/tensorflow/tf-${TENSORFLOW_VERSION}/tensorflow-${TENSORFLOW_VERSION}-${PYTHON_WHEEL_VERSION}-${PYTHON_WHEEL_VERSION}-${LINUX_WHEEL_VERSION}.whl tensorflow-addons tensorflow-probability tensorflow-io \
+    torch==${TORCH_VERSION} https://storage.googleapis.com/tpu-pytorch/wheels/tpuvm/torch_xla-${TORCH_VERSION%.*}-${PYTHON_WHEEL_VERSION}-${PYTHON_WHEEL_VERSION}-${LINUX_WHEEL_VERSION}.whl torchvision==${TORCHVISION_VERSION} torchtext==${TORCHTEXT_VERSION} torchaudio==${TORCHAUDIO_VERSION} \
     jax[tpu]==${JAX_VERSION} -f https://storage.googleapis.com/jax-releases/libtpu_releases.html trax flax optax elegy git+https://github.com/deepmind/dm-haiku jraph distrax \
     numpy==1.23.5 \
     papermill jupyterlab python-lsp-server[all] "jupyter-lsp==1.5.1" \
@@ -58,12 +63,12 @@ RUN pip install tensorflow_hub https://storage.googleapis.com/cloud-tpu-tpuvm-ar
 RUN curl --output /lib/libtpu.so https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/libtpu/${TF_LIBTPU_VERSION}/libtpu.so
 
 # Kaggle Model Hub patches:
-ADD patches/kaggle_module_resolver.py /usr/local/lib/python3.8/site-packages/tensorflow_hub/kaggle_module_resolver.py
-RUN sed -i '/from tensorflow_hub import uncompressed_module_resolver/a from tensorflow_hub import kaggle_module_resolver' /usr/local/lib/python3.8/site-packages/tensorflow_hub/config.py
-RUN sed -i '/_install_default_resolvers()/a \ \ registry.resolver.add_implementation(kaggle_module_resolver.KaggleFileResolver())' /usr/local/lib/python3.8/site-packages/tensorflow_hub/config.py
+ADD patches/kaggle_module_resolver.py /usr/local/lib/${PYTHON_VERSION_PATH}/site-packages/tensorflow_hub/kaggle_module_resolver.py
+RUN sed -i '/from tensorflow_hub import uncompressed_module_resolver/a from tensorflow_hub import kaggle_module_resolver' /usr/local/lib/${PYTHON_VERSION_PATH}/site-packages/tensorflow_hub/config.py
+RUN sed -i '/_install_default_resolvers()/a \ \ registry.resolver.add_implementation(kaggle_module_resolver.KaggleFileResolver())' /usr/local/lib/${PYTHON_VERSION_PATH}/site-packages/tensorflow_hub/config.py
 
 # Monkey-patch the default TPU to the local (TPU VM).
-RUN sed -i 's/tpu=None,/tpu="local",/' /usr/local/lib/python3.8/site-packages/tensorflow/python/distribute/cluster_resolver/tpu/tpu_cluster_resolver.py
+RUN sed -i 's/tpu=None,/tpu="local",/' /usr/local/lib/${PYTHON_VERSION_PATH}/site-packages/tensorflow/python/distribute/cluster_resolver/tpu/tpu_cluster_resolver.py
 
 # Set these env vars so that they don't produce errs calling the metadata server to load them:
 ENV TPU_ACCELERATOR_TYPE=v3-8
