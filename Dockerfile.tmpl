@@ -36,9 +36,9 @@ RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/lib
 {{ end }}
 
 # Keep these variables in sync if base image is updated.
-ENV TENSORFLOW_VERSION=2.12.0
+ENV TENSORFLOW_VERSION=2.13.0
 # See https://github.com/tensorflow/io#tensorflow-version-compatibility
-ENV TENSORFLOW_IO_VERSION=0.32.0
+ENV TENSORFLOW_IO_VERSION=0.34.0
 
 # We need to redefine the ARG here to get the ARG value defined above the FROM instruction.
 # See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
@@ -406,7 +406,6 @@ RUN pip install annoy \
         # Pandas data reader
         pandas-datareader \
         wordsegment \
-        wordbatch \
         emoji \
         # Add Japanese morphological analysis engine
         janome \
@@ -520,8 +519,7 @@ RUN pip install flashtext \
         pyarabic \
         pandasql \
         tensorflow_hub \
-        # b/300552705 Remove pin once we upgrade to TensorFlow 2.13
-        tensorflowjs==4.10 \
+        tensorflowjs \
         jieba  \
         # ggplot is broken and main repo does not merge and release https://github.com/yhat/ggpy/pull/668
         https://github.com/hbasria/ggpy/archive/0.11.5.zip \
