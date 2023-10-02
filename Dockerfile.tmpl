@@ -179,7 +179,7 @@ RUN export PATH=/usr/local/cuda/bin:$PATH && \
 {{ end }}
 
 RUN JAXVER=$(pip freeze | grep -e "^jax==") && \
-    pip install seaborn python-dateutil dask igraph \
+    pip install "seaborn>=0.13.0" python-dateutil dask igraph \
         pyyaml joblib husl geopy mne pyshp \
         pandas \
         polars \
