@@ -181,7 +181,7 @@ RUN export PATH=/usr/local/cuda/bin:$PATH && \
 # Make sure to install at least the version 0.13.0 of seaborn
 # which has a fix for heatmap (b/308525631)
 RUN JAXVER=$(pip freeze | grep -e "^jax==") && \
-    pip install \
+    pip install --upgrade \
         seaborn>=0.13.0 \
         python-dateutil dask igraph \
         pyyaml joblib husl geopy mne pyshp \
