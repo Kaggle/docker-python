@@ -178,11 +178,12 @@ RUN export PATH=/usr/local/cuda/bin:$PATH && \
     /tmp/clean-layer.sh
 {{ end }}
 
-# Make sure to install at least the version 0.13.0 of seaborn
-# which has a fix for heatmap (b/308525631)
+# (b/308525631) Pin Matplotlib until seaborn can be upgraded
+# to >0.13.0 (now it's stuck by a package conflict with ydata-profiling 4.5.1).
 RUN JAXVER=$(pip freeze | grep -e "^jax==") && \
     pip install --upgrade \
-        seaborn>=0.13.0 \
+        "matplotlib<3.8.0" \
+        seaborn \
         python-dateutil dask igraph \
         pyyaml joblib husl geopy mne pyshp \
         pandas \
