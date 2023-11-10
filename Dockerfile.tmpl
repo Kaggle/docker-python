@@ -240,8 +240,7 @@ RUN apt-get install -y libfreetype6-dev && \
         scikit-image && \
     /tmp/clean-layer.sh
 
-RUN pip install ibis-framework && \
-    pip install opencv-contrib-python opencv-python && \
+RUN pip install opencv-contrib-python opencv-python && \
     /tmp/clean-layer.sh
 
 RUN pip install scipy \
@@ -481,7 +480,8 @@ RUN pip install bleach \
         wcwidth \
         webencodings \
         widgetsnbextension \
-        pyarrow \
+        # Require pyarrow newer than https://github.com/advisories/GHSA-5wvp-7f3h-6wmm
+        {{ if eq .Accelerator "gpu" }} pyarrow {{ else }} "pyarrow>=14.0.1" {{ end }} \
         feather-format \
         fastai
 
