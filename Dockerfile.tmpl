@@ -114,7 +114,7 @@ RUN pip install spacy && \
 
 # b/232247930: uninstall pyarrow to avoid double installation with the GPU specific version.
 RUN pip uninstall -y pyarrow && \
-    mamba install -y cudf cuml && \
+    mamba install -y "pyarrow>=14.0.1" cudf cuml && \
     /tmp/clean-layer.sh
 
 # TODO: b/296444923 - Resolve pandas dependency another way
