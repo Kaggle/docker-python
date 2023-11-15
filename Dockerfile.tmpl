@@ -1,3 +1,16 @@
+./build
+./test
+
+# Run the image built locally:
+docker run --rm -it kaggle/python-build /bin/bash
+# Run the pre-built image from gcr.io
+docker run --rm -it gcr.io/kaggle-images/python /bin/bash
+
+# Run the image built locally:
+docker run --runtime nvidia --rm -it kaggle/python-gpu-build /bin/bash
+# Run the image pre-built image from gcr.io
+docker run --runtime nvidia --rm -it gcr.io/kaggle-gpu-images/python /bin/bash
+
 ARG BASE_IMAGE_REPO
 ARG BASE_IMAGE_TAG
 ARG CPU_BASE_IMAGE_NAME
