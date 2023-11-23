@@ -542,8 +542,10 @@ RUN pip install flashtext \
         git+https://github.com/Philmod/catalyst.git@fix-fp16#egg=catalyst \
         # b/206990323 osmx 1.1.2 requires numpy >= 1.21 which we don't want.
         osmnx==1.1.1 \
+        # Remove once `keras-core` is released as Keras
         keras-core \
-        keras-cv \
+        # b/312946339 latest version not compatible with our version of keras
+        keras-cv==0.6.4 \
         keras-nlp && \
     apt-get -y install libspatialindex-dev
 
