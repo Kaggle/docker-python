@@ -94,7 +94,6 @@ class UserSecretsClient():
         """
         creds = self.get_gcloud_credential()
         creds_path = self._write_credentials_file(creds)
-        self._write_gsutil_credentials_file(creds)
 
         subprocess.run(['gcloud', 'config', 'set', 'auth/credential_file_override', creds_path])
 
@@ -138,17 +137,6 @@ class UserSecretsClient():
         os.environ['GOOGLE_APPLICATION_CREDENTIALS']=adc_path
 
         return adc_path
-
-    def _write_gsutil_credentials_file(self, credentials) -> str:
-        import json
-        creds_dict = json.loads(credentials)
-        boto_path = os.path.join(os.environ.get('HOME', '/'), '.boto')
-        with open(boto_path, 'w') as f:
-            f.write('[Credentials]\n')
-            f.write(' gs_oauth2_refresh_token = ')
-            f.write(creds_dict['refresh_token'])
-
-        return boto_path
 
     def _get_gcs_access_token(self) -> Tuple[str, Optional[datetime]]:
         return self._get_access_token(GcpTarget.GCS)
