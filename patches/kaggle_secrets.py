@@ -106,18 +106,10 @@ class UserSecretsClient():
             subprocess.run(['gcloud', 'config', 'set', 'account', account])
 
     def set_tensorflow_credential(self, credential):
-        """Sets the credential for use by Tensorflow both in the local notebook
-        and to pass to the TPU.
-        """
-        # b/159906185: Import tensorflow_gcs_config only when this method is called to prevent preloading TensorFlow.
-        import tensorflow_gcs_config
+        """Sets the credential for use by Tensorflow"""
 
-        # Write to a local JSON credentials file and set
-        # GOOGLE_APPLICATION_CREDENTIALS for tensorflow running in the notebook.
+        # Write to a local JSON credentials file
         self._write_credentials_file(credential)
-
-        # set the credential for the TPU
-        tensorflow_gcs_config.configure_gcs(credentials=credential)
 
     def get_bigquery_access_token(self) -> Tuple[str, Optional[datetime]]:
         """Retrieves BigQuery access token information from the UserSecrets service.

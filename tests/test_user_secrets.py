@@ -166,6 +166,22 @@ class TestUserSecrets(unittest.TestCase):
 
         self._test_client(test_fn, '/requests/GetUserSecretByLabelRequest', {'Label': "__gcloud_sdk_auth__"}, secret=secret)
 
+    def test_set_tensorflow_credential(self):
+        secret = '{"client_id":"gcloud","type":"authorized_user","refresh_token":"refresh_token"}'
+
+        def test_fn():
+            client = UserSecretsClient()
+            creds = client.get_gcloud_credential()
+            client.set_tensorflow_credential(creds)
+
+            expected_creds_file = '/tmp/gcloud_credential.json'
+            self.assertEqual(expected_creds_file, os.environ['GOOGLE_APPLICATION_CREDENTIALS'])
+
+            with open(expected_creds_file, 'r') as f:
+                self.assertEqual(secret, '\n'.join(f.readlines()))
+
+        self._test_client(test_fn, '/requests/GetUserSecretByLabelRequest', {'Label': "__gcloud_sdk_auth__"}, secret=secret)
+
     @mock.patch('kaggle_secrets.datetime')
     def test_get_access_token_succeeds(self, mock_dt):
         secret = '12345'
