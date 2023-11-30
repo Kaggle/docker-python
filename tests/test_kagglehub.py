@@ -13,7 +13,3 @@ class TestKagglehub(unittest.TestCase):
                 kagglehub.login(validate_credentials=False)
 
                 self.assertIn("credentials set", l.output[0])
-            
-
-
-        
