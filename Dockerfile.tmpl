@@ -652,7 +652,7 @@ ADD patches/sitecustomize.py /root/.local/lib/python3.10/site-packages/sitecusto
 ADD patches/imagemagick-policy.xml /etc/ImageMagick-6/policy.xml
 
 # Add generativeai Python patch
-ADD patches/generativeaipatch.py /root/.local/lib/python3.10/site-packages/generativeaipatch.py
+CMD python patches/generativeaipatch.py
 
 # Add Kaggle module resolver
 ADD patches/kaggle_module_resolver.py /opt/conda/lib/python3.10/site-packages/tensorflow_hub/kaggle_module_resolver.py
