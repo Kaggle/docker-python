@@ -78,6 +78,8 @@ if not hasattr(sys, 'frozen'):
 
 @wrapt.when_imported('google.generativeai')
 def post_import_logic(module):
+    if os.getenv('KAGGLE_DISABLE_GOOGLE_GENERATIVE_AI_INTEGRATION') == 1:
+      return
     old_configure = module.configure
     def new_configure(*args, **kwargs):
         if ('default_metadata' in kwargs):
