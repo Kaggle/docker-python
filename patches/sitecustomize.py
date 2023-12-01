@@ -90,7 +90,6 @@ def post_import_logic(module):
             default_metadata = kwargs['default_metadata']
         else:
             default_metadata = []
-        kwargs['transport'] = 'rest' # Only support REST requests for now
         default_metadata.append(("x-kaggle-proxy-data", os.environ['KAGGLE_DATA_PROXY_TOKEN']))
         user_secrets_token = os.environ['KAGGLE_USER_SECRETS_TOKEN']
         default_metadata.append(('x-kaggle-authorization', f'Bearer {user_secrets_token}'))
@@ -102,6 +101,7 @@ def post_import_logic(module):
         client_options['api_endpoint'] = os.environ['KAGGLE_DATA_PROXY_URL']
         if os.getenv('KAGGLE_GOOGLE_GENERATIVE_AI_USE_REST_ONLY') != None:
             client_options['api_endpoint'] += '/palmapi'
+            kwargs['transport'] = 'rest' # Only support REST requests for now
         kwargs['client_options'] = client_options
         old_configure(*args, **kwargs)
     module.configure = new_configure
