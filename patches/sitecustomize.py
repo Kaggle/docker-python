@@ -78,9 +78,9 @@ if not hasattr(sys, 'frozen'):
 
 @wrapt.when_imported('google.generativeai')
 def post_import_logic(module):
-    if os.getenv('KAGGLE_DISABLE_GOOGLE_GENERATIVE_AI_INTEGRATION') == 1:
+    if os.getenv('KAGGLE_DISABLE_GOOGLE_GENERATIVE_AI_INTEGRATION') != None:
       return
-    if os.getenv('KAGGLE_DATA_PROXY_TOKEN') == 0 || os.getenv('KAGGLE_USER_SECRETS_TOKEN') == 0:
+    if os.getenv('KAGGLE_DATA_PROXY_TOKEN') == None || os.getenv('KAGGLE_USER_SECRETS_TOKEN') == None || os.getenv('KAGGLE_DATA_PROXY_URL') == None:
       return
     old_configure = module.configure
     def new_configure(*args, **kwargs):
@@ -97,6 +97,8 @@ def post_import_logic(module):
         else:
             client_options = {}
         client_options['api_endpoint'] = os.environ['KAGGLE_DATA_PROXY_URL'] + '/palmapi'
+        if os.getenv('KAGGLE_GOOGLE_GENERATIVE_AI_USE_REST_ONLY') != None:
+            client_options['api_endpoint'] += '/palmapi'
         kwargs['client_options'] = client_options
         old_configure(*args, **kwargs)
     module.configure = new_configure
