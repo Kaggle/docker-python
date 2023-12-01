@@ -30,6 +30,7 @@ class TestGoogleGenerativeAiPatch(unittest.TestCase):
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
         env.set('KAGGLE_DATA_PROXY_TOKEN', 'foobar')
         env.set('KAGGLE_DATA_PROXY_URL', endpoint)
+        env.set('KAGGLE_GOOGLE_GENERATIVE_AI_USE_REST_ONLY', 'True')
         server_address = urlparse(endpoint)
         with env:
             with HTTPServer((server_address.hostname, server_address.port), HTTPHandler) as httpd:

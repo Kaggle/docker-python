@@ -79,10 +79,8 @@ if not hasattr(sys, 'frozen'):
 @wrapt.when_imported('google.generativeai')
 def post_import_logic(module):
     if os.getenv('KAGGLE_DISABLE_GOOGLE_GENERATIVE_AI_INTEGRATION') != None:
-      print('disabled google ai integration')
       return
     if os.getenv('KAGGLE_DATA_PROXY_TOKEN') == None or os.getenv('KAGGLE_USER_SECRETS_TOKEN') == None or os.getenv('KAGGLE_DATA_PROXY_URL') == None:
-      print('one of the tokens is not available')
       return
     old_configure = module.configure
     def new_configure(*args, **kwargs):
