@@ -364,6 +364,8 @@ RUN pip install mpld3 \
         eli5 \
         kaggle \
         kagglehub \
+        google-generativeai \
+        wrapt \
         mock \
         pytest && \
     /tmp/clean-layer.sh
@@ -634,10 +636,6 @@ RUN mkdir -p ~/src && git clone https://github.com/SohierDane/BigQuery_Helper ~/
     mv ~/src/BigQuery_Helper/test_helper.py ~/src/BigQuery_Helper/bq_helper/ && \
     sed -i 's/)/packages=["bq_helper"])/g' ~/src/BigQuery_Helper/setup.py && \
     pip install -e ~/src/BigQuery_Helper && \
-    /tmp/clean-layer.sh
-    
-RUN pip install wrapt \
-        google-generativeai && \
     /tmp/clean-layer.sh
 
 # Add BigQuery client proxy settings
