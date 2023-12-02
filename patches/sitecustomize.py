@@ -79,7 +79,6 @@ if not hasattr(sys, 'frozen'):
 @wrapt.when_imported('google.generativeai')
 def post_import_logic(module):
     if os.getenv('KAGGLE_DISABLE_GOOGLE_GENERATIVE_AI_INTEGRATION') != None:
-      print("PHILMOD EARLY EXIT")
       return
     if os.getenv('KAGGLE_DATA_PROXY_TOKEN') == None or 
        os.getenv('KAGGLE_USER_SECRETS_TOKEN') == None or 
