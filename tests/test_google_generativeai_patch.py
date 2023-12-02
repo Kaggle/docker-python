@@ -26,7 +26,7 @@ class HTTPHandler(BaseHTTPRequestHandler):
 class TestGoogleGenerativeAiPatch(unittest.TestCase):
     endpoint = "http://127.0.0.1:80"
 
-    def test_headers_are_set(self):
+    def test_proxy_enabled(self):
         env = EnvironmentVarGuard()
         secrets_token = "secrets_token"
         proxy_token = "proxy_token"
