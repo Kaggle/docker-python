@@ -79,10 +79,15 @@ if not hasattr(sys, 'frozen'):
 @wrapt.when_imported('google.generativeai')
 def post_import_logic(module):
     if os.getenv('KAGGLE_DISABLE_GOOGLE_GENERATIVE_AI_INTEGRATION') != None:
+      print("PHILMOD EARLY EXIT")
       return
-    if os.getenv('KAGGLE_DATA_PROXY_TOKEN') == None or os.getenv('KAGGLE_USER_SECRETS_TOKEN') == None or os.getenv('KAGGLE_DATA_PROXY_URL') == None:
+    if os.getenv('KAGGLE_DATA_PROXY_TOKEN') == None or 
+       os.getenv('KAGGLE_USER_SECRETS_TOKEN') == None or 
+       os.getenv('KAGGLE_DATA_PROXY_URL') == None:
       return
+
     old_configure = module.configure
+
     def new_configure(*args, **kwargs):
         if ('default_metadata' in kwargs):
             default_metadata = kwargs['default_metadata']
@@ -92,6 +97,7 @@ def post_import_logic(module):
         user_secrets_token = os.environ['KAGGLE_USER_SECRETS_TOKEN']
         default_metadata.append(('x-kaggle-authorization', f'Bearer {user_secrets_token}'))
         kwargs['default_metadata'] = default_metadata
+
         if ('client_options' in kwargs):
             client_options = kwargs['client_options']
         else:
@@ -103,6 +109,8 @@ def post_import_logic(module):
         elif 'transport' in kwargs and kwargs['transport'] == 'rest':
             client_options['api_endpoint'] += '/palmapi'
         kwargs['client_options'] = client_options
+
         old_configure(*args, **kwargs)
+
     module.configure = new_configure
     module.configure() # generativeai can use GOOGLE_API_KEY env variable, so make sure we have the other configs set
