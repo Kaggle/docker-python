@@ -80,9 +80,9 @@ if not hasattr(sys, 'frozen'):
 def post_import_logic(module):
     if os.getenv('KAGGLE_DISABLE_GOOGLE_GENERATIVE_AI_INTEGRATION') != None:
       return
-    if os.getenv('KAGGLE_DATA_PROXY_TOKEN') == None or 
+    if (os.getenv('KAGGLE_DATA_PROXY_TOKEN') == None or 
        os.getenv('KAGGLE_USER_SECRETS_TOKEN') == None or 
-       os.getenv('KAGGLE_DATA_PROXY_URL') == None:
+       os.getenv('KAGGLE_DATA_PROXY_URL') == None):
       return
 
     old_configure = module.configure
