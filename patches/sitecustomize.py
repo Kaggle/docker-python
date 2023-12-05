@@ -105,6 +105,7 @@ def post_import_logic(module):
         if os.getenv('KAGGLE_GOOGLE_GENERATIVE_AI_USE_REST_ONLY') != None:
             client_options['api_endpoint'] += '/palmapi'
             kwargs['transport'] = 'rest'
+            client_options['api_endpoint'] = os.environ['KAGGLE_DATA_PROXY_URL']
         elif 'transport' in kwargs and kwargs['transport'] == 'rest':
             client_options['api_endpoint'] += '/palmapi'
         kwargs['client_options'] = client_options
