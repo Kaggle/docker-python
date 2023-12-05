@@ -32,7 +32,7 @@ class TestGoogleGenerativeAiPatch(unittest.TestCase):
         proxy_token = "proxy_token"
         env.set("KAGGLE_USER_SECRETS_TOKEN", secrets_token)
         env.set("KAGGLE_DATA_PROXY_TOKEN", proxy_token)
-        env.set("KAGGLE_DATA_PROXY_URL", self.endpoint)
+        env.set("KAGGLE_GRPC_DATA_PROXY_URL", self.endpoint)
         env.set("KAGGLE_GOOGLE_GENERATIVE_AI_USE_REST_ONLY", "True")
         server_address = urlparse(self.endpoint)
         with env:

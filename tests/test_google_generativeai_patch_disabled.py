@@ -26,7 +26,7 @@ class TestGoogleGenerativeAiPatchDisabled(unittest.TestCase):
         env = EnvironmentVarGuard()
         env.set("KAGGLE_USER_SECRETS_TOKEN", "foobar")
         env.set("KAGGLE_DATA_PROXY_TOKEN", "foobar")
-        env.set("KAGGLE_DATA_PROXY_URL", self.endpoint)
+        env.set("KAGGLE_GRPC_DATA_PROXY_URL", self.endpoint)
         env.set("KAGGLE_DISABLE_GOOGLE_GENERATIVE_AI_INTEGRATION", "True")
         server_address = urlparse(self.endpoint)
         with env:
