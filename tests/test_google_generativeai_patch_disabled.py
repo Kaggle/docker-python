@@ -14,6 +14,7 @@ class HTTPHandler(BaseHTTPRequestHandler):
         self.send_response(200)
 
     def do_GET(self):
+        print('YO MOD', self.path)
         HTTPHandler.called = True
         self.send_response(200)
         self.send_header("Content-type", "application/json")
@@ -29,7 +30,6 @@ class TestGoogleGenerativeAiPatchDisabled(unittest.TestCase):
         env.set("KAGGLE_DATA_PROXY_TOKEN", "foobar")
         env.set("KAGGLE_DATA_PROXY_URL", self.http_endpoint)
         env.set("KAGGLE_GRPC_DATA_PROXY_URL", self.grpc_endpoint)
-        env.set("KAGGLE_GOOGLE_GENERATIVE_AI_USE_REST_ONLY", "True")
         env.set("KAGGLE_DISABLE_GOOGLE_GENERATIVE_AI_INTEGRATION", "True")
         server_address = urlparse(self.http_endpoint)
         with env:
