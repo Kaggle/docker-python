@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 import os
 
-os.environ["KERAS_BACKEND"] = "jax" 
+os.environ["KERAS_BACKEND"] = "tensorflow" 
 
 # Note that keras_core should only be imported after the backend
 # has been configured. The backend cannot be changed once the
