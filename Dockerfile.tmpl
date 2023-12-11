@@ -403,6 +403,7 @@ RUN pip install annoy \
         google-cloud-bigquery \
         google-cloud-storage && \
     # Split these installations to avoid `pip._vendor.resolvelib.resolvers.ResolutionTooDeep: 200000`
+    # TODO(b/315753846) Unpin translate package.
     pip install google-cloud-translate==3.12.1 \
         google-cloud-language==2.* \
         google-cloud-videointelligence==2.* \
