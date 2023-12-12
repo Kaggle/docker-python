@@ -1,0 +1,21 @@
+{
+    "module": "keras_nlp.src.models.bert.bert_tokenizer",
+    "class_name": "BertTokenizer",
+    "config": {
+        "name": "bert_tokenizer",
+        "trainable": true,
+        "dtype": "int32",
+        "vocabulary": null,
+        "sequence_length": null,
+        "lowercase": true,
+        "strip_accents": false,
+        "split": true,
+        "suffix_indicator": "##",
+        "oov_token": "[UNK]"
+    },
+    "registered_name": "keras_nlp>BertTokenizer",
+    "assets": [
+        "assets/tokenizer/vocabulary.txt"
+    ],
+    "weights": null
+}
