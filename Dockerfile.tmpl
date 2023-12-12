@@ -690,6 +690,10 @@ RUN pip install "jupyter-lsp==1.5.1"
 # Set backend for matplotlib
 ENV MPLBACKEND "agg"
 
+# Set LC_ALL
+# https://github.com/explosion/spaCy/issues/12872#issuecomment-1661847588
+ENV LC_ALL "POSIX"
+
 ARG GIT_COMMIT=unknown
 ARG BUILD_DATE=unknown
 
