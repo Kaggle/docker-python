@@ -1,0 +1,19 @@
+{
+    "module": "keras_nlp.src.models.bert.bert_backbone",
+    "class_name": "BertBackbone",
+    "config": {
+        "name": "bert_backbone",
+        "trainable": true,
+        "vocabulary_size": 30522,
+        "num_layers": 2,
+        "num_heads": 2,
+        "hidden_dim": 128,
+        "intermediate_dim": 512,
+        "dropout": 0.1,
+        "max_sequence_length": 512,
+        "num_segments": 2
+    },
+    "registered_name": "keras_nlp>BertBackbone",
+    "assets": [],
+    "weights": "model.weights.h5"
+}
