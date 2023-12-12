@@ -1,0 +1,99 @@
+{
+    "module": "keras_cv.src.models.classification.image_classifier",
+    "class_name": "ImageClassifier",
+    "config": {
+        "name": "image_classifier",
+        "trainable": true,
+        "backbone": {
+            "module": "keras_cv.src.models.backbones.efficientnet_v2.efficientnet_v2_backbone",
+            "class_name": "EfficientNetV2Backbone",
+            "config": {
+                "name": "efficient_net_v2_backbone_1",
+                "trainable": true,
+                "include_rescaling": true,
+                "width_coefficient": 1.0,
+                "depth_coefficient": 1.0,
+                "skip_connection_dropout": 0.2,
+                "depth_divisor": 8,
+                "min_depth": 8,
+                "activation": "swish",
+                "input_shape": [
+                    null,
+                    null,
+                    3
+                ],
+                "input_tensor": null,
+                "stackwise_kernel_sizes": [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3
+                ],
+                "stackwise_num_repeats": [
+                    1,
+                    2,
+                    2,
+                    3,
+                    5,
+                    8
+                ],
+                "stackwise_input_filters": [
+                    32,
+                    16,
+                    32,
+                    48,
+                    96,
+                    112
+                ],
+                "stackwise_output_filters": [
+                    16,
+                    32,
+                    48,
+                    96,
+                    112,
+                    192
+                ],
+                "stackwise_expansion_ratios": [
+                    1,
+                    4,
+                    4,
+                    4,
+                    6,
+                    6
+                ],
+                "stackwise_squeeze_and_excite_ratios": [
+                    0,
+                    0,
+                    0,
+                    0.25,
+                    0.25,
+                    0.25
+                ],
+                "stackwise_strides": [
+                    1,
+                    2,
+                    2,
+                    2,
+                    1,
+                    2
+                ],
+                "stackwise_conv_types": [
+                    "fused",
+                    "fused",
+                    "fused",
+                    "unfused",
+                    "unfused",
+                    "unfused"
+                ]
+            },
+            "registered_name": "keras_cv>EfficientNetV2Backbone"
+        },
+        "num_classes": 1000,
+        "pooling": "avg",
+        "activation": "softmax"
+    },
+    "registered_name": "keras_cv>ImageClassifier",
+    "weights": "model.weights.h5"
+}
