@@ -547,9 +547,8 @@ RUN pip install flashtext \
         osmnx==1.1.1 \
         # Remove once `keras-core` is released as Keras
         keras-core \
-        # b/312946339 latest version not compatible with our version of keras
-        keras-cv==0.6.4 \
         # TODO(b/315833744) unpin when the alpha version is merged to the main version.
+        keras-cv==0.8.0.dev0 \
         keras-nlp==0.7.0.dev3 && \
     apt-get -y install libspatialindex-dev
 
