@@ -184,7 +184,7 @@ pipeline {
         }
         stage('TPU VM') {
           stages {
-            stage('Build Tensorflow TPU Image') {
+            stage('Build TPU VM Image') {
               options {
                 timeout(time: 60, unit: 'MINUTES')
               }
