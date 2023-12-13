@@ -62,6 +62,9 @@ RUN pip install tensorflow_hub https://storage.googleapis.com/cloud-tpu-tpuvm-ar
 # Tensorflow libtpu:
 RUN curl --output /lib/libtpu.so https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/libtpu/${TF_LIBTPU_VERSION}/libtpu.so
 
+# Install kagglehub library
+RUN pip install kagglehub
+
 # Kaggle Model Hub patches:
 ADD patches/kaggle_module_resolver.py /usr/local/lib/${PYTHON_VERSION_PATH}/site-packages/tensorflow_hub/kaggle_module_resolver.py
 RUN sed -i '/from tensorflow_hub import uncompressed_module_resolver/a from tensorflow_hub import kaggle_module_resolver' /usr/local/lib/${PYTHON_VERSION_PATH}/site-packages/tensorflow_hub/config.py
