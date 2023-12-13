@@ -18,7 +18,7 @@ ARG TORCHAUDIO_VERSION
 
 ENV ISTPUVM=1
 
-ADD clean-layer.sh  /tmp/clean-layer.sh
+ADD tpu/clean-layer.sh  /tmp/clean-layer.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 ADD patches/template_conf.json /opt/kaggle/conf.json
 
