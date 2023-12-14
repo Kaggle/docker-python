@@ -18,6 +18,7 @@ ARG TORCHAUDIO_VERSION
 
 ENV ISTPUVM=1
 
+ADD tpu/clean-layer.sh  /tmp/clean-layer.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 ADD patches/template_conf.json /opt/kaggle/conf.json
 
@@ -57,7 +58,9 @@ RUN pip install tensorflow_hub https://storage.googleapis.com/cloud-tpu-tpuvm-ar
     torch==${TORCH_VERSION} https://storage.googleapis.com/pytorch-xla-releases/wheels/tpuvm/torch_xla-${TORCH_VERSION}+libtpu-${PYTHON_WHEEL_VERSION}-${PYTHON_WHEEL_VERSION}-${TORCH_LINUX_WHEEL_VERSION}.whl torchvision==${TORCHVISION_VERSION} torchtext==${TORCHTEXT_VERSION} torchaudio==${TORCHAUDIO_VERSION} \
     jax[tpu]==${JAX_VERSION} -f https://storage.googleapis.com/jax-releases/libtpu_releases.html trax flax optax git+https://github.com/deepmind/dm-haiku jraph distrax \
     papermill jupyterlab python-lsp-server[all] "jupyter-lsp==1.5.1" \
-    pandas matplotlib opencv-python-headless librosa accelerate diffusers scikit-learn transformers
+    pandas matplotlib opencv-python-headless librosa accelerate diffusers scikit-learn transformers \
+    kagglehub && \
+    /tmp/clean-layer.sh
 
 # Tensorflow libtpu:
 RUN curl --output /lib/libtpu.so https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/libtpu/${TF_LIBTPU_VERSION}/libtpu.so
