@@ -8,7 +8,7 @@
             "module": "keras_cv.src.models.backbones.efficientnet_v2.efficientnet_v2_backbone",
             "class_name": "EfficientNetV2Backbone",
             "config": {
-                "name": "efficient_net_v2_backbone_1",
+                "name": "efficient_net_v2_backbone",
                 "trainable": true,
                 "include_rescaling": true,
                 "width_coefficient": 1.0,
