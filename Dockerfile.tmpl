@@ -316,8 +316,7 @@ RUN pip install mpld3 \
         s2sphere \
         bayesian-optimization \
         matplotlib-venn \
-        # b/184083722 pyldavis >= 3.3 requires numpy >= 1.20.0 but TensorFlow 2.4.1 / 2.5.0 requires 1.19.2
-        pyldavis==3.2.2 \
+        pyldavis \
         mlxtend \
         altair \
         ImageHash \
@@ -543,11 +542,9 @@ RUN pip install flashtext \
         # b/290207097 switch back to the pip catalyst package when bug fixed
         # https://github.com/catalyst-team/catalyst/issues/1440
         git+https://github.com/Philmod/catalyst.git@fix-fp16#egg=catalyst \
-        # b/206990323 osmx 1.1.2 requires numpy >= 1.21 which we don't want.
-        osmnx==1.1.1 \
-        # Remove once `keras-core` is released as Keras
-        keras-core \
-        # TODO(b/315833744) unpin when the alpha versions are merged to the main version.
+        osmnx \
+        # Remove once base image includes Keras 3.*. Currently includes Keras 2.*
+        keras==3.0.2 \
         keras-cv \
         keras-nlp && \
     apt-get -y install libspatialindex-dev
