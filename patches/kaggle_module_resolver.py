@@ -7,7 +7,7 @@ from tensorflow_hub import resolver
 url_pattern = re.compile(r"https?://([a-z]+\.)?kaggle.com/models/(?P<owner>[^\\/]+)/(?P<model>[^\\/]+)/frameworks/(?P<framework>[^\\/]+)/variations/(?P<variation>[^\\/]+)/versions/(?P<version>[0-9]+)$")
 
 def _is_on_kaggle_notebook():
-    return os.getenv("KAGGLE_KERNEL_RUN_TYPE") != None
+    return os.getenv("KAGGLE_KERNEL_RUN_TYPE") != None and os.getenv("KAGGLE_USER_SECRETS_TOKEN") != None
 
 def _is_kaggle_handle(handle):
     return url_pattern.match(handle) != None
