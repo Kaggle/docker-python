@@ -197,7 +197,6 @@ RUN apt-get install -y default-jre && \
 
 RUN pip install -f http://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o && /tmp/clean-layer.sh
 
-# Remove pin on `keras once base image includes Keras 3.*. Currently includes Keras 2.*
 RUN pip install \
         "tensorflow==${TENSORFLOW_VERSION}" \
         "tensorflow-io==${TENSORFLOW_IO_VERSION}" \
@@ -205,10 +204,13 @@ RUN pip install \
         tensorflow_decision_forests \
         tensorflow_text \
         tensorflowjs \
-        tensorflow_hub \
-        keras>=3.0.2 \
-        keras-cv \
-        keras-nlp && \
+        tensorflow_hub && \
+    /tmp/clean-layer.sh
+
+# b/318672157 Install Keras 3 for loading models.
+# We ignore dependencies for now since tf2.15 should work despite pip saying it won't.
+# Remove pin on `keras once base image includes Keras 3.*. Currently includes Keras 2.*
+RUN pip install --no-dependencies "keras>=3.0.2" keras-cv keras-nlp && \
     /tmp/clean-layer.sh
 
 RUN pip install pysal
