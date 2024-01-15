@@ -204,7 +204,11 @@ RUN pip install \
         tensorflow_decision_forests \
         tensorflow_text \
         tensorflowjs \
-        tensorflow_hub && \
+        tensorflow_hub \
+        # Remove once base image includes Keras 3.*. Currently includes Keras 2.*
+        keras>=3.0.2 \
+        keras-cv \
+        keras-nlp && \
     /tmp/clean-layer.sh
 
 RUN pip install pysal
@@ -542,11 +546,7 @@ RUN pip install flashtext \
         # b/290207097 switch back to the pip catalyst package when bug fixed
         # https://github.com/catalyst-team/catalyst/issues/1440
         git+https://github.com/Philmod/catalyst.git@fix-fp16#egg=catalyst \
-        osmnx \
-        # Remove once base image includes Keras 3.*. Currently includes Keras 2.*
-        keras==3.0.2 \
-        keras-cv \
-        keras-nlp && \
+        osmnx && \
     apt-get -y install libspatialindex-dev
 
 RUN pip install pytorch-ignite \
