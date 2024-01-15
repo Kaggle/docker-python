@@ -134,7 +134,7 @@ fi
 
 if $SHOULD_BUILD; then
     echo "Building $TAG..."
-    docker build --rm --pull $BUILD_ARGS \
+    DOCKER_BUILDKIT=0 docker build --rm --pull $BUILD_ARGS \
         $CACHE_FLAG \
         -t $TAG \
         -f "$DOCKERFILE_PATH" \
