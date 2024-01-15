@@ -197,15 +197,15 @@ RUN apt-get install -y default-jre && \
 
 RUN pip install -f http://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o && /tmp/clean-layer.sh
 
+# Remove once base image includes Keras 3.*. Currently includes Keras 2.*
 RUN pip install \
         "tensorflow==${TENSORFLOW_VERSION}" \
-        "tensorflow-io==${TENSORFLOW_IO_VERSION}"\
+        "tensorflow-io==${TENSORFLOW_IO_VERSION}" \
         tensorflow-addons \
         tensorflow_decision_forests \
         tensorflow_text \
         tensorflowjs \
         tensorflow_hub \
-        # Remove once base image includes Keras 3.*. Currently includes Keras 2.*
         keras>=3.0.2 \
         keras-cv \
         keras-nlp && \
@@ -273,12 +273,6 @@ RUN pip install scipy \
     # Pandoc is a dependency of deap
     apt-get install -y pandoc && \
     pip install essentia
-
-{{ if eq .Accelerator "gpu" }}
-# #1281 Install numba MVC support:
-RUN pip install ptxcompiler-cu11 cubinlinker-cu11 --extra-index-url=https://pypi.nvidia.com
-ENV NUMBA_CUDA_ENABLE_MINOR_VERSION_COMPATIBILITY=1
-{{ end }}
 
 RUN apt-get install -y git-lfs && \
     /tmp/clean-layer.sh
