@@ -207,10 +207,9 @@ RUN pip install \
         tensorflow_hub && \
     /tmp/clean-layer.sh
 
-# b/318672157 Install Keras 3 for loading models.
-# We ignore dependencies for now since tf2.15 should work despite pip saying it won't.
-# Remove pin on `keras once base image includes Keras 3.*. Currently includes Keras 2.*
-RUN pip install --no-dependencies "keras>=3.0.2" keras-cv keras-nlp && \
+# TODO(b/318672158): Upgrade to Keras 3 once compatible with other TF libries.
+# See blockers here: https://b.corp.google.com/issues/319722433#comment8
+RUN pip install keras keras-cv keras-nlp && \
     /tmp/clean-layer.sh
 
 RUN pip install pysal
