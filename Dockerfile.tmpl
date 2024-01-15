@@ -202,7 +202,9 @@ RUN pip install \
         "tensorflow-io==${TENSORFLOW_IO_VERSION}"\
         tensorflow-addons \
         tensorflow_decision_forests \
-        tensorflow_text && \
+        tensorflow_text \
+        tensorflowjs \
+        tensorflow_hub && \
     /tmp/clean-layer.sh
 
 RUN pip install pysal
@@ -526,8 +528,6 @@ RUN pip install flashtext \
         gym \
         pyarabic \
         pandasql \
-        tensorflow_hub \
-        tensorflowjs \
         jieba  \
         # ggplot is broken and main repo does not merge and release https://github.com/yhat/ggpy/pull/668
         https://github.com/hbasria/ggpy/archive/0.11.5.zip \
