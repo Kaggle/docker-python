@@ -158,7 +158,7 @@ RUN pip install lightgbm==$LIGHTGBM_VERSION && \
 
 # Install JAX
 {{ if eq .Accelerator "gpu" }}
-RUN pip install "jax[cuda11_local]" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html && \
+RUN pip install "jax[cuda12_local]" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html && \
     /tmp/clean-layer.sh
 {{ else }}
 RUN pip install jax[cpu] && \
@@ -169,7 +169,7 @@ RUN pip install jax[cpu] && \
 # Install GPU specific packages
 {{ if eq .Accelerator "gpu" }}
 # Install GPU-only packages
-# No specific package for nnabla-ext-cuda 11.x minor versions.
+# No specific package for nnabla-ext-cuda 12.x minor versions.
 RUN export PATH=/usr/local/cuda/bin:$PATH && \
     export CUDA_ROOT=/usr/local/cuda && \
     pip install pycuda \
