@@ -7,10 +7,12 @@ ARG TORCH_VERSION
 ARG TORCHAUDIO_VERSION
 ARG TORCHTEXT_VERSION
 ARG TORCHVISION_VERSION
+ARG JAX_VERSION
 
 {{ if eq .Accelerator "gpu" }}
 FROM gcr.io/kaggle-images/python-lightgbm-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_TAG}-${LIGHTGBM_VERSION} AS lightgbm_whl
 FROM gcr.io/kaggle-images/python-torch-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_TAG}-${TORCH_VERSION} AS torch_whl
+FROM gcr.io/kaggle-images/python-jaxlib-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_TAG}-${JAX_VERSION} AS jaxlib_whl
 FROM ${BASE_IMAGE_REPO}/${GPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 {{ else }}
 FROM ${BASE_IMAGE_REPO}/${CPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
@@ -158,7 +160,9 @@ RUN pip install lightgbm==$LIGHTGBM_VERSION && \
 
 # Install JAX
 {{ if eq .Accelerator "gpu" }}
-RUN pip install "jax[cuda12_local]" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html && \
+COPY --from=jaxlib_whl /tmp/whl/*.whl /tmp/jax/
+# b/319722433#comment9: Use pip wheels once versions matches our CUDA version.
+RUN pip install /tmp/jax/*.whl jax==$JAX_VERSION && \
     /tmp/clean-layer.sh
 {{ else }}
 RUN pip install jax[cpu] && \
