@@ -5,12 +5,9 @@ import os
 
 os.environ["KERAS_BACKEND"] = "tensorflow" 
 
-# Note that keras_core should only be imported after the backend
-# has been configured. The backend cannot be changed once the
-# package is imported.
-import keras_core as keras
+import keras
 
-class TestKerasCore(unittest.TestCase):
+class TestKeras(unittest.TestCase):
     def test_train(self):
         # Load the data and split it between train and test sets
         (x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data(

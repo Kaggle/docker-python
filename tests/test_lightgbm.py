@@ -30,7 +30,7 @@ class TestLightgbm(unittest.TestCase):
                         lgb_train,
                         num_boost_round=1,
                         valid_sets=lgb_eval,
-                        early_stopping_rounds=1)
+                        callbacks=[lgb.early_stopping(stopping_rounds=1)])
 
         self.assertEqual(1, gbm.best_iteration)
 
@@ -57,7 +57,7 @@ class TestLightgbm(unittest.TestCase):
                         lgb_train,
                         num_boost_round=1,
                         valid_sets=lgb_eval,
-                        early_stopping_rounds=1)
+                        callbacks=[lgb.early_stopping(stopping_rounds=1)])
 
         self.assertEqual(1, gbm.best_iteration)
     

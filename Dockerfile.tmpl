@@ -7,10 +7,12 @@ ARG TORCH_VERSION
 ARG TORCHAUDIO_VERSION
 ARG TORCHTEXT_VERSION
 ARG TORCHVISION_VERSION
+ARG JAX_VERSION
 
 {{ if eq .Accelerator "gpu" }}
 FROM gcr.io/kaggle-images/python-lightgbm-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_TAG}-${LIGHTGBM_VERSION} AS lightgbm_whl
 FROM gcr.io/kaggle-images/python-torch-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_TAG}-${TORCH_VERSION} AS torch_whl
+FROM gcr.io/kaggle-images/python-jaxlib-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_TAG}-${JAX_VERSION} AS jaxlib_whl
 FROM ${BASE_IMAGE_REPO}/${GPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 {{ else }}
 FROM ${BASE_IMAGE_REPO}/${CPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
@@ -36,9 +38,9 @@ RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/lib
 {{ end }}
 
 # Keep these variables in sync if base image is updated.
-ENV TENSORFLOW_VERSION=2.13.0
+ENV TENSORFLOW_VERSION=2.15.0
 # See https://github.com/tensorflow/io#tensorflow-version-compatibility
-ENV TENSORFLOW_IO_VERSION=0.34.0
+ENV TENSORFLOW_IO_VERSION=0.35.0
 
 # We need to redefine the ARG here to get the ARG value defined above the FROM instruction.
 # See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
@@ -47,6 +49,7 @@ ARG TORCH_VERSION
 ARG TORCHAUDIO_VERSION
 ARG TORCHTEXT_VERSION
 ARG TORCHVISION_VERSION
+ARG JAX_VERSION
 
 # Disable pesky logs like: KMP_AFFINITY: pid 6121 tid 6121 thread 0 bound to OS proc set 0
 # See: https://stackoverflow.com/questions/57385766/disable-tensorflow-log-information
@@ -158,7 +161,9 @@ RUN pip install lightgbm==$LIGHTGBM_VERSION && \
 
 # Install JAX
 {{ if eq .Accelerator "gpu" }}
-RUN pip install "jax[cuda11_local]" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html && \
+COPY --from=jaxlib_whl /tmp/whl/*.whl /tmp/jax/
+# b/319722433#comment9: Use pip wheels once versions matches our CUDA version.
+RUN pip install /tmp/jax/*.whl jax==$JAX_VERSION && \
     /tmp/clean-layer.sh
 {{ else }}
 RUN pip install jax[cpu] && \
@@ -169,7 +174,7 @@ RUN pip install jax[cpu] && \
 # Install GPU specific packages
 {{ if eq .Accelerator "gpu" }}
 # Install GPU-only packages
-# No specific package for nnabla-ext-cuda 11.x minor versions.
+# No specific package for nnabla-ext-cuda 12.x minor versions.
 RUN export PATH=/usr/local/cuda/bin:$PATH && \
     export CUDA_ROOT=/usr/local/cuda && \
     pip install pycuda \
@@ -199,10 +204,17 @@ RUN pip install -f http://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html
 
 RUN pip install \
         "tensorflow==${TENSORFLOW_VERSION}" \
-        "tensorflow-io==${TENSORFLOW_IO_VERSION}"\
+        "tensorflow-io==${TENSORFLOW_IO_VERSION}" \
         tensorflow-addons \
         tensorflow_decision_forests \
-        tensorflow_text && \
+        tensorflow_text \
+        tensorflowjs \
+        tensorflow_hub && \
+    /tmp/clean-layer.sh
+
+# TODO(b/318672158): Upgrade to Keras 3 once compatible with other TF libries.
+# See blockers here: https://b.corp.google.com/issues/319722433#comment8
+RUN pip install keras keras-cv keras-nlp && \
     /tmp/clean-layer.sh
 
 RUN pip install pysal
@@ -268,12 +280,6 @@ RUN pip install scipy \
     apt-get install -y pandoc && \
     pip install essentia
 
-{{ if eq .Accelerator "gpu" }}
-# #1281 Install numba MVC support:
-RUN pip install ptxcompiler-cu11 cubinlinker-cu11 --extra-index-url=https://pypi.nvidia.com
-ENV NUMBA_CUDA_ENABLE_MINOR_VERSION_COMPATIBILITY=1
-{{ end }}
-
 RUN apt-get install -y git-lfs && \
     /tmp/clean-layer.sh
 
@@ -316,8 +322,7 @@ RUN pip install mpld3 \
         s2sphere \
         bayesian-optimization \
         matplotlib-venn \
-        # b/184083722 pyldavis >= 3.3 requires numpy >= 1.20.0 but TensorFlow 2.4.1 / 2.5.0 requires 1.19.2
-        pyldavis==3.2.2 \
+        pyldavis \
         mlxtend \
         altair \
         ImageHash \
@@ -527,8 +532,6 @@ RUN pip install flashtext \
         gym \
         pyarabic \
         pandasql \
-        tensorflow_hub \
-        tensorflowjs \
         jieba  \
         # ggplot is broken and main repo does not merge and release https://github.com/yhat/ggpy/pull/668
         https://github.com/hbasria/ggpy/archive/0.11.5.zip \
@@ -543,13 +546,7 @@ RUN pip install flashtext \
         # b/290207097 switch back to the pip catalyst package when bug fixed
         # https://github.com/catalyst-team/catalyst/issues/1440
         git+https://github.com/Philmod/catalyst.git@fix-fp16#egg=catalyst \
-        # b/206990323 osmx 1.1.2 requires numpy >= 1.21 which we don't want.
-        osmnx==1.1.1 \
-        # Remove once `keras-core` is released as Keras
-        keras-core \
-        # TODO(b/315833744) unpin when the alpha versions are merged to the main version.
-        keras-cv \
-        keras-nlp && \
+        osmnx && \
     apt-get -y install libspatialindex-dev
 
 RUN pip install pytorch-ignite \
