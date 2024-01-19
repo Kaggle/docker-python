@@ -248,7 +248,8 @@ pipeline {
         sh '''#!/bin/bash
           set -exo pipefail
           gcloud container images list-tags gcr.io/kaggle-images/python --filter="NOT tags:v* AND timestamp.datetime < -P6M" --format='get(digest)' --limit 100 | xargs -I {} gcloud container images delete gcr.io/kaggle-images/python@{} --quiet --force-delete-tags
-          gcloud container images list-tags gcr.io/kaggle-private-byod/python --filter="NOT tags:v* AND timestamp.datetime < -P6M" --format='get(digest)' --limit 100 | xargs -I {} gcloud container images delete gcr.io/kaggle-private-byod/python@{} --quiet --force-delete-tags
+          # b/321030221#comment8 Disable deletion of old images from gcr.io/kaggle-private-byod/python. GCR seems to have an issue with this repo and the creation date. See bug.
+          # gcloud container images list-tags gcr.io/kaggle-private-byod/python --filter="NOT tags:v* AND timestamp.datetime < -P6M" --format='get(digest)' --limit 100 | xargs -I {} gcloud container images delete gcr.io/kaggle-private-byod/python@{} --quiet --force-delete-tags
         '''
       }
     }
