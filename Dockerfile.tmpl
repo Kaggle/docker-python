@@ -215,7 +215,7 @@ RUN pip install \
 # Remove --no-deps flag once Keras 3.* is included in our base image.
 # We ignore dependencies since tf2.15 and Keras 3.* should work despite pip saying it won't.
 # Currently, keras tries to install a nightly version of tf 2.16: https://github.com/keras-team/keras/blob/fe2f54aa5bc42fb23a96449cf90434ab9bb6a2cd/requirements.txt#L2
-RUN pip install --no-deps keras>= 3.0.2 && \
+RUN pip install --no-deps -U keras && \
     pip install keras-cv keras-nlp && \
     /tmp/clean-layer.sh
 
