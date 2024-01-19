@@ -26,6 +26,9 @@ pipeline {
       steps {
         sh '''#!/bin/bash
           date
+          docker pull python
+          docker tag python gcr.io/kaggle-private-byod/python:test-jenkins
+          gcloud docker -- push gcr.io/kaggle-private-byod/python:test-jenkins
         '''
       }
     }
