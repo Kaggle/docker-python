@@ -210,7 +210,7 @@ RUN pip install \
         git+https://github.com/tensorflow/probability.git@fbc5ebe9b1d343113fb917010096cfd88b32eecf \
         tensorflow_text \
         tensorflowjs \
-        tensorflow_hub \
+        "tensorflow_hub>=0.16.0" \
         tf-keras && \
     /tmp/clean-layer.sh
 
