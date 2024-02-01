@@ -708,4 +708,6 @@ RUN echo "$GIT_COMMIT" > /etc/git_commit && echo "$BUILD_DATE" > /etc/build_date
 {{ if eq .Accelerator "gpu" }}
 # Remove the CUDA stubs.
 ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH_NO_STUBS"
+# Add the CUDA home.
+ENV CUDA_HOME=/usr/local/cuda
 {{ end }}
