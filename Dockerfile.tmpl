@@ -209,9 +209,8 @@ RUN pip install \
         tensorflow_decision_forests \
         git+https://github.com/tensorflow/probability.git@fbc5ebe9b1d343113fb917010096cfd88b32eecf \
         tensorflow_text \
-        tensorflowjs \
         "tensorflow_hub>=0.16.0" \
-        tf-keras && \
+	tf-keras && \
     /tmp/clean-layer.sh
 
 # Remove "--no-deps" flag and "namex" package once Keras 3.* is included in our base image.
