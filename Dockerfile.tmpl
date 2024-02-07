@@ -207,7 +207,7 @@ RUN pip install -f http://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html
 RUN pip install \
         "tensorflow==${TENSORFLOW_VERSION}" \
         "tensorflow-io==${TENSORFLOW_IO_VERSION}" \
-	pip install tensorflow_decision_forests --no-dependencie
+	pip install tensorflow_decision_forests --no-dependencies \
 	git+https://github.com/tensorflow/probability.git@fbc5ebe9b1d343113fb917010096cfd88b32eecf \
         tensorflow_text \
         "tensorflow_hub>=0.16.0" \
