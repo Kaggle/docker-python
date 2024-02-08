@@ -62,6 +62,7 @@ ENV KMP_SETTINGS=false
 ENV PIP_ROOT_USER_ACTION=ignore
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
+ADD patches/keras_patch.sh  /tmp/keras_patch.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 ADD patches/template_conf.json /opt/kaggle/conf.json
 
@@ -202,18 +203,30 @@ RUN apt-get install -y default-jre && \
 
 RUN pip install -f http://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o && /tmp/clean-layer.sh
 
+# b/318672158 Use simply tensorflow-probability once > 0.23.0 is released.
 RUN pip install \
         "tensorflow==${TENSORFLOW_VERSION}" \
         "tensorflow-io==${TENSORFLOW_IO_VERSION}" \
-        tensorflow_decision_forests \
+        git+https://github.com/tensorflow/probability.git@fbc5ebe9b1d343113fb917010096cfd88b32eecf \
         tensorflow_text \
-        tensorflowjs \
-        tensorflow_hub && \
+        "tensorflow_hub>=0.16.0" \
+        tf-keras && \
     /tmp/clean-layer.sh
 
-# TODO(b/318672158): Upgrade to Keras 3 once compatible with other TF libries.
-# See blockers here: https://b.corp.google.com/issues/319722433#comment8
-RUN pip install keras keras-cv keras-nlp && \
+# b/318672158 Use simply tensorflow_decision_forests on next release, expected with tf 2.16
+RUN pip install tensorflow_decision_forests --no-deps && \
+    /tmp/clean-layer.sh
+
+RUN chmod +x /tmp/keras_patch.sh && \
+    /tmp/keras_patch.sh
+
+ADD patches/keras_internal.py /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras/keras_internal.py
+ADD patches/keras_internal_test.py /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras/keras_internal_test.py
+
+# Remove "--no-deps" flag and "namex" package once Keras 3.* is included in our base image.
+# We ignore dependencies since tf2.15 and Keras 3.* should work despite pip saying it won't.
+# Currently, keras tries to install a nightly version of tf 2.16: https://github.com/keras-team/keras/blob/fe2f54aa5bc42fb23a96449cf90434ab9bb6a2cd/requirements.txt#L2
+RUN pip install --no-deps "keras>3" keras-cv keras-nlp namex && \
     /tmp/clean-layer.sh
 
 RUN pip install pysal
