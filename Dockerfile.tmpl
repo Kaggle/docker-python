@@ -217,7 +217,8 @@ RUN pip install \
 RUN pip install tensorflow_decision_forests --no-deps && \
     /tmp/clean-layer.sh
 
-RUN /tmp/keras_patch.sh
+RUN chmod +x /tmp/keras_patch.sh && \
+    /tmp/keras_patch.sh
 
 ADD patches/keras_internal.py /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras/keras_internal.py
 ADD patches/keras_internal_test.py /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras/keras_internal_test.py
