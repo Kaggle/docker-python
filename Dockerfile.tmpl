@@ -215,6 +215,42 @@ RUN pip install \
     
 RUN pip install tensorflow_decision_forests --no-deps && \
     /tmp/clean-layer.sh
+RUN sed -i "/import tensorflow_decision_forests as tfdf/a import tf_keras" /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/__init__.py && \
+    sed -i -e "/import tensorflow as tf/a import tf_keras" \
+           -e "/from yggdrasil_decision_forests.utils.distribute.implementations.grpc/a from tensorflow_decision_forests.keras import keras_internal" \
+           -e '/try:/{:a;N;/backend = tf.keras.backend/!ba;d}'\
+           /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras/core.py && \
+    sed -i -e "s/from typing import Optional, List, Dict, Any, Union, NamedTuple/from typing import Any, Dict, List, NamedTuple, Optional, Union/g" \
+           -e "/import tensorflow as tf/a from tensorflow_decision_forests.keras import keras_internal" \
+           -e "/import tensorflow as tf/a import tf_keras" \
+           -e '/layers = tf.keras.layers/{:a;N;/backend = tf.keras.backend/!ba;d}' \
+           /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras/core_inference.py && \
+    find /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests -type f -exec sed -i "s/get_data_handler/keras_internal.get_data_handler/g" {} \; && \
+    find /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests -type f -exec sed -i 's/"models.Functional"/keras_internal.Functional/g' {} \; && \
+    find /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests -type f -exec sed -i "s/tf.keras.utils.unpack_x_y_sample_weight/keras_internal.unpack_x_y_sample_weight/g" {} \; && \
+    find /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests -type f -exec sed -i "s/tf.keras.utils.experimental/keras_internal/g" {} \; && \
+    sed -i -e "/import tensorflow as tf/a import tf_keras" \
+           -e "/from tensorflow_decision_forests.keras import core/a from tensorflow_decision_forests.keras import keras_internal" \
+           -e '/layers = tf.keras.layers/{:a;N;/callbacks = tf.keras.callbacks/!ba;d}' \
+           /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras/keras_test.py && \
+    find /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras -type f -exec sed -i "s/ layers.Input/ tf_keras.layers.Input/g" {} \; && \
+    find /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras -type f -exec sed -i "s/layers.minimum/tf_keras.layers.minimum/g" {} \; && \
+    find /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras -type f -exec sed -i "s/layers.Concatenate/tf_keras.layers.Concatenate/g" {} \; && \
+    find /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras -type f -exec sed -i "s/layers.Dense/tf_keras.layers.Dense/g" {} \; && \
+    find /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras -type f -exec sed -i "s/layers.experimental.preprocessing./tf_keras.layers./g" {} \; && \
+    find /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras -type f -exec sed -i "s/layers.DenseFeatures/keras_internal.layers.DenseFeatures/g" {} \; && \
+    find /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras -type f -exec sed -i "s/models.Model/tf_keras.models.Model/g" {} \; && \
+    sed -i "s/ models.load_model/ tf_keras.models.load_model/g" /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras/keras_test.py && \
+    sed -i "/import tensorflow as tf/a import tf_keras" /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras/test_runner.py && \
+    sed -i "/import tensorflow as tf/a import tf_keras" /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras/wrappers.py && \
+    sed -i -e "/import tensorflow as tf/a import tf_keras" \
+           -e "s/optimizer=optimizers.Adam()/optimizer=tf_keras.optimizers.Adam()/g" \
+           /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras/wrappers_pre_generated.py && \
+   find /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests -type f -exec sed -i "s/tf.keras./tf_keras./g" {} \;
+ADD patches/keras_internal.py /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras/keras_internal.py
+ADD patches/keras_internal_test.py /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras/keras_internal_test.py
+
+
 
 # Remove "--no-deps" flag and "namex" package once Keras 3.* is included in our base image.
 # We ignore dependencies since tf2.15 and Keras 3.* should work despite pip saying it won't.
