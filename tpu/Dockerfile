@@ -59,6 +59,7 @@ RUN pip install tensorflow_hub https://storage.googleapis.com/cloud-tpu-tpuvm-ar
     jax[tpu]==${JAX_VERSION} -f https://storage.googleapis.com/jax-releases/libtpu_releases.html trax flax optax git+https://github.com/deepmind/dm-haiku jraph distrax \
     papermill jupyterlab python-lsp-server[all] "jupyter-lsp==1.5.1" \
     pandas matplotlib opencv-python-headless librosa accelerate diffusers scikit-learn transformers \
+    seaborn timm albumentations einops pyarrow fastparquet opencv-python \
     kagglehub && \
     /tmp/clean-layer.sh
 
