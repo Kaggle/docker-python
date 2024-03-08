@@ -229,7 +229,8 @@ ADD patches/keras_internal_test.py /opt/conda/lib/python3.10/site-packages/tenso
 RUN pip install --no-deps "keras>3" keras-cv keras-nlp namex && \
     /tmp/clean-layer.sh
 
-RUN pip install pysal
+# b/328788268 libpysal 4.10 seems to fail with "module 'shapely' has no attribute 'Geometry'. Did you mean: 'geometry'"
+RUN pip install pysal "libpysal==4.9.2"
 
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
