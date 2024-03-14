@@ -397,7 +397,6 @@ RUN pip install tensorpack && \
     /tmp/clean-layer.sh
 
 RUN pip install cython \
-        cysignals \
         fasttext && \
     apt-get install -y libhunspell-dev && pip install hunspell
 RUN pip install annoy \
