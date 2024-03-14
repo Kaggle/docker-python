@@ -198,7 +198,8 @@ RUN JAXVER=$(pip freeze | grep -e "^jax==") && \
         "${JAXVER}" && \
     /tmp/clean-layer.sh
 
-RUN apt-get install -y default-jre && \
+RUN apt-get update && \
+    apt-get install -y default-jre && \
     /tmp/clean-layer.sh
 
 RUN pip install -f http://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o && /tmp/clean-layer.sh
@@ -214,7 +215,7 @@ RUN pip install \
     /tmp/clean-layer.sh
 
 # b/318672158 Use simply tensorflow_decision_forests on next release, expected with tf 2.16
-RUN pip install tensorflow_decision_forests --no-deps && \
+RUN pip install tensorflow_decision_forests==1.8.1 --no-deps && \
     /tmp/clean-layer.sh
 
 RUN chmod +x /tmp/keras_patch.sh && \
