@@ -190,7 +190,7 @@ RUN JAXVER=$(pip freeze | grep -e "^jax==") && \
     pip install --upgrade \
         "matplotlib<3.8.0" \
         seaborn \
-        python-dateutil dask igraph \
+        python-dateutil dask dask-expr igraph \
         pyyaml joblib husl geopy mne pyshp \
         pandas \
         polars \
@@ -269,8 +269,6 @@ RUN pip install opencv-contrib-python opencv-python && \
     /tmp/clean-layer.sh
 
 RUN pip install scipy \
-        # b/302136621 Fix eli5 import for learntools
-        "scikit-learn<1.3" \
         # Scikit-learn accelerated library for x86
         scikit-learn-intelex>=2023.0.1 \
         # HDF5 support
@@ -318,7 +316,8 @@ RUN pip install mpld3 \
         path.py \
         Geohash && \
     pip install deap \
-        tpot \
+        # b/302136621 Fix eli5 import for learntools, newer version require scikit-learn > 1.3
+        "tpot==0.12.1" \
         scikit-optimize \
         haversine \
         toolz cytoolz \
@@ -537,19 +536,21 @@ RUN pip install flashtext \
         s3fs \
         featuretools \
         #-e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper \
-        hpsklearn \
         git+https://github.com/Kaggle/learntools \
-        kmapper \
-        shap \
         ray \
         gym \
         pyarabic \
         pandasql \
+	# b/302136621 Fix eli5 import for learntools
+        scikit-learn==1.2.2 \
+	hpsklearn \
+        kmapper \
+        shap \
+        cesium \
+        rgf_python \
         jieba  \
         # ggplot is broken and main repo does not merge and release https://github.com/yhat/ggpy/pull/668
         https://github.com/hbasria/ggpy/archive/0.11.5.zip \
-        cesium \
-        rgf_python \
         tsfresh \
         pykalman \
         optuna \
