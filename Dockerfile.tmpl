@@ -274,14 +274,11 @@ RUN pip install scipy \
         scikit-learn-intelex>=2023.0.1 \
         # HDF5 support
         h5py \
-        biopython \
         # PUDB, for local debugging convenience
         pudb \
         imbalanced-learn \
         # Profiling and other utilities
         line_profiler \
-        orderedmultidict \
-        smhasher \
         bokeh \
         numba \
         datashader \
@@ -326,9 +323,7 @@ RUN pip install mpld3 \
         hyperopt \
         fitter \
         langid \
-        # Delorean. Useful for dealing with datetime
-        delorean \
-        trueskill \
+         trueskill \
         # Useful data exploration libraries (for missing data and generating reports)
         missingno \
         pandas-profiling \
@@ -351,7 +346,6 @@ RUN pip install mpld3 \
         wavio \
         SimpleITK \
         hmmlearn \
-        bayespy \
         gplearn \
         PyAstronomy \
         squarify \
@@ -396,17 +390,13 @@ RUN pip install tensorpack && \
     pip install librosa \
         polyglot \
         mmh3 \
-        fbpca \
         sentencepiece \
         cufflinks \
         lime \
         memory_profiler && \
     /tmp/clean-layer.sh
 
-# install cython & cysignals before pyfasttext
 RUN pip install cython \
-        cysignals \
-        pyfasttext \
         fasttext && \
     apt-get install -y libhunspell-dev && pip install hunspell
 RUN pip install annoy \
@@ -530,7 +520,6 @@ RUN pip install flashtext \
         # b/214080882 blake3 0.3.0 is not compatible with vaex.
         blake3==0.2.1 \
         vaex \
-        marisa-trie \
         pyemd \
         pyupset \
         pympler \
