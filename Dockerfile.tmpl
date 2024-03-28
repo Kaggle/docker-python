@@ -211,6 +211,8 @@ RUN pip install \
         git+https://github.com/tensorflow/probability.git@fbc5ebe9b1d343113fb917010096cfd88b32eecf \
         tensorflow_text \
         "tensorflow_hub>=0.16.0" \
+        # b/331799280 remove once other packages over to dm-tre
+        optree \
         tf-keras && \
     /tmp/clean-layer.sh
 
