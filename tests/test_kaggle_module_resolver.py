@@ -52,7 +52,6 @@ class KaggleJwtHandler(BaseHTTPRequestHandler):
             request = json.loads(self.rfile.read(content_length))
             model_ref = request["modelRef"]
 
-
             self.send_response(200)
             self.send_header("Content-type", "application/json")
             self.end_headers()
