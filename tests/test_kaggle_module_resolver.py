@@ -52,6 +52,7 @@ class KaggleJwtHandler(BaseHTTPRequestHandler):
             request = json.loads(self.rfile.read(content_length))
             model_ref = request["modelRef"]
 
+
             self.send_response(200)
             self.send_header("Content-type", "application/json")
             self.end_headers()
@@ -88,7 +89,7 @@ class TestKaggleModuleResolver(unittest.TestCase):
     def test_kaggle_resolver_short_url_succeeds(self):        
         with create_test_server(KaggleJwtHandler) as addr:
             test_inputs = tf.ones([1,4])
-            layer = hub.KerasLayer("https://kaggle.com/models/foo/foomodule/TensorFlow2/barvar/2")
+            layer = hub.KerasLayer("https://kaggle.com/models/bar/barmodule/pyTorch/barvar/1")
             self.assertEqual([1, 1], layer(test_inputs).shape)
 
     def test_kaggle_resolver_not_attached_throws(self):
