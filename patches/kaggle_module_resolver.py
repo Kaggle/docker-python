@@ -11,7 +11,7 @@ def _is_on_kaggle_notebook():
     return os.getenv("KAGGLE_KERNEL_RUN_TYPE") != None and os.getenv("KAGGLE_USER_SECRETS_TOKEN") != None
 
 def _is_kaggle_handle(handle):
-    return url_pattern.match(handle) != None
+    return long_url_pattern.match(handle) != None or short_url_pattern.match(handle) != None
 
 class KaggleFileResolver(resolver.HttpResolverBase):
     def is_supported(self, handle):
