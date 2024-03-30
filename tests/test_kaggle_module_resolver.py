@@ -64,8 +64,9 @@ class KaggleJwtHandler(BaseHTTPRequestHandler):
 
             # Load the files
             mount_slug = f"{model_ref['ModelSlug']}/{model_ref['Framework']}/{model_ref['InstanceSlug']}/{model_ref['VersionNumber']}"
-            os.makedirs(os.path.dirname(os.path.join(MOUNT_PATH, mount_slug)))
-            os.symlink('/input/tests/data/saved_model/', os.path.join(MOUNT_PATH, mount_slug), target_is_directory=True)
+            model_path = os.path.join(MOUNT_PATH, mount_slug)
+            os.makedirs(os.path.dirname(model_path))
+            os.symlink('/input/tests/data/saved_model/', model_path, target_is_directory=True)
 
             # Return the response
             self.wfile.write(bytes(json.dumps({
@@ -79,17 +80,27 @@ class KaggleJwtHandler(BaseHTTPRequestHandler):
             self.wfile.write(bytes(f"Unhandled path: {self.path}", "utf-8"))
 
 class TestKaggleModuleResolver(unittest.TestCase):
-    def test_kaggle_resolver_long_url_succeeds(self):        
+    def test_kaggle_resolver_long_url_succeeds(self):
+        model_url = "https://kaggle.com/models/foo/foomodule/frameworks/TensorFlow2/variations/barvar/versions/2"
         with create_test_server(KaggleJwtHandler) as addr:
             test_inputs = tf.ones([1,4])
-            layer = hub.KerasLayer("https://kaggle.com/models/foo/foomodule/frameworks/TensorFlow2/variations/barvar/versions/2")
+            layer = hub.KerasLayer(model_url)
             self.assertEqual([1, 1], layer(test_inputs).shape)
+        # Delete the files that were created in KaggleJwtHandler's do_POST method
+        model_path = os.path.join(MOUNT_PATH, "foomodule/tensorflow2/barvar/2")
+        os.unlink(model_path)
+        os.rmdir(os.path.dirname(model_path))
 
-    def test_kaggle_resolver_short_url_succeeds(self):        
+    def test_kaggle_resolver_short_url_succeeds(self):
+        model_url = "https://kaggle.com/models/foo/foomodule/TensorFlow2/barvar/2"
         with create_test_server(KaggleJwtHandler) as addr:
             test_inputs = tf.ones([1,4])
-            layer = hub.KerasLayer("https://kaggle.com/models/bar/barmodule/pyTorch/barvar/1")
+            layer = hub.KerasLayer(model_url)
             self.assertEqual([1, 1], layer(test_inputs).shape)
+        # Delete the files that were created in KaggleJwtHandler's do_POST method
+        model_path = os.path.join(MOUNT_PATH, "foomodule/tensorflow2/barvar/2")
+        os.unlink(model_path)
+        os.rmdir(os.path.dirname(model_path))
 
     def test_kaggle_resolver_not_attached_throws(self):
         with create_test_server(KaggleJwtHandler) as addr:
