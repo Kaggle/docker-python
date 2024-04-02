@@ -79,11 +79,25 @@ class KaggleJwtHandler(BaseHTTPRequestHandler):
             self.wfile.write(bytes(f"Unhandled path: {self.path}", "utf-8"))
 
 class TestKaggleModuleResolver(unittest.TestCase):
-    def test_kaggle_resolver_succeeds(self):        
+    def test_kaggle_resolver_long_url_succeeds(self):
+        model_url = "https://kaggle.com/models/foo/foomodule/frameworks/TensorFlow2/variations/barvar/versions/2"
         with create_test_server(KaggleJwtHandler) as addr:
             test_inputs = tf.ones([1,4])
-            layer = hub.KerasLayer("https://kaggle.com/models/foo/foomodule/frameworks/TensorFlow2/variations/barvar/versions/2")
+            layer = hub.KerasLayer(model_url)
             self.assertEqual([1, 1], layer(test_inputs).shape)
+        # Delete the files that were created in KaggleJwtHandler's do_POST method
+        os.unlink(os.path.join(MOUNT_PATH, "foomodule/tensorflow2/barvar/2"))
+        os.rmdir(os.path.dirname(os.path.join(MOUNT_PATH, "foomodule/tensorflow2/barvar/2")))
+
+    def test_kaggle_resolver_short_url_succeeds(self):
+        model_url = "https://kaggle.com/models/foo/foomodule/TensorFlow2/barvar/2"
+        with create_test_server(KaggleJwtHandler) as addr:
+            test_inputs = tf.ones([1,4])
+            layer = hub.KerasLayer(model_url)
+            self.assertEqual([1, 1], layer(test_inputs).shape)
+        # Delete the files that were created in KaggleJwtHandler's do_POST method
+        os.unlink(os.path.join(MOUNT_PATH, "foomodule/tensorflow2/barvar/2"))
+        os.rmdir(os.path.dirname(os.path.join(MOUNT_PATH, "foomodule/tensorflow2/barvar/2")))
 
     def test_kaggle_resolver_not_attached_throws(self):
         with create_test_server(KaggleJwtHandler) as addr:
