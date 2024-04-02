@@ -45,6 +45,8 @@ A suite of tests can be found under the `/tests` folder. You can run the test us
 Flags:
 
 * `--gpu` to test the GPU image.
+* `--pattern test_keras.py` or `-p test_keras.py` to run a single test
+* `--image gcr.io/kaggle-images/python:ci-pretest` or `-i gcr.io/kaggle-images/python:ci-pretest` to test against a specific image
 
 ## Running the image
 
