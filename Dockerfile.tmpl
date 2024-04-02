@@ -525,7 +525,6 @@ RUN pip install flashtext \
         pyemd \
         pyupset \
         pympler \
-        s3fs \
         featuretools \
         #-e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper \
         git+https://github.com/Kaggle/learntools \
@@ -561,8 +560,9 @@ RUN pip install pytorch-ignite \
         bqplot \
         earthengine-api \
         transformers \
-        # b/232247930 >= 2.2.0 requires pyarrow >= 6.0.0 which conflicts with dependencies for rapidsai 0.21.*
-        datasets==2.1.0 \
+        datasets \
+        s3fs \
+        gcsfs \
         kaggle-environments \
         geopandas \
         "shapely<2" \
