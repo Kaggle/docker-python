@@ -2,7 +2,6 @@ import unittest
 
 import datasets
 import pandas as pd
-import warnings
 
 class TestHuggingFaceDatasets(unittest.TestCase):
 
@@ -17,7 +16,6 @@ class TestHuggingFaceDatasets(unittest.TestCase):
         self.assertEqual('foo', mapped_df[0]['label'])
         
     def test_load_dataset(self):
-        warnings.simplefilter(action='ignore', category=FutureWarning)
         dataset = datasets.load_dataset("csv", data_files="/input/tests/data/train.csv")
         full_data = pd.DataFrame(dataset['train'])
         self.assertFalse(full_data.empty)
