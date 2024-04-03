@@ -7,7 +7,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from test.support.os_helper import EnvironmentVarGuard
 from urllib.parse import urlparse
 from datetime import datetime, timedelta
-import mock
+from unittest.mock import Mock, patch
 
 from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import bigquery
@@ -182,11 +182,11 @@ class TestUserSecrets(unittest.TestCase):
 
         self._test_client(test_fn, '/requests/GetUserSecretByLabelRequest', {'Label': "__gcloud_sdk_auth__"}, secret=secret)
 
-    @mock.patch('kaggle_secrets.datetime')
+    @patch('kaggle_secrets.datetime')
     def test_get_access_token_succeeds(self, mock_dt):
         secret = '12345'
         now = datetime(1993, 4, 24)
-        mock_dt.utcnow = mock.Mock(return_value=now)
+        mock_dt.utcnow = Mock(return_value=now)
 
         def call_get_bigquery_access_token():
             client = UserSecretsClient()

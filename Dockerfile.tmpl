@@ -191,7 +191,7 @@ RUN JAXVER=$(pip freeze | grep -e "^jax==") && \
         "matplotlib<3.8.0" \
         seaborn \
         python-dateutil dask dask-expr igraph \
-        pyyaml joblib husl geopy mne pyshp \
+        pyyaml joblib geopy mne pyshp \
         pandas \
         polars \
         flax \
@@ -242,7 +242,6 @@ RUN apt-get install -y libfreetype6-dev && \
         wordcloud \
         xgboost \
         pydot \
-        python-Levenshtein \
         hep_ml && \
     # NLTK Project datasets
     mkdir -p /usr/share/nltk_data && \
@@ -309,8 +308,6 @@ RUN pip install mpld3 \
         arrow \
         nilearn \
         nibabel \
-        pronouncing \
-        markovify \
         imgaug \
         preprocessing \
         path.py \
@@ -325,7 +322,6 @@ RUN pip install mpld3 \
         hyperopt \
         fitter \
         langid \
-         trueskill \
         # Useful data exploration libraries (for missing data and generating reports)
         missingno \
         pandas-profiling \
@@ -349,7 +345,6 @@ RUN pip install mpld3 \
         SimpleITK \
         hmmlearn \
         gplearn \
-        PyAstronomy \
         squarify \
         fuzzywuzzy \
         python-louvain \
@@ -379,19 +374,16 @@ RUN pip install mpld3 \
         kaggle \
         kagglehub \
         google-generativeai \
-        mock \
         pytest && \
     /tmp/clean-layer.sh
 
 RUN rm -rf /opt/conda/lib/python3.10/site-packages/numpy-1.23.5.dist-info*
-RUN pip install tensorpack && \
-    # Add google PAIR-code Facets
-    cd /opt/ && git clone https://github.com/PAIR-code/facets && cd facets/ && jupyter nbextension install facets-dist/ --user && \
+ # Add google PAIR-code Facets
+RUN cd /opt/ && git clone https://github.com/PAIR-code/facets && cd facets/ && jupyter nbextension install facets-dist/ --user && \
     export PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/ && \
     pip install kmodes --no-dependencies && \
     pip install librosa \
         polyglot \
-        mmh3 \
         sentencepiece \
         cufflinks \
         lime \
@@ -606,8 +598,7 @@ RUN apt-get install tesseract-ocr -y && \
     pip install pytesseract \
         wand \
         pdf2image \
-        PyPDF \
-        pyocr && \
+        PyPDF && \
     /tmp/clean-layer.sh
 ENV TESSERACT_PATH=/usr/bin/tesseract
 
