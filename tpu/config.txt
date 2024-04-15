@@ -1,9 +1,10 @@
 BASE_IMAGE=python:3.10
 PYTHON_WHEEL_VERSION=cp310
 PYTHON_VERSION_PATH=python3.10
+# gsutil ls gs://cloud-tpu-tpuvm-artifacts/tensorflow
 # https://cloud.google.com/tpu/docs/supported-tpu-configurations#libtpu_versions
-TENSORFLOW_VERSION=2.15.0
-TF_LIBTPU_VERSION=1.9.0
+TENSORFLOW_VERSION=2.16.1
+TF_LIBTPU_VERSION=1.10.1
 TF_LINUX_WHEEL_VERSION=manylinux_2_17_x86_64.manylinux2014_x86_64
 JAX_VERSION=0.4.23
 # Supports nightly
