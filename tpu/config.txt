@@ -6,6 +6,7 @@ TENSORFLOW_VERSION=2.15.0
 TF_LIBTPU_VERSION=1.9.0
 TF_LINUX_WHEEL_VERSION=manylinux_2_17_x86_64.manylinux2014_x86_64
 JAX_VERSION=0.4.26
+# gsutil ls gs://pytorch-xla-releases/wheels/tpuvm/* | grep libtpu | grep -v -E ".*rc[0-9].*"
 # Supports nightly
 TORCH_VERSION=2.2.0
 # https://github.com/pytorch/audio supports nightly
