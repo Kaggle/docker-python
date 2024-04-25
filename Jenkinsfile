@@ -25,7 +25,7 @@ pipeline {
       parallel {
         stage('torch') {
           options {
-            timeout(time: 180, unit: 'MINUTES')
+            timeout(time: 300, unit: 'MINUTES')
           }
           steps {
             sh '''#!/bin/bash
