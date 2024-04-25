@@ -65,12 +65,8 @@ RUN pip install tensorflow_hub https://storage.googleapis.com/cloud-tpu-tpuvm-ar
     papermill jupyterlab python-lsp-server[all] "jupyter-lsp==1.5.1" \
     pandas matplotlib opencv-python-headless librosa accelerate diffusers scikit-learn transformers \
     seaborn timm albumentations einops pyarrow fastparquet opencv-python \
+    "keras>3" keras-cv keras-nlp \
     kagglehub && \
-    /tmp/clean-layer.sh
-
-# b/318672157 Install Keras 3 for loading models.
-# We ignore dependencies for now since tf2.15 should work despite pip saying it won't.
-RUN pip install --no-dependencies "keras>3" keras-cv keras-nlp && \
     /tmp/clean-layer.sh
 
 # Tensorflow libtpu:
