@@ -99,6 +99,7 @@ ENV PROJ_LIB=/opt/conda/share/proj
 # the remaining pip commands: https://www.anaconda.com/using-pip-in-a-conda-environment/
 RUN conda config --add channels nvidia && \
     conda config --add channels rapidsai && \
+    conda config --set solver libmamba && \
     # b/299991198 remove curl/libcurl install once DLVM base image includes version >= 7.86
     conda install -c conda-forge mamba curl libcurl && \
     # Base image channel order: conda-forge (highest priority), defaults.
@@ -112,13 +113,13 @@ RUN mamba install -y -c conda-forge spacy cupy cuda-version=$CUDA_MAJOR_VERSION.
     /tmp/clean-layer.sh
 {{ else }}
 RUN pip install spacy && \
-    /tmp/clean-layer.sh
+    /tmp/clean-layer.sht
 {{ end}}
 {{ if eq .Accelerator "gpu" }}
 
 # b/232247930: uninstall pyarrow to avoid double installation with the GPU specific version.
 RUN pip uninstall -y pyarrow && \
-    mamba install -y cudf cuml && \
+    conda install -y cudf=24.4 cuml=24.4 && \
     /tmp/clean-layer.sh
 
 # TODO: b/296444923 - Resolve pandas dependency another way
