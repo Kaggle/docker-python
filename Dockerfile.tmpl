@@ -113,7 +113,7 @@ RUN mamba install -y -c conda-forge spacy cupy cuda-version=$CUDA_MAJOR_VERSION.
     /tmp/clean-layer.sh
 {{ else }}
 RUN pip install spacy && \
-    /tmp/clean-layer.sht
+    /tmp/clean-layer.sh
 {{ end}}
 {{ if eq .Accelerator "gpu" }}
 
