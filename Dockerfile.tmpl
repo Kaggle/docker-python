@@ -109,9 +109,11 @@ RUN conda config --add channels nvidia && \
 
 # Install spacy
 # b/232247930: uninstall pyarrow to avoid double installation with the GPU specific version.
+# b/341938540: unistall grpc-cpp to allow >=v24.4 cudf and cuml to be installed.
 {{ if eq .Accelerator "gpu" }}
 RUN pip uninstall -y pyarrow && \
-    conda install -y -c conda-forge spacy cudf=24.4 cuml=24.4 cupy cuda-version=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
+    mamba remove grpc-cpp && \
+    mamba install -y -c conda-forge spacy cudf>=24.4 cuml>=24.4 cupy cuda-version=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
     /tmp/clean-layer.sh
 {{ else }}
 RUN pip install spacy && \

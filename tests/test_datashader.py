@@ -4,7 +4,7 @@ from common import p100_exempt
 
 class TestDatashader(unittest.TestCase):
 
-    @p100_exempt
+    @p100_exempt # b/342143152: Uses cuDF(>=24.4v), which is no longer capitble with p100 GPUs.
     def test_pipeline(self):
         # based on https://github.com/pyviz/datashader/blob/master/datashader/tests/test_pipeline.py
         import numpy as np

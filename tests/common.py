@@ -12,5 +12,6 @@ def getAcceleratorName():
         return("nvidia-smi not found.")
 
 gpu_test = unittest.skipIf(len(os.environ.get('CUDA_VERSION', '')) == 0, 'Not running GPU tests')
+# b/342143152 P100s are slowly being unsupported in new release of popular ml tools such as RAPIDS. 
 p100_exempt = unittest.skipIf(getAcceleratorName() == "Tesla P100-PCIE-16GB", 'Not running p100 exempt tests')
 tpu_test = unittest.skipIf(len(os.environ.get('ISTPUVM', '')) == 0, 'Not running TPU tests')
