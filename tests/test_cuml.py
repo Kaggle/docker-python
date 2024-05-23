@@ -16,4 +16,4 @@ class TestCuml(unittest.TestCase):
 
         x_transformed = pca.fit_transform(x)
 
-        self.assertEqual(x_transformed.shape, (5, 1)) 
+        self.assertEqual(x_transformed.shape, (5, 1))
