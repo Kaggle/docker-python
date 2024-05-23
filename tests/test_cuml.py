@@ -3,7 +3,7 @@ import unittest
 from common import gpu_test, p100_exempt
 
 
-class TestCumlPCA(unittest.TestCase):
+class TestCuml(unittest.TestCase):
     @gpu_test
     @p100_exempt
     def test_pca_fit_transform(self):

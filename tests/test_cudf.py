@@ -3,7 +3,7 @@ import unittest
 from common import gpu_test, p100_exempt
 
 
-class TestCudfDataFrame(unittest.TestCase):
+class TestCudf(unittest.TestCase):
     @gpu_test
     @p100_exempt
     def test_cudf_dataframe_operations(self):
