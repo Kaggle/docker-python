@@ -101,10 +101,10 @@ RUN conda config --add channels nvidia && \
     conda config --add channels rapidsai && \
     conda config --set solver libmamba && \
     # b/299991198 remove curl/libcurl install once DLVM base image includes version >= 7.86
-    conda install -c conda-forge curl libcurl && \
+    conda install -c conda-forge mamba curl libcurl && \
     # Base image channel order: conda-forge (highest priority), defaults.
     # End state: rapidsai (highest priority), nvidia, conda-forge, defaults.
-    conda install -y mkl cartopy imagemagick pyproj "shapely<2" && \
+    mamba install -y mkl cartopy imagemagick pyproj "shapely<2" && \
     /tmp/clean-layer.sh
 
 # Install spacy
