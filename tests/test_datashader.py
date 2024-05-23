@@ -1,12 +1,15 @@
 import unittest
 
-import numpy as np
-import pandas as pd
-import datashader as ds
-import datashader.transfer_functions as tf
+from common import p100_exempt
 
+@p100_exempt
 class TestDatashader(unittest.TestCase):
     # based on https://github.com/pyviz/datashader/blob/master/datashader/tests/test_pipeline.py
+    import numpy as np
+    import pandas as pd
+    import datashader as ds
+    import datashader.transfer_functions as tf
+
     def test_pipeline(self):
         df = pd.DataFrame({
             'x': np.array(([0.] * 10 + [1] * 10)),
