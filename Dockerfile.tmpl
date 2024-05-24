@@ -99,6 +99,7 @@ ENV PROJ_LIB=/opt/conda/share/proj
 # the remaining pip commands: https://www.anaconda.com/using-pip-in-a-conda-environment/
 RUN conda config --add channels nvidia && \
     conda config --add channels rapidsai && \
+    conda config --set solver libmamba && \
     # b/299991198 remove curl/libcurl install once DLVM base image includes version >= 7.86
     conda install -c conda-forge mamba curl libcurl && \
     # Base image channel order: conda-forge (highest priority), defaults.
@@ -107,24 +108,17 @@ RUN conda config --add channels nvidia && \
     /tmp/clean-layer.sh
 
 # Install spacy
+# b/232247930: uninstall pyarrow to avoid double installation with the GPU specific version.
+# b/341938540: unistall grpc-cpp to allow >=v24.4 cudf and cuml to be installed.
 {{ if eq .Accelerator "gpu" }}
-RUN mamba install -y -c conda-forge spacy cupy cuda-version=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
+RUN pip uninstall -y pyarrow && \
+    mamba remove -y --force grpc-cpp && \
+    mamba install -y -c conda-forge spacy cudf>=24.4 cuml>=24.4 cupy cuda-version=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
     /tmp/clean-layer.sh
 {{ else }}
 RUN pip install spacy && \
     /tmp/clean-layer.sh
 {{ end}}
-{{ if eq .Accelerator "gpu" }}
-
-# b/232247930: uninstall pyarrow to avoid double installation with the GPU specific version.
-RUN pip uninstall -y pyarrow && \
-    mamba install -y cudf cuml && \
-    /tmp/clean-layer.sh
-
-# TODO: b/296444923 - Resolve pandas dependency another way
-RUN sed -i 's/^is_extension_type/# is_extension_type/g' /opt/conda/lib/python3.10/site-packages/cudf/api/types.py \
-    && sed -i 's/^is_categorical/# is_categorical/g' /opt/conda/lib/python3.10/site-packages/cudf/api/types.py
-{{ end }}
 
 # Install PyTorch
 {{ if eq .Accelerator "gpu" }}

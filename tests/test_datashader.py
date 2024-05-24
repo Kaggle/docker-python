@@ -1,13 +1,17 @@
 import unittest
 
-import numpy as np
-import pandas as pd
-import datashader as ds
-import datashader.transfer_functions as tf
+from common import p100_exempt
 
 class TestDatashader(unittest.TestCase):
-    # based on https://github.com/pyviz/datashader/blob/master/datashader/tests/test_pipeline.py
+
+    @p100_exempt # b/342143152: Uses cuDF(>=24.4v), which is no longer capitble with p100 GPUs.
     def test_pipeline(self):
+        # based on https://github.com/pyviz/datashader/blob/master/datashader/tests/test_pipeline.py
+        import numpy as np
+        import pandas as pd
+        import datashader as ds
+        import datashader.transfer_functions as tf
+
         df = pd.DataFrame({
             'x': np.array(([0.] * 10 + [1] * 10)),
             'y': np.array(([0.] * 5 + [1] * 5 + [0] * 5 + [1] * 5)),
