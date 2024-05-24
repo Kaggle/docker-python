@@ -112,7 +112,7 @@ RUN conda config --add channels nvidia && \
 # b/341938540: unistall grpc-cpp to allow >=v24.4 cudf and cuml to be installed.
 {{ if eq .Accelerator "gpu" }}
 RUN pip uninstall -y pyarrow && \
-    mamba remove --force grpc-cpp && \
+    mamba remove -y --force grpc-cpp && \
     mamba install -y -c conda-forge spacy cudf>=24.4 cuml>=24.4 cupy cuda-version=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
     /tmp/clean-layer.sh
 {{ else }}
