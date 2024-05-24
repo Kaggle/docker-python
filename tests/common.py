@@ -7,7 +7,7 @@ import subprocess
 def getAcceleratorName():
     try:
         deviceName = subprocess.check_output(['nvidia-smi', '--query-gpu=name', '--format=csv,noheader'])
-        return deviceName.decode('utf-8').strip();
+        return deviceName.decode('utf-8').strip()
     except FileNotFoundError:
         return("nvidia-smi not found.")
 
