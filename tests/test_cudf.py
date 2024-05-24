@@ -15,6 +15,6 @@ class TestCudf(unittest.TestCase):
         gdf['col3'] = gdf['col1'] + gdf['col2']
 
         expected_col3 = cudf.Series([5, 7, 9])
-        self.assertEqual(gdf.shape, (3, 2))
-        self.assertEqual(list(gdf.columns), ['col1', 'col2'])
+        self.assertEqual(gdf.shape, (3, 3))
+        self.assertEqual(list(gdf.columns), ['col1', 'col2', 'col3'])
         self.assertTrue(gdf['col3'].equals(expected_col3))
