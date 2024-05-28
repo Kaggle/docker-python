@@ -27,7 +27,7 @@ class KaggleAPIHandler(BaseHTTPRequestHandler):
         filepath = f"/input/tests/data/kagglehub/models/{model_handle}/{path}"
         if not os.path.isfile(filepath):
             self.send_error(404, "Internet is disabled in our tests "
-                "kagglehub uses a fake API server "
+                "kagglehub uses a fake API server. "
                 f"Use `kagglehub.model_download('{model_handle}', path='{path}')` to download the missing file "
                 f"and copy it to `./docker-python/tests/data/kagglehub/models/{model_handle}/{path}`.")
             return
