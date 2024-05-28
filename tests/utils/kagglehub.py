@@ -26,14 +26,10 @@ class KaggleAPIHandler(BaseHTTPRequestHandler):
         path = m.group(2)
         filepath = f"/input/tests/data/kagglehub/models/{model_handle}/{path}"
         if not os.path.isfile(filepath):
-            raise ValueError((
-                "Internet is disabled in our tests\n"
-                "kagglehub uses a fake API server\n"
-                f"Use `kagglehub.model_download('{model_handle}', path='{path}')` to download the missing file\n"
-                f"and copy it to `./docker-python/tests/data/kagglehub/models/{model_handle}/{path}`\n"
-            ))
+            self.send_response(404)
+            self.end_headers()
             return
-        
+
         with open(filepath, "rb") as f:
             self.send_response(200)
             self.send_header("Content-type", "application/octet-stream")
