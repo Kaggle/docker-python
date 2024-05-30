@@ -305,7 +305,6 @@ RUN pip install mpld3 \
         nilearn \
         nibabel \
         imgaug \
-        preprocessing \
         path.py \
         Geohash && \
     pip install deap \
@@ -322,7 +321,6 @@ RUN pip install mpld3 \
         missingno \
         pandas-profiling \
         s2sphere \
-        bayesian-optimization \
         matplotlib-venn \
         pyldavis \
         mlxtend \
@@ -340,7 +338,6 @@ RUN pip install mpld3 \
         wavio \
         SimpleITK \
         hmmlearn \
-        gplearn \
         squarify \
         fuzzywuzzy \
         python-louvain \
@@ -354,7 +351,6 @@ RUN pip install mpld3 \
         holoviews \
         geoviews \
         hypertools \
-        mlens \
         scikit-multilearn \
         cleverhans \
         leven \
@@ -365,7 +361,6 @@ RUN pip install mpld3 \
         plotnine \
         scikit-surprise \
         pymongo \
-        geoplot \
         eli5 \
         kaggle \
         kagglehub \
@@ -377,9 +372,7 @@ RUN rm -rf /opt/conda/lib/python3.10/site-packages/numpy-1.23.5.dist-info*
  # Add google PAIR-code Facets
 RUN cd /opt/ && git clone https://github.com/PAIR-code/facets && cd facets/ && jupyter nbextension install facets-dist/ --user && \
     export PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/ && \
-    pip install kmodes --no-dependencies && \
     pip install librosa \
-        polyglot \
         sentencepiece \
         cufflinks \
         lime \
@@ -416,7 +409,6 @@ RUN pip install annoy \
         # Add Japanese morphological analysis engine
         janome \
         wfdb \
-        vecstack \
         # yellowbrick machine learning visualization library
         yellowbrick \
         mlcrate && \
@@ -529,10 +521,7 @@ RUN pip install flashtext \
         cesium \
         rgf_python \
         jieba  \
-        # ggplot is broken and main repo does not merge and release https://github.com/yhat/ggpy/pull/668
-        https://github.com/hbasria/ggpy/archive/0.11.5.zip \
         tsfresh \
-        pykalman \
         optuna \
         plotly_express \
         albumentations \
@@ -554,7 +543,6 @@ RUN pip install pytorch-ignite \
         kaggle-environments \
         geopandas \
         "shapely<2" \
-        vowpalwabbit \
         pydub \
         pydegensac \
         torchmetrics \
@@ -564,7 +552,6 @@ RUN pip install pytorch-ignite \
         flask \
         # pycrypto is used by competitions team.
         pycryptodome \
-        easyocr \
         # ipympl adds interactive widget support for matplotlib
         ipympl==0.7.0 \
         onnx \
