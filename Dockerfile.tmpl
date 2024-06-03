@@ -572,7 +572,7 @@ RUN pip install pytorch-ignite \
         pip install git+https://github.com/facebookresearch/segment-anything.git && \
     # b/343971718: remove duplicate aiohttp installs, and reinstall it
     rm -rf /opt/conda/lib/python3.10/site-packages/aiohttp* && \
-    pip install aiohttp && \
+    mamba install --force-reinstall -y aiohttp && \
     /tmp/clean-layer.sh
 
 # Download base easyocr models.
