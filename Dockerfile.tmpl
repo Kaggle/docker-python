@@ -266,7 +266,7 @@ RUN pip install opencv-contrib-python opencv-python && \
     /tmp/clean-layer.sh
 
 # Pin scipy until we update JAX b/335003097
-RUN pip install "scipy==1.12.0" \
+RUN pip install scipy \
         # Scikit-learn accelerated library for x86
         "scikit-learn-intelex>=2023.0.1" \
         # HDF5 support
