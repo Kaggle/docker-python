@@ -223,7 +223,6 @@ ADD patches/keras_internal_test.py /opt/conda/lib/python3.10/site-packages/tenso
 # Remove "--no-deps" flag and "namex" package once Keras 3.* is included in our base image.
 # We ignore dependencies since tf2.15 and Keras 3.* should work despite pip saying it won't.
 # Currently, keras tries to install a nightly version of tf 2.16: https://github.com/keras-team/keras/blob/fe2f54aa5bc42fb23a96449cf90434ab9bb6a2cd/requirements.txt#L2
-# b/341360061 Unpin keras-nlp once kaggle-hub is able to provide task.json file when requested
 RUN pip install --no-deps "keras>3" keras-cv keras-nlp namex && \
     /tmp/clean-layer.sh
 
