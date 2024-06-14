@@ -38,9 +38,9 @@ RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/lib
 {{ end }}
 
 # Keep these variables in sync if base image is updated.
-ENV TENSORFLOW_VERSION=2.15.0
+ENV TENSORFLOW_VERSION=2.16.0
 # See https://github.com/tensorflow/io#tensorflow-version-compatibility
-ENV TENSORFLOW_IO_VERSION=0.35.0
+ENV TENSORFLOW_IO_VERSION=0.37.0
 
 # We need to redefine the ARG here to get the ARG value defined above the FROM instruction.
 # See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
@@ -220,10 +220,7 @@ RUN chmod +x /tmp/keras_patch.sh && \
 ADD patches/keras_internal.py /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras/keras_internal.py
 ADD patches/keras_internal_test.py /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras/keras_internal_test.py
 
-# Remove "--no-deps" flag and "namex" package once Keras 3.* is included in our base image.
-# We ignore dependencies since tf2.15 and Keras 3.* should work despite pip saying it won't.
-# Currently, keras tries to install a nightly version of tf 2.16: https://github.com/keras-team/keras/blob/fe2f54aa5bc42fb23a96449cf90434ab9bb6a2cd/requirements.txt#L2
-RUN pip install --no-deps "keras>3" keras-cv keras-nlp namex && \
+RUN pip install "keras>3" keras-cv keras-nlp && \
     /tmp/clean-layer.sh
 
 # b/328788268 libpysal 4.10 seems to fail with "module 'shapely' has no attribute 'Geometry'. Did you mean: 'geometry'"
