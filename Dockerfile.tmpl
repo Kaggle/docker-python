@@ -198,20 +198,16 @@ RUN apt-get update && \
 
 RUN pip install -f http://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o && /tmp/clean-layer.sh
 
-# b/318672158 Use simply tensorflow-probability once > 0.23.0 is released.
 RUN pip install \
         "tensorflow==${TENSORFLOW_VERSION}" \
         "tensorflow-io==${TENSORFLOW_IO_VERSION}" \
-        git+https://github.com/tensorflow/probability.git@fbc5ebe9b1d343113fb917010096cfd88b32eecf \
+        tensorflow-probability \
+        tensorflow_decision_forests \
         tensorflow_text \
         "tensorflow_hub>=0.16.0" \
         # b/331799280 remove once other packages over to dm-tre
         optree \
         tf-keras && \
-    /tmp/clean-layer.sh
-
-# b/318672158 Use simply tensorflow_decision_forests on next release, expected with tf 2.16
-RUN pip install tensorflow_decision_forests==1.8.1 --no-deps && \
     /tmp/clean-layer.sh
 
 RUN chmod +x /tmp/keras_patch.sh && \
