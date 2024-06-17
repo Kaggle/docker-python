@@ -15,7 +15,7 @@ ENV LIBRARY_PATH="$LIBRARY_PATH:/opt/conda/lib"
 ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/conda/lib"
 
 # Instructions: https://jax.readthedocs.io/en/latest/developer.html#building-jaxlib-from-source
-RUN ln -s /usr/bin/python3 /usr/bin/python && \
+RUN apt-get install python-is-python3 && \
     apt-get update && \
     apt-get install -y g++ python python3-dev
 
