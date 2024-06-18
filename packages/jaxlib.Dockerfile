@@ -15,9 +15,9 @@ ENV LIBRARY_PATH="$LIBRARY_PATH:/opt/conda/lib"
 ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/conda/lib"
 
 # Instructions: https://jax.readthedocs.io/en/latest/developer.html#building-jaxlib-from-source
-RUN sudo apt install python-is-python3 && \
+RUN apt-get install python-distutils-extra && \
     apt-get update && \ 
-    apt-get install -y g++ python3 python3-devt
+    apt-get install -y g++ python3 python3-dev
 
 RUN pip install numpy wheel build
 
