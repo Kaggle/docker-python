@@ -20,7 +20,7 @@ RUN conda install -c conda-forge mamba
 
 # Build instructions: https://github.com/pytorch/pytorch#from-source
 RUN mamba install astunparse numpy ninja pyyaml mkl mkl-include setuptools cmake cffi typing_extensions future six requests dataclasses
-RUN mamba install -c pytorch magma-cuda122
+RUN mamba install -c pytorch magma-cuda121
 
 # By default, it uses the version from version.txt which includes the `a0` (alpha zero) suffix and part of the git hash.
 # This causes dependency conflicts like these: https://paste.googleplex.com/4786486378496000
