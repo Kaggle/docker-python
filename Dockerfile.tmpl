@@ -230,12 +230,13 @@ RUN pip install --no-deps "keras>3" keras-cv keras-nlp namex && \
 # b/328788268 libpysal 4.10 seems to fail with "module 'shapely' has no attribute 'Geometry'. Did you mean: 'geometry'"
 RUN pip install pysal "libpysal==4.9.2"
 
+# b/350573866 xgboost v2.1.0 breaks learntools
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
     pip install gensim \
         textblob \
         wordcloud \
-        xgboost \
+        "xgboost==2.0.3" \
         pydot \
         hep_ml && \
     # NLTK Project datasets

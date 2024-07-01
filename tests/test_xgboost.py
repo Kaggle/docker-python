@@ -17,9 +17,10 @@ class TestXGBoost(unittest.TestCase):
         X_test = np.random.random((100, 28))
         y_test = np.random.randint(10, size=(100, 1))
 
-        xgb1 = XGBClassifier(n_estimators=3, use_label_encoder=False, eval_metric='mlogloss')
+        xgb1 = XGBClassifier(n_estimators=3, use_label_encoder=False)
         xgb1.fit(
             X_train, y_train,
             eval_set=[(X_train, y_train), (X_test, y_test)],
+            eval_metric='mlogloss'
         )
         self.assertIn("validation_0", xgb1.evals_result())
