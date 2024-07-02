@@ -89,6 +89,7 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     apt-get install -y build-essential unzip cmake libboost-dev libboost-system-dev libboost-filesystem-dev p7zip-full && \
     # b/182601974: ssh client was removed from the base image but is required for packages such as stable-baselines.
     apt-get install -y openssh-client && \
+    apt-get install -y graphviz && pip install graphviz && \
     /tmp/clean-layer.sh
 
 # b/128333086: Set PROJ_LIB to points to the proj4 cartographic library.
@@ -229,12 +230,13 @@ RUN pip install --no-deps "keras>3" keras-cv keras-nlp namex && \
 # b/328788268 libpysal 4.10 seems to fail with "module 'shapely' has no attribute 'Geometry'. Did you mean: 'geometry'"
 RUN pip install pysal "libpysal==4.9.2"
 
+# b/350573866 xgboost v2.1.0 breaks learntools
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
     pip install gensim \
         textblob \
         wordcloud \
-        xgboost \
+        "xgboost==2.0.3" \
         pydot \
         hep_ml && \
     # NLTK Project datasets
@@ -280,7 +282,6 @@ RUN pip install "scipy==1.12.0" \
         datashader \
         # Boruta (python implementation)
         Boruta && \
-    apt-get install -y graphviz && pip install graphviz && \
     # Pandoc is a dependency of deap
     apt-get install -y pandoc && \
     pip install essentia
