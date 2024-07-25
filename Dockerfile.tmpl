@@ -209,10 +209,6 @@ RUN pip install \
         tf-keras && \
     /tmp/clean-layer.sh
 
-# b/318672158 Use simply tensorflow_decision_forests on next release, expected with tf 2.16
-RUN pip install tensorflow_decision_forests==1.8.1 --no-deps && \
-    /tmp/clean-layer.sh
-
 RUN chmod +x /tmp/keras_patch.sh && \
     /tmp/keras_patch.sh
 
