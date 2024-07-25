@@ -31,7 +31,7 @@ ENV PYTORCH_BUILD_NUMBER=1
 # For PyTorch, we need specifically mkl.
 ENV LIBRARY_PATH="$LIBRARY_PATH:/opt/conda/lib"
 ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/conda/lib"
-ENV TORCH_CUDA_ARCH_LIST="6.0;7.0+PTX;7.5+PTX"
+ENV TORCH_CUDA_ARCH_LIST="6.0;7.0;7.5;8.0;8.6;8.7;8.9;9.0+PTX"
 ENV FORCE_CUDA=1
 RUN cd /usr/local/src && \
     git clone --recursive https://github.com/pytorch/pytorch && \
