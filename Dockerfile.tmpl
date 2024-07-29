@@ -121,7 +121,7 @@ RUN pip install spacy && \
 # Install PyTorch
 {{ if eq .Accelerator "gpu" }}
 COPY --from=torch_whl /tmp/whl/*.whl /tmp/torch/
-RUN mamba install -y -c pytorch magma-cuda${CUDA_MAJOR_VERSION}${CUDA_MINOR_VERSION} && \
+RUN mamba install -y -c pytorch magma-cuda121 && \
     pip install /tmp/torch/*.whl && \
     # b/255757999 openmp (libomp.so) is an dependency libtorchaudio but
     mamba install -y openmp && \
