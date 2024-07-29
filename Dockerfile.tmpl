@@ -5,7 +5,6 @@ ARG GPU_BASE_IMAGE_NAME
 ARG LIGHTGBM_VERSION
 ARG TORCH_VERSION
 ARG TORCHAUDIO_VERSION
-ARG TORCHTEXT_VERSION
 ARG TORCHVISION_VERSION
 ARG JAX_VERSION
 
@@ -47,7 +46,6 @@ ENV TENSORFLOW_IO_VERSION=0.37.0
 ARG LIGHTGBM_VERSION
 ARG TORCH_VERSION
 ARG TORCHAUDIO_VERSION
-ARG TORCHTEXT_VERSION
 ARG TORCHVISION_VERSION
 ARG JAX_VERSION
 
@@ -62,7 +60,6 @@ ENV KMP_SETTINGS=false
 ENV PIP_ROOT_USER_ACTION=ignore
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
-ADD patches/keras_patch.sh  /tmp/keras_patch.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 ADD patches/template_conf.json /opt/kaggle/conf.json
 
@@ -89,6 +86,7 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     apt-get install -y build-essential unzip cmake libboost-dev libboost-system-dev libboost-filesystem-dev p7zip-full && \
     # b/182601974: ssh client was removed from the base image but is required for packages such as stable-baselines.
     apt-get install -y openssh-client && \
+    apt-get install -y graphviz && pip install graphviz && \
     /tmp/clean-layer.sh
 
 # b/128333086: Set PROJ_LIB to points to the proj4 cartographic library.
@@ -125,7 +123,7 @@ RUN pip install spacy && \
 COPY --from=torch_whl /tmp/whl/*.whl /tmp/torch/
 RUN mamba install -y -c pytorch magma-cuda${CUDA_MAJOR_VERSION}${CUDA_MINOR_VERSION} && \
     pip install /tmp/torch/*.whl && \
-    # b/255757999 openmp (libomp.so) is an dependency of libtorchtext and libtorchaudio but
+    # b/255757999 openmp (libomp.so) is an dependency libtorchaudio but
     mamba install -y openmp && \
     rm -rf /tmp/torch && \
     /tmp/clean-layer.sh
@@ -134,8 +132,7 @@ RUN pip install \
         torch==$TORCH_VERSION+cpu \
         torchvision==$TORCHVISION_VERSION+cpu \
         torchaudio==$TORCHAUDIO_VERSION+cpu \
-        torchtext==$TORCHTEXT_VERSION \
-    -f https://download.pytorch.org/whl/torch_stable.html && \
+        --index-url https://download.pytorch.org/whl/cpu && \
     /tmp/clean-layer.sh
 {{ end }}
 
@@ -203,14 +200,12 @@ RUN pip install \
         "tensorflow-io==${TENSORFLOW_IO_VERSION}" \
         tensorflow-probability \
         tensorflow_decision_forests \
+        tensorflow-text \
         "tensorflow_hub>=0.16.0" \
         # b/331799280 remove once other packages over to dm-tre
         optree \
         tf-keras && \
     /tmp/clean-layer.sh
-
-RUN chmod +x /tmp/keras_patch.sh && \
-    /tmp/keras_patch.sh
 
 ADD patches/keras_internal.py /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras/keras_internal.py
 ADD patches/keras_internal_test.py /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras/keras_internal_test.py
@@ -221,12 +216,13 @@ RUN pip install "keras>3" keras-cv keras-nlp && \
 # b/328788268 libpysal 4.10 seems to fail with "module 'shapely' has no attribute 'Geometry'. Did you mean: 'geometry'"
 RUN pip install pysal "libpysal==4.9.2"
 
+# b/350573866 xgboost v2.1.0 breaks learntools
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
     pip install gensim \
         textblob \
         wordcloud \
-        xgboost \
+        "xgboost==2.0.3" \
         pydot \
         hep_ml && \
     # NLTK Project datasets
@@ -272,7 +268,6 @@ RUN pip install "scipy==1.12.0" \
         datashader \
         # Boruta (python implementation)
         Boruta && \
-    apt-get install -y graphviz && pip install graphviz && \
     # Pandoc is a dependency of deap
     apt-get install -y pandoc && \
     pip install essentia
@@ -471,8 +466,8 @@ RUN pip install bleach \
         widgetsnbextension \
         # Require pyarrow newer than https://github.com/advisories/GHSA-5wvp-7f3h-6wmm
         {{ if eq .Accelerator "gpu" }} pyarrow {{ else }} "pyarrow>=14.0.1" {{ end }} \
-        feather-format \
-        fastai
+        feather-format && \
+    pip install --no-deps fastai fastcore fastdownload
 
 RUN python -m spacy download en_core_web_sm && python -m spacy download en_core_web_lg && \
     apt-get update && apt-get install -y ffmpeg && \

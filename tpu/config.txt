@@ -12,8 +12,6 @@ JAX_VERSION=0.4.23
 TORCH_VERSION=2.3.0
 # https://github.com/pytorch/audio supports nightly
 TORCHAUDIO_VERSION=2.3.0
-# https://github.com/pytorch/text supports main
-TORCHTEXT_VERSION=0.18.0
 # https://github.com/pytorch/vision supports nightly
 TORCHVISION_VERSION=0.18.0
 TORCH_LINUX_WHEEL_VERSION=manylinux_2_28_x86_64

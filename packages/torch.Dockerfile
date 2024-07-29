@@ -4,7 +4,6 @@ FROM ${BASE_IMAGE} AS builder
 
 ARG PACKAGE_VERSION
 ARG TORCHAUDIO_VERSION
-ARG TORCHTEXT_VERSION
 ARG TORCHVISION_VERSION
 ARG CUDA_MAJOR_VERSION
 ARG CUDA_MINOR_VERSION
@@ -63,18 +62,6 @@ RUN sudo apt-get update && \
 RUN sed -i 's/set(envs/set(envs\n  "LIBS=-ltinfo"/' /usr/local/src/audio/third_party/sox/CMakeLists.txt 
 RUN cd /usr/local/src/audio && python setup.py bdist_wheel
 
-# Build torchtext
-# Instructions: https://github.com/pytorch/text#building-from-source
-# See comment above for PYTORCH_BUILD_VERSION.
-ENV BUILD_VERSION=$TORCHTEXT_VERSION
-RUN cd /usr/local/src && \
-    git clone https://github.com/pytorch/text && \
-    cd text && \
-    git checkout tags/v$TORCHTEXT_VERSION && \
-    git submodule sync && \
-    git submodule update --init --recursive --jobs 1 && \
-    python setup.py bdist_wheel
-
 # Build torchvision.
 # Instructions: https://github.com/pytorch/vision/tree/main#installation
 # See comment above for PYTORCH_BUILD_VERSION.
@@ -93,7 +80,6 @@ FROM alpine:latest
 RUN mkdir -p /tmp/whl/
 COPY --from=builder /usr/local/src/pytorch/dist/*.whl /tmp/whl
 COPY --from=builder /usr/local/src/audio/dist/*.whl /tmp/whl
-COPY --from=builder /usr/local/src/text/dist/*.whl /tmp/whl
 COPY --from=builder /usr/local/src/vision/dist/*.whl /tmp/whl
 
 # Print out the built .whl file.
