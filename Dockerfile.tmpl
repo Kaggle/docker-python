@@ -119,6 +119,7 @@ RUN pip install spacy && \
 {{ end}}
 
 # Install PyTorch
+# b/356397043: magma-cuda121 is the latest version
 {{ if eq .Accelerator "gpu" }}
 COPY --from=torch_whl /tmp/whl/*.whl /tmp/torch/
 # b/356397043: We are currently using cuda 12.3,
