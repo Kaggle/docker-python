@@ -102,7 +102,7 @@ RUN conda config --add channels nvidia && \
     conda install -c conda-forge mamba curl libcurl && \
     # Base image channel order: conda-forge (highest priority), defaults.
     # End state: rapidsai (highest priority), nvidia, conda-forge, defaults.
-    mamba install -y cartopy imagemagick pyproj "shapely<2" mkl && \
+    mamba install -y mkl cartopy imagemagick pyproj "shapely<2" && \
     /tmp/clean-layer.sh
 
 # Install spacy
@@ -119,6 +119,7 @@ RUN pip install spacy && \
 {{ end}}
 
 # Install PyTorch
+# b/356397043: magma-cuda121 is the latest version
 {{ if eq .Accelerator "gpu" }}
 COPY --from=torch_whl /tmp/whl/*.whl /tmp/torch/
 RUN mamba install -y -c pytorch magma-cuda121 && \
@@ -465,8 +466,8 @@ RUN pip install bleach \
         widgetsnbextension \
         # Require pyarrow newer than https://github.com/advisories/GHSA-5wvp-7f3h-6wmm
         {{ if eq .Accelerator "gpu" }} pyarrow {{ else }} "pyarrow>=14.0.1" {{ end }} \
-        feather-format && \
-    pip install --no-deps fastai fastcore fastdownload
+        feather-format \
+        fastai
 
 RUN python -m spacy download en_core_web_sm && python -m spacy download en_core_web_lg && \
     apt-get update && apt-get install -y ffmpeg && \

@@ -63,7 +63,7 @@ pipeline {
         }
         stage('jaxlib') {
           options {
-            timeout(time: 500, unit: 'MINUTES')
+            timeout(time: 300, unit: 'MINUTES')
           }
           steps {
             sh '''#!/bin/bash
