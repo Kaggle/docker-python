@@ -102,8 +102,7 @@ RUN conda config --add channels nvidia && \
     conda install -c conda-forge mamba curl libcurl && \
     # Base image channel order: conda-forge (highest priority), defaults.
     # End state: rapidsai (highest priority), nvidia, conda-forge, defaults.
-    mamba install -y cartopy imagemagick pyproj "shapely<2" && \
-    mamba install -c pkgs/main -y mkl && \
+    mamba install -y cartopy imagemagick pyproj "shapely<2" mkl && \
     /tmp/clean-layer.sh
 
 # Install spacy
@@ -124,8 +123,7 @@ RUN pip install spacy && \
 COPY --from=torch_whl /tmp/whl/*.whl /tmp/torch/
 RUN mamba install -y -c pytorch magma-cuda121 && \
     pip install /tmp/torch/*.whl && \
-    # b/255757999 openmp (libomp.so) is an dependency libtorchaudio but
-    mamba install -y openmp && \
+    sudo apt -y install libsox-dev && \
     rm -rf /tmp/torch && \
     /tmp/clean-layer.sh
 {{ else }}
