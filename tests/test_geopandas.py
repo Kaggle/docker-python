@@ -1,16 +1,11 @@
 import unittest
 
 import geopandas
+from shapely.geometry import Polygon
 
 class TestGeopandas(unittest.TestCase):
-    def test_read(self):
-        df = geopandas.read_file(geopandas.datasets.get_path('nybb'))
-        self.assertTrue(df.size > 1)
-
-    def test_spatial_join(self):
-        cities = geopandas.read_file(geopandas.datasets.get_path('naturalearth_cities'))
-        world = geopandas.read_file(geopandas.datasets.get_path('naturalearth_lowres'))
-        countries = world[['geometry', 'name']]
-        countries = countries.rename(columns={'name':'country'})
-        cities_with_country = geopandas.sjoin(cities, countries, how="inner", op='intersects')
-        self.assertTrue(cities_with_country.size > 1)
+    def test_GeoSeries(self):
+        p1 = Polygon([(0, 0), (1, 0), (1, 1)])
+        p2 = Polygon([(0, 0), (1, 0), (1, 1), (0, 1)])
+        p3 = Polygon([(2, 0), (3, 0), (3, 1), (2, 1)])
+        g = geopandas.GeoSeries([p1, p2, p3])

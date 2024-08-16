@@ -5,7 +5,6 @@ ARG GPU_BASE_IMAGE_NAME
 ARG LIGHTGBM_VERSION
 ARG TORCH_VERSION
 ARG TORCHAUDIO_VERSION
-ARG TORCHTEXT_VERSION
 ARG TORCHVISION_VERSION
 ARG JAX_VERSION
 
@@ -38,16 +37,15 @@ RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/lib
 {{ end }}
 
 # Keep these variables in sync if base image is updated.
-ENV TENSORFLOW_VERSION=2.15.0
+ENV TENSORFLOW_VERSION=2.16.1
 # See https://github.com/tensorflow/io#tensorflow-version-compatibility
-ENV TENSORFLOW_IO_VERSION=0.35.0
+ENV TENSORFLOW_IO_VERSION=0.37.0
 
 # We need to redefine the ARG here to get the ARG value defined above the FROM instruction.
 # See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
 ARG LIGHTGBM_VERSION
 ARG TORCH_VERSION
 ARG TORCHAUDIO_VERSION
-ARG TORCHTEXT_VERSION
 ARG TORCHVISION_VERSION
 ARG JAX_VERSION
 
@@ -62,7 +60,6 @@ ENV KMP_SETTINGS=false
 ENV PIP_ROOT_USER_ACTION=ignore
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
-ADD patches/keras_patch.sh  /tmp/keras_patch.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 ADD patches/template_conf.json /opt/kaggle/conf.json
 
@@ -122,12 +119,12 @@ RUN pip install spacy && \
 {{ end}}
 
 # Install PyTorch
+# b/356397043: magma-cuda121 is the latest version
 {{ if eq .Accelerator "gpu" }}
 COPY --from=torch_whl /tmp/whl/*.whl /tmp/torch/
-RUN mamba install -y -c pytorch magma-cuda${CUDA_MAJOR_VERSION}${CUDA_MINOR_VERSION} && \
+RUN mamba install -y -c pytorch magma-cuda121 && \
     pip install /tmp/torch/*.whl && \
-    # b/255757999 openmp (libomp.so) is an dependency of libtorchtext and libtorchaudio but
-    mamba install -y openmp && \
+    sudo apt -y install libsox-dev && \
     rm -rf /tmp/torch && \
     /tmp/clean-layer.sh
 {{ else }}
@@ -135,8 +132,7 @@ RUN pip install \
         torch==$TORCH_VERSION+cpu \
         torchvision==$TORCHVISION_VERSION+cpu \
         torchaudio==$TORCHAUDIO_VERSION+cpu \
-        torchtext==$TORCHTEXT_VERSION \
-    -f https://download.pytorch.org/whl/torch_stable.html && \
+        --index-url https://download.pytorch.org/whl/cpu && \
     /tmp/clean-layer.sh
 {{ end }}
 
@@ -199,32 +195,22 @@ RUN apt-get update && \
 
 RUN pip install -f http://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o && /tmp/clean-layer.sh
 
-# b/318672158 Use simply tensorflow-probability once > 0.23.0 is released.
 RUN pip install \
         "tensorflow==${TENSORFLOW_VERSION}" \
         "tensorflow-io==${TENSORFLOW_IO_VERSION}" \
-        git+https://github.com/tensorflow/probability.git@fbc5ebe9b1d343113fb917010096cfd88b32eecf \
-        tensorflow_text \
+        tensorflow-probability \
+        tensorflow_decision_forests \
+        tensorflow-text \
         "tensorflow_hub>=0.16.0" \
         # b/331799280 remove once other packages over to dm-tre
         optree \
         tf-keras && \
     /tmp/clean-layer.sh
 
-# b/318672158 Use simply tensorflow_decision_forests on next release, expected with tf 2.16
-RUN pip install tensorflow_decision_forests==1.8.1 --no-deps && \
-    /tmp/clean-layer.sh
-
-RUN chmod +x /tmp/keras_patch.sh && \
-    /tmp/keras_patch.sh
-
 ADD patches/keras_internal.py /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras/keras_internal.py
 ADD patches/keras_internal_test.py /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras/keras_internal_test.py
 
-# Remove "--no-deps" flag and "namex" package once Keras 3.* is included in our base image.
-# We ignore dependencies since tf2.15 and Keras 3.* should work despite pip saying it won't.
-# Currently, keras tries to install a nightly version of tf 2.16: https://github.com/keras-team/keras/blob/fe2f54aa5bc42fb23a96449cf90434ab9bb6a2cd/requirements.txt#L2
-RUN pip install --no-deps "keras>3" keras-cv keras-nlp namex && \
+RUN pip install "keras>3" keras-cv keras-nlp && \
     /tmp/clean-layer.sh
 
 # b/328788268 libpysal 4.10 seems to fail with "module 'shapely' has no attribute 'Geometry'. Did you mean: 'geometry'"

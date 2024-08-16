@@ -13,7 +13,6 @@ ARG TENSORFLOW_VERSION
 ARG TF_LIBTPU_VERSION
 ARG JAX_VERSION
 ARG TORCHVISION_VERSION
-ARG TORCHTEXT_VERSION
 ARG TORCHAUDIO_VERSION
 
 ENV ISTPUVM=1
@@ -60,7 +59,7 @@ RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
 # Additional useful packages should be added here
 
 RUN pip install tensorflow_hub https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/tensorflow/tf-${TENSORFLOW_VERSION}/tensorflow-${TENSORFLOW_VERSION}-${PYTHON_WHEEL_VERSION}-${PYTHON_WHEEL_VERSION}-${TF_LINUX_WHEEL_VERSION}.whl tensorflow-probability tensorflow-io \
-    torch~=${TORCH_VERSION} https://storage.googleapis.com/pytorch-xla-releases/wheels/tpuvm/torch_xla-${TORCH_VERSION}+libtpu-${PYTHON_WHEEL_VERSION}-${PYTHON_WHEEL_VERSION}-${TORCH_LINUX_WHEEL_VERSION}.whl torchvision==${TORCHVISION_VERSION} torchtext==${TORCHTEXT_VERSION} torchaudio==${TORCHAUDIO_VERSION} \
+    torch~=${TORCH_VERSION} https://storage.googleapis.com/pytorch-xla-releases/wheels/tpuvm/torch_xla-${TORCH_VERSION}+libtpu-${PYTHON_WHEEL_VERSION}-${PYTHON_WHEEL_VERSION}-${TORCH_LINUX_WHEEL_VERSION}.whl torchvision==${TORCHVISION_VERSION} torchaudio==${TORCHAUDIO_VERSION} \
     jax[tpu]==${JAX_VERSION} -f https://storage.googleapis.com/jax-releases/libtpu_releases.html trax flax optax git+https://github.com/deepmind/dm-haiku jraph distrax \
     papermill jupyterlab python-lsp-server[all] "jupyter-lsp==1.5.1" \
     pandas matplotlib opencv-python-headless librosa accelerate diffusers scikit-learn transformers \
