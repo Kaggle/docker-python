@@ -119,9 +119,10 @@ RUN pip install spacy && \
 {{ end}}
 
 # Install PyTorch
-# b/356397043: magma-cuda121 is the latest version
 {{ if eq .Accelerator "gpu" }}
 COPY --from=torch_whl /tmp/whl/*.whl /tmp/torch/
+# b/356397043: We are currently using cuda 12.3,
+# but magma-cuda121 is the latest compatible version 
 RUN mamba install -y -c pytorch magma-cuda121 && \
     pip install /tmp/torch/*.whl && \
     sudo apt -y install libsox-dev && \
@@ -535,7 +536,8 @@ RUN pip install pytorch-ignite \
         s3fs \
         gcsfs \
         kaggle-environments \
-        geopandas \
+        # geopandas > v0.14.4 breaks learn tools
+        geopandas==v0.14.4 \
         "shapely<2" \
         vowpalwabbit \
         pydub \
