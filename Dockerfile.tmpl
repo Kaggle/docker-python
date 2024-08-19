@@ -89,8 +89,8 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     apt-get install -y graphviz && pip install graphviz && \
     /tmp/clean-layer.sh
 
-# b/128333086: Set PROJ_LIB to points to the proj4 cartographic library.
-ENV PROJ_LIB=/opt/conda/share/proj
+# b/128333086: Set PROJ_DATA to points to the proj4 cartographic library.
+ENV PROJ_DATA=/opt/conda/share/proj
 
 # Install conda packages not available on pip.
 # When using pip in a conda environment, conda commands should be ran first and then
@@ -103,6 +103,7 @@ RUN conda config --add channels nvidia && \
     # Base image channel order: conda-forge (highest priority), defaults.
     # End state: rapidsai (highest priority), nvidia, conda-forge, defaults.
     mamba install -y mkl cartopy imagemagick pyproj "shapely<2" && \
+    rm -rf /opt/conda/lib/python3.10/site-packages/pyproj/proj_dir/ && \
     /tmp/clean-layer.sh
 
 # Install spacy
