@@ -183,7 +183,7 @@ RUN export PATH=/usr/local/cuda/bin:$PATH && \
 RUN JAXVER=$(pip freeze | grep -e "^jax==") && \
     pip install --upgrade \
         "matplotlib<3.8.0" \
-        seaborn \
+        "seaborn==0.12.2" \
         python-dateutil dask dask-expr igraph \
         pyyaml joblib geopy mne pyshp \
         pandas \
