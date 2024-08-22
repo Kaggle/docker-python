@@ -63,13 +63,16 @@ ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 ADD patches/template_conf.json /opt/kaggle/conf.json
 
+# Install uv, which is used in place of pip (its faster).
+RUN pip install uv
+
 # b/276344496: Install specific version of boto3, because 1.26.103 is broken.
-RUN pip install boto3==1.26.100 && \
+RUN uv pip install --system boto3==1.26.100 && \
     /tmp/clean-layer.sh
 
 {{ if eq .Accelerator "gpu" }}
 # b/200968891 Keeps horovod once torch is upgraded.
-RUN pip uninstall -y horovod && \
+RUN uv pip uninstall --system -y horovod && \
     /tmp/clean-layer.sh
 {{ end }}
 
@@ -86,7 +89,7 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     apt-get install -y build-essential unzip cmake libboost-dev libboost-system-dev libboost-filesystem-dev p7zip-full && \
     # b/182601974: ssh client was removed from the base image but is required for packages such as stable-baselines.
     apt-get install -y openssh-client && \
-    apt-get install -y graphviz && pip install graphviz && \
+    apt-get install -y graphviz && uv pip install --system graphviz && \
     /tmp/clean-layer.sh
 
 # b/128333086: Set PROJ_DATA to points to the proj4 cartographic library.
@@ -110,12 +113,12 @@ RUN conda config --add channels nvidia && \
 # b/232247930: uninstall pyarrow to avoid double installation with the GPU specific version.
 # b/341938540: unistall grpc-cpp to allow >=v24.4 cudf and cuml to be installed.
 {{ if eq .Accelerator "gpu" }}
-RUN pip uninstall -y pyarrow && \
+RUN uv pip uninstall --system -y pyarrow && \
     mamba remove -y --force grpc-cpp && \
     mamba install -y -c conda-forge spacy cudf>=24.4 cuml>=24.4 cupy cuda-version=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
     /tmp/clean-layer.sh
 {{ else }}
-RUN pip install spacy && \
+RUN uv pip install --system spacy && \
     /tmp/clean-layer.sh
 {{ end}}
 
@@ -126,12 +129,12 @@ COPY --from=torch_whl /tmp/whl/*.whl /tmp/torch/
 # b/356397043: We are currently using cuda 12.3,
 # but magma-cuda121 is the latest compatible version 
 RUN mamba install -y -c pytorch magma-cuda121 && \
-    pip install /tmp/torch/*.whl && \
+    uv pip install --system /tmp/torch/*.whl && \
     sudo apt -y install libsox-dev && \
     rm -rf /tmp/torch && \
     /tmp/clean-layer.sh
 {{ else }}
-RUN pip install \
+RUN uv pip install --system \
         torch==$TORCH_VERSION+cpu \
         torchvision==$TORCHVISION_VERSION+cpu \
         torchaudio==$TORCHAUDIO_VERSION+cpu \
@@ -146,11 +149,11 @@ COPY --from=lightgbm_whl /tmp/whl/*.whl /tmp/lightgbm/
 RUN apt-get install -y ocl-icd-libopencl1 clinfo && \
     mkdir -p /etc/OpenCL/vendors && \
     echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd && \
-    pip install /tmp/lightgbm/*.whl && \
+    uv pip install --system /tmp/lightgbm/*.whl && \
     rm -rf /tmp/lightgbm && \
     /tmp/clean-layer.sh
 {{ else }}
-RUN pip install lightgbm==$LIGHTGBM_VERSION && \
+RUN uv pip install --system lightgbm==$LIGHTGBM_VERSION && \
     /tmp/clean-layer.sh
 {{ end }}
 
@@ -158,10 +161,10 @@ RUN pip install lightgbm==$LIGHTGBM_VERSION && \
 {{ if eq .Accelerator "gpu" }}
 COPY --from=jaxlib_whl /tmp/whl/*.whl /tmp/jax/
 # b/319722433#comment9: Use pip wheels once versions matches our CUDA version.
-RUN pip install /tmp/jax/*.whl jax==$JAX_VERSION && \
+RUN uv pip install --system /tmp/jax/*.whl jax==$JAX_VERSION && \
     /tmp/clean-layer.sh
 {{ else }}
-RUN pip install jax[cpu] && \
+RUN uv pip install --system jax[cpu] && \
     /tmp/clean-layer.sh
 {{ end }}
 
@@ -172,7 +175,7 @@ RUN pip install jax[cpu] && \
 # No specific package for nnabla-ext-cuda 12.x minor versions.
 RUN export PATH=/usr/local/cuda/bin:$PATH && \
     export CUDA_ROOT=/usr/local/cuda && \
-    pip install pycuda \
+    uv pip install --system pycuda \
         pynvrtc \
         pynvml && \
     /tmp/clean-layer.sh
@@ -181,7 +184,7 @@ RUN export PATH=/usr/local/cuda/bin:$PATH && \
 # (b/308525631) Pin Matplotlib until seaborn can be upgraded
 # to >0.13.0 (now it's stuck by a package conflict with ydata-profiling 4.5.1).
 RUN JAXVER=$(pip freeze | grep -e "^jax==") && \
-    pip install --upgrade \
+    uv pip install --system --upgrade \
         "matplotlib<3.8.0" \
         "seaborn==0.12.2" \
         python-dateutil dask dask-expr igraph \
@@ -196,9 +199,9 @@ RUN apt-get update && \
     apt-get install -y default-jre && \
     /tmp/clean-layer.sh
 
-RUN pip install -f http://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o && /tmp/clean-layer.sh
+RUN uv pip install --system -f http://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o && /tmp/clean-layer.sh
 
-RUN pip install \
+RUN uv pip install --system \
         "tensorflow==${TENSORFLOW_VERSION}" \
         "tensorflow-io==${TENSORFLOW_IO_VERSION}" \
         tensorflow-probability \
@@ -213,16 +216,16 @@ RUN pip install \
 ADD patches/keras_internal.py /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras/keras_internal.py
 ADD patches/keras_internal_test.py /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras/keras_internal_test.py
 
-RUN pip install "keras>3" keras-cv keras-nlp && \
+RUN uv pip install --system "keras>3" keras-cv keras-nlp && \
     /tmp/clean-layer.sh
 
 # b/328788268 libpysal 4.10 seems to fail with "module 'shapely' has no attribute 'Geometry'. Did you mean: 'geometry'"
-RUN pip install pysal "libpysal==4.9.2"
+RUN uv pip install --system pysal "libpysal==4.9.2"
 
 # b/350573866 xgboost v2.1.0 breaks learntools
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
-    pip install gensim \
+    uv pip install --system gensim \
         textblob \
         wordcloud \
         "xgboost==2.0.3" \
@@ -248,15 +251,15 @@ RUN apt-get install -y libfreetype6-dev && \
     twitter_samples udhr2 udhr unicode_samples universal_tagset universal_treebanks_v20 \
     vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
     # Stop-words
-    pip install stop-words \
+    uv pip install --system stop-words \
         scikit-image && \
     /tmp/clean-layer.sh
 
-RUN pip install opencv-contrib-python opencv-python && \
+RUN uv pip install --system opencv-contrib-python opencv-python && \
     /tmp/clean-layer.sh
 
 # Pin scipy until we update JAX b/335003097
-RUN pip install "scipy==1.12.0" \
+RUN uv pip install --system "scipy==1.12.0" \
         # Scikit-learn accelerated library for x86
         "scikit-learn-intelex>=2023.0.1" \
         # HDF5 support
@@ -273,22 +276,22 @@ RUN pip install "scipy==1.12.0" \
         Boruta && \
     # Pandoc is a dependency of deap
     apt-get install -y pandoc && \
-    pip install essentia
+    uv pip install --system essentia
 
 RUN apt-get install -y git-lfs && \
     /tmp/clean-layer.sh
 
 # vtk with dependencies
 RUN apt-get install -y libgl1-mesa-glx && \
-    pip install vtk && \
+    uv pip install --system vtk && \
     # xvfbwrapper with dependencies
     apt-get install -y xvfb && \
-    pip install xvfbwrapper && \
+    uv pip install --system xvfbwrapper && \
     /tmp/clean-layer.sh
 
 RUN rm -rf /opt/conda/lib/python3.10/site-packages/Shapely-1.8.5.post1.dist-info/
 
-RUN pip install mpld3 \
+RUN uv pip install --system mpld3 \
         gpxpy \
         arrow \
         nilearn \
@@ -297,7 +300,7 @@ RUN pip install mpld3 \
         preprocessing \
         path.py \
         Geohash && \
-    pip install deap \
+    uv pip install --system deap \
         # b/302136621 Fix eli5 import for learntools, newer version require scikit-learn > 1.3
         "tpot==0.12.1" \
         scikit-optimize \
@@ -366,8 +369,8 @@ RUN rm -rf /opt/conda/lib/python3.10/site-packages/numpy-1.23.5.dist-info*
  # Add google PAIR-code Facets
 RUN cd /opt/ && git clone https://github.com/PAIR-code/facets && cd facets/ && jupyter nbextension install facets-dist/ --user && \
     export PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/ && \
-    pip install kmodes --no-dependencies && \
-    pip install librosa \
+    uv pip install --system kmodes --no-dependencies && \
+    uv pip install --system librosa \
         polyglot \
         sentencepiece \
         cufflinks \
@@ -375,23 +378,23 @@ RUN cd /opt/ && git clone https://github.com/PAIR-code/facets && cd facets/ && j
         memory_profiler && \
     /tmp/clean-layer.sh
 
-RUN pip install cython \
+RUN uv pip install --system cython \
         fasttext && \
-    apt-get install -y libhunspell-dev && pip install hunspell
-RUN pip install annoy \
+    apt-get install -y libhunspell-dev && uv pip install --system hunspell
+RUN uv pip install --system annoy \
         category_encoders && \
     # b/183041606#comment5: the Kaggle data proxy doesn't support these APIs. If the library is missing, it falls back to using a regular BigQuery query to fetch data.
     pip uninstall -y google-cloud-bigquery-storage && \
     # google-cloud-automl 2.0.0 introduced incompatible API changes, need to pin to 1.0.1
     # After launch this should be installed from pip
-    pip install git+https://github.com/googleapis/python-aiplatform.git@mb-release \
+    uv pip install --system git+https://github.com/googleapis/python-aiplatform.git@mb-release \
         google-cloud-automl==1.0.1 \
         google-api-core==1.33.2 \
         google-cloud-bigquery \
         google-cloud-storage && \
     # Split these installations to avoid `pip._vendor.resolvelib.resolvers.ResolutionTooDeep: 200000`
     # TODO(b/315753846) Unpin translate package.
-    pip install google-cloud-translate==3.12.1 \
+    uv pip install --system google-cloud-translate==3.12.1 \
         google-cloud-language==2.* \
         google-cloud-videointelligence==2.* \
         google-cloud-vision==2.* \
@@ -417,7 +420,7 @@ RUN rm -rf /opt/conda/lib/python3.10/site-packages/{nbconvert,nbclient,mistune,p
 
 # Fix qgrid by pinning ipywidgets https://github.com/quantopian/qgrid/issues/376
 #        allennlp \
-RUN pip install bleach \
+RUN uv pip install --system bleach \
         certifi \
         cycler \
         decorator \
@@ -451,7 +454,7 @@ RUN pip install bleach \
         Pillow==9.5.0 && \
     # Install openslide and its python binding
     apt-get install -y openslide-tools && \
-    pip install openslide-python \
+    uv pip install --system openslide-python \
         ptyprocess \
         Pygments \
         pyparsing \
@@ -491,7 +494,7 @@ RUN rm /opt/conda/lib/python3.10/site-packages/google*/REQUESTED
 # test_dlib_face_detector (test_dlib.TestDLib) ... INTEL MKL ERROR: /opt/conda/bin/../lib/libmkl_avx512.so.2: undefined symbol: mkl_sparse_optimize_bsr_trsm_i8.
 # Intel MKL FATAL ERROR: Cannot load libmkl_avx512.so.2 or libmkl_def.so.2.
 # nnabla breaks protobuf compatibiilty:
-RUN pip install flashtext \
+RUN uv pip install --system flashtext \
         wandb \
         # b/214080882 blake3 0.3.0 is not compatible with vaex.
         blake3==0.2.1 \
@@ -529,7 +532,7 @@ RUN pip install flashtext \
         osmnx && \
     apt-get -y install libspatialindex-dev
 
-RUN pip install pytorch-ignite \
+RUN uv pip install --system pytorch-ignite \
         qgrid \
         bqplot \
         earthengine-api \
@@ -559,7 +562,7 @@ RUN pip install pytorch-ignite \
         openpyxl \
         timm \
         torchinfo && \
-        pip install git+https://github.com/facebookresearch/segment-anything.git && \
+    uv pip install --system git+https://github.com/facebookresearch/segment-anything.git && \
     # b/343971718: remove duplicate aiohttp installs, and reinstall it
     rm -rf /opt/conda/lib/python3.10/site-packages/aiohttp* && \
     mamba install --force-reinstall -y aiohttp && \
@@ -581,7 +584,7 @@ RUN mkdir -p /root/.EasyOCR/model && \
 
 # Tesseract and some associated utility packages
 RUN apt-get install tesseract-ocr -y && \
-    pip install pytesseract \
+    uv pip install --system pytesseract \
         wand \
         pdf2image \
         PyPDF && \
@@ -595,7 +598,7 @@ ENV MKL_THREADING_LAYER=GNU
 
 # Temporary fixes and patches
 # Temporary patch for Dask getting downgraded, which breaks Keras
-RUN pip install --upgrade dask && \
+RUN uv pip install --system --upgrade dask && \
     # Stop jupyter nbconvert trying to rewrite its folder hierarchy
     mkdir -p /root/.jupyter && touch /root/.jupyter/jupyter_nbconvert_config.py && touch /root/.jupyter/migrated && \
     mkdir -p /.jupyter && touch /.jupyter/jupyter_nbconvert_config.py && touch /.jupyter/migrated && \
@@ -606,7 +609,7 @@ RUN pip install --upgrade dask && \
     # Temporary patch for broken libpixman 0.38 in conda-forge, symlink to system libpixman 0.34 untile conda package gets updated to 0.38.5 or higher.
     ln -sf /usr/lib/x86_64-linux-gnu/libpixman-1.so.0.34.0 /opt/conda/lib/libpixman-1.so.0.38.0 && \
     # pin jupyter-server to version 2.12.5; later versions break LSP (b/333854354)
-    pip install --force-reinstall --no-deps jupyter_server==2.12.5 && \
+    uv pip install --system --force-reinstall --no-deps jupyter_server==2.12.5 && \
     /tmp/clean-layer.sh
 
 # Fix to import bq_helper library without downgrading setuptools
@@ -615,7 +618,7 @@ RUN mkdir -p ~/src && git clone https://github.com/SohierDane/BigQuery_Helper ~/
     mv ~/src/BigQuery_Helper/bq_helper.py ~/src/BigQuery_Helper/bq_helper/__init__.py && \
     mv ~/src/BigQuery_Helper/test_helper.py ~/src/BigQuery_Helper/bq_helper/ && \
     sed -i 's/)/packages=["bq_helper"])/g' ~/src/BigQuery_Helper/setup.py && \
-    pip install -e ~/src/BigQuery_Helper && \
+    uv pip install --system -e ~/src/BigQuery_Helper && \
     /tmp/clean-layer.sh
 
 # Add BigQuery client proxy settings
@@ -639,7 +642,7 @@ RUN sed -i '/from tensorflow_hub import uncompressed_module_resolver/a from tens
 # worker tunneling support in place.
 # b/139212522 re-enable TensorBoard once solution for slowdown is implemented.
 # ENV JUPYTER_CONFIG_DIR "/root/.jupyter/"
-# RUN pip install jupyter_tensorboard && \
+# RUN uv pip install --system jupyter_tensorboard && \
 #     jupyter serverextension enable jupyter_tensorboard && \
 #     jupyter tensorboard enable
 # ADD patches/tensorboard/notebook.py /opt/conda/lib/python3.10/site-packages/tensorboard/notebook.py
@@ -666,7 +669,7 @@ RUN ln -s /usr/local/cuda/lib64/libcusolver.so.11 /opt/conda/bin/../lib/libcusol
 RUN rm /opt/conda/lib/libtinfo.so.6 && ln -s /usr/lib/x86_64-linux-gnu/libtinfo.so.6 /opt/conda/lib/libtinfo.so.6
 
 # b/276358430 fix Jupyter lsp freezing up the jupyter server
-RUN pip install "jupyter-lsp==1.5.1"
+RUN uv pip install --system "jupyter-lsp==1.5.1"
 
 # Set backend for matplotlib
 ENV MPLBACKEND "agg"
