@@ -505,7 +505,6 @@ RUN uv pip install --system flashtext \
         pympler \
         featuretools \
         #-e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper \
-        git+https://github.com/Kaggle/learntools \
         ray \
         gym \
         pyarabic \
@@ -527,11 +526,13 @@ RUN uv pip install --system flashtext \
         plotly_express \
         albumentations \
         accelerate \
-        # b/290207097 switch back to the pip catalyst package when bug fixed
-        # https://github.com/catalyst-team/catalyst/issues/1440
-        git+https://github.com/Philmod/catalyst.git@fix-fp16#egg=catalyst \
+        catalyst \
         osmnx && \
     apt-get -y install libspatialindex-dev
+
+# uv fails to install these, falling back to pip:
+RUN pip install git+https://github.com/Kaggle/learntools
+RUN pip install kaggle-environments
 
 RUN uv pip install --system pytorch-ignite \
         qgrid \
@@ -541,7 +542,6 @@ RUN uv pip install --system pytorch-ignite \
         datasets \
         s3fs \
         gcsfs \
-        kaggle-environments \
         # geopandas > v0.14.4 breaks learn tools
         geopandas==v0.14.4 \
         "shapely<2" \
