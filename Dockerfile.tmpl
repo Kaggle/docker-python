@@ -72,7 +72,7 @@ RUN uv pip install --system boto3==1.26.100 && \
 
 {{ if eq .Accelerator "gpu" }}
 # b/200968891 Keeps horovod once torch is upgraded.
-RUN uv pip uninstall --system -y horovod && \
+RUN uv pip uninstall --system horovod && \
     /tmp/clean-layer.sh
 {{ end }}
 
@@ -113,7 +113,7 @@ RUN conda config --add channels nvidia && \
 # b/232247930: uninstall pyarrow to avoid double installation with the GPU specific version.
 # b/341938540: unistall grpc-cpp to allow >=v24.4 cudf and cuml to be installed.
 {{ if eq .Accelerator "gpu" }}
-RUN uv pip uninstall --system -y pyarrow && \
+RUN uv pip uninstall --system pyarrow && \
     mamba remove -y --force grpc-cpp && \
     mamba install -y -c conda-forge spacy cudf>=24.4 cuml>=24.4 cupy cuda-version=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
     /tmp/clean-layer.sh
@@ -385,7 +385,7 @@ RUN uv pip install --system cython \
 RUN uv pip install --system annoy \
         category_encoders && \
     # b/183041606#comment5: the Kaggle data proxy doesn't support these APIs. If the library is missing, it falls back to using a regular BigQuery query to fetch data.
-    pip uninstall -y google-cloud-bigquery-storage && \
+    uv pip uninstall --system google-cloud-bigquery-storage && \
     # google-cloud-automl 2.0.0 introduced incompatible API changes, need to pin to 1.0.1
     # After launch this should be installed from pip
     uv pip install --system git+https://github.com/googleapis/python-aiplatform.git@mb-release \
