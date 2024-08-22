@@ -300,7 +300,9 @@ RUN uv pip install --system mpld3 \
         preprocessing \
         path.py \
         Geohash && \
-    uv pip install --system deap \
+        /tmp/clean-layer.sh
+
+RUN uv pip install --system deap \
         # b/302136621 Fix eli5 import for learntools, newer version require scikit-learn > 1.3
         "tpot==0.12.1" \
         scikit-optimize \
@@ -321,7 +323,6 @@ RUN uv pip install --system mpld3 \
         altair \
         ImageHash \
         ecos \
-        CVXcanon \
         pymc3 \
         imagecodecs \
         tifffile \
@@ -369,7 +370,7 @@ RUN rm -rf /opt/conda/lib/python3.10/site-packages/numpy-1.23.5.dist-info*
  # Add google PAIR-code Facets
 RUN cd /opt/ && git clone https://github.com/PAIR-code/facets && cd facets/ && jupyter nbextension install facets-dist/ --user && \
     export PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/ && \
-    uv pip install --system kmodes --no-dependencies && \
+    uv pip install --system kmodes --no-deps && \
     uv pip install --system librosa \
         polyglot \
         sentencepiece \
