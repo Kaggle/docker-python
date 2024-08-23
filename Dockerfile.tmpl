@@ -448,7 +448,7 @@ RUN pip install bleach \
         pexpect \
         pickleshare \
         # TODO(b/290035631) unpin when EasyOCR did a release.
-        Pillow==9.5.0 && \
+        Pillow && \
     # Install openslide and its python binding
     apt-get install -y openslide-tools && \
     pip install openslide-python \
