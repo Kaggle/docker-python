@@ -63,16 +63,6 @@ ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 ADD patches/template_conf.json /opt/kaggle/conf.json
 
-# b/276344496: Install specific version of boto3, because 1.26.103 is broken.
-RUN pip install boto3==1.26.100 && \
-    /tmp/clean-layer.sh
-
-{{ if eq .Accelerator "gpu" }}
-# b/200968891 Keeps horovod once torch is upgraded.
-RUN pip uninstall -y horovod && \
-    /tmp/clean-layer.sh
-{{ end }}
-
 # Update GPG key per documentation at https://cloud.google.com/compute/docs/troubleshooting/known-issues
 RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
@@ -98,7 +88,7 @@ ENV PROJ_DATA=/opt/conda/share/proj
 RUN conda config --add channels nvidia && \
     conda config --add channels rapidsai && \
     conda config --set solver libmamba && \
-    # b/299991198 remove curl/libcurl install once DLVM base image includes version >= 7.86
+    # b/299991198: remove curl/libcurl install once DLVM base image includes version >= 7.86
     conda install -c conda-forge mamba curl libcurl && \
     # Base image channel order: conda-forge (highest priority), defaults.
     # End state: rapidsai (highest priority), nvidia, conda-forge, defaults.
@@ -178,7 +168,7 @@ RUN export PATH=/usr/local/cuda/bin:$PATH && \
     /tmp/clean-layer.sh
 {{ end }}
 
-# (b/308525631) Pin Matplotlib until seaborn can be upgraded
+# b/308525631: Pin Matplotlib until seaborn can be upgraded
 # to >0.13.0 (now it's stuck by a package conflict with ydata-profiling 4.5.1).
 RUN JAXVER=$(pip freeze | grep -e "^jax==") && \
     pip install --upgrade \
@@ -205,21 +195,16 @@ RUN pip install \
         tensorflow_decision_forests \
         tensorflow-text \
         "tensorflow_hub>=0.16.0" \
-        # b/331799280 remove once other packages over to dm-tre
-        optree \
-        tf-keras && \
+        tf-keras \
+        "keras>3" \
+        keras-cv \
+        keras-nlp && \
     /tmp/clean-layer.sh
 
 ADD patches/keras_internal.py /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras/keras_internal.py
 ADD patches/keras_internal_test.py /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras/keras_internal_test.py
 
-RUN pip install "keras>3" keras-cv keras-nlp && \
-    /tmp/clean-layer.sh
-
-# b/328788268 libpysal 4.10 seems to fail with "module 'shapely' has no attribute 'Geometry'. Did you mean: 'geometry'"
-RUN pip install pysal "libpysal==4.9.2"
-
-# b/350573866 xgboost v2.1.0 breaks learntools
+# b/350573866: xgboost v2.1.0 breaks learntools
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
     pip install gensim \
@@ -255,8 +240,12 @@ RUN apt-get install -y libfreetype6-dev && \
 RUN pip install opencv-contrib-python opencv-python && \
     /tmp/clean-layer.sh
 
-# Pin scipy until we update JAX b/335003097
-RUN pip install "scipy==1.12.0" \
+
+RUN pip install cython \
+        fasttext \
+        opencv-contrib-python \
+        opencv-python \
+        "scipy<1.14.0" \
         # Scikit-learn accelerated library for x86
         "scikit-learn-intelex>=2023.0.1" \
         # HDF5 support
@@ -270,16 +259,22 @@ RUN pip install "scipy==1.12.0" \
         numba \
         datashader \
         # Boruta (python implementation)
+        pysal \
+        # b/328788268: libpysal 4.10 seems to fail with "module 'shapely' has no attribute 'Geometry'. Did you mean: 'geometry'"
+        "libpysal==4.9.2" \
+        # b/276344496: Install specific version of boto3, because 1.26.103 is broken.
+        "boto3==1.26.100" \
         Boruta && \
     # Pandoc is a dependency of deap
     apt-get install -y pandoc && \
-    pip install essentia
-
-RUN apt-get install -y git-lfs && \
+    apt-get install -y libhunspell-dev && \
+    pip install hunspell && \
+    pip install essentia && \
     /tmp/clean-layer.sh
 
-# vtk with dependencies
-RUN apt-get install -y libgl1-mesa-glx && \
+RUN apt-get install -y git-lfs && \
+    # vtk with dependencies
+    apt-get install -y libgl1-mesa-glx && \
     pip install vtk && \
     # xvfbwrapper with dependencies
     apt-get install -y xvfb && \
@@ -298,7 +293,7 @@ RUN pip install mpld3 \
         path.py \
         Geohash && \
     pip install deap \
-        # b/302136621 Fix eli5 import for learntools, newer version require scikit-learn > 1.3
+        # b/302136621: Fix eli5 import for learntools, newer version require scikit-learn > 1.3
         "tpot==0.12.1" \
         scikit-optimize \
         haversine \
@@ -310,7 +305,6 @@ RUN pip install mpld3 \
         # Useful data exploration libraries (for missing data and generating reports)
         missingno \
         pandas-profiling \
-        s2sphere \
         bayesian-optimization \
         matplotlib-venn \
         pyldavis \
@@ -329,21 +323,17 @@ RUN pip install mpld3 \
         wavio \
         SimpleITK \
         hmmlearn \
-        gplearn \
         squarify \
         fuzzywuzzy \
         python-louvain \
         pyexcel-ods \
         sklearn-pandas \
         stemming \
-        # b/266272046 prophet 1.1.2 breaks the test
-        prophet==1.1.1 \
-        # b/283847935 holidays >0.24 is broken
-        "holidays==0.24" \
+        prophet \
+        holidays \
         holoviews \
         geoviews \
         hypertools \
-        mlens \
         scikit-multilearn \
         cleverhans \
         leven \
@@ -354,7 +344,6 @@ RUN pip install mpld3 \
         plotnine \
         scikit-surprise \
         pymongo \
-        geoplot \
         eli5 \
         kaggle \
         kagglehub \
@@ -362,22 +351,16 @@ RUN pip install mpld3 \
         pytest && \
     /tmp/clean-layer.sh
 
-RUN rm -rf /opt/conda/lib/python3.10/site-packages/numpy-1.23.5.dist-info*
  # Add google PAIR-code Facets
 RUN cd /opt/ && git clone https://github.com/PAIR-code/facets && cd facets/ && jupyter nbextension install facets-dist/ --user && \
     export PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/ && \
-    pip install kmodes --no-dependencies && \
     pip install librosa \
-        polyglot \
         sentencepiece \
         cufflinks \
         lime \
         memory_profiler && \
     /tmp/clean-layer.sh
 
-RUN pip install cython \
-        fasttext && \
-    apt-get install -y libhunspell-dev && pip install hunspell
 RUN pip install annoy \
         category_encoders && \
     # b/183041606#comment5: the Kaggle data proxy doesn't support these APIs. If the library is missing, it falls back to using a regular BigQuery query to fetch data.
@@ -390,7 +373,7 @@ RUN pip install annoy \
         google-cloud-bigquery \
         google-cloud-storage && \
     # Split these installations to avoid `pip._vendor.resolvelib.resolvers.ResolutionTooDeep: 200000`
-    # TODO(b/315753846) Unpin translate package.
+    # b/315753846: Unpin translate package.
     pip install google-cloud-translate==3.12.1 \
         google-cloud-language==2.* \
         google-cloud-videointelligence==2.* \
@@ -405,18 +388,15 @@ RUN pip install annoy \
         # Add Japanese morphological analysis engine
         janome \
         wfdb \
-        vecstack \
         # yellowbrick machine learning visualization library
         yellowbrick \
         mlcrate && \
     /tmp/clean-layer.sh
 
-# b/273059949 The pre-installed nbconvert is slow on html conversions and has to be force-uninstalled.
-# b/274619697 learntools also requires a specific nbconvert right now
+# b/273059949: The pre-installed nbconvert is slow on html conversions and has to be force-uninstalled.
+# b/274619697: learntools also requires a specific nbconvert right now
 RUN rm -rf /opt/conda/lib/python3.10/site-packages/{nbconvert,nbclient,mistune,platformdirs}*
 
-# Fix qgrid by pinning ipywidgets https://github.com/quantopian/qgrid/issues/376
-#        allennlp \
 RUN pip install bleach \
         certifi \
         cycler \
@@ -426,6 +406,7 @@ RUN pip install bleach \
         ipykernel \
         ipython \
         ipython-genutils \
+        # Fix qgrid by pinning ipywidgets https://github.com/quantopian/qgrid/issues/376
         ipywidgets==7.7.1 \
         isoweek \
         jedi \
@@ -447,7 +428,6 @@ RUN pip install bleach \
         pandocfilters \
         pexpect \
         pickleshare \
-        # TODO(b/290035631) unpin when EasyOCR did a release.
         Pillow && \
     # Install openslide and its python binding
     apt-get install -y openslide-tools && \
@@ -484,16 +464,15 @@ RUN python -m spacy download en_core_web_sm && python -m spacy download en_core_
     #
     ###########
 
-RUN rm /opt/conda/lib/python3.10/site-packages/google*/direct_url.json
-RUN rm /opt/conda/lib/python3.10/site-packages/google*/REQUESTED
-
+RUN rm /opt/conda/lib/python3.10/site-packages/google*/direct_url.json && \
+    rm /opt/conda/lib/python3.10/site-packages/google*/REQUESTED
 # dlib has a libmkl incompatibility:
 # test_dlib_face_detector (test_dlib.TestDLib) ... INTEL MKL ERROR: /opt/conda/bin/../lib/libmkl_avx512.so.2: undefined symbol: mkl_sparse_optimize_bsr_trsm_i8.
 # Intel MKL FATAL ERROR: Cannot load libmkl_avx512.so.2 or libmkl_def.so.2.
 # nnabla breaks protobuf compatibiilty:
 RUN pip install flashtext \
         wandb \
-        # b/214080882 blake3 0.3.0 is not compatible with vaex.
+        # b/214080882: blake3 0.3.0 is not compatible with vaex.
         blake3==0.2.1 \
         vaex \
         pyemd \
@@ -506,30 +485,28 @@ RUN pip install flashtext \
         gym \
         pyarabic \
         pandasql \
-	# b/302136621 Fix eli5 import for learntools
+	    # b/302136621: Fix eli5 import for learntools
         scikit-learn==1.2.2 \
-	hpsklearn \
+	    hpsklearn \
         kmapper \
-	# b/329869023 shap 0.45.0 breaks learntools
-        shap==0.44.1 \
+        shap \
         cesium \
         rgf_python \
         jieba  \
-        # ggplot is broken and main repo does not merge and release https://github.com/yhat/ggpy/pull/668
-        https://github.com/hbasria/ggpy/archive/0.11.5.zip \
         tsfresh \
-        pykalman \
         optuna \
         plotly_express \
         albumentations \
         accelerate \
-        # b/290207097 switch back to the pip catalyst package when bug fixed
+        # b/290207097: switch back to the pip catalyst package when bug fixed
         # https://github.com/catalyst-team/catalyst/issues/1440
         git+https://github.com/Philmod/catalyst.git@fix-fp16#egg=catalyst \
         osmnx && \
     apt-get -y install libspatialindex-dev
 
-RUN pip install pytorch-ignite \
+RUN rm -rf /opt/conda/lib/python3.10/site-packages/numpy* && \
+    pip install "numpy==1.26.4" && \
+    pip install pytorch-ignite \
         qgrid \
         bqplot \
         earthengine-api \
@@ -541,7 +518,6 @@ RUN pip install pytorch-ignite \
         # geopandas > v0.14.4 breaks learn tools
         geopandas==v0.14.4 \
         "shapely<2" \
-        vowpalwabbit \
         pydub \
         pydegensac \
         torchmetrics \
@@ -559,7 +535,7 @@ RUN pip install pytorch-ignite \
         openpyxl \
         timm \
         torchinfo && \
-        pip install git+https://github.com/facebookresearch/segment-anything.git && \
+    pip install git+https://github.com/facebookresearch/segment-anything.git && \
     # b/343971718: remove duplicate aiohttp installs, and reinstall it
     rm -rf /opt/conda/lib/python3.10/site-packages/aiohttp* && \
     mamba install --force-reinstall -y aiohttp && \
@@ -605,7 +581,7 @@ RUN pip install --upgrade dask && \
     mkdir -p /etc/ipython/ && echo "c = get_config(); c.IPKernelApp.matplotlib = 'inline'" > /etc/ipython/ipython_config.py && \
     # Temporary patch for broken libpixman 0.38 in conda-forge, symlink to system libpixman 0.34 untile conda package gets updated to 0.38.5 or higher.
     ln -sf /usr/lib/x86_64-linux-gnu/libpixman-1.so.0.34.0 /opt/conda/lib/libpixman-1.so.0.38.0 && \
-    # pin jupyter-server to version 2.12.5; later versions break LSP (b/333854354)
+    # b/333854354: pin jupyter-server to version 2.12.5; later versions break LSP (b/333854354)
     pip install --force-reinstall --no-deps jupyter_server==2.12.5 && \
     /tmp/clean-layer.sh
 
@@ -635,20 +611,6 @@ ADD patches/kaggle_module_resolver.py /opt/conda/lib/python3.10/site-packages/te
 RUN sed -i '/from tensorflow_hub import uncompressed_module_resolver/a from tensorflow_hub import kaggle_module_resolver' /opt/conda/lib/python3.10/site-packages/tensorflow_hub/config.py && \
     sed -i '/_install_default_resolvers()/a \ \ registry.resolver.add_implementation(kaggle_module_resolver.KaggleFileResolver())' /opt/conda/lib/python3.10/site-packages/tensorflow_hub/config.py
 
-# TensorBoard Jupyter extension. Should be replaced with TensorBoard's provided magic once we have
-# worker tunneling support in place.
-# b/139212522 re-enable TensorBoard once solution for slowdown is implemented.
-# ENV JUPYTER_CONFIG_DIR "/root/.jupyter/"
-# RUN pip install jupyter_tensorboard && \
-#     jupyter serverextension enable jupyter_tensorboard && \
-#     jupyter tensorboard enable
-# ADD patches/tensorboard/notebook.py /opt/conda/lib/python3.10/site-packages/tensorboard/notebook.py
-
-# Disable unnecessary jupyter extensions
-#RUN jupyter-nbextension disable nb_conda --py --sys-prefix && \
-#    jupyter-serverextension disable nb_conda --py --sys-prefix && \
-#    python -m nb_conda_kernels.install --disable
-
 # Disable preloaded jupyter modules (they add to startup, and break when they are missing)
 RUN sed -i /bq_stats/d /etc/ipython/ipython_kernel_config.py && \
     sed -i /beatrix/d /etc/ipython/ipython_kernel_config.py && \
@@ -662,10 +624,10 @@ RUN rm /opt/conda/bin/../lib/libcusolver.so.11 && ln -s /usr/local/cuda/lib64/li
 RUN ln -s /usr/local/cuda/lib64/libcusolver.so.11 /opt/conda/bin/../lib/libcusolver.so.11
 {{ end }}
 
-# b/270147159 conda ships with a version of libtinfo which is missing version info causing warnings, replace it with a good version.
+# b/270147159: conda ships with a version of libtinfo which is missing version info causing warnings, replace it with a good version.
 RUN rm /opt/conda/lib/libtinfo.so.6 && ln -s /usr/lib/x86_64-linux-gnu/libtinfo.so.6 /opt/conda/lib/libtinfo.so.6
 
-# b/276358430 fix Jupyter lsp freezing up the jupyter server
+# b/276358430: fix Jupyter lsp freezing up the jupyter server
 RUN pip install "jupyter-lsp==1.5.1"
 
 # Set backend for matplotlib
