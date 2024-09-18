@@ -1,12 +1,12 @@
-ARG BASE_IMAGE_REPO
-ARG BASE_IMAGE_TAG
-ARG CPU_BASE_IMAGE_NAME
-ARG GPU_BASE_IMAGE_NAME
-ARG LIGHTGBM_VERSION
-ARG TORCH_VERSION
-ARG TORCHAUDIO_VERSION
-ARG TORCHVISION_VERSION
-ARG JAX_VERSION
+ARG BASE_IMAGE_REPO \
+    BASE_IMAGE_TAG \
+    CPU_BASE_IMAGE_NAME \
+    GPU_BASE_IMAGE_NAME \
+    LIGHTGBM_VERSION \
+    TORCH_VERSION \
+    TORCHAUDIO_VERSION \
+    TORCHVISION_VERSION \
+    JAX_VERSION
 
 {{ if eq .Accelerator "gpu" }}
 FROM gcr.io/kaggle-images/python-lightgbm-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_TAG}-${LIGHTGBM_VERSION} AS lightgbm_whl
@@ -18,46 +18,45 @@ FROM ${BASE_IMAGE_REPO}/${CPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 {{ end }}
 
 # Ensures shared libraries installed with conda can be found by the dynamic link loader.
-ENV LIBRARY_PATH="$LIBRARY_PATH:/opt/conda/lib"
-ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/conda/lib"
+ENV LIBRARY_PATH="$LIBRARY_PATH:/opt/conda/lib" \
+    LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/conda/lib"
 
 {{ if eq .Accelerator "gpu" }}
-ARG CUDA_MAJOR_VERSION
-ARG CUDA_MINOR_VERSION
-ENV CUDA_MAJOR_VERSION=${CUDA_MAJOR_VERSION}
-ENV CUDA_MINOR_VERSION=${CUDA_MINOR_VERSION}
+ARG CUDA_MAJOR_VERSION \
+    CUDA_MINOR_VERSION
+ENV CUDA_MAJOR_VERSION=${CUDA_MAJOR_VERSION} \
+    CUDA_MINOR_VERSION=${CUDA_MINOR_VERSION}
 # Make sure we are on the right version of CUDA
 RUN update-alternatives --set cuda /usr/local/cuda-$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION
 # NVIDIA binaries from the host are mounted to /opt/bin.
-ENV PATH=/opt/bin:${PATH}
-# Add CUDA stubs to LD_LIBRARY_PATH to support building the GPU image on a CPU machine.
-ENV LD_LIBRARY_PATH_NO_STUBS="$LD_LIBRARY_PATH"
-ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda/lib64/stubs"
+ENV PATH=/opt/bin:${PATH} \
+    # Add CUDA stubs to LD_LIBRARY_PATH to support building the GPU image on a CPU machine.
+    LD_LIBRARY_PATH_NO_STUBS="$LD_LIBRARY_PATH" \
+    LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda/lib64/stubs"
 RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1
 {{ end }}
 
 # Keep these variables in sync if base image is updated.
-ENV TENSORFLOW_VERSION=2.16.1
-# See https://github.com/tensorflow/io#tensorflow-version-compatibility
-ENV TENSORFLOW_IO_VERSION=0.37.0
+ENV TENSORFLOW_VERSION=2.16.1 \
+    # See https://github.com/tensorflow/io#tensorflow-version-compatibility
+    TENSORFLOW_IO_VERSION=0.37.0
 
 # We need to redefine the ARG here to get the ARG value defined above the FROM instruction.
 # See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
-ARG LIGHTGBM_VERSION
-ARG TORCH_VERSION
-ARG TORCHAUDIO_VERSION
-ARG TORCHVISION_VERSION
-ARG JAX_VERSION
+ARG LIGHTGBM_VERSION \
+    TORCH_VERSION \
+    TORCHAUDIO_VERSION \
+    TORCHVISION_VERSION \
+    JAX_VERSION
 
 # Disable pesky logs like: KMP_AFFINITY: pid 6121 tid 6121 thread 0 bound to OS proc set 0
 # See: https://stackoverflow.com/questions/57385766/disable-tensorflow-log-information
-ENV KMP_WARNINGS=0
-# Also make the KMP logs noverbose.
-# https://stackoverflow.com/questions/70250304/stop-tensorflow-from-printing-warning-message
-ENV KMP_SETTINGS=false
-
-# Remove the pip as the root user warning.
-ENV PIP_ROOT_USER_ACTION=ignore
+ENV KMP_WARNINGS=0 \
+    # Also make the KMP logs noverbose.
+    # https://stackoverflow.com/questions/70250304/stop-tensorflow-from-printing-warning-message
+    KMP_SETTINGS=false \
+    # Remove the pip as the root user warning.
+    PIP_ROOT_USER_ACTION=ignore
 
 ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
@@ -201,8 +200,9 @@ RUN pip install \
         keras-nlp && \
     /tmp/clean-layer.sh
 
-ADD patches/keras_internal.py /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras/keras_internal.py
-ADD patches/keras_internal_test.py /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras/keras_internal_test.py
+ADD patches/keras_internal.py \
+    patches/keras_internal_test.py \
+    /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras/
 
 # b/350573866: xgboost v2.1.0 breaks learntools
 RUN apt-get install -y libfreetype6-dev && \
@@ -232,14 +232,9 @@ RUN apt-get install -y libfreetype6-dev && \
     state_union stopwords subjectivity swadesh switchboard tagsets timit toolbox treebank \
     twitter_samples udhr2 udhr unicode_samples universal_tagset universal_treebanks_v20 \
     vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
-    # Stop-words
-    pip install stop-words \
-        scikit-image && \
+    pip install scikit-image && \
+    pip install opencv-contrib-python opencv-python && \
     /tmp/clean-layer.sh
-
-RUN pip install opencv-contrib-python opencv-python && \
-    /tmp/clean-layer.sh
-
 
 RUN pip install cython \
         fasttext \
@@ -258,8 +253,6 @@ RUN pip install cython \
         bokeh \
         numba \
         datashader \
-        # Boruta (python implementation)
-        pysal \
         # b/328788268: libpysal 4.10 seems to fail with "module 'shapely' has no attribute 'Geometry'. Did you mean: 'geometry'"
         "libpysal==4.9.2" \
         # b/276344496: Install specific version of boto3, because 1.26.103 is broken.
@@ -267,9 +260,6 @@ RUN pip install cython \
         Boruta && \
     # Pandoc is a dependency of deap
     apt-get install -y pandoc && \
-    apt-get install -y libhunspell-dev && \
-    pip install hunspell && \
-    pip install essentia && \
     /tmp/clean-layer.sh
 
 RUN apt-get install -y git-lfs && \
@@ -290,8 +280,7 @@ RUN pip install mpld3 \
         nibabel \
         imgaug \
         preprocessing \
-        path.py \
-        Geohash && \
+        path.py && \
     pip install deap \
         # b/302136621: Fix eli5 import for learntools, newer version require scikit-learn > 1.3
         "tpot==0.12.1" \
@@ -300,7 +289,6 @@ RUN pip install mpld3 \
         toolz cytoolz \
         plotly \
         hyperopt \
-        fitter \
         langid \
         # Useful data exploration libraries (for missing data and generating reports)
         missingno \
@@ -314,28 +302,20 @@ RUN pip install mpld3 \
         ecos \
         CVXcanon \
         pymc3 \
-        imagecodecs \
         tifffile \
-        spectral \
-        descartes \
         geojson \
         pydicom \
         wavio \
         SimpleITK \
-        hmmlearn \
         squarify \
         fuzzywuzzy \
         python-louvain \
         pyexcel-ods \
         sklearn-pandas \
-        stemming \
         prophet \
         holidays \
         holoviews \
-        geoviews \
-        hypertools \
         scikit-multilearn \
-        cleverhans \
         leven \
         catboost \
         folium \
@@ -379,15 +359,11 @@ RUN pip install annoy \
         google-cloud-videointelligence==2.* \
         google-cloud-vision==2.* \
         protobuf==3.20.3 \
-        ortools \
-        scattertext \
         # Pandas data reader
         pandas-datareader \
-        wordsegment \
         emoji \
         # Add Japanese morphological analysis engine
         janome \
-        wfdb \
         # yellowbrick machine learning visualization library
         yellowbrick \
         mlcrate && \
@@ -449,7 +425,6 @@ RUN pip install bleach \
         widgetsnbextension \
         # Require pyarrow newer than https://github.com/advisories/GHSA-5wvp-7f3h-6wmm
         {{ if eq .Accelerator "gpu" }} pyarrow {{ else }} "pyarrow>=14.0.1" {{ end }} \
-        feather-format \
         fastai
 
 RUN python -m spacy download en_core_web_sm && python -m spacy download en_core_web_lg && \
@@ -470,8 +445,7 @@ RUN rm /opt/conda/lib/python3.10/site-packages/google*/direct_url.json && \
 # test_dlib_face_detector (test_dlib.TestDLib) ... INTEL MKL ERROR: /opt/conda/bin/../lib/libmkl_avx512.so.2: undefined symbol: mkl_sparse_optimize_bsr_trsm_i8.
 # Intel MKL FATAL ERROR: Cannot load libmkl_avx512.so.2 or libmkl_def.so.2.
 # nnabla breaks protobuf compatibiilty:
-RUN pip install flashtext \
-        wandb \
+RUN pip install wandb \
         # b/214080882: blake3 0.3.0 is not compatible with vaex.
         blake3==0.2.1 \
         vaex \
@@ -487,9 +461,8 @@ RUN pip install flashtext \
         pandasql \
 	    # b/302136621: Fix eli5 import for learntools
         scikit-learn==1.2.2 \
-	    hpsklearn \
-        kmapper \
-        shap \
+	    # b/329869023 shap 0.45.0 breaks learntools
+        shap==0.44.1 \
         cesium \
         rgf_python \
         jieba  \
@@ -497,11 +470,11 @@ RUN pip install flashtext \
         optuna \
         plotly_express \
         albumentations \
+        Rtree \
         accelerate \
         # b/290207097: switch back to the pip catalyst package when bug fixed
         # https://github.com/catalyst-team/catalyst/issues/1440
-        git+https://github.com/Philmod/catalyst.git@fix-fp16#egg=catalyst \
-        osmnx && \
+        git+https://github.com/Philmod/catalyst.git@fix-fp16#egg=catalyst && \
     apt-get -y install libspatialindex-dev
 
 RUN rm -rf /opt/conda/lib/python3.10/site-packages/numpy* && \
@@ -562,12 +535,12 @@ RUN apt-get install tesseract-ocr -y && \
         pdf2image \
         PyPDF && \
     /tmp/clean-layer.sh
-ENV TESSERACT_PATH=/usr/bin/tesseract
 
-# For Facets
-ENV PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/
-# For Theano with MKL
-ENV MKL_THREADING_LAYER=GNU
+ENV TESSERACT_PATH=/usr/bin/tesseract \
+    # For Facets
+    PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/ \
+    # For Theano with MKL
+    MKL_THREADING_LAYER=GNU
 
 # Temporary fixes and patches
 # Temporary patch for Dask getting downgraded, which breaks Keras
@@ -596,13 +569,15 @@ RUN mkdir -p ~/src && git clone https://github.com/SohierDane/BigQuery_Helper ~/
 
 # Add BigQuery client proxy settings
 ENV PYTHONUSERBASE "/root/.local"
-ADD patches/kaggle_gcp.py /root/.local/lib/python3.10/site-packages/kaggle_gcp.py
-ADD patches/kaggle_secrets.py /root/.local/lib/python3.10/site-packages/kaggle_secrets.py
-ADD patches/kaggle_session.py /root/.local/lib/python3.10/site-packages/kaggle_session.py
-ADD patches/kaggle_web_client.py /root/.local/lib/python3.10/site-packages/kaggle_web_client.py
-ADD patches/kaggle_datasets.py /root/.local/lib/python3.10/site-packages/kaggle_datasets.py
-ADD patches/log.py /root/.local/lib/python3.10/site-packages/log.py
-ADD patches/sitecustomize.py /root/.local/lib/python3.10/site-packages/sitecustomize.py
+ADD patches/kaggle_gcp.py \
+    patches/kaggle_secrets.py \
+    patches/kaggle_session.py \
+    patches/kaggle_web_client.py \ 
+    patches/kaggle_datasets.py \
+    patches/log.py \
+    patches/sitecustomize.py \
+    /root/.local/lib/python3.10/site-packages/
+
 # Override default imagemagick policies
 ADD patches/imagemagick-policy.xml /etc/ImageMagick-6/policy.xml
 
@@ -631,30 +606,30 @@ RUN rm /opt/conda/lib/libtinfo.so.6 && ln -s /usr/lib/x86_64-linux-gnu/libtinfo.
 RUN pip install "jupyter-lsp==1.5.1"
 
 # Set backend for matplotlib
-ENV MPLBACKEND "agg"
+ENV MPLBACKEND="agg" \  
+    # Set LC_ALL
+    # https://github.com/explosion/spaCy/issues/12872#issuecomment-1661847588
+    LC_ALL="POSIX"
 
-# Set LC_ALL
-# https://github.com/explosion/spaCy/issues/12872#issuecomment-1661847588
-ENV LC_ALL "POSIX"
+ARG GIT_COMMIT=unknown \
+    BUILD_DATE=unknown
 
-ARG GIT_COMMIT=unknown
-ARG BUILD_DATE=unknown
+LABEL git-commit=$GIT_COMMIT \
+    build-date=$BUILD_DATE
 
-LABEL git-commit=$GIT_COMMIT
-LABEL build-date=$BUILD_DATE
-ENV GIT_COMMIT=${GIT_COMMIT}
-ENV BUILD_DATE=${BUILD_DATE}
+ENV GIT_COMMIT=${GIT_COMMIT} \
+    BUILD_DATE=${BUILD_DATE}
 
-LABEL tensorflow-version=$TENSORFLOW_VERSION
-# Used in the Jenkins `Docker GPU Build` step to restrict the images being pruned.
-LABEL kaggle-lang=python
+LABEL tensorflow-version=$TENSORFLOW_VERSION \
+    # Used in the Jenkins `Docker GPU Build` step to restrict the images being pruned.
+    kaggle-lang=python
 
 # Correlate current release with the git hash inside the kernel editor by running `!cat /etc/git_commit`.
 RUN echo "$GIT_COMMIT" > /etc/git_commit && echo "$BUILD_DATE" > /etc/build_date
 
 {{ if eq .Accelerator "gpu" }}
 # Remove the CUDA stubs.
-ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH_NO_STUBS"
-# Add the CUDA home.
-ENV CUDA_HOME=/usr/local/cuda
+ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH_NO_STUBS" \
+    # Add the CUDA home.
+    CUDA_HOME=/usr/local/cuda
 {{ end }}
