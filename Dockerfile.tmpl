@@ -172,7 +172,10 @@ RUN export PATH=/usr/local/cuda/bin:$PATH && \
 RUN JAXVER=$(pip freeze | grep -e "^jax==") && \
     pip install --upgrade \
         "matplotlib<3.8.0" \
+        # ipympl adds interactive widget support for matplotlib
+        ipympl==0.7.0 \
         "seaborn==0.12.2" \
+        pyupset \
         python-dateutil dask dask-expr igraph \
         pyyaml joblib geopy mne pyshp \
         pandas \
@@ -446,11 +449,7 @@ RUN rm /opt/conda/lib/python3.10/site-packages/google*/direct_url.json && \
 # Intel MKL FATAL ERROR: Cannot load libmkl_avx512.so.2 or libmkl_def.so.2.
 # nnabla breaks protobuf compatibiilty:
 RUN pip install wandb \
-        # b/214080882: blake3 0.3.0 is not compatible with vaex.
-        blake3==0.2.1 \
-        vaex \
         pyemd \
-        pyupset \
         pympler \
         featuretools \
         #-e git+https://github.com/SohierDane/BigQuery_Helper#egg=bq_helper \
@@ -471,10 +470,7 @@ RUN pip install wandb \
         plotly_express \
         albumentations \
         Rtree \
-        accelerate \
-        # b/290207097: switch back to the pip catalyst package when bug fixed
-        # https://github.com/catalyst-team/catalyst/issues/1440
-        git+https://github.com/Philmod/catalyst.git@fix-fp16#egg=catalyst && \
+        accelerate && \
     apt-get -y install libspatialindex-dev
 
 RUN rm -rf /opt/conda/lib/python3.10/site-packages/numpy* && \
@@ -501,8 +497,6 @@ RUN rm -rf /opt/conda/lib/python3.10/site-packages/numpy* && \
         # pycrypto is used by competitions team.
         pycryptodome \
         easyocr \
-        # ipympl adds interactive widget support for matplotlib
-        ipympl==0.7.0 \
         onnx \
         tables \
         openpyxl \
