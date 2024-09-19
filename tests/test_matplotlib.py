@@ -9,6 +9,7 @@ import numpy as np
 
 class TestMatplotlib(unittest.TestCase):
     def test_version(self):
+        # b/308525631: newer versions of Matplotlib causes learntools to fail
         self.assertLess(StrictVersion(matplotlib.__version__), StrictVersion("3.8.0"))
 
     def test_plot(self):
