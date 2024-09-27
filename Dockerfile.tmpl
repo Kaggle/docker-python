@@ -323,7 +323,6 @@ RUN pip install mpld3 \
         catboost \
         folium \
         scikit-plot \
-        hvplot \
         fury dipy \
         plotnine \
         scikit-surprise \
@@ -485,6 +484,7 @@ RUN rm -rf /opt/conda/lib/python3.10/site-packages/numpy* && \
         s3fs \
         gcsfs \
         kaggle-environments \
+	hvplot \
         # geopandas > v0.14.4 breaks learn tools
         geopandas==v0.14.4 \
         "shapely<2" \
