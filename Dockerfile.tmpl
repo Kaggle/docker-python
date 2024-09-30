@@ -274,8 +274,6 @@ RUN apt-get install -y git-lfs && \
     pip install xvfbwrapper && \
     /tmp/clean-layer.sh
 
-RUN rm -rf /opt/conda/lib/python3.10/site-packages/Shapely-1.8.5.post1.dist-info/
-
 RUN pip install mpld3 \
         gpxpy \
         arrow \
@@ -471,9 +469,8 @@ RUN pip install wandb \
         albumentations \
         Rtree \
         accelerate && \
-    apt-get -y install libspatialindex-dev
-
-RUN rm -rf /opt/conda/lib/python3.10/site-packages/numpy* && \
+        apt-get -y install libspatialindex-dev && \
+        rm -rf /opt/conda/lib/python3.10/site-packages/numpy* && \
     pip install "numpy==1.26.4" && \
     pip install pytorch-ignite \
         qgrid \
@@ -484,7 +481,6 @@ RUN rm -rf /opt/conda/lib/python3.10/site-packages/numpy* && \
         s3fs \
         gcsfs \
         kaggle-environments \
-	hvplot \
         # geopandas > v0.14.4 breaks learn tools
         geopandas==v0.14.4 \
         "shapely<2" \
@@ -497,7 +493,7 @@ RUN rm -rf /opt/conda/lib/python3.10/site-packages/numpy* && \
         flask \
         # pycrypto is used by competitions team.
         pycryptodome \
-	nbdev \
+        nbdev \
         easyocr \
         onnx \
         tables \
@@ -580,10 +576,9 @@ ADD patches/imagemagick-policy.xml /etc/ImageMagick-6/policy.xml
 # Add Kaggle module resolver
 ADD patches/kaggle_module_resolver.py /opt/conda/lib/python3.10/site-packages/tensorflow_hub/kaggle_module_resolver.py
 RUN sed -i '/from tensorflow_hub import uncompressed_module_resolver/a from tensorflow_hub import kaggle_module_resolver' /opt/conda/lib/python3.10/site-packages/tensorflow_hub/config.py && \
-    sed -i '/_install_default_resolvers()/a \ \ registry.resolver.add_implementation(kaggle_module_resolver.KaggleFileResolver())' /opt/conda/lib/python3.10/site-packages/tensorflow_hub/config.py
-
-# Disable preloaded jupyter modules (they add to startup, and break when they are missing)
-RUN sed -i /bq_stats/d /etc/ipython/ipython_kernel_config.py && \
+    sed -i '/_install_default_resolvers()/a \ \ registry.resolver.add_implementation(kaggle_module_resolver.KaggleFileResolver())' /opt/conda/lib/python3.10/site-packages/tensorflow_hub/config.py && \
+    # Disable preloaded jupyter modules (they add to startup, and break when they are missing)
+    sed -i /bq_stats/d /etc/ipython/ipython_kernel_config.py && \
     sed -i /beatrix/d /etc/ipython/ipython_kernel_config.py && \
     sed -i /bigquery/d /etc/ipython/ipython_kernel_config.py && \
     sed -i /sql/d /etc/ipython/ipython_kernel_config.py
@@ -596,10 +591,9 @@ RUN ln -s /usr/local/cuda/lib64/libcusolver.so.11 /opt/conda/bin/../lib/libcusol
 {{ end }}
 
 # b/270147159: conda ships with a version of libtinfo which is missing version info causing warnings, replace it with a good version.
-RUN rm /opt/conda/lib/libtinfo.so.6 && ln -s /usr/lib/x86_64-linux-gnu/libtinfo.so.6 /opt/conda/lib/libtinfo.so.6
-
-# b/276358430: fix Jupyter lsp freezing up the jupyter server
-RUN pip install "jupyter-lsp==1.5.1"
+RUN rm /opt/conda/lib/libtinfo.so.6 && ln -s /usr/lib/x86_64-linux-gnu/libtinfo.so.6 /opt/conda/lib/libtinfo.so.6 && \
+    # b/276358430: fix Jupyter lsp freezing up the jupyter server
+    pip install "jupyter-lsp==1.5.1"
 
 # Set backend for matplotlib
 ENV MPLBACKEND="agg" \  
