@@ -5,6 +5,13 @@ import fastai
 from fastai.tabular.all import *
 
 class TestFastAI(unittest.TestCase):
+    # Basic import
+    def test_basic(self):
+        import fastai
+        import fastcore
+        import fastprogress
+        import fastdownload
+
     def test_has_version(self):
         self.assertGreater(len(fastai.__version__), 2)
     

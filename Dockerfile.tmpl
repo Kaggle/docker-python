@@ -210,6 +210,8 @@ ADD patches/keras_internal.py \
 # b/350573866: xgboost v2.1.0 breaks learntools
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
+    rm -rf /opt/conda/lib/python3.10/site-packages/numpy* && \
+    pip install "numpy==1.26.4" && \
     pip install gensim \
         textblob \
         wordcloud \
@@ -425,8 +427,7 @@ RUN pip install bleach \
         webencodings \
         widgetsnbextension \
         # Require pyarrow newer than https://github.com/advisories/GHSA-5wvp-7f3h-6wmm
-        {{ if eq .Accelerator "gpu" }} pyarrow {{ else }} "pyarrow>=14.0.1" {{ end }} \
-        fastai
+        {{ if eq .Accelerator "gpu" }} pyarrow {{ else }} "pyarrow>=14.0.1" {{ end }} 
 
 RUN python -m spacy download en_core_web_sm && python -m spacy download en_core_web_lg && \
     apt-get update && apt-get install -y ffmpeg && \
@@ -470,7 +471,8 @@ RUN pip install wandb \
         Rtree \
         accelerate && \
         apt-get -y install libspatialindex-dev && \
-        rm -rf /opt/conda/lib/python3.10/site-packages/numpy* && \
+    # b/370860329: newer versions are not capable with current tensorflow
+    rm -rf /opt/conda/lib/python3.10/site-packages/numpy* && \
     pip install "numpy==1.26.4" && \
     pip install pytorch-ignite \
         qgrid \
@@ -501,6 +503,8 @@ RUN pip install wandb \
         timm \
         torchinfo && \
     pip install git+https://github.com/facebookresearch/segment-anything.git && \
+    # b/370860329: newer versions are not capable with current tensorflow
+    pip install --no-dependencies fastai fastdownload && \
     # b/343971718: remove duplicate aiohttp installs, and reinstall it
     rm -rf /opt/conda/lib/python3.10/site-packages/aiohttp* && \
     mamba install --force-reinstall -y aiohttp && \
