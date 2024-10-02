@@ -1,9 +1,15 @@
 import unittest
 
+from distutils.version import StrictVersion
+
 import numpy as np
 from numpy.distutils.system_info import get_info
 
-class TestNumpy(unittest.TestCase):    
+class TestNumpy(unittest.TestCase):   
+    def test_version(self):
+        # b/370860329: newer versions are not capable with current tensorflow
+        self.assertEqual(StrictVersion(np.__version__), StrictVersion("1.26.4")) 
+
     def test_array(self):
         array = np.array([1, 3])
 
