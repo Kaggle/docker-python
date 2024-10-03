@@ -82,6 +82,7 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
 ENV PROJ_DATA=/opt/conda/share/proj
 
 # Install micromamba, setup channels, and replace conda with micromamba
+ENV MAMBA_ROOT_PREFIX=/opt/conda
 RUN curl -L "https://micro.mamba.pm/install.sh" -o /tmp/micromamba-install.sh \
     && bash /tmp/micromamba-install.sh \
     && rm /tmp/micromamba-install.sh \
@@ -90,7 +91,8 @@ RUN curl -L "https://micro.mamba.pm/install.sh" -o /tmp/micromamba-install.sh \
     && micromamba config append channels conda-forge \
     && micromamba config append channels nvidia \
     && micromamba config append channels rapidsai \
-    && micromamba config set channel_priority strict
+    && micromamba config set channel_priority strict \
+    && python -m nb_conda_kernels.install --disable
 
 # Install conda packages not available on pip.
 # When using pip in a conda environment, conda commands should be ran first and then
