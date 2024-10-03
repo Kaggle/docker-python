@@ -81,17 +81,21 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
 # b/128333086: Set PROJ_DATA to points to the proj4 cartographic library.
 ENV PROJ_DATA=/opt/conda/share/proj
 
+# Install micromamba, setup channels, and replace conda with micromamba
+RUN curl -L "https://micro.mamba.pm/install.sh" -o /tmp/micromamba-install.sh \
+    && bash /tmp/micromamba-install.sh \
+    && rm /tmp/micromamba-install.sh \
+    && mv ~/.local/bin/micromamba /usr/bin/micromamba \
+    && (!(which conda) || cp /usr/bin/micromamba $(which conda)) \
+    && micromamba config append channels conda-forge \
+    && micromamba config append channels nvidia \
+    && micromamba config append channels rapidsai \
+    && micromamba config set channel_priority strict
+
 # Install conda packages not available on pip.
 # When using pip in a conda environment, conda commands should be ran first and then
 # the remaining pip commands: https://www.anaconda.com/using-pip-in-a-conda-environment/
-RUN conda config --add channels nvidia && \
-    conda config --add channels rapidsai && \
-    conda config --set solver libmamba && \
-    # b/299991198: remove curl/libcurl install once DLVM base image includes version >= 7.86
-    conda install -c conda-forge mamba curl libcurl && \
-    # Base image channel order: conda-forge (highest priority), defaults.
-    # End state: rapidsai (highest priority), nvidia, conda-forge, defaults.
-    mamba install -y mkl cartopy imagemagick pyproj "shapely<2" && \
+RUN micromamba install -y mkl cartopy imagemagick pyproj "shapely<2" && \
     rm -rf /opt/conda/lib/python3.10/site-packages/pyproj/proj_dir/ && \
     /tmp/clean-layer.sh
 
@@ -100,8 +104,8 @@ RUN conda config --add channels nvidia && \
 # b/341938540: unistall grpc-cpp to allow >=v24.4 cudf and cuml to be installed.
 {{ if eq .Accelerator "gpu" }}
 RUN pip uninstall -y pyarrow && \
-    mamba remove -y --force grpc-cpp && \
-    mamba install -y -c conda-forge spacy cudf>=24.4 cuml>=24.4 cupy cuda-version=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
+    micromamba remove -y --force grpc-cpp && \
+    micromamba install -y -c conda-forge spacy cudf>=24.4 cuml>=24.4 cupy cuda-version=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
     /tmp/clean-layer.sh
 {{ else }}
 RUN pip install spacy && \
@@ -114,7 +118,7 @@ RUN pip install spacy && \
 COPY --from=torch_whl /tmp/whl/*.whl /tmp/torch/
 # b/356397043: We are currently using cuda 12.3,
 # but magma-cuda121 is the latest compatible version 
-RUN mamba install -y -c pytorch magma-cuda121 && \
+RUN micromamba install -y -c pytorch magma-cuda121 && \
     pip install /tmp/torch/*.whl && \
     sudo apt -y install libsox-dev && \
     rm -rf /tmp/torch && \
@@ -507,7 +511,7 @@ RUN pip install wandb \
     pip install --no-dependencies fastai fastdownload && \
     # b/343971718: remove duplicate aiohttp installs, and reinstall it
     rm -rf /opt/conda/lib/python3.10/site-packages/aiohttp* && \
-    mamba install --force-reinstall -y aiohttp && \
+    micromamba install --force-reinstall -y aiohttp && \
     /tmp/clean-layer.sh
 
 # Download base easyocr models.
