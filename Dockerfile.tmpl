@@ -106,8 +106,7 @@ RUN micromamba install -y mkl cartopy imagemagick pyproj "shapely<2" && \
 # b/341938540: unistall grpc-cpp to allow >=v24.4 cudf and cuml to be installed.
 {{ if eq .Accelerator "gpu" }}
 RUN pip uninstall -y pyarrow && \
-    micromamba remove -y --force grpc-cpp && \
-    micromamba install -y -c conda-forge spacy cudf>=24.4 cuml>=24.4 cupy cuda-version=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
+    micromamba install -y spacy cudf>=24.4 cuml>=24.4 cupy cuda-version=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
     /tmp/clean-layer.sh
 {{ else }}
 RUN pip install spacy && \
