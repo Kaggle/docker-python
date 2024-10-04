@@ -88,10 +88,10 @@ RUN curl -L "https://micro.mamba.pm/install.sh" -o /tmp/micromamba-install.sh \
     && rm /tmp/micromamba-install.sh \
     && mv ~/.local/bin/micromamba /usr/bin/micromamba \
     && (!(which conda) || cp /usr/bin/micromamba $(which conda)) \
-    && micromamba config append channels conda-forge \
     && micromamba config append channels nvidia \
     && micromamba config append channels rapidsai \
-    && micromamba config set channel_priority strict \
+    && micromamba config append channels conda-forge \
+    && micromamba config set channel_priority flexible \
     && python -m nb_conda_kernels.install --disable
 
 # Install conda packages not available on pip.
@@ -106,7 +106,7 @@ RUN micromamba install -y mkl cartopy imagemagick pyproj "shapely<2" && \
 # b/341938540: unistall grpc-cpp to allow >=v24.4 cudf and cuml to be installed.
 {{ if eq .Accelerator "gpu" }}
 RUN pip uninstall -y pyarrow && \
-    micromamba install -y spacy cudf>=24.4 cuml>=24.4 cupy cuda-version=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
+    micromamba install -vvvy spacy cudf>=24.4 cuml>=24.4 cupy cuda-version=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
     /tmp/clean-layer.sh
 {{ else }}
 RUN pip install spacy && \
