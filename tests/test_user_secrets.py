@@ -137,6 +137,14 @@ class TestUserSecrets(unittest.TestCase):
                           '/requests/GetUserSecretByLabelRequest', {'Label': "__gcloud_sdk_auth__"},
                           success=False)
 
+
+
+
+
+
+
+
+
     def test_set_gcloud_credentials_succeeds(self):
         secret = '{"client_id":"gcloud","type":"authorized_user","refresh_token":"refresh_token"}'
         project = 'foo'
@@ -165,6 +173,23 @@ class TestUserSecrets(unittest.TestCase):
                 self.assertEqual(secret, '\n'.join(f.readlines()))
 
         self._test_client(test_fn, '/requests/GetUserSecretByLabelRequest', {'Label': "__gcloud_sdk_auth__"}, secret=secret)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     def test_set_tensorflow_credential(self):
         secret = '{"client_id":"gcloud","type":"authorized_user","refresh_token":"refresh_token"}'
