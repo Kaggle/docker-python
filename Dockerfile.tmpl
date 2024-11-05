@@ -6,16 +6,17 @@ ARG BASE_IMAGE_REPO \
     TORCH_VERSION \
     TORCHAUDIO_VERSION \
     TORCHVISION_VERSION \
-    JAX_VERSION
+    JAX_VERSION \
+    COLAB_IMAGE_REPO \
+    COLAB_IMAGE_NAME \
+    COLAB_IMAGE_TAG
 
 {{ if eq .Accelerator "gpu" }}
 FROM gcr.io/kaggle-images/python-lightgbm-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_TAG}-${LIGHTGBM_VERSION} AS lightgbm_whl
 FROM gcr.io/kaggle-images/python-torch-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_TAG}-${TORCH_VERSION} AS torch_whl
 FROM gcr.io/kaggle-images/python-jaxlib-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_TAG}-${JAX_VERSION} AS jaxlib_whl
-FROM ${BASE_IMAGE_REPO}/${GPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
-{{ else }}
-FROM ${BASE_IMAGE_REPO}/${CPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 {{ end }}
+FROM ${COLAB_IMAGE_REPO}/${COLAB_IMAGE_NAME}:${COLAB_IMAGE_TAG}
 
 # Ensures shared libraries installed with conda can be found by the dynamic link loader.
 ENV LIBRARY_PATH="$LIBRARY_PATH:/opt/conda/lib" \
@@ -68,6 +69,7 @@ RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --
 
 # Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
 # as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
+ENV PATH /opt/conda/bin:$PATH
 RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list && \
     apt-get update --allow-releaseinfo-change && \
     # Needed by lightGBM (GPU build)
@@ -76,6 +78,10 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     # b/182601974: ssh client was removed from the base image but is required for packages such as stable-baselines.
     apt-get install -y openssh-client && \
     apt-get install -y graphviz && pip install graphviz && \
+    apt-get install -y wget vim bzip2 && \
+    wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py310_24.9.2-0-Linux-x86_64.sh -O ~/miniconda.sh && \
+    bash ~/miniconda.sh -b -p /opt/conda && \
+    rm ~/miniconda.sh && \
     /tmp/clean-layer.sh
 
 # b/128333086: Set PROJ_DATA to points to the proj4 cartographic library.
@@ -91,8 +97,7 @@ RUN curl -L "https://micro.mamba.pm/install.sh" -o /tmp/micromamba-install.sh \
     && micromamba config append channels nvidia \
     && micromamba config append channels rapidsai \
     && micromamba config append channels conda-forge \
-    && micromamba config set channel_priority flexible \
-    && python -m nb_conda_kernels.install --disable
+    && micromamba config set channel_priority flexible
 
 # Install conda packages not available on pip.
 # When using pip in a conda environment, conda commands should be ran first and then
@@ -167,7 +172,6 @@ RUN pip install jax[cpu] && \
 RUN export PATH=/usr/local/cuda/bin:$PATH && \
     export CUDA_ROOT=/usr/local/cuda && \
     pip install pycuda \
-        pynvrtc \
         pynvml && \
     /tmp/clean-layer.sh
 {{ end }}
@@ -241,7 +245,7 @@ RUN apt-get install -y libfreetype6-dev && \
     sentiwordnet shakespeare sinica_treebank smultron snowball_data spanish_grammars \
     state_union stopwords subjectivity swadesh switchboard tagsets timit toolbox treebank \
     twitter_samples udhr2 udhr unicode_samples universal_tagset universal_treebanks_v20 \
-    vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe && \
+    vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe || if [[ $? -eq 141 ]]; then true; else exit $?; fi && \
     pip install scikit-image && \
     pip install opencv-contrib-python opencv-python && \
     /tmp/clean-layer.sh
@@ -565,7 +569,7 @@ RUN mkdir -p ~/src && git clone https://github.com/SohierDane/BigQuery_Helper ~/
     mv ~/src/BigQuery_Helper/bq_helper.py ~/src/BigQuery_Helper/bq_helper/__init__.py && \
     mv ~/src/BigQuery_Helper/test_helper.py ~/src/BigQuery_Helper/bq_helper/ && \
     sed -i 's/)/packages=["bq_helper"])/g' ~/src/BigQuery_Helper/setup.py && \
-    pip install -e ~/src/BigQuery_Helper && \
+    pip install --use-pep517 -e ~/src/BigQuery_Helper && \
     /tmp/clean-layer.sh
 
 # Add BigQuery client proxy settings
@@ -585,12 +589,7 @@ ADD patches/imagemagick-policy.xml /etc/ImageMagick-6/policy.xml
 # Add Kaggle module resolver
 ADD patches/kaggle_module_resolver.py /opt/conda/lib/python3.10/site-packages/tensorflow_hub/kaggle_module_resolver.py
 RUN sed -i '/from tensorflow_hub import uncompressed_module_resolver/a from tensorflow_hub import kaggle_module_resolver' /opt/conda/lib/python3.10/site-packages/tensorflow_hub/config.py && \
-    sed -i '/_install_default_resolvers()/a \ \ registry.resolver.add_implementation(kaggle_module_resolver.KaggleFileResolver())' /opt/conda/lib/python3.10/site-packages/tensorflow_hub/config.py && \
-    # Disable preloaded jupyter modules (they add to startup, and break when they are missing)
-    sed -i /bq_stats/d /etc/ipython/ipython_kernel_config.py && \
-    sed -i /beatrix/d /etc/ipython/ipython_kernel_config.py && \
-    sed -i /bigquery/d /etc/ipython/ipython_kernel_config.py && \
-    sed -i /sql/d /etc/ipython/ipython_kernel_config.py
+    sed -i '/_install_default_resolvers()/a \ \ registry.resolver.add_implementation(kaggle_module_resolver.KaggleFileResolver())' /opt/conda/lib/python3.10/site-packages/tensorflow_hub/config.py
 
 # Force only one libcusolver
 {{ if eq .Accelerator "gpu" }}
@@ -632,3 +631,4 @@ ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH_NO_STUBS" \
     # Add the CUDA home.
     CUDA_HOME=/usr/local/cuda
 {{ end }}
+ENTRYPOINT ["/usr/bin/env"]
