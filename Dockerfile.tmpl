@@ -98,7 +98,7 @@ RUN curl -L "https://micro.mamba.pm/install.sh" -o /tmp/micromamba-install.sh \
 # When using pip in a conda environment, conda commands should be ran first and then
 # the remaining pip commands: https://www.anaconda.com/using-pip-in-a-conda-environment/
 RUN micromamba install -y mkl cartopy imagemagick pyproj "shapely<2" && \
-    rm -rf /opt/conda/lib/python3.10/site-packages/pyproj/proj_dir/ && \
+    rm -rf /opt/conda/lib/python3.7/site-packages/pyproj/proj_dir/ && \
     /tmp/clean-layer.sh
 
 # Install spacy
@@ -210,12 +210,12 @@ RUN pip install \
 
 ADD patches/keras_internal.py \
     patches/keras_internal_test.py \
-    /opt/conda/lib/python3.10/site-packages/tensorflow_decision_forests/keras/
+    /opt/conda/lib/python3.7/site-packages/tensorflow_decision_forests/keras/
 
 # b/350573866: xgboost v2.1.0 breaks learntools
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
-    rm -rf /opt/conda/lib/python3.10/site-packages/numpy* && \
+    rm -rf /opt/conda/lib/python3.7/site-packages/numpy* && \
     pip install "numpy==1.26.4" && \
     pip install gensim \
         textblob \
@@ -379,7 +379,7 @@ RUN pip install annoy \
 
 # b/273059949: The pre-installed nbconvert is slow on html conversions and has to be force-uninstalled.
 # b/274619697: learntools also requires a specific nbconvert right now
-RUN rm -rf /opt/conda/lib/python3.10/site-packages/{nbconvert,nbclient,mistune,platformdirs}*
+RUN rm -rf /opt/conda/lib/python3.7/site-packages/{nbconvert,nbclient,mistune,platformdirs}*
 
 RUN pip install bleach \
         certifi \
@@ -446,8 +446,8 @@ RUN python -m spacy download en_core_web_sm && python -m spacy download en_core_
     #
     ###########
 
-RUN rm /opt/conda/lib/python3.10/site-packages/google*/direct_url.json && \
-    rm /opt/conda/lib/python3.10/site-packages/google*/REQUESTED
+RUN rm /opt/conda/lib/python3.7/site-packages/google*/direct_url.json && \
+    rm /opt/conda/lib/python3.7/site-packages/google*/REQUESTED
 # dlib has a libmkl incompatibility:
 # test_dlib_face_detector (test_dlib.TestDLib) ... INTEL MKL ERROR: /opt/conda/bin/../lib/libmkl_avx512.so.2: undefined symbol: mkl_sparse_optimize_bsr_trsm_i8.
 # Intel MKL FATAL ERROR: Cannot load libmkl_avx512.so.2 or libmkl_def.so.2.
@@ -477,7 +477,7 @@ RUN pip install wandb \
         accelerate && \
         apt-get -y install libspatialindex-dev && \
     # b/370860329: newer versions are not capable with current tensorflow
-    rm -rf /opt/conda/lib/python3.10/site-packages/numpy* && \
+    rm -rf /opt/conda/lib/python3.7/site-packages/numpy* && \
     pip install "numpy==1.26.4" && \
     pip install pytorch-ignite \
         qgrid \
@@ -511,7 +511,7 @@ RUN pip install wandb \
     # b/370860329: newer versions are not capable with current tensorflow
     pip install --no-dependencies fastai fastdownload && \
     # b/343971718: remove duplicate aiohttp installs, and reinstall it
-    rm -rf /opt/conda/lib/python3.10/site-packages/aiohttp* && \
+    rm -rf /opt/conda/lib/python3.7/site-packages/aiohttp* && \
     micromamba install --force-reinstall -y aiohttp && \
     /tmp/clean-layer.sh
 
@@ -550,7 +550,7 @@ RUN pip install --upgrade dask && \
     mkdir -p /root/.jupyter && touch /root/.jupyter/jupyter_nbconvert_config.py && touch /root/.jupyter/migrated && \
     mkdir -p /.jupyter && touch /.jupyter/jupyter_nbconvert_config.py && touch /.jupyter/migrated && \
     # Stop Matplotlib printing junk to the console on first load
-    sed -i "s/^.*Matplotlib is building the font cache using fc-list.*$/# Warning removed by Kaggle/g" /opt/conda/lib/python3.10/site-packages/matplotlib/font_manager.py && \
+    sed -i "s/^.*Matplotlib is building the font cache using fc-list.*$/# Warning removed by Kaggle/g" /opt/conda/lib/python3.7/site-packages/matplotlib/font_manager.py && \
     # Make matplotlib output in Jupyter notebooks display correctly
     mkdir -p /etc/ipython/ && echo "c = get_config(); c.IPKernelApp.matplotlib = 'inline'" > /etc/ipython/ipython_config.py && \
     # Temporary patch for broken libpixman 0.38 in conda-forge, symlink to system libpixman 0.34 untile conda package gets updated to 0.38.5 or higher.
@@ -577,15 +577,15 @@ ADD patches/kaggle_gcp.py \
     patches/kaggle_datasets.py \
     patches/log.py \
     patches/sitecustomize.py \
-    /root/.local/lib/python3.10/site-packages/
+    /root/.local/lib/python3.7/site-packages/
 
 # Override default imagemagick policies
 ADD patches/imagemagick-policy.xml /etc/ImageMagick-6/policy.xml
 
 # Add Kaggle module resolver
-ADD patches/kaggle_module_resolver.py /opt/conda/lib/python3.10/site-packages/tensorflow_hub/kaggle_module_resolver.py
-RUN sed -i '/from tensorflow_hub import uncompressed_module_resolver/a from tensorflow_hub import kaggle_module_resolver' /opt/conda/lib/python3.10/site-packages/tensorflow_hub/config.py && \
-    sed -i '/_install_default_resolvers()/a \ \ registry.resolver.add_implementation(kaggle_module_resolver.KaggleFileResolver())' /opt/conda/lib/python3.10/site-packages/tensorflow_hub/config.py && \
+ADD patches/kaggle_module_resolver.py /opt/conda/lib/python3.7/site-packages/tensorflow_hub/kaggle_module_resolver.py
+RUN sed -i '/from tensorflow_hub import uncompressed_module_resolver/a from tensorflow_hub import kaggle_module_resolver' /opt/conda/lib/python3.7/site-packages/tensorflow_hub/config.py && \
+    sed -i '/_install_default_resolvers()/a \ \ registry.resolver.add_implementation(kaggle_module_resolver.KaggleFileResolver())' /opt/conda/lib/python3.7/site-packages/tensorflow_hub/config.py && \
     # Disable preloaded jupyter modules (they add to startup, and break when they are missing)
     sed -i /bq_stats/d /etc/ipython/ipython_kernel_config.py && \
     sed -i /beatrix/d /etc/ipython/ipython_kernel_config.py && \
