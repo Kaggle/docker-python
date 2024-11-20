@@ -167,7 +167,8 @@ RUN pip install jax[cpu] && \
 RUN export PATH=/usr/local/cuda/bin:$PATH && \
     export CUDA_ROOT=/usr/local/cuda && \
     pip install pycuda \
-        pynvrtc==9.2\
+        # TODO(379932879): pip resolver fails when not specified.
+        pynvrtc==9.2 \
         pynvml && \
     /tmp/clean-layer.sh
 {{ end }}
