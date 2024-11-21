@@ -173,6 +173,24 @@ RUN export PATH=/usr/local/cuda/bin:$PATH && \
     /tmp/clean-layer.sh
 {{ end }}
 
+
+# b/308525631: Pin Matplotlib until seaborn can be upgraded
+# to >0.13.0 (now it's stuck by a package conflict with ydata-profiling 4.5.1).
+RUN JAXVER=$(pip freeze | grep -e "^jax==") && \
+pip install --upgrade \
+    "matplotlib<3.8.0" \
+    # ipympl adds interactive widget support for matplotlib
+    ipympl==0.7.0 \
+    "seaborn==0.12.2" \
+    pyupset \
+    python-dateutil dask dask-expr igraph \
+    pyyaml joblib geopy mne pyshp \
+    pandas \
+    polars \
+    flax \
+    "${JAXVER}" && \
+/tmp/clean-layer.sh
+
 RUN apt-get update && \
     apt-get install -y default-jre && \
     /tmp/clean-layer.sh
@@ -527,26 +545,10 @@ ENV TESSERACT_PATH=/usr/bin/tesseract \
     # For Theano with MKL
     MKL_THREADING_LAYER=GNU
 
-# b/308525631: Pin Matplotlib until seaborn can be upgraded
-# to >0.13.0 (now it's stuck by a package conflict with ydata-profiling 4.5.1).
-RUN JAXVER=$(pip freeze | grep -e "^jax==") && \
-pip install --upgrade \
-    "matplotlib<3.8.0" \
-    # ipympl adds interactive widget support for matplotlib
-    ipympl==0.7.0 \
-    "seaborn==0.12.2" \
-    pyupset \
-    python-dateutil dask dask-expr igraph \
-    pyyaml joblib geopy mne pyshp \
-    pandas \
-    polars \
-    flax \
-    "${JAXVER}" && \
-/tmp/clean-layer.sh
-
 # Temporary fixes and patches
 # Temporary patch for Dask getting downgraded, which breaks Keras
 RUN pip install --upgrade dask && \
+    pip install "matplotlib<3.8.0" && \
     # Stop jupyter nbconvert trying to rewrite its folder hierarchy
     mkdir -p /root/.jupyter && touch /root/.jupyter/jupyter_nbconvert_config.py && touch /root/.jupyter/migrated && \
     mkdir -p /.jupyter && touch /.jupyter/jupyter_nbconvert_config.py && touch /.jupyter/migrated && \
