@@ -52,6 +52,7 @@ haversine
 hep-ml
 igraph
 ipympl
+ipywidgets==8.1.5
 isoweek
 jedi
 # b/276358430: fix Jupyter lsp freezing up the jupyter server
