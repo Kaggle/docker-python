@@ -26,15 +26,6 @@ ADD patches/template_conf.json /opt/kaggle/conf.json
 # /opt/conda/lib/python3.10/site-packages
 ARG PACKAGE_PATH=/usr/local/lib/python3.10/dist-packages
 
-# Install micromamba
-RUN curl -L micro.mamba.pm/install.sh | sh
-
-# Install conda packages not available on pip.
-# When using pip in a conda environment, conda commands should be ran first and then
-# the remaining pip commands: https://www.anaconda.com/using-pip-in-a-conda-environment/
-RUN micromamba install -y mkl imagemagick pyproj && \
-    /tmp/clean-layer.sh
-
 # Install GPU-specific non-pip packages.
 {{ if eq .Accelerator "gpu" }}
 ARG CUDA_MAJOR_VERSION \
@@ -44,14 +35,6 @@ ENV CUDA_MAJOR_VERSION=${CUDA_MAJOR_VERSION} \
 
 # Make sure we are on the right version of CUDA
 RUN update-alternatives --set cuda /usr/local/cuda-$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION
-
-RUN micromamba config append channels nvidia \
-&& micromamba config append channels rapidsai \
-&& micromamba config append channels conda-forge \
-&& micromamba config set channel_priority flexible
-
-RUN micromamba install -vvvy "cudf>=24.4" "cuml>=24.4" cupy cuda-version=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
-    /tmp/clean-layer.sh
 
 # Remove CUDA_VERSION from non-GPU image.
 {{ else }}
