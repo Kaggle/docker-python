@@ -39,8 +39,6 @@ pipeline {
               }
             }
             stage('Test CPU Image') {
-              // Colab base image may require a GPU *VM .image* to run
-              agent { label 'ephemeral-linux-gpu' }
               options {
                 timeout(time: 15, unit: 'MINUTES')
               }

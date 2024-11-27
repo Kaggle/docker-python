@@ -3,7 +3,7 @@ set -e
 
 IMAGE_TAG='kaggle/python-build'
 IMAGE_TAG_OVERRIDE=''
-ADDITONAL_OPTS=''
+ADDITONAL_OPTS='--runtime runc ' # Use the CPU runtime by default
 PATTERN='test*.py'
 
 usage() {
