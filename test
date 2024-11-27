@@ -96,7 +96,10 @@ fi
 # Note about `--hostname localhost` (b/158137436)
 # hostname defaults to the container name which fails DNS name
 # resolution with --net=none (required to keep tests hermetic). See details in bug.
-docker run --rm -t --net=none \
+#
+# Note about CLOUDSDK_CONFIG=/tmp/.config/gcloud
+# We use the /tmp dir since the filesystem is --read-only and we need writable space for gcloud configs.
+docker run --rm -t --read-only --net=none \
     -e HOME=/tmp -e KAGGLE_DATA_PROXY_TOKEN=test-key \
     -e KAGGLE_USER_SECRETS_TOKEN_KEY=test-secrets-key \
     -e KAGGLE_URL_BASE=http://127.0.0.1:0 \
@@ -104,6 +107,7 @@ docker run --rm -t --net=none \
     -e KAGGLE_DATA_PROXY_PROJECT=test \
     -e TF_FORCE_GPU_ALLOW_GROWTH=true \
     -e XLA_PYTHON_CLIENT_PREALLOCATE=false \
+    -e CLOUDSDK_CONFIG=/tmp/.config/gcloud \
     --hostname localhost \
     --shm-size=2g \
     -v $PWD:/input:ro -v /tmp/python-build/working:/working \
