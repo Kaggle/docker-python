@@ -34,7 +34,9 @@ class TestLightgbm(unittest.TestCase):
 
         self.assertEqual(1, gbm.best_iteration)
 
+    # TODO(b/381256047): Colab needs to install GPU-enabled lightgbm.
     @gpu_test
+    @unittest.skip("Skipping this test until b/381256047 is resolved.")
     def test_gpu(self):
         lgb_train, lgb_eval = self.load_datasets()
         
