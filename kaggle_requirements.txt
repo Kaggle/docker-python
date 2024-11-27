@@ -56,7 +56,7 @@ ipywidgets==8.1.5
 isoweek
 jedi
 # b/276358430: fix Jupyter lsp freezing up the jupyter server
-jupyter-lsp==1.5.1
+jupyter-lsp==2.2.2
 # b/333854354: pin jupyter-server to version 2.12.5; later versions break LSP (b/333854354)
 jupyter_server==2.12.5
 jupyterlab
