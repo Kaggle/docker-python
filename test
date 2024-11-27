@@ -69,7 +69,6 @@ readonly ADDITONAL_OPTS
 readonly PATTERN
 
 set -x
-docker run --rm --net=none -v /tmp/python-build:/tmp/python-build "$IMAGE_TAG" rm -rf /tmp/python-build/*
 mkdir -p /tmp/python-build/tmp
 mkdir -p /tmp/python-build/devshm
 mkdir -p /tmp/python-build/working
