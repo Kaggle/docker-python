@@ -61,6 +61,7 @@ jupyter_server==2.12.5
 jupyterlab
 jupyterlab-lsp
 kaggle-environments
+kagglehub>=0.3.4
 # Keras 3.6 broke test_keras.py > test_train > keras.datasets.mnist.load_data():
 # See https://github.com/keras-team/keras/commit/dcefb139863505d166dd1325066f329b3033d45a
 keras<3.6
