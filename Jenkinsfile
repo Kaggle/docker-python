@@ -21,66 +21,6 @@ pipeline {
   }
 
   stages {
-    stage('Pre-build Packages from Source') {
-      parallel {
-        stage('torch') {
-          options {
-            timeout(time: 300, unit: 'MINUTES')
-          }
-          steps {
-            sh '''#!/bin/bash
-              set -exo pipefail
-              source config.txt
-              cd packages/
-              ./build_package --base-image $BASE_IMAGE_REPO/$GPU_BASE_IMAGE_NAME:$BASE_IMAGE_TAG \
-                --package torch \
-                --version $TORCH_VERSION \
-                --build-arg TORCHAUDIO_VERSION=$TORCHAUDIO_VERSION \
-                --build-arg TORCHVISION_VERSION=$TORCHVISION_VERSION \
-                --build-arg CUDA_MAJOR_VERSION=$CUDA_MAJOR_VERSION \
-                --build-arg CUDA_MINOR_VERSION=$CUDA_MINOR_VERSION \
-                --push
-            '''
-          }
-        }
-        stage('lightgbm') {
-          options {
-            timeout(time: 10, unit: 'MINUTES')
-          }
-          steps {
-            sh '''#!/bin/bash
-              set -exo pipefail
-              source config.txt
-              cd packages/
-              ./build_package --base-image $BASE_IMAGE_REPO/$GPU_BASE_IMAGE_NAME:$BASE_IMAGE_TAG \
-                --package lightgbm \
-                --version $LIGHTGBM_VERSION \
-                --build-arg CUDA_MAJOR_VERSION=$CUDA_MAJOR_VERSION \
-                --build-arg CUDA_MINOR_VERSION=$CUDA_MINOR_VERSION \
-                --push
-            '''
-          }
-        }
-        stage('jaxlib') {
-          options {
-            timeout(time: 300, unit: 'MINUTES')
-          }
-          steps {
-            sh '''#!/bin/bash
-              set -exo pipefail
-              source config.txt
-              cd packages/
-              ./build_package --base-image $BASE_IMAGE_REPO/$GPU_BASE_IMAGE_NAME:$BASE_IMAGE_TAG \
-                --package jaxlib \
-                --version $JAX_VERSION \
-                --build-arg CUDA_MAJOR_VERSION=$CUDA_MAJOR_VERSION \
-                --build-arg CUDA_MINOR_VERSION=$CUDA_MINOR_VERSION \
-                --push
-            '''
-          }
-        }
-      }
-    }
     stage('Build/Test/Diff') {
       parallel {
         stage('CPU') {

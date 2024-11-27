@@ -27,8 +27,9 @@ class TestFastAI(unittest.TestCase):
             "/input/tests/data/train.csv",
             cont_names=["pixel"+str(i) for i in range(784)],
             y_names='label',
-            procs=[FillMissing, Categorify, Normalize])       
+            procs=[FillMissing, Categorify, Normalize])
         learn = tabular_learner(dls, layers=[200, 100])
-        learn.fit_one_cycle(n_epoch=1)
+        with learn.no_bar():
+            learn.fit_one_cycle(n_epoch=1)
         
-        self.assertGreater(learn.smooth_loss, 0)
+            self.assertGreater(learn.smooth_loss, 0)
