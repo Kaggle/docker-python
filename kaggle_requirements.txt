@@ -69,6 +69,7 @@ keras<3.6
 keras-cv
 keras-nlp
 keras-tuner
+kmodes
 kornia
 langid
 leven
