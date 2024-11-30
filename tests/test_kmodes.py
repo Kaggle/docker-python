@@ -18,4 +18,3 @@ class TestKmodes(unittest.TestCase):
         km = KModes(n_clusters=4, init="Huang", n_init=5, verbose=0)
         clusters = km.fit_predict(data)
         self.assertEqual(len(np.unique(clusters)), 4)
-        self.assertTrue()
