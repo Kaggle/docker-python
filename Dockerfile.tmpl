@@ -122,8 +122,8 @@ RUN mkdir -p /root/.EasyOCR/model && \
 RUN apt-get install tesseract-ocr -y
 
 ENV TESSERACT_PATH=/usr/bin/tesseract \
-    # For Facets
-    PYTHONPATH=$PYTHONPATH:/opt/facets/facets_overview/python/ \
+    # For Facets, we also include an empty path to include $PWD.
+    PYTHONPATH=:$PYTHONPATH:/opt/facets/facets_overview/python/ \
     # For Theano with MKL
     MKL_THREADING_LAYER=GNU
 
