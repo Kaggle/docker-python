@@ -22,7 +22,7 @@ pipeline {
 
   stages {
     stage('Pre-build Packages from Source') {
-      parallel {
+      stages {
         stage('lightgbm') {
           options {
             timeout(time: 10, unit: 'MINUTES')
@@ -42,6 +42,7 @@ pipeline {
           }
         }
     }
+
     stage('Build/Test/Diff') {
       parallel {
         stage('CPU') {
