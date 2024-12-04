@@ -49,7 +49,7 @@ class TestLightgbm(unittest.TestCase):
             'bagging_freq': 5,
             'force_row_wise': True,
             'verbose': 1,
-            'device': 'cuda'
+            'device': 'gpu'
         }
         
         # Run only one round for faster test

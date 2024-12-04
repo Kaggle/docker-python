@@ -115,12 +115,8 @@ if [[ -z "$DOCKERFILE" ]]; then
     exit 1
 fi
 
-# Keep only `tf2-gpu.2-6:m80` in `gcr.io/deeplearning-platform-release/tf2-gpu.2-6:m80` 
-TAG=${BASE_IMAGE/gcr.io\/deeplearning-platform-release\//}
-# Keep only `python:v108` in `gcr.io/kaggle-images/python:v108`
-TAG=${TAG/gcr.io\/kaggle-images\//}
-# Replace the `:` in `tf2-gpu.2-6:m80` by `-`
-TAG=${TAG/:/-}
+# Keep only `release-colab_20240920-060127_RC00` in `us-docker.pkg.dev/colab-images/public/runtime:release-colab_20240920-060127_RC00` 
+TAG=$(echo $BASE_IMAGE | cut -d ':' -f 2)
 # Append the package version
 TAG=$TAG-$PACKAGE_VERSION
 # Add the gcr repo.
