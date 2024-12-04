@@ -61,22 +61,6 @@ pipeline {
                 '''
               }
             }
-            stage('Test CPU Image') {
-              options {
-                timeout(time: 15, unit: 'MINUTES')
-              }
-              steps {
-                retry(2) {
-                  sh '''#!/bin/bash
-                    set -exo pipefail
-
-                    date
-                    docker pull gcr.io/kaggle-images/python:${PRETEST_TAG}
-                    ./test --image gcr.io/kaggle-images/python:${PRETEST_TAG}
-                  '''
-                }
-              }
-            }
             stage('Diff CPU image') {
               steps {
                 sh '''#!/bin/bash
@@ -111,44 +95,6 @@ pipeline {
                   ./build --gpu | ts
                   ./push --gpu ${PRETEST_TAG}
                 '''
-              }
-            }
-            stage('Test GPU Image') {
-              parallel {
-                stage('Test on P100') {
-                  agent { label 'ephemeral-linux-gpu' }
-                  options {
-                    timeout(time: 40, unit: 'MINUTES')
-                  }
-                  steps {
-                    retry(2) {
-                      sh '''#!/bin/bash
-                        set -exo pipefail
-
-                        date
-                        docker pull gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
-                        ./test --gpu --image gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
-                      '''
-                    }
-                  }
-                }
-                stage('Test on T4x2') {
-                  agent { label 'ephemeral-linux-gpu-t4x2' }
-                  options {
-                    timeout(time: 60, unit: 'MINUTES')
-                  }
-                  steps {
-                    retry(2) {
-                      sh '''#!/bin/bash
-                        set -exo pipefail
-
-                        date
-                        docker pull gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
-                        ./test --gpu --image gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
-                      '''
-                    }
-                  }
-                }
               }
             }
             stage('Diff GPU Image') {
@@ -187,6 +133,61 @@ pipeline {
                 ./diff --tpu --target gcr.io/kaggle-private-byod/python-tpuvm:${PRETEST_TAG}
               '''
               }
+            }
+          }
+        }
+      }
+    }
+
+    stage('Test') {
+      parallel {
+        stage('Test CPU Image') {
+          options {
+            timeout(time: 15, unit: 'MINUTES')
+          }
+          steps {
+            retry(2) {
+              sh '''#!/bin/bash
+                set -exo pipefail
+
+                date
+                docker pull gcr.io/kaggle-images/python:${PRETEST_TAG}
+                ./test --image gcr.io/kaggle-images/python:${PRETEST_TAG}
+              '''
+            }
+          }
+        }
+        stage('Test on P100') {
+          agent { label 'ephemeral-linux-gpu' }
+          options {
+            timeout(time: 40, unit: 'MINUTES')
+          }
+          steps {
+            retry(2) {
+              sh '''#!/bin/bash
+                set -exo pipefail
+
+                date
+                docker pull gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
+                ./test --gpu --image gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
+              '''
+            }
+          }
+        }
+        stage('Test on T4x2') {
+          agent { label 'ephemeral-linux-gpu-t4x2' }
+          options {
+            timeout(time: 60, unit: 'MINUTES')
+          }
+          steps {
+            retry(2) {
+              sh '''#!/bin/bash
+                set -exo pipefail
+
+                date
+                docker pull gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
+                ./test --gpu --image gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
+              '''
             }
           }
         }
