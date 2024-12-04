@@ -41,6 +41,7 @@ pipeline {
             '''
           }
         }
+      }
     }
 
     stage('Build/Test/Diff') {
