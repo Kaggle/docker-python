@@ -114,7 +114,7 @@ pipeline {
               }
             }
             stage('Test GPU Image') {
-              stages {
+              parallel {
                 stage('Test on P100') {
                   agent { label 'ephemeral-linux-gpu' }
                   options {
