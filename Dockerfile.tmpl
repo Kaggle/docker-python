@@ -1,4 +1,11 @@
-FROM us-docker.pkg.dev/colab-images/public/runtime:latest
+ARG BASE_IMAGE \
+    BASE_IMAGE_TAG \
+    LIGHTGBM_VERSION
+
+{{ if eq .Accelerator "gpu" }}
+FROM gcr.io/kaggle-images/python-lightgbm-whl:${BASE_IMAGE_TAG}-${LIGHTGBM_VERSION} AS lightgbm_whl
+{{ end }}
+FROM ${BASE_IMAGE}:${BASE_IMAGE_TAG}
 
 ADD kaggle_requirements.txt /kaggle_requirements.txt
 
@@ -48,6 +55,17 @@ ENV CUDA_MAJOR_VERSION=${CUDA_MAJOR_VERSION} \
 RUN update-alternatives --set cuda /usr/local/cuda-$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION
 
 RUN uv pip install --system "pycuda"
+
+# b/381256047 Remove once installed in Colabs base image.
+# Install LightGBM
+COPY --from=lightgbm_whl /tmp/whl/*.whl /tmp/lightgbm/
+# Install OpenCL (required by LightGBM GPU version)
+RUN apt-get install -y ocl-icd-libopencl1 clinfo && \
+    mkdir -p /etc/OpenCL/vendors && \
+    echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd && \
+    uv pip install --system /tmp/lightgbm/*.whl && \
+    rm -rf /tmp/lightgbm && \
+    /tmp/clean-layer.sh
 
 # Remove CUDA_VERSION from non-GPU image.
 {{ else }}
