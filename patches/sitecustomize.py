@@ -117,3 +117,30 @@ def post_import_logic(module):
 
     module.configure = new_configure
     module.configure() # generativeai can use GOOGLE_API_KEY env variable, so make sure we have the other configs set
+
+@wrapt.when_imported('google.genai')
+def post_genai_import_logic(module):
+    if os.getenv('KAGGLE_DISABLE_GOOGLE_GENERATIVE_AI_INTEGRATION'):
+        return
+
+    if not (os.getenv('KAGGLE_DATA_PROXY_TOKEN') and
+            os.getenv('KAGGLE_USER_SECRETS_TOKEN') and
+            os.getenv('KAGGLE_DATA_PROXY_URL')):
+        return
+    @wrapt.patch_function_wrapper(module, 'Client.__init__')
+    def init_wrapper(wrapped, instance, args, kwargs):
+        # Don't want to forward requests that are to Vertex AI, debug mode, or have their own http_options specified
+        # Thus, if the client constructor contains any params other than api_key, we don't set up forwarding
+        if any(value is not None for key, value in kwargs.items() if key != 'api_key'):
+            return wrapped(*args, **kwargs)
+
+        default_metadata = {
+            "x-kaggle-proxy-data": os.environ['KAGGLE_DATA_PROXY_TOKEN'],
+            'x-kaggle-authorization': f"Bearer {os.environ['KAGGLE_USER_SECRETS_TOKEN']}"
+        }
+        http_options = {
+            'base_url': os.getenv('KAGGLE_DATA_PROXY_URL') + '/palmapi/',
+            'headers': default_metadata
+        }
+        kwargs['http_options'] = http_options
+        return wrapped(*args, **kwargs)
