@@ -48,6 +48,7 @@ google-cloud-automl==1.0.1
 google-cloud-translate==3.12.1
 google-cloud-videointelligence
 google-cloud-vision
+google-genai
 gpxpy
 h2o
 haversine
