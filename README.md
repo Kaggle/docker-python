@@ -17,7 +17,7 @@ If you the first step above doesn't work for your use case, [open an issue](http
 
 ## Opening a pull request
 
-1. Edit the [Dockerfile](Dockerfile.tmpl).
+1. Edit [kaggle_requirements.txt](kaggle_requirements.txt).
 1. Follow the instructions below to build a new image.
 1. Add tests for your new package. See this [example](https://github.com/Kaggle/docker-python/blob/main/tests/test_fastai.py).
 1. Follow the instructions below to test the new image.
