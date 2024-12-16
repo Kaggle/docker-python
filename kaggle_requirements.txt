@@ -41,6 +41,8 @@ fuzzywuzzy
 geojson
 # geopandas > v0.14.4 breaks learn tools
 geopandas==v0.14.4
+# b/384493671: remove google-genai once included in base image
+google-genai
 google-cloud-aiplatform
 # google-cloud-automl 2.0.0 introduced incompatible API changes, need to pin to 1.0.1
 google-cloud-automl==1.0.1
@@ -140,6 +142,7 @@ tensorflow_decision_forests
 timm
 torchinfo
 torchmetrics
+torchtune
 tsfresh
 vtk
 wandb
