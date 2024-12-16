@@ -140,6 +140,7 @@ tensorflow_decision_forests
 timm
 torchinfo
 torchmetrics
+torchtune
 tsfresh
 vtk
 wandb
