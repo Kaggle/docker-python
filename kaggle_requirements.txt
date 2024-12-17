@@ -33,6 +33,7 @@ docker
 easyocr
 eli5
 emoji
+fastcore>=1.7.20
 fasttext
 featuretools
 fiona
