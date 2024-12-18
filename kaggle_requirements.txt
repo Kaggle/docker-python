@@ -25,7 +25,9 @@ cesium
 comm
 cytoolz
 dask-expr
-datasets
+# Older versions of datasets fail with "Loading a dataset cached in a LocalFileSystem is not supported"
+# https://stackoverflow.com/questions/77433096/notimplementederror-loading-a-dataset-cached-in-a-localfilesystem-is-not-suppor
+datasets>=2.14.6
 datashader
 deap
 dipy
