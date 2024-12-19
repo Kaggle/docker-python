@@ -140,7 +140,8 @@ squarify
 tensorflow-cloud
 tensorflow-io
 tensorflow-text
-tensorflow_decision_forests
+# b/385161357: tf 2.17.1 does not have matching tensorflow_decision_forests release
+# tensorflow_decision_forests
 timm
 torchinfo
 torchmetrics
