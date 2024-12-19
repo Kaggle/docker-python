@@ -19,6 +19,7 @@ trax
 # Jupyter packages
 jupyter-lsp==1.5.1
 jupyterlab
+notebook
 papermill
 python-lsp-server[all]
 # Keras Packages
