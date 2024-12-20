@@ -1,4 +1,5 @@
 # Please keep this in alphabetical order
+--extra-index-url https://pypi.nvidia.com
 Altair>=5.4.0
 Babel
 Boruta
