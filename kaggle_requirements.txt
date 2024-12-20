@@ -83,6 +83,7 @@ libpysal<=4.9.2
 lime
 line_profiler
 mamba
+matplotlib<3.8
 mlcrate
 mne
 mpld3
