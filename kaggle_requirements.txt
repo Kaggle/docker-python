@@ -85,6 +85,7 @@ libpysal<=4.9.2
 lime
 line_profiler
 mamba
+matplotlib<3.8
 mlcrate
 mne
 mpld3
@@ -142,7 +143,8 @@ squarify
 tensorflow-cloud
 tensorflow-io
 tensorflow-text
-tensorflow_decision_forests
+# b/385161357: tf 2.17.1 does not have matching tensorflow_decision_forests release
+# tensorflow_decision_forests
 timm
 torchinfo
 torchmetrics
