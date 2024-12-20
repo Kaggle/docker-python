@@ -6,7 +6,6 @@ from common import gpu_test, p100_exempt
 class TestCuml(unittest.TestCase):
     @gpu_test
     @p100_exempt # b/342143152: cuML(>=24.4v) is inompatible with p100 GPUs.
-    @unittest.skip("b/381287748 cuML is not installed in Colab.")
     def test_pca_fit_transform(self):
         import unittest
         import numpy as np

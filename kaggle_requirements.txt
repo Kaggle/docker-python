@@ -1,4 +1,5 @@
 # Please keep this in alphabetical order
+--extra-index-url https://pypi.nvidia.com
 Altair>=5.4.0
 Babel
 Boruta
@@ -23,6 +24,7 @@ catboost
 category-encoders
 cesium
 comm
+cuml-cu12
 cytoolz
 dask-expr
 # Older versions of datasets fail with "Loading a dataset cached in a LocalFileSystem is not supported"
