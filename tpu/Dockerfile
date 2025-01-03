@@ -6,11 +6,8 @@ FROM $BASE_IMAGE
 # See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
 ARG PYTHON_WHEEL_VERSION
 ARG PYTHON_VERSION_PATH
-ARG TF_LINUX_WHEEL_VERSION
 ARG TORCH_LINUX_WHEEL_VERSION
 ARG TORCH_VERSION
-ARG TENSORFLOW_VERSION
-ARG TF_LIBTPU_VERSION
 ARG TORCHVISION_VERSION
 ARG TORCHAUDIO_VERSION
 
@@ -68,16 +65,10 @@ RUN export PATH="${HOME}/.local/bin:${PATH}" && uv pip install --system -r /requ
     /tmp/clean-layer.sh
 ENV PATH="${HOME}/.local/bin:${PATH}"
 
-# Tensorflow libtpu:
-RUN curl --output /usr/local/lib/python3.10/site-packages/libtpu/libtpu.so https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/libtpu/${TF_LIBTPU_VERSION}/libtpu.so
-
 # Kaggle Model Hub patches:
 ADD patches/kaggle_module_resolver.py /usr/local/lib/${PYTHON_VERSION_PATH}/site-packages/tensorflow_hub/kaggle_module_resolver.py
 RUN sed -i '/from tensorflow_hub import uncompressed_module_resolver/a from tensorflow_hub import kaggle_module_resolver' /usr/local/lib/${PYTHON_VERSION_PATH}/site-packages/tensorflow_hub/config.py
 RUN sed -i '/_install_default_resolvers()/a \ \ registry.resolver.add_implementation(kaggle_module_resolver.KaggleFileResolver())' /usr/local/lib/${PYTHON_VERSION_PATH}/site-packages/tensorflow_hub/config.py
-
-# Monkey-patch the default TPU to the local (TPU VM).
-RUN sed -i 's/tpu=None,/tpu="local",/' /usr/local/lib/${PYTHON_VERSION_PATH}/site-packages/tensorflow/python/distribute/cluster_resolver/tpu/tpu_cluster_resolver.py
 
 # Set these env vars so that they don't produce errs calling the metadata server to load them:
 ENV TPU_ACCELERATOR_TYPE=v3-8
@@ -92,7 +83,6 @@ LABEL build-date=$BUILD_DATE
 ENV GIT_COMMIT=${GIT_COMMIT}
 ENV BUILD_DATE=${BUILD_DATE}
 
-LABEL tensorflow-version=$TENSORFLOW_VERSION
 LABEL kaggle-lang=python
 
 # Correlate current release with the git hash inside the kernel editor by running `!cat /etc/git_commit`.

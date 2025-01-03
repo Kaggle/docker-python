@@ -1,7 +1,8 @@
 # TPU Utils
 tpu-info
 # Tensorflow packages
-https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/tensorflow/tf-${TENSORFLOW_VERSION}/tensorflow-${TENSORFLOW_VERSION}-${PYTHON_WHEEL_VERSION}-${PYTHON_WHEEL_VERSION}-${TF_LINUX_WHEEL_VERSION}.whl
+tensorflow-tpu>=2.18.0
+-f https://storage.googleapis.com/libtpu-tf-releases/index.html
 tensorflow_hub
 tensorflow-io
 tensorflow-probability
@@ -36,7 +37,6 @@ albumentations
 diffusers
 einops
 fastparquet
-librosa
 matplotlib
 opencv-python
 opencv-python-headless
