@@ -1,3 +1,5 @@
+# TPU Utils
+tpu-info
 # Tensorflow packages
 https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/tensorflow/tf-${TENSORFLOW_VERSION}/tensorflow-${TENSORFLOW_VERSION}-${PYTHON_WHEEL_VERSION}-${PYTHON_WHEEL_VERSION}-${TF_LINUX_WHEEL_VERSION}.whl
 tensorflow_hub
@@ -9,7 +11,7 @@ https://storage.googleapis.com/pytorch-xla-releases/wheels/tpuvm/torch_xla-${TOR
 torchaudio==${TORCHAUDIO_VERSION}
 torchvision==${TORCHVISION_VERSION}
 # Jax packages
-jax[tpu]==${JAX_VERSION}
+jax[tpu]>=0.4.34
 distrax
 flax
 git+https://github.com/deepmind/dm-haiku

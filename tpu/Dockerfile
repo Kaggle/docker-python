@@ -11,7 +11,6 @@ ARG TORCH_LINUX_WHEEL_VERSION
 ARG TORCH_VERSION
 ARG TENSORFLOW_VERSION
 ARG TF_LIBTPU_VERSION
-ARG JAX_VERSION
 ARG TORCHVISION_VERSION
 ARG TORCHAUDIO_VERSION
 
@@ -67,6 +66,7 @@ RUN envsubst < /kaggle_requirements.txt > /requirements.txt
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 RUN export PATH="${HOME}/.local/bin:${PATH}" && uv pip install --system -r /requirements.txt --prerelease=allow --find-links https://storage.googleapis.com/jax-releases/libtpu_releases.html && \
     /tmp/clean-layer.sh
+ENV PATH="${HOME}/.local/bin:${PATH}"
 
 # Tensorflow libtpu:
 RUN curl --output /usr/local/lib/python3.10/site-packages/libtpu/libtpu.so https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/libtpu/${TF_LIBTPU_VERSION}/libtpu.so
