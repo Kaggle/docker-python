@@ -36,7 +36,8 @@ RUN uv pip install --no-build-isolation --system "git+https://github.com/Kaggle/
 RUN uv pip install --system --force-reinstall -i https://pypi.anaconda.org/intel/simple numpy
 
 # b/328788268 We install an incompatible pair of libs (shapely<2, libpysal==4.9.2) so we can't put this one in the requirements.txt
-RUN uv pip install --system  "libpysal==4.9.2"
+# newer daal4py requires tbb>=2022, but libpysal is downgrading it for some reason
+RUN uv pip install --system "tbb>=2022" "libpysal==4.9.2"
 
 # Adding non-package dependencies:
 
