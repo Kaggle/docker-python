@@ -4,7 +4,6 @@ import numpy as np
 import pandas as pd
 import tensorflow_decision_forests as tfdf
 
-@unittest.skip("b/385161357: tensorflow_decision_forests is incompatible with tensorflow 2.17.1")
 class TestTensorflowDecisionForest(unittest.TestCase):
     def test_fit(self):
         train_df = pd.read_csv("/input/tests/data/train.csv")
