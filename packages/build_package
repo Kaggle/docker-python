@@ -11,8 +11,8 @@ Options:
     -v, --version VERSION     Package version to build.
     -b, --base-image IMAGE    Base image tag (e.g. m80).
     -c, --use-cache           Use layer cache when building a new image.
-    -f, --force-rebuild       Rebuild the image regardless of whether it already exist on GCR.
-    -u, --push                Push image to GCR.
+    -f, --force-rebuild       Rebuild the image regardless of whether it already exist on GAR.
+    -u, --push                Push image to GAR.
     --build-arg ARG=VALUE     Build arguments to pass to the docker build command.
 EOF
 }
@@ -23,7 +23,7 @@ BASE_IMAGE=''
 DOCKERFILE=''
 CACHE_FLAG='--no-cache'
 FORCE_REBUILD=false
-PUSH_TO_GCR=false
+PUSH_TO_GAR=false
 BUILD_ARGS=''
 
 while :; do
@@ -138,8 +138,8 @@ if $SHOULD_BUILD; then
         --build-arg PACKAGE_VERSION=$PACKAGE_VERSION \
         $SRCDIR
     
-    if $PUSH_TO_GCR; then
-        echo "Pushing $TAG to GCR..."
+    if $PUSH_TO_GAR; then
+        echo "Pushing $TAG to GAR..."
         docker push $TAG
     fi
 else
