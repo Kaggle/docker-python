@@ -1,7 +1,7 @@
 BASE_IMAGE=python:3.10
 PYTHON_WHEEL_VERSION=cp310
 PYTHON_VERSION_PATH=python3.10
-TF_LINUX_WHEEL_VERSION=manylinux_2_17_x86_64.manylinux2014_x86_64
+TENSORFLOW_VERSION=2.18.0
 # gsutil ls gs://pytorch-xla-releases/wheels/tpuvm/* | grep libtpu | grep torch_xla | grep -v -E ".*rc[0-9].*" | sed 's/.*torch_xla-\(.*\)+libtpu.*/\1/' | sort -rV
 # Supports nightly
 TORCH_VERSION=2.5.0

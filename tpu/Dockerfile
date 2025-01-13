@@ -6,6 +6,7 @@ FROM $BASE_IMAGE
 # See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
 ARG PYTHON_WHEEL_VERSION
 ARG PYTHON_VERSION_PATH
+ARG TENSORFLOW_VERSION
 ARG TORCH_LINUX_WHEEL_VERSION
 ARG TORCH_VERSION
 ARG TORCHVISION_VERSION
@@ -61,9 +62,9 @@ RUN envsubst < /kaggle_requirements.txt > /requirements.txt
 
 # Install uv and then install the requirements:
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-RUN export PATH="${HOME}/.local/bin:${PATH}" && uv pip install --system -r /requirements.txt --prerelease=allow --find-links https://storage.googleapis.com/jax-releases/libtpu_releases.html && \
+RUN export PATH="${HOME}/.local/bin:${PATH}" && uv pip install --system -r /requirements.txt --prerelease=allow --force-reinstall && \
     /tmp/clean-layer.sh
-ENV PATH="${HOME}/.local/bin:${PATH}"
+ENV PATH="~/.local/bin:${PATH}"
 
 # Kaggle Model Hub patches:
 ADD patches/kaggle_module_resolver.py /usr/local/lib/${PYTHON_VERSION_PATH}/site-packages/tensorflow_hub/kaggle_module_resolver.py

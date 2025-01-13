@@ -1,8 +1,8 @@
 # TPU Utils
 tpu-info
 # Tensorflow packages
-tensorflow-tpu>=2.18.0
--f https://storage.googleapis.com/libtpu-tf-releases/index.html
+tensorflow-tpu>=${TENSORFLOW_VERSION}
+--find-links https://storage.googleapis.com/libtpu-tf-releases/index.html
 tensorflow_hub
 tensorflow-io
 tensorflow-probability
@@ -13,6 +13,7 @@ torchaudio==${TORCHAUDIO_VERSION}
 torchvision==${TORCHVISION_VERSION}
 # Jax packages
 jax[tpu]>=0.4.34
+--find-links https://storage.googleapis.com/jax-releases/libtpu_releases.html
 distrax
 flax
 git+https://github.com/deepmind/dm-haiku
