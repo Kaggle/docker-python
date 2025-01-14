@@ -110,6 +110,7 @@ pipeline {
           }
         }
         stage('TPU VM') {
+          agent { label 'ephemeral-linux' }
           stages {
             stage('Build TPU VM Image') {
               options {
