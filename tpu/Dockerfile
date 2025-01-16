@@ -66,6 +66,12 @@ RUN export PATH="${HOME}/.local/bin:${PATH}" && uv pip install --system -r /requ
     /tmp/clean-layer.sh
 ENV PATH="~/.local/bin:${PATH}"
 
+# Try to force tensorflow to reliably install without breaking other installed deps
+RUN export PATH="${HOME}/.local/bin:${PATH}" && \
+    uv pip freeze --system > /tmp/constraints.txt && \
+    uv pip install --system -c /tmp/constraints.txt tensorflow-tpu -f https://storage.googleapis.com/libtpu-tf-releases/index.html && \
+    rm /tmp/constraints.txt
+
 # Kaggle Model Hub patches:
 ADD patches/kaggle_module_resolver.py /usr/local/lib/${PYTHON_VERSION_PATH}/site-packages/tensorflow_hub/kaggle_module_resolver.py
 RUN sed -i '/from tensorflow_hub import uncompressed_module_resolver/a from tensorflow_hub import kaggle_module_resolver' /usr/local/lib/${PYTHON_VERSION_PATH}/site-packages/tensorflow_hub/config.py
