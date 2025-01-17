@@ -149,6 +149,7 @@ timm
 torchinfo
 torchmetrics
 torchtune
+transformers==4.48.0
 tsfresh
 vtk
 wandb
