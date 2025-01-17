@@ -69,7 +69,7 @@ ENV PATH="~/.local/bin:${PATH}"
 # Try to force tensorflow to reliably install without breaking other installed deps
 RUN export PATH="${HOME}/.local/bin:${PATH}" && \
     uv pip freeze --system > /tmp/constraints.txt && \
-    uv pip install --system -c /tmp/constraints.txt tensorflow-tpu -f https://storage.googleapis.com/libtpu-tf-releases/index.html && \
+    uv pip install --system -c /tmp/constraints.txt tensorflow-tpu -f https://storage.googleapis.com/libtpu-tf-releases/index.html --force-reinstall && \
     rm /tmp/constraints.txt
 
 # Kaggle Model Hub patches:
