@@ -64,4 +64,4 @@ readonly LABEL
 
 set -x
 docker tag "${SOURCE_IMAGE_TAG}" "${TARGET_IMAGE}:${LABEL}"
-gcloud docker -- push "${TARGET_IMAGE}:${LABEL}"
+docker push "${TARGET_IMAGE}:${LABEL}"

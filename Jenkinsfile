@@ -200,8 +200,8 @@ pipeline {
         sh '''#!/bin/bash
           set -exo pipefail
 
-          gcloud container images add-tag gcr.io/kaggle-images/python:${PRETEST_TAG} gcr.io/kaggle-images/python:${STAGING_TAG}
-          gcloud container images add-tag gcr.io/kaggle-private-byod/python:${PRETEST_TAG} gcr.io/kaggle-private-byod/python:${STAGING_TAG}
+          gcloud artifacts docker tags add gcr.io/kaggle-images/python:${PRETEST_TAG} gcr.io/kaggle-images/python:${STAGING_TAG}
+          gcloud artifacts docker tags add gcr.io/kaggle-private-byod/python:${PRETEST_TAG} gcr.io/kaggle-private-byod/python:${STAGING_TAG}
           # NOTE(b/336842777): TPUVM images are tested on an actual TPU VM outside this pipeline, so they are not auto-promoted to :staging tag.
         '''
       }
