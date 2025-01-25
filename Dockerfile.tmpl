@@ -170,6 +170,7 @@ RUN mkdir -p ~/src && git clone https://github.com/SohierDane/BigQuery_Helper ~/
     uv pip install --system -e ~/src/BigQuery_Helper && \
     /tmp/clean-layer.sh
 
+RUN uv pip install --system tensorly
 
 # install imagemagick for wand
 # https://docs.wand-py.org/en/latest/guide/install.html#install-imagemagick-on-debian-ubuntu
