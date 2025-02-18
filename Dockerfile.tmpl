@@ -29,7 +29,7 @@ ENV PATH="~/.local/bin:${PATH}"
 RUN uv pip uninstall --system google-cloud-bigquery-storage
 
 # b/394382016: sigstore (dependency of kagglehub) requires a prerelease packages, installing separate.
-RUN uv pip install --system --force-reinstall --prerelease=allow kagglehub[pandas-datasets,hf-datasets]>=0.3.7
+RUN uv pip install --system --force-reinstall --prerelease=allow kagglehub[pandas-datasets,hf-datasets,signing]>=0.3.9
 
 # uv cannot install this in requirements.txt without --no-build-isolation
 # to avoid affecting the larger build, we'll post-install it.
