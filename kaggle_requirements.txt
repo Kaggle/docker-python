@@ -23,7 +23,7 @@ catboost
 category-encoders
 cesium
 comm
-cuml-cu12
+cuml-cu12>=24.12.0
 cytoolz
 dask-expr
 # Older versions of datasets fail with "Loading a dataset cached in a LocalFileSystem is not supported"
@@ -45,14 +45,6 @@ fuzzywuzzy
 geojson
 # geopandas > v0.14.4 breaks learn tools
 geopandas==v0.14.4
-google-cloud-aiplatform
-# google-cloud-automl 2.0.0 introduced incompatible API changes, need to pin to 1.0.1
-google-cloud-automl==1.0.1
-# b/315753846: Unpin translate package.
-google-cloud-translate==3.12.1
-google-cloud-videointelligence
-google-cloud-vision
-google-genai
 gpxpy
 h2o
 haversine
@@ -69,15 +61,11 @@ jupyter_server==2.12.5
 jupyterlab
 jupyterlab-lsp
 kaggle-environments
-# Keras 3.6 broke test_keras.py > test_train > keras.datasets.mnist.load_data():
-# See https://github.com/keras-team/keras/commit/dcefb139863505d166dd1325066f329b3033d45a
-keras
 keras-cv
 keras-nlp
 keras-tuner
 kornia
 langid
-leven
 # b/328788268: libpysal 4.10 seems to fail with "module 'shapely' has no attribute 'Geometry'. Did you mean: 'geometry'"
 libpysal<=4.9.2
 lime
@@ -134,6 +122,7 @@ scikit-plot
 scikit-surprise
 # Also pinning seaborn for learntools
 seaborn==0.12.2
+git+https://github.com/facebookresearch/segment-anything.git
 # b/329869023 shap 0.45.0 breaks learntools
 shap==0.44.1
 squarify
@@ -141,7 +130,7 @@ tensorflow-cloud
 tensorflow-io
 tensorflow-text
 # b/385161357: tf 2.17.1 does not have matching tensorflow_decision_forests release
-# tensorflow_decision_forests
+tensorflow_decision_forests
 timm
 torchinfo
 torchmetrics
