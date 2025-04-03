@@ -47,6 +47,7 @@ RUN uv pip install --no-build-isolation --system "git+https://github.com/Kaggle/
 # This conflict causes a number of package downgrades, which are handled in this command
 RUN uv pip install --system --force-reinstall --extra-index-url https://pypi.nvidia.com pynvjitlink-cu12 cuml-cu12==25.2.1 \
     nvidia-cudnn-cu12==9.3.0.75 scipy tsfresh
+RUN uv pip install --system --force-reinstall pynvjitlink-cu12==0.5.2
 
 # b/385145217 Latest Colab lacks mkl numpy, install it.
 RUN uv pip install --system --force-reinstall -i https://pypi.anaconda.org/intel/simple numpy
@@ -116,6 +117,8 @@ RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing
 
 # NLTK Project datasets
+# b/408298750: We currently reinstall the package, because we get the following error:
+# `AttributeError: module 'inspect' has no attribute 'formatargspec'. Did you mean: 'formatargvalues'?`
 RUN uv pip install --system --force-reinstall "nltk>=3.9.1"
 RUN mkdir -p /usr/share/nltk_data && \
     # NLTK Downloader no longer continues smoothly after an error, so we explicitly list
