@@ -21,7 +21,7 @@ RUN cat /kaggle_requirements.txt >> /requirements.txt
 
 # Install uv & Kaggle packages
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-RUN export PATH="${HOME}/.local/bin:${PATH}" && uv pip install --system -v -r /requirements.txt
+RUN export PATH="${HOME}/.local/bin:${PATH}" && uv pip install --system -r /requirements.txt
 ENV PATH="~/.local/bin:${PATH}"
 
 # Install manual packages:
@@ -31,9 +31,11 @@ RUN uv pip uninstall --system google-cloud-bigquery-storage
 # b/394382016: sigstore (dependency of kagglehub) requires a prerelease packages, installing separate.
 RUN uv pip install --system --force-reinstall --prerelease=allow kagglehub[pandas-datasets,hf-datasets,signing]>=0.3.9
 
-# google-cloud-automl 2.0.0 introduced incompatible API changes, need to pin to 1.0.1
-# Keras 3.6 broke test_keras.py > test_train > keras.datasets.mnist.load_data():
+# b/408284143: google-cloud-automl 2.0.0 introduced incompatible API changes, need to pin to 1.0.1
+
+# b/408284435: Keras 3.6 broke test_keras.py > test_train > keras.datasets.mnist.load_data()
 # See https://github.com/keras-team/keras/commit/dcefb139863505d166dd1325066f329b3033d45a
+# Colab base is on Keras 3.8, we have to install the package separately
 RUN uv pip install --system google-cloud-automl==1.0.1 google-cloud-aiplatform google-cloud-translate==3.12.1 \
     google-cloud-videointelligence google-cloud-vision google-genai "keras<3.6"
 
@@ -41,13 +43,14 @@ RUN uv pip install --system google-cloud-automl==1.0.1 google-cloud-aiplatform g
 # to avoid affecting the larger build, we'll post-install it.
 RUN uv pip install --no-build-isolation --system "git+https://github.com/Kaggle/learntools"
 
+# b/408281617: Torch is adamant that it can not install cudnn 9.3.x, only 9.1.x, but Tensorflow can only support 9.3.x.
+# This conflict causes a number of package downgrades, which are handled in this command
+RUN uv pip install --system --force-reinstall --extra-index-url https://pypi.nvidia.com pynvjitlink-cu12 cuml-cu12==25.2.1 \
+    nvidia-cudnn-cu12==9.3.0.75 scipy tsfresh
+
 # b/385145217 Latest Colab lacks mkl numpy, install it.
 RUN uv pip install --system --force-reinstall -i https://pypi.anaconda.org/intel/simple numpy
 
-# b/385145217 torch 2.4.x .
-RUN uv pip install --system --force-reinstall --no-deps --extra-index-url=https://pypi.nvidia.com "cuml-cu12==25.2.1" "nvidia-cudnn-cu12==9.3.0.75"
-
-# b/328788268 We install an incompatible pair of libs (shapely<2, libpysal==4.9.2) so we can't put this one in the requirements.txt
 # newer daal4py requires tbb>=2022, but libpysal is downgrading it for some reason
 RUN uv pip install --system "tbb>=2022" "libpysal==4.9.2"
 
