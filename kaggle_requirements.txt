@@ -23,7 +23,6 @@ catboost
 category-encoders
 cesium
 comm
-cuml-cu12>=24.12.0
 cytoolz
 dask-expr
 # Older versions of datasets fail with "Loading a dataset cached in a LocalFileSystem is not supported"

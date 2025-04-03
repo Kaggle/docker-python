@@ -21,7 +21,7 @@ RUN cat /kaggle_requirements.txt >> /requirements.txt
 
 # Install uv & Kaggle packages
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-RUN export PATH="${HOME}/.local/bin:${PATH}" && uv pip install --system -r /requirements.txt
+RUN export PATH="${HOME}/.local/bin:${PATH}" && uv pip install --system -v -r /requirements.txt
 ENV PATH="~/.local/bin:${PATH}"
 
 # Install manual packages:
@@ -43,6 +43,9 @@ RUN uv pip install --no-build-isolation --system "git+https://github.com/Kaggle/
 
 # b/385145217 Latest Colab lacks mkl numpy, install it.
 RUN uv pip install --system --force-reinstall -i https://pypi.anaconda.org/intel/simple numpy
+
+# b/385145217 torch 2.4.x .
+RUN uv pip install --system --force-reinstall --no-deps --extra-index-url=https://pypi.nvidia.com "cuml-cu12==25.2.1" "nvidia-cudnn-cu12==9.3.0.75"
 
 # b/328788268 We install an incompatible pair of libs (shapely<2, libpysal==4.9.2) so we can't put this one in the requirements.txt
 # newer daal4py requires tbb>=2022, but libpysal is downgrading it for some reason
