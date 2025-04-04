@@ -130,9 +130,11 @@ tensorflow-io
 tensorflow-text
 tensorflow_decision_forests
 timm
+torchao
 torchinfo
 torchmetrics
 torchtune
+triton
 tsfresh
 vtk
 wandb
