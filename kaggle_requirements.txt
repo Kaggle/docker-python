@@ -130,6 +130,7 @@ torchao
 torchinfo
 torchmetrics
 torchtune
+transformers>=4.51.0
 triton
 tsfresh
 vtk
