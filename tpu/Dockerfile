@@ -25,36 +25,13 @@ ADD patches/kaggle_session.py /root/.local/lib/${PYTHON_VERSION_PATH}/site-packa
 ADD patches/kaggle_web_client.py /root/.local/lib/${PYTHON_VERSION_PATH}/site-packages/kaggle_web_client.py
 ADD patches/kaggle_datasets.py /root/.local/lib/${PYTHON_VERSION_PATH}/site-packages/kaggle_datasets.py
 
-# Disable GCP integrations for now
-# ADD patches/kaggle_gcp.py /root/.local/lib/${PYTHON_VERSION_PATH}/site-packages/kaggle_gcp.py
-
-# Disable logging to file (why do we need this?)
-# ADD patches/log.py /root/.local/lib/${PYTHON_VERSION_PATH}/site-packages/log.py
-
-# sitecustomize adds significant latency to ipython kernel startup and should only be added if needed
-# ADD patches/sitecustomize.py /root/.local/lib/${PYTHON_VERSION_PATH}/site-packages/sitecustomize.py
-
 # Prereqs
 # This is needed for cv2 (opencv-python):
 # https://stackoverflow.com/questions/55313610/importerror-libgl-so-1-cannot-open-shared-object-file-no-such-file-or-directo
 RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
 
 # Install all the packages together for maximum compatibility.
-
-# Install Tensorflow.
-
-# Install Pytorch & related packages
-# https://cloud.google.com/tpu/docs/pytorch-xla-ug-tpu-vm#changing_pytorch_version
-# The URL doesn't include patch version. i.e. must use 1.11 instead of 1.11.0
-# We need to keep the numpy version the same as the installed tf one but compatible with other installs.
-
-# Install JAX & related packages
-# https://cloud.google.com/tpu/docs/jax-quickstart-tpu-vm#install_jax_on_your_cloud_tpu_vm
-
-# Packages needed by the Notebook editor
-
 # Additional useful packages should be added in the requirements.txt
-
 # Bring in the requirements.txt and replace variables in it:
 RUN apt-get install -y gettext
 ADD tpu/requirements.txt /kaggle_requirements.txt
