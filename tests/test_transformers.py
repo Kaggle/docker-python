@@ -1,7 +1,7 @@
 import unittest
 
 import torch
-from transformers import AdamW
+import torch.optim as optim
 import transformers.pipelines # verify this import works
 
 
@@ -16,7 +16,7 @@ class TestTransformers(unittest.TestCase):
         target = torch.tensor([0.4, 0.2, -0.5])
         criterion = torch.nn.MSELoss()
         # No warmup, constant schedule, no gradient clipping
-        optimizer = AdamW(params=[w], lr=2e-1, weight_decay=0.0)
+        optimizer = optim.AdamW(params=[w], lr=2e-1, weight_decay=0.0)
         for _ in range(100):
             loss = criterion(w, target)
             loss.backward()
