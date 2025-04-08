@@ -1,13 +1,13 @@
 # TPU Utils
 tpu-info
 # Tensorflow packages
-tensorflow-tpu>=${TENSORFLOW_VERSION}
+tensorflow-tpu==${TENSORFLOW_VERSION}
 --find-links https://storage.googleapis.com/libtpu-tf-releases/index.html
 tensorflow_hub
 tensorflow-io
 tensorflow-probability
 # Torch packages
-torch~=${TORCH_VERSION}
+torch==${TORCH_VERSION}
 https://storage.googleapis.com/pytorch-xla-releases/wheels/tpuvm/torch_xla-${TORCH_VERSION}+libtpu-${PYTHON_WHEEL_VERSION}-${PYTHON_WHEEL_VERSION}-${TORCH_LINUX_WHEEL_VERSION}.whl
 torchaudio==${TORCHAUDIO_VERSION}
 torchvision==${TORCHVISION_VERSION}
