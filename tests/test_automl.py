@@ -8,7 +8,9 @@ from google.cloud import storage, automl_v1beta1, automl
 
 def _make_credentials():
     import google.auth.credentials
-    return Mock(spec=google.auth.credentials.Credentials)
+    credentials = Mock(spec=google.auth.credentials.Credentials)
+    credentials.universe_domain = 'googleapis.com'
+    return credentials
 
 class TestAutoMl(unittest.TestCase):
 
