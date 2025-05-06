@@ -19,10 +19,8 @@ RUN cat /kaggle_requirements.txt >> /requirements.txt
 # TODO: GPU requirements.txt
 # TODO: merge them better (override matching ones).
 
-# Install uv & Kaggle packages
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-RUN export PATH="${HOME}/.local/bin:${PATH}" && uv pip install --system -r /requirements.txt
-ENV PATH="~/.local/bin:${PATH}"
+# Install Kaggle packages
+RUN uv pip install --system -r /requirements.txt
 
 # Install manual packages:
 # b/183041606#comment5: the Kaggle data proxy doesn't support these APIs. If the library is missing, it falls back to using a regular BigQuery query to fetch data.
@@ -71,14 +69,6 @@ ARG PACKAGE_PATH=/usr/local/lib/python3.11/dist-packages
 
 # Install GPU-specific non-pip packages.
 {{ if eq .Accelerator "gpu" }}
-ARG CUDA_MAJOR_VERSION \
-    CUDA_MINOR_VERSION
-ENV CUDA_MAJOR_VERSION=${CUDA_MAJOR_VERSION} \
-    CUDA_MINOR_VERSION=${CUDA_MINOR_VERSION}
-
-# Make sure we are on the right version of CUDA
-RUN update-alternatives --set cuda /usr/local/cuda-$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION
-
 RUN uv pip install --system "pycuda"
 
 # b/381256047 Remove once installed in Colabs base image.
