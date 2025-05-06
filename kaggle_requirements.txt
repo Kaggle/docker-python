@@ -20,7 +20,6 @@ arrow
 bayesian-optimization
 boto3
 catboost
-category-encoders
 cesium
 comm
 cytoolz
@@ -33,8 +32,6 @@ deap
 dipy
 docker
 easyocr
-# b/302136621: Fix eli5 import for learntools
-eli5
 emoji
 fastcore>=1.7.20
 fasttext
@@ -130,8 +127,6 @@ scikit-multilearn
 scikit-optimize
 scikit-plot
 scikit-surprise
-# b/415358158: Gensim removed from Colab image to upgrade scipy to 1.14.1
-scipy==1.15.1
 # Also pinning seaborn for learntools
 seaborn==0.12.2
 git+https://github.com/facebookresearch/segment-anything.git
