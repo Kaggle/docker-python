@@ -48,7 +48,8 @@ RUN uv pip install --no-build-isolation --system "git+https://github.com/Kaggle/
 # This conflict causes a number of package downgrades, which are handled in this command
 # b/302136621: Fix eli5 import for learntools
 RUN uv pip install --system --force-reinstall --extra-index-url https://pypi.nvidia.com "cuml-cu12==25.2.1" \
-    "nvidia-cudnn-cu12==9.3.0.75" scipy tsfresh scikit-learn==1.2.2 category-encoders eli5
+    "nvidia-cudnn-cu12==9.3.0.75" cuda-bindings==12.8.0 cuda-python==12.8.0 \
+    scipy tsfresh scikit-learn==1.2.2 category-encoders eli5
 
 RUN uv pip install --system --force-reinstall "pynvjitlink-cu12==0.5.2"
 
