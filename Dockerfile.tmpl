@@ -81,16 +81,8 @@ RUN apt-get install -y ocl-icd-libopencl1 clinfo && \
     uv pip install --system /tmp/lightgbm/*.whl && \
     rm -rf /tmp/lightgbm && \
     /tmp/clean-layer.sh
-
-# Remove CUDA_VERSION from non-GPU image.
-{{ else }}
-ENV CUDA_VERSION=""
 {{ end }}
 
-
-# Update GPG key per documentation at https://cloud.google.com/compute/docs/troubleshooting/known-issues
-RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
 
 # Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
 # as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
