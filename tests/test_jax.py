@@ -6,7 +6,7 @@ import time
 import jax
 import jax.numpy as np
 
-from common import gpu_test
+from common import gpu_test, isGPU
 from jax import grad, jit
 
 
@@ -21,5 +21,5 @@ class TestJAX(unittest.TestCase):
         self.assertEqual(0.4199743, ag)
 
     def test_backend(self):
-        expected_backend = 'cpu' if len(os.environ.get('CUDA_VERSION', '')) == 0 else 'gpu'
+        expected_backend = 'cpu' if not isGPU() else 'gpu'
         self.assertEqual(expected_backend, jax.default_backend())
