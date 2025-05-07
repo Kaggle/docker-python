@@ -31,27 +31,20 @@ RUN uv pip install --system -r /requirements.txt
 RUN uv pip uninstall --system google-cloud-bigquery-storage
 
 # b/394382016: sigstore (dependency of kagglehub) requires a prerelease packages, installing separate.
-# b/408284143: google-cloud-automl 2.0.0 introduced incompatible API changes, need to pin to 1.0.1
+# b/408284143: google-cloud-automl 2.0.0 introduced incompatible API changes, need to pin to 1.0.1,
+# installed outside of kaggle_requirements.txt due to requiring an incompatibile version of protobuf.
 RUN uv pip install --system --force-reinstall --prerelease=allow kagglehub[pandas-datasets,hf-datasets,signing]>=0.3.12 \
     google-cloud-automl==1.0.1
-
-# b/408284435: Keras 3.6 broke test_keras.py > test_train > keras.datasets.mnist.load_data()
-# See https://github.com/keras-team/keras/commit/dcefb139863505d166dd1325066f329b3033d45a
-# Colab base is on Keras 3.8, we have to install the package separately
-RUN uv pip install --system "keras<3.6"
 
 # uv cannot install this in requirements.txt without --no-build-isolation
 # to avoid affecting the larger build, we'll post-install it.
 RUN uv pip install --no-build-isolation --system "git+https://github.com/Kaggle/learntools"
 
+# b/302136621: Fix eli5 import for learntools
 # b/408281617: Torch is adamant that it can not install cudnn 9.3.x, only 9.1.x, but Tensorflow can only support 9.3.x.
 # This conflict causes a number of package downgrades, which are handled in this command
-# b/302136621: Fix eli5 import for learntools
-# b/416137032: cuda 12.9.0 breaks datashader 1.18.0
 RUN uv pip install --system --force-reinstall --extra-index-url https://pypi.nvidia.com "cuml-cu12==25.2.1" \
-    "nvidia-cudnn-cu12==9.3.0.75" cuda-bindings==12.8.0 cuda-python==12.8.0 \
-    scipy tsfresh scikit-learn==1.2.2 category-encoders eli5
-
+    "nvidia-cudnn-cu12==9.3.0.75"
 RUN uv pip install --system --force-reinstall "pynvjitlink-cu12==0.5.2"
 
 # b/385145217 Latest Colab lacks mkl numpy, install it.

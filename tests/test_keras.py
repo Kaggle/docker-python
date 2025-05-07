@@ -9,10 +9,11 @@ import keras
 
 class TestKeras(unittest.TestCase):
     def test_train(self):
-        # Load the data and split it between train and test sets
-        (x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data(
-            path='/input/tests/data/mnist.npz'
-        )
+        path = '/input/tests/data/mnist.npz'
+        with np.load(path) as f:
+            x_train, y_train = f['x_train'], f['y_train']
+            x_test, y_test = f['x_test'], f['y_test']
+
 
         # Scale images to the [0, 1] range
         x_train = x_train.astype("float32") / 255
