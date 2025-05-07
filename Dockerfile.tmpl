@@ -49,7 +49,7 @@ RUN uv pip install --no-build-isolation --system "git+https://github.com/Kaggle/
 # b/302136621: Fix eli5 import for learntools
 # b/416137032: cuda 12.9.0 breaks datashader 1.18.0
 RUN uv pip install --system --force-reinstall --extra-index-url https://pypi.nvidia.com "cuml-cu12==25.2.1" \
-    "nvidia-cudnn-cu12==9.3.0.75" cuda-bindings==12.8.0 2==12.8.0 \
+    "nvidia-cudnn-cu12==9.3.0.75" cuda-bindings==12.8.0 cuda-python==12.8.0 \
     scipy tsfresh scikit-learn==1.2.2 category-encoders eli5
 
 RUN uv pip install --system --force-reinstall "pynvjitlink-cu12==0.5.2"
