@@ -8,7 +8,9 @@ from google.cloud import storage
 
 def _make_credentials():
     import google.auth.credentials
-    return Mock(spec=google.auth.credentials.Credentials)
+    credentials = Mock(spec=google.auth.credentials.Credentials)
+    credentials.universe_domain = 'googleapis.com'
+    return credentials
 
 class TestStorage(unittest.TestCase):
 
