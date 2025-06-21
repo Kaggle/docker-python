@@ -12,6 +12,7 @@ def strip_ansi(text):
 class TestAnyWidget(unittest.TestCase):
 
     def test_labextension(self):
+        """Test if the anywidget labextension is installed and enabled."""
         output = subprocess.check_output(
             ["jupyter", "labextension", "list"], stderr=subprocess.STDOUT, text=True
         )
