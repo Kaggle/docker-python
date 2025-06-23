@@ -21,29 +21,6 @@ pipeline {
   }
 
   stages {
-    stage('Pre-build Packages from Source') {
-      stages {
-        stage('lightgbm') {
-          options {
-            timeout(time: 10, unit: 'MINUTES')
-          }
-          steps {
-            sh '''#!/bin/bash
-              set -exo pipefail
-              source config.txt
-              cd packages/
-              ./build_package --base-image $BASE_IMAGE:$BASE_IMAGE_TAG \
-                --package lightgbm \
-                --version $LIGHTGBM_VERSION \
-                --build-arg CUDA_MAJOR_VERSION=$CUDA_MAJOR_VERSION \
-                --build-arg CUDA_MINOR_VERSION=$CUDA_MINOR_VERSION \
-                --push
-            '''
-          }
-        }
-      }
-    }
-
     stage('Build/Test/Diff') {
       parallel {
         stage('CPU') {
