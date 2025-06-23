@@ -2,9 +2,6 @@ ARG BASE_IMAGE \
     BASE_IMAGE_TAG \
     LIGHTGBM_VERSION
 
-{{ if eq .Accelerator "gpu" }}
-FROM gcr.io/kaggle-images/python-lightgbm-whl:${BASE_IMAGE_TAG}-${LIGHTGBM_VERSION} AS lightgbm_whl
-{{ end }}
 FROM ${BASE_IMAGE}:${BASE_IMAGE_TAG}
 
 #b/415358342: UV reports missing requirements files https://github.com/googlecolab/colabtools/issues/5237
@@ -14,14 +11,11 @@ ENV UV_CONSTRAINT= \
 ADD kaggle_requirements.txt /kaggle_requirements.txt
 
 # Freeze existing requirements from base image for critical packages:
-RUN pip freeze | grep -E 'tensorflow|keras|torch|jax|lightgbm' > /colab_requirements.txt
+RUN pip freeze | grep -E 'tensorflow|keras|torch|jax' > /colab_requirements.txt
 
 # Merge requirements files:
 RUN cat /colab_requirements.txt >> /requirements.txt
 RUN cat /kaggle_requirements.txt >> /requirements.txt
-
-# TODO: GPU requirements.txt
-# TODO: merge them better (override matching ones).
 
 # Install Kaggle packages
 RUN uv pip install --system -r /requirements.txt
@@ -64,23 +58,6 @@ ADD patches/template_conf.json /opt/kaggle/conf.json
 # /opt/conda/lib/python3.11/site-packages
 ARG PACKAGE_PATH=/usr/local/lib/python3.11/dist-packages
 
-# Install GPU-specific non-pip packages.
-{{ if eq .Accelerator "gpu" }}
-RUN uv pip install --system "pycuda"
-
-# b/381256047 Remove once installed in Colabs base image.
-# Install LightGBM
-COPY --from=lightgbm_whl /tmp/whl/*.whl /tmp/lightgbm/
-# Install OpenCL (required by LightGBM GPU version)
-RUN apt-get install -y ocl-icd-libopencl1 clinfo && \
-    mkdir -p /etc/OpenCL/vendors && \
-    echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd && \
-    uv pip install --system /tmp/lightgbm/*.whl && \
-    rm -rf /tmp/lightgbm && \
-    /tmp/clean-layer.sh
-{{ end }}
-
-
 # Use a fixed apt-get repo to stop intermittent failures due to flaky httpredir connections,
 # as described by Lionel Chan at http://stackoverflow.com/a/37426929/5881346
 RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list && \
@@ -100,27 +77,7 @@ ADD patches/keras_internal.py \
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing
 
-# NLTK Project datasets
-# b/408298750: We currently reinstall the package, because we get the following error:
-# `AttributeError: module 'inspect' has no attribute 'formatargspec'. Did you mean: 'formatargvalues'?`
 RUN uv pip install --system --force-reinstall "nltk>=3.9.1"
-RUN mkdir -p /usr/share/nltk_data && \
-    # NLTK Downloader no longer continues smoothly after an error, so we explicitly list
-    # the corpuses that work
-    python -m nltk.downloader -d /usr/share/nltk_data abc alpino averaged_perceptron_tagger \
-    basque_grammars biocreative_ppi bllip_wsj_no_aux \
-    book_grammars brown brown_tei cess_cat cess_esp chat80 city_database cmudict \
-    comtrans conll2000 conll2002 conll2007 crubadan dependency_treebank \
-    europarl_raw floresta gazetteers genesis gutenberg \
-    ieer inaugural indian jeita kimmo knbc large_grammars lin_thesaurus mac_morpho machado \
-    masc_tagged maxent_ne_chunker maxent_treebank_pos_tagger moses_sample movie_reviews \
-    mte_teip5 names nps_chat omw opinion_lexicon paradigms \
-    pil pl196x porter_test ppattach problem_reports product_reviews_1 product_reviews_2 propbank \
-    pros_cons ptb punkt punkt_tab qc reuters rslp rte sample_grammars semcor senseval sentence_polarity \
-    sentiwordnet shakespeare sinica_treebank smultron snowball_data spanish_grammars \
-    state_union stopwords subjectivity swadesh switchboard tagsets timit toolbox treebank \
-    twitter_samples udhr2 udhr unicode_samples universal_tagset universal_treebanks_v20 \
-    vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe
 
 RUN apt-get install -y git-lfs && \
     # vtk dependencies
