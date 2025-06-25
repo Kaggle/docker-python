@@ -1,20 +1,12 @@
 ARG BASE_IMAGE \
-    BASE_IMAGE_TAG \
-    LIGHTGBM_VERSION
+    BASE_IMAGE_TAG
 
-{{ if eq .Accelerator "gpu" }}
-FROM gcr.io/kaggle-images/python-lightgbm-whl:${BASE_IMAGE_TAG}-${LIGHTGBM_VERSION} AS lightgbm_whl
-{{ end }}
 FROM ${BASE_IMAGE}:${BASE_IMAGE_TAG}
-
-#b/415358342: UV reports missing requirements files https://github.com/googlecolab/colabtools/issues/5237
-ENV UV_CONSTRAINT= \ 
-    UV_BUILD_CONSTRAINT=
 
 ADD kaggle_requirements.txt /kaggle_requirements.txt
 
 # Freeze existing requirements from base image for critical packages:
-RUN pip freeze | grep -E 'tensorflow|keras|torch|jax|lightgbm' > /colab_requirements.txt
+RUN pip freeze | grep -E 'tensorflow|keras|torch|jax' > /colab_requirements.txt
 
 # Merge requirements files:
 RUN cat /colab_requirements.txt >> /requirements.txt
@@ -67,17 +59,6 @@ ARG PACKAGE_PATH=/usr/local/lib/python3.11/dist-packages
 # Install GPU-specific non-pip packages.
 {{ if eq .Accelerator "gpu" }}
 RUN uv pip install --system "pycuda"
-
-# b/381256047 Remove once installed in Colabs base image.
-# Install LightGBM
-COPY --from=lightgbm_whl /tmp/whl/*.whl /tmp/lightgbm/
-# Install OpenCL (required by LightGBM GPU version)
-RUN apt-get install -y ocl-icd-libopencl1 clinfo && \
-    mkdir -p /etc/OpenCL/vendors && \
-    echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd && \
-    uv pip install --system /tmp/lightgbm/*.whl && \
-    rm -rf /tmp/lightgbm && \
-    /tmp/clean-layer.sh
 {{ end }}
 
 
