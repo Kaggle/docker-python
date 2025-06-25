@@ -32,12 +32,6 @@ RUN uv pip install --system --force-reinstall --prerelease=allow kagglehub[panda
 # to avoid affecting the larger build, we'll post-install it.
 RUN uv pip install --no-build-isolation --system "git+https://github.com/Kaggle/learntools"
 
-# b/408281617: Torch is adamant that it can not install cudnn 9.3.x, only 9.1.x, but Tensorflow can only support 9.3.x.
-# This conflict causes a number of package downgrades, which are handled in this command
-RUN uv pip install --system --force-reinstall --extra-index-url https://pypi.nvidia.com "cuml-cu12==25.2.1" \
-    "nvidia-cudnn-cu12==9.3.0.75"
-RUN uv pip install --system --force-reinstall "pynvjitlink-cu12==0.5.2"
-
 # b/385145217 Latest Colab lacks mkl numpy, install it.
 RUN uv pip install --system --force-reinstall -i https://pypi.anaconda.org/intel/simple numpy
 

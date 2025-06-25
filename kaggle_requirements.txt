@@ -121,6 +121,7 @@ qtconsole
 ray
 rgf-python
 s3fs
+# b/302136621: Fix eli5 import for learntools
 scikit-learn==1.2.2
 # Scikit-learn accelerated library for x86
 scikit-learn-intelex>=2023.0.1
@@ -131,7 +132,7 @@ scikit-surprise
 # Also pinning seaborn for learntools
 seaborn==0.12.2
 git+https://github.com/facebookresearch/segment-anything.git
-# b/329869023 shap 0.45.0 breaks learntools
+# b/329869023: shap 0.45.0 breaks learntools
 shap==0.44.1
 squarify
 tensorflow-cloud
