@@ -46,7 +46,7 @@ RUN uv pip install --system "tbb>=2022" "libpysal==4.9.2"
 
 # b/404590350: Ray and torchtune have conflicting tune cli, we will prioritize torchtune.
 # b/415358158: Gensim removed from Colab image to upgrade scipy
-RUN uv pip install --system --force-reinstall --no-deps torchtune gensim
+RUN uv pip install --system --force-reinstall --no-deps torchtune gensim "scipy<=1.15.3"
 
 # Adding non-package dependencies:
 ADD clean-layer.sh  /tmp/clean-layer.sh
