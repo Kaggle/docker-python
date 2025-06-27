@@ -16,6 +16,7 @@ TPOT==0.12.1
 Theano
 Wand
 annoy
+anywidget
 arrow
 bayesian-optimization
 boto3
