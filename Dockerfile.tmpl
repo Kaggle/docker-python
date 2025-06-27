@@ -39,7 +39,6 @@ RUN uv pip install --system --force-reinstall --extra-index-url https://pypi.nvi
     "nvidia-cuda-cupti-cu12==12.5.82" "nvidia-cuda-nvrtc-cu12==12.5.82" "nvidia-cuda-runtime-cu12==12.5.82" \
     "nvidia-cufft-cu12==11.2.3.61" "nvidia-curand-cu12==10.3.6.82" "nvidia-cusparse-cu12==12.5.1.3" \
     "nvidia-nvjitlink-cu12==12.5.82"
-
 RUN uv pip install --system --force-reinstall "pynvjitlink-cu12==0.5.2"
 
 # b/385145217 Latest Colab lacks mkl numpy, install it.
