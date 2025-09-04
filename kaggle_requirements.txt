@@ -153,4 +153,5 @@ wavio
 # b/350573866: xgboost v2.1.0 breaks learntools
 xgboost==2.0.3
 xvfbwrapper
-ydata-profiling
+
+
