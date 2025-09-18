@@ -6,6 +6,7 @@ tensorflow-tpu==${TENSORFLOW_VERSION}
 tensorflow_hub
 tensorflow-io
 tensorflow-probability
+tensorflow_datasets
 # Torch packages
 torch==${TORCH_VERSION}
 https://storage.googleapis.com/pytorch-xla-releases/wheels/tpuvm/torch_xla-${TORCH_VERSION}-${PYTHON_WHEEL_VERSION}-${PYTHON_WHEEL_VERSION}-${TORCH_LINUX_WHEEL_VERSION}.whl
@@ -20,6 +21,10 @@ git+https://github.com/deepmind/dm-haiku
 jraph
 optax
 trax
+# Tunix GRPO
+git+https://github.com/google/tunix
+git+https://github.com/google/qwix
+grain
 # Jupyter packages
 jupyter-lsp==1.5.1
 jupyterlab
@@ -38,6 +43,7 @@ albumentations
 diffusers
 einops
 fastparquet
+ipywidgets
 matplotlib
 opencv-python
 opencv-python-headless
