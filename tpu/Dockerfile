@@ -55,7 +55,6 @@ RUN sed -i '/from tensorflow_hub import uncompressed_module_resolver/a from tens
 RUN sed -i '/_install_default_resolvers()/a \ \ registry.resolver.add_implementation(kaggle_module_resolver.KaggleFileResolver())' /usr/local/lib/${PYTHON_VERSION_PATH}/site-packages/tensorflow_hub/config.py
 
 # Set these env vars so that they don't produce errs calling the metadata server to load them:
-ENV TPU_ACCELERATOR_TYPE=v3-8
 ENV TPU_PROCESS_ADDRESSES=local
 
 # Metadata
