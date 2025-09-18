@@ -35,7 +35,10 @@ easyocr
 # b/302136621: Fix eli5 import for learntools
 eli5
 emoji
-fastcore>=1.7.20
+fastcore
+# b/445960030: Requires a newer version of fastai than the currently used base image.
+# Remove when relying on a newer base image.
+fastai>=2.8.4
 fasttext
 featuretools
 fiona
@@ -89,7 +92,9 @@ nbconvert==6.4.5
 nbdev
 nilearn
 olefile
-onnx
+# b/445960030: Broken in 1.19.0. See https://github.com/onnx/onnx/issues/7249.
+# Fixed with https://github.com/onnx/onnx/pull/7254. Upgrade when version with fix is published.
+onnx==1.18.0
 openslide-bin
 openslide-python
 optuna
