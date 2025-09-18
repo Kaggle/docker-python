@@ -20,6 +20,7 @@ git+https://github.com/deepmind/dm-haiku
 jraph
 optax
 trax
+git+https://github.com/google/tunix
 # Jupyter packages
 jupyter-lsp==1.5.1
 jupyterlab
