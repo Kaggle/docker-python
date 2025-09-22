@@ -43,9 +43,6 @@ RUN uv pip install \
     "nvidia-nvjitlink-cu12==12.5.82"
 RUN uv pip install --system --force-reinstall "pynvjitlink-cu12==0.5.2"
 
-# b/385145217 Latest Colab lacks mkl numpy, install it.
-RUN uv pip install --system --force-reinstall -i https://pypi.anaconda.org/intel/simple numpy
-
 # newer daal4py requires tbb>=2022, but libpysal is downgrading it for some reason
 RUN uv pip install --system "tbb>=2022" "libpysal==4.9.2"
 
@@ -59,7 +56,7 @@ ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 ADD patches/template_conf.json /opt/kaggle/conf.json
 
 # /opt/conda/lib/python3.11/site-packages
-ARG PACKAGE_PATH=/usr/local/lib/python3.11/dist-packages
+ARG PACKAGE_PATH=/usr/local/lib/python3.12/dist-packages
 
 # Install GPU-specific non-pip packages.
 {{ if eq .Accelerator "gpu" }}
@@ -85,28 +82,6 @@ ADD patches/keras_internal.py \
 
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing
-
-# NLTK Project datasets
-# b/408298750: We currently reinstall the package, because we get the following error:
-# `AttributeError: module 'inspect' has no attribute 'formatargspec'. Did you mean: 'formatargvalues'?`
-RUN uv pip install --system --force-reinstall "nltk>=3.9.1"
-RUN mkdir -p /usr/share/nltk_data && \
-    # NLTK Downloader no longer continues smoothly after an error, so we explicitly list
-    # the corpuses that work
-    python -m nltk.downloader -d /usr/share/nltk_data abc alpino averaged_perceptron_tagger \
-    basque_grammars biocreative_ppi bllip_wsj_no_aux \
-    book_grammars brown brown_tei cess_cat cess_esp chat80 city_database cmudict \
-    comtrans conll2000 conll2002 conll2007 crubadan dependency_treebank \
-    europarl_raw floresta gazetteers genesis gutenberg \
-    ieer inaugural indian jeita kimmo knbc large_grammars lin_thesaurus mac_morpho machado \
-    masc_tagged maxent_ne_chunker maxent_treebank_pos_tagger moses_sample movie_reviews \
-    mte_teip5 names nps_chat omw opinion_lexicon paradigms \
-    pil pl196x porter_test ppattach problem_reports product_reviews_1 product_reviews_2 propbank \
-    pros_cons ptb punkt punkt_tab qc reuters rslp rte sample_grammars semcor senseval sentence_polarity \
-    sentiwordnet shakespeare sinica_treebank smultron snowball_data spanish_grammars \
-    state_union stopwords subjectivity swadesh switchboard tagsets timit toolbox treebank \
-    twitter_samples udhr2 udhr unicode_samples universal_tagset universal_treebanks_v20 \
-    vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe
 
 RUN apt-get install -y git-lfs && \
     # vtk dependencies

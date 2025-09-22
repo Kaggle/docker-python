@@ -9,11 +9,9 @@ PyArabic
 PyUpSet
 Pympler
 Rtree
-shapely<2
 SimpleITK
 # b/302136621: Fix eli5 import for learntools, newer version require scikit-learn > 1.3
 TPOT==0.12.1
-Theano
 Wand
 annoy
 arrow
@@ -49,11 +47,10 @@ geojson
 geopandas==v0.14.4
 gensim
 google-cloud-aiplatform
-# b/315753846: Unpin translate package.
-google-cloud-translate==3.12.1
 google-cloud-videointelligence
 google-cloud-vision
 google-genai
+google-adk
 gpxpy
 h2o
 haversine
@@ -109,12 +106,10 @@ preprocessing
 pudb
 pyLDAvis
 pycryptodome
-pydegensac
 pydicom
 pydub
 pyemd
 pyexcel-ods
-pymc3
 pymongo
 pypdf
 pytesseract
@@ -140,10 +135,6 @@ git+https://github.com/facebookresearch/segment-anything.git
 # b/329869023: shap 0.45.0 breaks learntools
 shap==0.44.1
 squarify
-tensorflow-cloud
-tensorflow-io
-tensorflow-text
-tensorflow_decision_forests
 timm
 torchao
 torchinfo
