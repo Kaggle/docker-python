@@ -1,6 +1,6 @@
-BASE_IMAGE=python:3.11
-PYTHON_WHEEL_VERSION=cp311
-PYTHON_VERSION_PATH=python3.11
+BASE_IMAGE=python:3.12
+PYTHON_WHEEL_VERSION=cp312
+PYTHON_VERSION_PATH=python3.12
 TENSORFLOW_VERSION=2.20.0
 # gsutil ls gs://pytorch-xla-releases/wheels/tpuvm/* | grep libtpu | grep torch_xla | grep -v -E ".*rc[0-9].*" | sed 's/.*torch_xla-\(.*\)+libtpu.*/\1/' | sort -rV
 # Supports nightly
