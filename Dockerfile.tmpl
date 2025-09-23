@@ -44,7 +44,8 @@ RUN uv pip install \
 RUN uv pip install --system --force-reinstall "pynvjitlink-cu12==0.5.2"
 
 # newer daal4py requires tbb>=2022, but libpysal is downgrading it for some reason
-RUN uv pip install --system "tbb>=2022" "libpysal==4.9.2"
+# b/315753846: Unpin translate package.
+RUN uv pip install --system "tbb>=2022" "libpysal==4.9.2" "google-cloud-translate==3.12.1"
 
 # b/385145217 Latest Colab lacks mkl numpy, install it.
 RUN uv pip install --system --force-reinstall -i  https://software.repos.intel.com/python/pypi "numpy==1.26.4"
@@ -58,7 +59,7 @@ ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 ADD patches/template_conf.json /opt/kaggle/conf.json
 
-# /opt/conda/lib/python3.11/site-packages
+# /opt/conda/lib/python3.12/site-packages
 ARG PACKAGE_PATH=/usr/local/lib/python3.12/dist-packages
 
 # Install GPU-specific non-pip packages.
@@ -177,7 +178,7 @@ ADD patches/kaggle_gcp.py \
 
 # Figure out why this is in a different place?
 # Found by doing a export PYTHONVERBOSE=1 and then running python and checking for where it looked for it.
-ADD patches/sitecustomize.py /usr/lib/python3.11/sitecustomize.py
+ADD patches/sitecustomize.py /usr/lib/python3.12/sitecustomize.py
 
 ARG GIT_COMMIT=unknown \
     BUILD_DATE=unknown

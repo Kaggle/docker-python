@@ -71,7 +71,7 @@ jupyterlab-lsp
 kaggle>=1.7.4.2
 kaggle-environments
 keras-cv
-keras-nlp
+keras-hub
 keras-tuner
 kornia
 langid
@@ -141,6 +141,9 @@ torchinfo
 torchmetrics
 torchtune
 transformers>=4.51.0
+tensorflow-cloud
+tensorflow-io
+tensorflow-text
 triton
 tsfresh
 vtk
