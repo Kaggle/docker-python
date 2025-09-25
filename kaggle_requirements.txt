@@ -1,6 +1,4 @@
 # Please keep this in alphabetical order
-Altair>=5.4.0
-Babel
 Boruta
 Cartopy
 ImageHash
@@ -24,7 +22,6 @@ category-encoders
 cesium
 comm
 cytoolz
-dask-expr
 # Older versions of datasets fail with "Loading a dataset cached in a LocalFileSystem is not supported"
 # https://stackoverflow.com/questions/77433096/notimplementederror-loading-a-dataset-cached-in-a-localfilesystem-is-not-suppor
 datasets>=2.14.6
@@ -48,6 +45,8 @@ geojson
 # geopandas > v0.14.4 breaks learn tools
 geopandas==v0.14.4
 gensim
+# b/443054743
+google-adk
 google-cloud-aiplatform
 # b/315753846: Unpin translate package.
 google-cloud-translate==3.12.1
@@ -111,7 +110,6 @@ pyLDAvis
 pycryptodome
 pydegensac
 pydicom
-pydub
 pyemd
 pyexcel-ods
 pymc3
@@ -144,18 +142,15 @@ tensorflow-cloud
 tensorflow-io
 tensorflow-text
 tensorflow_decision_forests
-timm
-torchao
 torchinfo
 torchmetrics
 torchtune
 transformers>=4.51.0
-triton
-tsfresh
 vtk
-wandb
 wavio
 # b/350573866: xgboost v2.1.0 breaks learntools
 xgboost==2.0.3
 xvfbwrapper
 ydata-profiling
+# b/443054743: pinned as newer versions requires protobuf > 3.20.3
+ydf==0.9.0
