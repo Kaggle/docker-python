@@ -144,7 +144,6 @@ tensorflow-cloud
 tensorflow-io
 tensorflow-text
 tensorflow_decision_forests
-ydf==0.9.0
 torchinfo
 torchmetrics
 torchtune
@@ -155,3 +154,5 @@ wavio
 xgboost==2.0.3
 xvfbwrapper
 ydata-profiling
+# b/443054743: pinned as newer versions requires protobuf > 3.20.3
+ydf==0.9.0
