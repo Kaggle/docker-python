@@ -47,7 +47,6 @@ RUN uv pip install --system --force-reinstall "pynvjitlink-cu12==0.5.2"
 RUN uv pip install --system --force-reinstall -i https://pypi.anaconda.org/intel/simple numpy
 
 # newer daal4py requires tbb>=2022, but libpysal is downgrading it for some reason
-# b/315753846: Unpin translate package.
 RUN uv pip install --system "tbb>=2022" "libpysal==4.9.2" 
 
 # b/404590350: Ray and torchtune have conflicting tune cli, we will prioritize torchtune.
