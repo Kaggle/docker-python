@@ -50,13 +50,9 @@ RUN uv pip install --system --force-reinstall -i https://pypi.anaconda.org/intel
 # b/315753846: Unpin translate package.
 RUN uv pip install --system "tbb>=2022" "libpysal==4.9.2" 
 
-# "google-cloud-translate==3.12.1"
-
 # b/404590350: Ray and torchtune have conflicting tune cli, we will prioritize torchtune.
 # b/415358158: Gensim removed from Colab image to upgrade scipy
 RUN uv pip install --system --force-reinstall --no-deps torchtune gensim "scipy<=1.15.3" 
-
-# "tensorflow_decision_forests==1.11.0"
 
 # Adding non-package dependencies:
 ADD clean-layer.sh  /tmp/clean-layer.sh
