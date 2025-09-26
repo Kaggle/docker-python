@@ -125,7 +125,7 @@ ray
 rgf-python
 s3fs
 # b/302136621: Fix eli5 import for learntools
-scikit-learn==1.2.2
+scikit-learn==1.7.2
 # Scikit-learn accelerated library for x86
 scikit-learn-intelex>=2023.0.1
 scikit-multilearn
