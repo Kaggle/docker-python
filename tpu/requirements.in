@@ -1,6 +1,7 @@
 # TPU Utils
 tpu-info
 # Tensorflow packages
+# TODO: b/447621961 - re-enable tensorflow-tpu when a compatible libtpu can be found.
 tensorflow-cpu==${TENSORFLOW_VERSION}
 tensorflow_hub
 tensorflow-io
