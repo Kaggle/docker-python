@@ -58,16 +58,6 @@ RUN export PATH="${HOME}/.local/bin:${PATH}" && \
     /tmp/clean-layer.sh
 ENV PATH="~/.local/bin:${PATH}"
 
-# We install a libtpu version compatible with both jax 0.7.2 and torch 2.8.0.
-# Why? tunix latest -> flax 0.12 -> jax 0.7.2 -> libtpu 0.0.23. However, that
-# libtpu causes pjrt api errors for torch 2.8.0. screenshot/5heUtdyaJ4MmR3D
-# https://github.com/pytorch/xla/blob/d517649bdef6ab0519c30c704bde8779c8216502/setup.py#L111
-# https://github.com/jax-ml/jax/blob/3489529b38d1f11d1e5caf4540775aadd5f2cdda/setup.py#L26
-RUN export PATH="${HOME}/.local/bin:${PATH}" && \
-    uv pip install --system --force-reinstall libtpu==0.0.17 && \
-    uv cache clean && \
-    /tmp/clean-layer.sh
-
 # Kaggle Model Hub patches:
 ADD patches/kaggle_module_resolver.py /usr/local/lib/${PYTHON_VERSION_PATH}/site-packages/tensorflow_hub/kaggle_module_resolver.py
 RUN sed -i '/from tensorflow_hub import uncompressed_module_resolver/a from tensorflow_hub import kaggle_module_resolver' /usr/local/lib/${PYTHON_VERSION_PATH}/site-packages/tensorflow_hub/config.py

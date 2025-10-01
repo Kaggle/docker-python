@@ -8,10 +8,10 @@ tensorflow-io
 tensorflow-probability
 tensorflow_datasets
 # Torch packages
-torch==${TORCH_VERSION}
+https://download.pytorch.org/whl/cpu/torch-${TORCH_VERSION}%2Bcpu-${PYTHON_WHEEL_VERSION}-${PYTHON_WHEEL_VERSION}-${TORCH_LINUX_WHEEL_VERSION}.whl
+https://download.pytorch.org/whl/cpu/torchaudio-${TORCHAUDIO_VERSION}%2Bcpu-${PYTHON_WHEEL_VERSION}-${PYTHON_WHEEL_VERSION}-${TORCH_LINUX_WHEEL_VERSION}.whl
+https://download.pytorch.org/whl/cpu/torchvision-${TORCHVISION_VERSION}%2Bcpu-${PYTHON_WHEEL_VERSION}-${PYTHON_WHEEL_VERSION}-${TORCH_LINUX_WHEEL_VERSION}.whl
 https://storage.googleapis.com/pytorch-xla-releases/wheels/tpuvm/torch_xla-${TORCH_VERSION}-${PYTHON_WHEEL_VERSION}-${PYTHON_WHEEL_VERSION}-${TORCH_LINUX_WHEEL_VERSION}.whl
-torchaudio==${TORCHAUDIO_VERSION}
-torchvision==${TORCHVISION_VERSION}
 # Jax packages
 jax[tpu]
 distrax
