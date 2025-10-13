@@ -58,8 +58,8 @@ ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 ADD patches/template_conf.json /opt/kaggle/conf.json
 
-# /opt/conda/lib/python3.11/site-packages
-ARG PACKAGE_PATH=/usr/local/lib/python3.11/dist-packages
+# /opt/conda/lib/python3.12/site-packages
+ARG PACKAGE_PATH=/usr/local/lib/python3.12/dist-packages
 
 # Install GPU-specific non-pip packages.
 {{ if eq .Accelerator "gpu" }}
