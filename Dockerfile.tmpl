@@ -48,7 +48,7 @@ RUN uv pip install --system "tbb>=2022" "libpysal==4.9.2"
 
 # b/404590350: Ray and torchtune have conflicting tune cli, we will prioritize torchtune.
 # b/415358158: Gensim removed from Colab image to upgrade scipy
-# b/456239669: remove huggingface-hub when pytorch-lighting and transformer are compatible
+# b/456239669: remove huggingface-hub pin when pytorch-lighting and transformer are compatible
 RUN uv pip install --system --force-reinstall --no-deps torchtune gensim "scipy<=1.15.3" "huggingface-hub==0.36.0"
 
 # Adding non-package dependencies:
