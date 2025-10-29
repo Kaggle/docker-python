@@ -66,6 +66,7 @@ jedi
 jupyter-lsp==1.5.1
 # b/333854354: pin jupyter-server to version 2.12.5; later versions break LSP (b/333854354)
 jupyter_server==2.12.5
+jupyter_server_proxy
 jupyterlab
 jupyterlab-lsp
 # b/409363708: Ensure we have the update version, we can consider removing it once
