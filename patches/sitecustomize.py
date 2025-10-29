@@ -13,7 +13,6 @@ class GcpModuleFinder(importlib.abc.MetaPathFinder):
     _MODULES = [
         'google.cloud.bigquery',
         'google.cloud.storage',
-        'google.cloud.automl_v1beta1',
         'google.cloud.translate',
         'google.cloud.translate_v2',
         'google.cloud.translate_v3',
