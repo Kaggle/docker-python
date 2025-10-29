@@ -146,16 +146,6 @@ RUN mkdir -p /root/.jupyter && touch /root/.jupyter/jupyter_nbconvert_config.py 
     mkdir -p /etc/ipython/ && echo "c = get_config(); c.IPKernelApp.matplotlib = 'inline'" > /etc/ipython/ipython_config.py && \
     /tmp/clean-layer.sh
 
-# Fix to import bq_helper library without downgrading setuptools and upgrading protobuf
-RUN mkdir -p ~/src && git clone https://github.com/SohierDane/BigQuery_Helper ~/src/BigQuery_Helper && \
-    mkdir -p ~/src/BigQuery_Helper/bq_helper && \
-    mv ~/src/BigQuery_Helper/bq_helper.py ~/src/BigQuery_Helper/bq_helper/__init__.py && \
-    mv ~/src/BigQuery_Helper/test_helper.py ~/src/BigQuery_Helper/bq_helper/ && \
-    sed -i 's/)/packages=["bq_helper"])/g' ~/src/BigQuery_Helper/setup.py && \
-    uv pip install --system -e ~/src/BigQuery_Helper "protobuf<3.21"&& \
-    /tmp/clean-layer.sh
-
-
 # install imagemagick for wand
 # https://docs.wand-py.org/en/latest/guide/install.html#install-imagemagick-on-debian-ubuntu
 RUN apt-get install libmagickwand-dev
