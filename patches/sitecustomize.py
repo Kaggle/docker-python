@@ -56,7 +56,6 @@ class GcpModuleLoader(importlib.abc.Loader):
         _LOADERS = {
             'google.cloud.bigquery': kaggle_gcp.init_bigquery,
             'google.cloud.storage': kaggle_gcp.init_gcs,
-            'google.cloud.automl_v1beta1': kaggle_gcp.init_automl,
             'google.cloud.translate': kaggle_gcp.init_translation_v3,
             'google.cloud.translate_v2': kaggle_gcp.init_translation_v2,
             'google.cloud.translate_v3': kaggle_gcp.init_translation_v3,
