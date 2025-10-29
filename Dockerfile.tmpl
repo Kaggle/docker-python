@@ -23,10 +23,7 @@ RUN uv pip install --system -r /requirements.txt
 RUN uv pip uninstall --system google-cloud-bigquery-storage
 
 # b/394382016: sigstore (dependency of kagglehub) requires a prerelease packages, installing separate.
-# b/408284143: google-cloud-automl 2.0.0 introduced incompatible API changes, need to pin to 1.0.1,
-# installed outside of kaggle_requirements.txt due to requiring an incompatibile version of protobuf.
-RUN uv pip install --system --force-reinstall --prerelease=allow "kagglehub[pandas-datasets,hf-datasets,signing]>=0.3.12" \
-    "google-cloud-automl==1.0.1"
+RUN uv pip install --system --force-reinstall --prerelease=allow "kagglehub[pandas-datasets,hf-datasets,signing]>=0.3.12"
 
 # uv cannot install this in requirements.txt without --no-build-isolation
 # to avoid affecting the larger build, we'll post-install it.

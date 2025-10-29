@@ -253,37 +253,6 @@ def init_gcs():
         KaggleKernelCredentials(target=GcpTarget.GCS))
     return storage
 
-def init_automl():
-    from google.cloud import automl, automl_v1beta1
-    if not is_user_secrets_token_set():
-        return
-
-    from kaggle_gcp import get_integrations
-    if not get_integrations().has_cloudai():
-        return
-
-    from kaggle_secrets import GcpTarget
-    from kaggle_gcp import KaggleKernelCredentials
-    kaggle_kernel_credentials = KaggleKernelCredentials(target=GcpTarget.CLOUDAI)
-
-    # Patch the 2 GA clients: AutoMlClient and PreditionServiceClient
-    monkeypatch_client(automl.AutoMlClient, kaggle_kernel_credentials)
-    monkeypatch_client(automl.PredictionServiceClient, kaggle_kernel_credentials)
-
-    # The AutoML client library exposes 3 different client classes (AutoMlClient,
-    # TablesClient, PredictionServiceClient), so patch each of them.
-    # The same KaggleKernelCredentials are passed to all of them.
-    # The GcsClient class is only used internally by TablesClient.
-
-    # The beta version of the clients that are now GA are included here for now.
-    # They are deprecated and will be removed by 1 May 2020.
-    monkeypatch_client(automl_v1beta1.AutoMlClient, kaggle_kernel_credentials)
-    monkeypatch_client(automl_v1beta1.PredictionServiceClient, kaggle_kernel_credentials)
-
-    # The TablesClient is still in beta, so this will not be deprecated until
-    # the TablesClient is GA.
-    monkeypatch_client(automl_v1beta1.TablesClient, kaggle_kernel_credentials)
-
 def init_translation_v2():
     from google.cloud import translate_v2
     if not is_user_secrets_token_set():
@@ -379,7 +348,6 @@ def init_vision():
 def init():
     init_bigquery()
     init_gcs()
-    init_automl()
     init_translation_v2()
     init_translation_v3()
     init_natural_language()
