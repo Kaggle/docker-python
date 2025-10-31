@@ -48,8 +48,6 @@ gensim
 # b/443054743,b/455550872
 google-adk[a2a,eval]
 google-cloud-aiplatform
-# b/315753846: Unpin translate package.
-google-cloud-translate==3.12.1
 google-cloud-videointelligence
 google-cloud-vision
 google-genai

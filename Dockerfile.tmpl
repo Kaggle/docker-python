@@ -49,7 +49,8 @@ RUN uv pip install --system "tbb>=2022" "libpysal==4.9.2"
 # b/404590350: Ray and torchtune have conflicting tune cli, we will prioritize torchtune.
 # b/415358158: Gensim removed from Colab image to upgrade scipy
 # b/456239669: remove huggingface-hub pin when pytorch-lighting and transformer are compatible
-RUN uv pip install --system --force-reinstall --no-deps torchtune gensim "scipy<=1.15.3" "huggingface-hub==0.36.0"
+# b/315753846: Unpin translate package, currently conflicts with adk 1.17.0
+RUN uv pip install --system --force-reinstall --no-deps torchtune gensim "scipy<=1.15.3" "huggingface-hub==0.36.0" "google-cloud-translate==3.12.1"
 
 # Adding non-package dependencies:
 ADD clean-layer.sh  /tmp/clean-layer.sh
