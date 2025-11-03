@@ -21,7 +21,7 @@ def get_integrations():
             target = GcpTarget[integration.upper()]
             kernel_integrations.add_integration(target)
         except KeyError as e:
-            logging.error(f"Unknown integration target: {integration.upper()}")
+            logging.debug(f"Unknown integration target: {integration.upper()}")
     return kernel_integrations
 
 
