@@ -1,5 +1,6 @@
 import os
 import inspect
+import logging
 from google.auth import credentials, environment_vars
 from google.auth.exceptions import RefreshError
 from google.api_core.gapic_v1.client_info import ClientInfo
@@ -7,8 +8,6 @@ from google.cloud import bigquery
 from google.cloud.exceptions import Forbidden
 from google.cloud.bigquery._http import Connection
 from kaggle_secrets import GcpTarget, UserSecretsClient
-
-from log import Log
 
 KAGGLE_GCP_CLIENT_USER_AGENT="kaggle-gcp-client/1.0"
 
@@ -22,7 +21,7 @@ def get_integrations():
             target = GcpTarget[integration.upper()]
             kernel_integrations.add_integration(target)
         except KeyError as e:
-            Log.error(f"Unknown integration target: {integration.upper()}")
+            logging.error(f"Unknown integration target: {integration.upper()}")
     return kernel_integrations
 
 
@@ -66,14 +65,14 @@ class KaggleKernelCredentials(credentials.Credentials):
             elif self.target == GcpTarget.CLOUDAI:
                 self.token, self.expiry = client._get_cloudai_access_token()
         except ConnectionError as e:
-            Log.error(f"Connection error trying to refresh access token: {e}")
+            logging.error(f"Connection error trying to refresh access token: {e}")
             print("There was a connection error trying to fetch the access token. "
                   f"Please ensure internet is on in order to use the {self.target.service} Integration.")
             raise RefreshError('Unable to refresh access token due to connection error.') from e
         except Exception as e:
-            Log.error(f"Error trying to refresh access token: {e}")
+            logging.error(f"Error trying to refresh access token: {e}")
             if (not get_integrations().has_integration(self.target)):
-                Log.error(f"No {self.target.service} integration found.")
+                logging.error(f"No {self.target.service} integration found.")
                 print(
                    f"Please ensure you have selected a {self.target.service} account in the Notebook Add-ons menu.")
             raise RefreshError('Unable to refresh access token.') from e
@@ -102,7 +101,7 @@ class _DataProxyConnection(Connection):
             msg = ("Permission denied using Kaggle's public BigQuery integration. "
                    "Did you mean to select a BigQuery account in the Notebook Add-ons menu?")
             print(msg)
-            Log.info(msg)
+            logging.info(msg)
             raise e
 
 
@@ -156,23 +155,23 @@ def init_bigquery():
         # Remove these two lines once this is resolved:
         # https://github.com/googleapis/google-cloud-python/issues/8108
         if explicit_project_id:
-            Log.info(f"Explicit project set to {explicit_project_id}")
+            logging.info(f"Explicit project set to {explicit_project_id}")
             kwargs['project'] = explicit_project_id
         if explicit_project_id is None and specified_credentials is None and not has_bigquery:
             msg = "Using Kaggle's public dataset BigQuery integration."
-            Log.info(msg)
+            logging.info(msg)
             print(msg)
             return PublicBigqueryClient(*args, **kwargs)
         else:
             if specified_credentials is None:
-                Log.info("No credentials specified, using KaggleKernelCredentials.")
+                logging.info("No credentials specified, using KaggleKernelCredentials.")
                 kwargs['credentials'] = KaggleKernelCredentials()
                 if (not has_bigquery):
-                    Log.info("No bigquery integration found, creating client anyways.")
+                    logging.info("No bigquery integration found, creating client anyways.")
                     print('Please ensure you have selected a BigQuery '
                         'account in the Notebook Add-ons menu.')
             if explicit_project_id is None:
-                Log.info("No project specified while using the unmodified client.")
+                logging.info("No project specified while using the unmodified client.")
                 print('Please ensure you specify a project id when creating the client'
                     ' in order to use your BigQuery account.')
             kwargs['client_info'] = set_kaggle_user_agent(kwargs.get('client_info'))
@@ -196,20 +195,20 @@ def monkeypatch_aiplatform_init(aiplatform_klass, kaggle_kernel_credentials):
     def patched_init(*args, **kwargs):
         specified_credentials = kwargs.get('credentials')
         if specified_credentials is None:
-            Log.info("No credentials specified, using KaggleKernelCredentials.")
+            logging.info("No credentials specified, using KaggleKernelCredentials.")
             kwargs['credentials'] = kaggle_kernel_credentials
         return aiplatform_init(*args, **kwargs)
 
     if (not has_been_monkeypatched(aiplatform_klass.init)):
         aiplatform_klass.init = patched_init
-        Log.info("aiplatform.init patched")
+        logging.info("aiplatform.init patched")
 
 def monkeypatch_client(client_klass, kaggle_kernel_credentials):
     client_init = client_klass.__init__
     def patched_init(self, *args, **kwargs):
         specified_credentials = kwargs.get('credentials')
         if specified_credentials is None:
-            Log.info("No credentials specified, using KaggleKernelCredentials.")
+            logging.info("No credentials specified, using KaggleKernelCredentials.")
             # Some GCP services demand the billing and target project must be the same.
             # To avoid using default service account based credential as caller credential
             # user need to provide ClientOptions with quota_project_id:
@@ -227,7 +226,7 @@ def monkeypatch_client(client_klass, kaggle_kernel_credentials):
 
     if (not has_been_monkeypatched(client_klass.__init__)):
         client_klass.__init__ = patched_init
-        Log.info(f"Client patched: {client_klass}")
+        logging.info(f"Client patched: {client_klass}")
 
 def set_kaggle_user_agent(client_info: ClientInfo):
     # Add kaggle client user agent in order to attribute usage.
