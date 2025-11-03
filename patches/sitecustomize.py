@@ -1,6 +1,5 @@
+import logging
 import os
-
-from log import Log
 
 import sys
 import importlib.abc
