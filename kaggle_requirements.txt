@@ -126,6 +126,7 @@ scikit-optimize
 scikit-plot
 scikit-surprise
 seaborn
+git+https://github.com/facebookresearch/segment-anything.git
 shap
 squarify
 tensorflow-cloud
