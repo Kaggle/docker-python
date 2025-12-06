@@ -144,3 +144,4 @@ xgboost==2.0.3
 xvfbwrapper
 ydata-profiling
 ydf
+protobuf==5.29.5

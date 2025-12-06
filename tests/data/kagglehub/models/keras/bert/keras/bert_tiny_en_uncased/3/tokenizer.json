@@ -1,0 +1,27 @@
+{
+    "module": "keras_hub.src.models.bert.bert_tokenizer",
+    "class_name": "BertTokenizer",
+    "config": {
+        "name": "bert_tokenizer",
+        "trainable": true,
+        "dtype": {
+            "module": "keras",
+            "class_name": "DTypePolicy",
+            "config": {
+                "name": "int32"
+            },
+            "registered_name": null
+        },
+        "config_file": "tokenizer.json",
+        "vocabulary": null,
+        "sequence_length": null,
+        "lowercase": true,
+        "strip_accents": false,
+        "split": true,
+        "suffix_indicator": "##",
+        "oov_token": "[UNK]",
+        "special_tokens": null,
+        "special_tokens_in_strings": false
+    },
+    "registered_name": "keras_hub>BertTokenizer"
+}
