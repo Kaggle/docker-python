@@ -6,14 +6,11 @@ FROM ${BASE_IMAGE}:${BASE_IMAGE_TAG}
 ADD kaggle_requirements.txt /kaggle_requirements.txt
 
 # Freeze existing requirements from base image for critical packages:
-RUN pip freeze | grep -E 'tensorflow|keras|torch|jax|numpy' > /colab_requirements.txt
+RUN pip freeze | grep -E 'tensorflow|keras|torch|jax' > /colab_requirements.txt
 
 # Merge requirements files:
 RUN cat /colab_requirements.txt >> /requirements.txt
 RUN cat /kaggle_requirements.txt >> /requirements.txt
-
-# TODO: GPU requirements.txt
-# TODO: merge them better (override matching ones).
 
 # Install Kaggle packages
 RUN uv pip install --system -r /requirements.txt
@@ -36,8 +33,10 @@ RUN uv pip install --system "tbb>=2022" "libpysal==4.9.2"
 # b/415358158: Gensim removed from Colab image to upgrade scipy
 # b/456239669: remove huggingface-hub pin when pytorch-lighting and transformer are compatible
 # b/315753846: Unpin translate package, currently conflicts with adk 1.17.0
-RUN uv pip install --system --force-reinstall --no-deps torchtune gensim "scipy<=1.15.3" "huggingface-hub==0.36.0" "google-cloud-translate==3.12.1" "numpy==2.0.2"
-
+# b/(xxxxx): Unpin Pandas once cuml/cudf are compatible, version 3.0 causes issues
+# b/(xxxxx): Unpin protobuf, v > 5.29.5 causes issues with numerous packages
+# b/(xxxxx): numpy will auto-upgrade to 2.4.x, which causes issues with numerous packages
+RUN uv pip install --system --force-reinstall --no-deps torchtune gensim "scipy<=1.15.3" "huggingface-hub==0.36.0" "google-cloud-translate==3.12.1" "numpy==2.0.2" "pandas==2.2.2"
 RUN uv pip install --system --force-reinstall "protobuf==5.29.5"
 
 # Adding non-package dependencies:

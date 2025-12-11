@@ -9,8 +9,7 @@ Pympler
 Rtree
 shapely
 SimpleITK
-# b/302136621: Fix eli5 import for learntools, newer version require scikit-learn > 1.3
-TPOT==0.12.1
+TPOT
 Wand
 annoy
 arrow
@@ -30,9 +29,6 @@ docker
 easyocr
 emoji
 fastcore
-# b/445960030: Requires a newer version of fastai than the currently used base image.
-# Remove when relying on a newer base image.
-fastai>=2.8.4
 fasttext
 featuretools
 fiona
@@ -126,6 +122,8 @@ scikit-surprise
 seaborn
 git+https://github.com/facebookresearch/segment-anything.git
 shap
+# b/(xxxxx): unpin, currently needed as dependency for tsfresh
+statsmodels==0.14.6
 squarify
 tensorflow-cloud
 tensorflow-io
@@ -136,11 +134,5 @@ torchtune
 transformers>=4.51.0
 vtk
 wavio
-# b/350573866: xgboost v2.1.0 breaks learntools
-xgboost==2.0.3
 xvfbwrapper
 ydata-profiling
-ydf
-protobuf==5.29.5
-numpy==2.0.2
-statsmodels==0.14.6
