@@ -39,8 +39,6 @@ fiona
 fury
 fuzzywuzzy
 geojson
-# geopandas > v0.14.4 breaks learn tools
-geopandas==v0.14.4
 gensim
 # b/443054743,b/455550872
 google-adk[a2a,eval]
@@ -132,7 +130,6 @@ squarify
 tensorflow-cloud
 tensorflow-io
 tensorflow-text
-tensorflow_decision_forests
 torchinfo
 torchmetrics
 torchtune
@@ -145,3 +142,5 @@ xvfbwrapper
 ydata-profiling
 ydf
 protobuf==5.29.5
+numpy==2.0.2
+statsmodels==0.14.6
