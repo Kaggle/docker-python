@@ -12,7 +12,6 @@ SimpleITK
 TPOT
 Wand
 annoy
-arrow
 bayesian-optimization
 boto3
 catboost
@@ -28,7 +27,6 @@ dipy
 docker
 easyocr
 emoji
-fastcore
 fasttext
 featuretools
 fiona
@@ -117,13 +115,10 @@ scikit-multilearn
 scikit-optimize
 scikit-plot
 scikit-surprise
-seaborn
 git+https://github.com/facebookresearch/segment-anything.git
-shap
 squarify
 tensorflow-cloud
 tensorflow-io
-tensorflow-text
 torchinfo
 torchmetrics
 torchtune
