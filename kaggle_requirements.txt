@@ -81,9 +81,7 @@ nbconvert==6.4.5
 nbdev
 nilearn
 olefile
-# b/445960030: Broken in 1.19.0. See https://github.com/onnx/onnx/issues/7249.
-# Fixed with https://github.com/onnx/onnx/pull/7254. Upgrade when version with fix is published.
-onnx==1.18.0
+onnx
 openslide-bin
 openslide-python
 optuna
@@ -122,8 +120,6 @@ scikit-surprise
 seaborn
 git+https://github.com/facebookresearch/segment-anything.git
 shap
-# b/(xxxxx): unpin, currently needed as dependency for tsfresh
-statsmodels==0.14.6
 squarify
 tensorflow-cloud
 tensorflow-io
