@@ -34,6 +34,7 @@ fury
 fuzzywuzzy
 geojson
 gensim
+gemma
 # b/443054743,b/455550872
 google-adk[a2a,eval]
 google-cloud-aiplatform
@@ -60,6 +61,8 @@ jupyterlab-lsp
 # Colab base image is updated more frequently.
 kaggle>=1.7.4.2
 kaggle-environments
+# Lastest version to support Gemma
+kauldron>=1.3.0
 keras-cv
 keras-nlp
 keras-tuner
