@@ -48,6 +48,8 @@ ipympl
 ipywidgets==8.1.5
 isoweek
 jedi
+# jitler 0.11.1 breaks simulation image
+jiter==0.10.0
 # b/276358430: fix Jupyter lsp freezing up the jupyter server
 jupyter-lsp==1.5.1
 # b/333854354: pin jupyter-server to version 2.12.5; later versions break LSP (b/333854354)
