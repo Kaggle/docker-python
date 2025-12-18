@@ -33,9 +33,8 @@ fury
 fuzzywuzzy
 geojson
 gensim
-gemma
 # b/443054743,b/455550872
-google-adk[a2a,eval]
+google-adk[a2a,eval]>=1.21.0
 google-cloud-aiplatform
 google-cloud-videointelligence
 google-cloud-vision
@@ -49,6 +48,8 @@ ipympl
 ipywidgets==8.1.5
 isoweek
 jedi
+# jitler 0.11.1 breaks simulation image
+jiter==0.10.0
 # b/276358430: fix Jupyter lsp freezing up the jupyter server
 jupyter-lsp==1.5.1
 # b/333854354: pin jupyter-server to version 2.12.5; later versions break LSP (b/333854354)
@@ -60,8 +61,6 @@ jupyterlab-lsp
 # Colab base image is updated more frequently.
 kaggle>=1.7.4.2
 kaggle-environments
-# Lastest version to support Gemma
-kauldron>=1.3.0
 keras-cv
 keras-nlp
 keras-tuner
