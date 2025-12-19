@@ -34,7 +34,7 @@ fuzzywuzzy
 geojson
 gensim
 # b/443054743,b/455550872
-google-adk[a2a,eval]>=1.21.0
+google-adk[a2a,eval]>=1.18.0
 google-cloud-aiplatform
 google-cloud-videointelligence
 google-cloud-vision
@@ -128,3 +128,4 @@ vtk
 wavio
 xvfbwrapper
 ydata-profiling
+pydantic==2.12.4
