@@ -127,4 +127,5 @@ transformers>=4.51.0
 vtk
 wavio
 xvfbwrapper
-ydata-profiling
+
+
