@@ -19,13 +19,8 @@ class KaggleAPIHandler(BaseHTTPRequestHandler):
         self.send_response(200)
 
     def do_POST(self):
-        # 1. Get the content length from the headers
         content_length = int(self.headers.get('Content-Length', 0))
-        
-        # 2. Read the specified number of bytes from the input file (rfile)
         body_bytes = self.rfile.read(content_length)
-        
-        # 3. Decode the bytes to a string
         request_body = json.loads(body_bytes.decode('utf-8'))
 
         if self.path != "/api/v1/models.ModelApiService/DownloadModelInstanceVersion":
