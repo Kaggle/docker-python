@@ -60,7 +60,28 @@ jupyterlab-lsp
 # b/409363708: Ensure we have the update version, we can consider removing it once
 # Colab base image is updated more frequently.
 kaggle>=1.7.4.2
-kaggle-environments
+accelerate
+bitsandbytes
+Flask >= 1.1.2
+gymnasium == 1.2.0
+gymnax==0.0.8
+jax
+jsonschema >= 3.0.1
+litellm
+numpy >= 2.0
+open_spiel >= 1.6.8
+pettingzoo == 1.24.0
+pokerkit==0.6.3
+pydantic >= 2.11.4
+pygame
+pyjson5
+termcolor
+requests >= 2.25.1
+shimmy >= 1.2.1
+stable-baselines3 == 2.7.0
+transformers >= 4.33.1
+tenacity
+google-auth >= 2.35.0
 keras-cv
 keras-nlp
 keras-tuner
