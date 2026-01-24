@@ -10,8 +10,8 @@
 set -e
 set -x
 
-# Delete files that pip caches when installing a package.
-rm -rf /root/.cache/pip/*
+# Delete files that pip and uv cache when installing packages.
+rm -rf /root/.cache/pip/* /root/.cache/uv/*
 # Delete old downloaded archive files 
 apt-get autoremove -y
 # Delete downloaded archive files

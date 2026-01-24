@@ -91,7 +91,7 @@ path
 path.py
 pdf2image
 plotly-express
-preprocessing
+# Removed: preprocessing (unmaintained since 2017, requires nltk==3.2.4 incompatible with Python 3.11)
 pudb
 pyLDAvis
 pycryptodome
@@ -109,7 +109,9 @@ qtconsole
 ray
 rgf-python
 s3fs
-scikit-learn
+# b/302136621: Fix eli5 import for learntools
+# Note: scikit-learn 1.2.2 is incompatible with numpy 2.x ABI - using 1.5.2 which supports numpy 2.x
+scikit-learn==1.5.2
 # Scikit-learn accelerated library for x86
 scikit-learn-intelex>=2023.0.1
 scikit-multilearn
