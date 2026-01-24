@@ -1,7 +1,52 @@
 ARG BASE_IMAGE \
     BASE_IMAGE_TAG
 
-FROM ${BASE_IMAGE}:${BASE_IMAGE_TAG}
+# =============================================================================
+# Stage 1: Apply --force-reinstall operations to base image
+# These replace packages from the base, causing layer bloat. We squash this
+# stage to eliminate the duplicate package data.
+# =============================================================================
+FROM ${BASE_IMAGE}:${BASE_IMAGE_TAG} AS base-reinstalls
+
+# Combine all --force-reinstall operations into one layer before squashing.
+# b/408281617: Torch is adamant that it can not install cudnn 9.3.x, only 9.1.x, but Tensorflow can only support 9.3.x.
+# This conflict causes a number of package downgrades, which are handled in this command.
+# b/394382016: sigstore (dependency of kagglehub) requires a prerelease packages, installing separate.
+# b/385145217: Intel MKL numpy removed - Intel's channel only has numpy 1.26.4, but base image has
+#              numpy 2.0.2. Downgrading would break packages built against numpy 2.x ABI.
+# b/404590350: Ray and torchtune have conflicting tune cli, we will prioritize torchtune.
+# b/415358158: Gensim removed from Colab image to upgrade scipy
+# b/456239669: remove huggingface-hub pin when pytorch-lighting and transformer are compatible
+# b/315753846: Unpin translate package, currently conflicts with adk 1.17.0
+# b/468379293: Unpin Pandas once cuml/cudf are compatible, version 3.0 causes issues
+# b/468383498: numpy will auto-upgrade to 2.4.x, which causes issues with numerous packages
+# b/468367647: Unpin protobuf, version greater than v5.29.5 causes issues with numerous packages
+# b/408298750: We reinstall nltk because older versions have: `AttributeError: module 'inspect' has no attribute 'formatargspec'`
+RUN uv pip install --no-cache \
+    --index-url https://pypi.nvidia.com --extra-index-url https://pypi.org/simple/ --index-strategy unsafe-first-match \
+    --system --force-reinstall "cuml-cu12==25.2.1" \
+    "nvidia-cudnn-cu12==9.3.0.75" "nvidia-cublas-cu12==12.5.3.2" "nvidia-cusolver-cu12==11.6.3.83" \
+    "nvidia-cuda-cupti-cu12==12.5.82" "nvidia-cuda-nvrtc-cu12==12.5.82" "nvidia-cuda-runtime-cu12==12.5.82" \
+    "nvidia-cufft-cu12==11.2.3.61" "nvidia-curand-cu12==10.3.6.82" "nvidia-cusparse-cu12==12.5.1.3" \
+    "nvidia-nvjitlink-cu12==12.5.82" \
+    && uv pip install --no-cache --system --force-reinstall "pynvjitlink-cu12==0.5.2" \
+    && uv pip install --no-cache --system --force-reinstall --prerelease=allow "kagglehub[pandas-datasets,hf-datasets,signing]>=0.3.12" \
+    && uv pip install --no-cache --system --force-reinstall --no-deps torchtune gensim "scipy<=1.15.3" "huggingface-hub==0.36.0" "google-cloud-translate==3.12.1" "numpy==2.0.2" "pandas==2.2.2" \
+    && uv pip install --no-cache --system --force-reinstall "protobuf==5.29.5" \
+    && uv pip install --no-cache --system --force-reinstall "nltk>=3.9.1" \
+    && rm -rf /root/.cache/uv /root/.cache/pip
+
+# =============================================================================
+# Stage 2: Squash the base + reinstalls to eliminate layer bloat
+# =============================================================================
+FROM scratch AS clean-base
+COPY --from=base-reinstalls / /
+
+# =============================================================================
+# Stage 3: Continue with cacheable operations
+# These layers will be cached normally on subsequent builds
+# =============================================================================
+FROM clean-base
 
 ADD kaggle_requirements.txt /kaggle_requirements.txt
 
@@ -12,32 +57,22 @@ RUN pip freeze | grep -E 'tensorflow|keras|torch|jax' > /colab_requirements.txt
 RUN cat /colab_requirements.txt >> /requirements.txt
 RUN cat /kaggle_requirements.txt >> /requirements.txt
 
-# Install Kaggle packages
-RUN uv pip install --system -r /requirements.txt
+# TODO: GPU requirements.txt
+# TODO: merge them better (override matching ones).
+
+# Install Kaggle packages (--no-cache prevents cache buildup)
+RUN uv pip install --no-cache --system -r /requirements.txt
 
 # Install manual packages:
 # b/183041606#comment5: the Kaggle data proxy doesn't support these APIs. If the library is missing, it falls back to using a regular BigQuery query to fetch data.
 RUN uv pip uninstall --system google-cloud-bigquery-storage
 
-# b/394382016: sigstore (dependency of kagglehub) requires a prerelease packages, installing separate.
-RUN uv pip install --system --force-reinstall --prerelease=allow "kagglehub[pandas-datasets,hf-datasets,signing]>=0.3.12"
-
 # uv cannot install this in requirements.txt without --no-build-isolation
 # to avoid affecting the larger build, we'll post-install it.
-RUN uv pip install --no-build-isolation --system "git+https://github.com/Kaggle/learntools"
+RUN uv pip install --no-cache --no-build-isolation --system "git+https://github.com/Kaggle/learntools"
 
 # newer daal4py requires tbb>=2022, but libpysal is downgrading it for some reason
-RUN uv pip install --system "tbb>=2022" "libpysal==4.9.2"
-
-# b/404590350: Ray and torchtune have conflicting tune cli, we will prioritize torchtune.
-# b/415358158: Gensim removed from Colab image to upgrade scipy
-# b/456239669: remove huggingface-hub pin when pytorch-lighting and transformer are compatible
-# b/315753846: Unpin translate package, currently conflicts with adk 1.17.0
-# b/468379293: Unpin Pandas once cuml/cudf are compatible, version 3.0 causes issues
-# b/468383498: numpy will auto-upgrade to 2.4.x, which causes issues with numerous packages
-# b/468367647: Unpin protobuf, version greater than v5.29.5 causes issues with numerous packages
-RUN uv pip install --system --force-reinstall --no-deps torchtune gensim "scipy<=1.15.3" "huggingface-hub==0.36.0" "google-cloud-translate==3.12.1" "numpy==2.0.2" "pandas==2.2.2"
-RUN uv pip install --system --force-reinstall "protobuf==5.29.5"
+RUN uv pip install --no-cache --system "tbb>=2022" "libpysal==4.9.2"
 
 # Adding non-package dependencies:
 ADD clean-layer.sh  /tmp/clean-layer.sh
@@ -48,7 +83,7 @@ ARG PACKAGE_PATH=/usr/local/lib/python3.12/dist-packages
 
 # Install GPU-specific non-pip packages.
 {{ if eq .Accelerator "gpu" }}
-RUN uv pip install --system "pycuda"
+RUN uv pip install --no-cache --system "pycuda"
 {{ end }}
 
 
@@ -72,9 +107,7 @@ RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing
 
 # NLTK Project datasets
-# b/408298750: We currently reinstall the package, because we get the following error:
-# `AttributeError: module 'inspect' has no attribute 'formatargspec'. Did you mean: 'formatargvalues'?`
-RUN uv pip install --system --force-reinstall "nltk>=3.9.1"
+# Note: nltk is reinstalled in stage 1 to fix b/408298750 (formatargspec error)
 RUN mkdir -p /usr/share/nltk_data && \
     # NLTK Downloader no longer continues smoothly after an error, so we explicitly list
     # the corpuses that work
@@ -167,6 +200,9 @@ ENV GIT_COMMIT=${GIT_COMMIT} \
 
 # Correlate current release with the git hash inside the kernel editor by running `!cat /etc/git_commit`.
 RUN echo "$GIT_COMMIT" > /etc/git_commit && echo "$BUILD_DATE" > /etc/build_date
+
+# Final cleanup
+RUN rm -rf /root/.cache/uv /root/.cache/pip /tmp/clean-layer.sh
 
 {{ if eq .Accelerator "gpu" }}
 # Add the CUDA home.
