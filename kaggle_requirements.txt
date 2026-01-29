@@ -61,6 +61,7 @@ jupyterlab-lsp
 # Colab base image is updated more frequently.
 kaggle>=1.7.4.2
 kaggle-environments
+kagglehub[pandas-datasets,hf-datasets,signing]
 keras-cv
 keras-nlp
 keras-tuner
