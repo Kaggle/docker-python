@@ -57,9 +57,7 @@ jupyter_server==2.12.5
 jupyter_server_proxy
 jupyterlab
 jupyterlab-lsp
-# b/409363708: Ensure we have the update version, we can consider removing it once
-# Colab base image is updated more frequently.
-kaggle>=1.7.4.2
+kaggle>=1.8.3
 kaggle-environments
 keras-cv
 keras-nlp
