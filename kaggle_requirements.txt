@@ -123,7 +123,7 @@ tensorflow-io
 torchinfo
 torchmetrics
 torchtune
-transformers>=4.51.0
+transformers>=5.0.0
 vtk
 wavio
 xvfbwrapper
