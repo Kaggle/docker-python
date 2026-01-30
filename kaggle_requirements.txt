@@ -115,8 +115,8 @@ scikit-plot
 scikit-surprise
 git+https://github.com/facebookresearch/segment-anything.git
 squarify
-tensorflow-cloud
 tensorflow-io
+torchcodec
 torchinfo
 torchmetrics
 torchtune

@@ -252,33 +252,6 @@ def init_gcs():
         KaggleKernelCredentials(target=GcpTarget.GCS))
     return storage
 
-def init_translation_v2():
-    from google.cloud import translate_v2
-    if not is_user_secrets_token_set():
-        return translate_v2
-
-    from kaggle_gcp import get_integrations
-    if not get_integrations().has_cloudai():
-        return translate_v2
-    from kaggle_secrets import GcpTarget
-    kernel_credentials = KaggleKernelCredentials(target=GcpTarget.CLOUDAI)
-    monkeypatch_client(translate_v2.Client, kernel_credentials)
-    return translate_v2
-
-def init_translation_v3():
-    # Translate v3 exposes different client than translate v2.
-    from google.cloud import translate_v3
-    if not is_user_secrets_token_set():
-        return translate_v3
-
-    from kaggle_gcp import get_integrations
-    if not get_integrations().has_cloudai():
-        return translate_v3
-    from kaggle_secrets import GcpTarget
-    kernel_credentials = KaggleKernelCredentials(target=GcpTarget.CLOUDAI)
-    monkeypatch_client(translate_v3.TranslationServiceClient, kernel_credentials)
-    return translate_v3
-
 def init_natural_language():
     from google.cloud import language
     if not is_user_secrets_token_set():
@@ -347,8 +320,6 @@ def init_vision():
 def init():
     init_bigquery()
     init_gcs()
-    init_translation_v2()
-    init_translation_v3()
     init_natural_language()
     init_video_intelligence()
     init_vision()
