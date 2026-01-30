@@ -104,7 +104,7 @@ fi
 for cmd in "${CMDS[@]}"; do
     echo "== Comparing $cmd =="
     diff --suppress-common-lines --side-by-side \
-        <(docker run -v $PWD/tools:/tools --rm "$BASE_IMAGE_TAG" /bin/bash -c "$cmd") \
-        <(docker run -v $PWD/tools:/tools --rm "$TARGET_IMAGE_TAG" /bin/bash -c "$cmd") \
+        <(docker run -v $PWD/tools:/tools --entrypoint bash --rm "$BASE_IMAGE_TAG" -c "$cmd") \
+        <(docker run -v $PWD/tools:/tools --entrypoint bash --rm "$TARGET_IMAGE_TAG" -c "$cmd") \
         && echo 'No diff' || true
 done
