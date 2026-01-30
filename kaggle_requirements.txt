@@ -59,6 +59,7 @@ jupyterlab
 jupyterlab-lsp
 kaggle>=1.8.3
 kaggle-environments
+kagglehub[pandas-datasets,hf-datasets,signing]>=0.4.2
 keras-cv
 keras-nlp
 keras-tuner
