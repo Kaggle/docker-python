@@ -117,7 +117,7 @@ git+https://github.com/facebookresearch/segment-anything.git
 squarify
 tensorflow-io
 # Must be compatible with torch version: https://github.com/meta-pytorch/torchcodec?tab=readme-ov-file#installing-torchcodec
-torchcodec=0.9
+torchcodec==0.9
 torchinfo
 torchmetrics
 torchtune
