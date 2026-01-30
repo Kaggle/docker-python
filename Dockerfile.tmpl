@@ -27,12 +27,11 @@ RUN uv pip install --no-build-isolation --system "git+https://github.com/Kaggle/
 RUN uv pip install --system "tbb>=2022" "libpysal==4.9.2"
 
 # b/404590350: Ray and torchtune have conflicting tune cli, we will prioritize torchtune.
-# b/415358158: Gensim removed from Colab image to upgrade scipy
 # b/315753846: Unpin translate package, currently conflicts with adk 1.17.0
 # b/468379293: Unpin Pandas once cuml/cudf are compatible, version 3.0 causes issues
 # b/468383498: numpy will auto-upgrade to 2.4.x, which causes issues with numerous packages
 # b/468367647: Unpin protobuf, version greater than v5.29.5 causes issues with numerous packages
-RUN uv pip install --system --force-reinstall --no-deps torchtune gensim "scipy<=1.15.3" "google-cloud-translate==3.12.1" "numpy==2.0.2" "pandas==2.2.2"
+RUN uv pip install --system --force-reinstall --no-deps torchtune "google-cloud-translate==3.12.1" "numpy==2.0.2" "pandas==2.2.2"
 RUN uv pip install --system --force-reinstall "protobuf==5.29.5"
 
 # Adding non-package dependencies:
