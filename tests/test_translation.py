@@ -6,7 +6,7 @@ from unittest.mock import Mock, patch
 from kaggle_gcp import KaggleKernelCredentials, KaggleKernelWithProjetCredentials, init_translation_v2, init_translation_v3
 from test.support.os_helper import EnvironmentVarGuard
 from google.api_core import client_options
-from google.cloud import translate, translate_v2
+from google.cloud import translate_v3 as translate, translate_v2
 
 def _make_credentials():
     import google.auth.credentials
@@ -48,7 +48,7 @@ class TestCloudTranslation(unittest.TestCase):
             self.assertIsNotNone(client.credentials)
             self.assertNotIsInstance(client.credentials, KaggleKernelCredentials)
 
-    @patch("google.cloud.translate.TranslationServiceClient", new=FakeClient)
+    @patch("google.cloud.translate_v3.TranslationServiceClient", new=FakeClient)
     def test_default_credentials_v3(self):
         env = EnvironmentVarGuard()
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
@@ -60,7 +60,7 @@ class TestCloudTranslation(unittest.TestCase):
             self.assertIsInstance(client.credentials, KaggleKernelCredentials)
 
 
-    @patch("google.cloud.translate.TranslationServiceClient", new=FakeClient)
+    @patch("google.cloud.translate_v3.TranslationServiceClient", new=FakeClient)
     def test_user_provided_credentials_v3(self):
         credentials = _make_credentials()
         env = EnvironmentVarGuard()
@@ -107,13 +107,12 @@ class TestCloudTranslation(unittest.TestCase):
             self.assertEqual(client2_1, client2_2)
             self.assertEqual(client3_1, client3_2)
 
-    @patch("google.cloud.translate.TranslationServiceClient", new=FakeClient)
+    @patch("google.cloud.translate_v3.TranslationServiceClient", new=FakeClient)
     def test_client_credential_uniqueness_v3(self):
         """
         Client instance must use unique KaggleKernelWithProjetCredentials with quota_project_id
         when client_options.quota_project_id provided. (even if quota_project_id is same)
         """
-        credentials = _make_credentials()
         env = EnvironmentVarGuard()
         env.set('KAGGLE_USER_SECRETS_TOKEN', 'foobar')
         env.set('KAGGLE_KERNEL_INTEGRATIONS', 'CLOUDAI')

@@ -65,8 +65,7 @@ keras-nlp
 keras-tuner
 kornia
 langid
-# b/328788268: libpysal 4.10 seems to fail with "module 'shapely' has no attribute 'Geometry'. Did you mean: 'geometry'"
-libpysal<=4.9.2
+libpysal
 lime
 line_profiler
 mamba
@@ -116,8 +115,9 @@ scikit-plot
 scikit-surprise
 git+https://github.com/facebookresearch/segment-anything.git
 squarify
-tensorflow-cloud
 tensorflow-io
+# Must be compatible with torch version: https://github.com/meta-pytorch/torchcodec?tab=readme-ov-file#installing-torchcodec
+torchcodec==0.9
 torchinfo
 torchmetrics
 torchtune

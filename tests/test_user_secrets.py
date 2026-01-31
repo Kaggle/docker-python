@@ -200,22 +200,6 @@ class TestUserSecrets(unittest.TestCase):
             client = UserSecretsClient()
             secret_response = client._get_cloudai_access_token()
             self.assertEqual(secret_response, (secret, now + timedelta(seconds=3600)))
-        def call_get_translation_access_token():
-            client = UserSecretsClient()
-            secret_response = client._get_translation_access_token()
-            self.assertEqual(secret_response, (secret, now + timedelta(seconds=3600)))
-        def call_get_natural_lang_access_token():
-            client = UserSecretsClient()
-            secret_response = client._get_natural_language_access_token()
-            self.assertEqual(secret_response, (secret, now + timedelta(seconds=3600)))
-        def call_get_video_intell_access_token():
-            client = UserSecretsClient()
-            secret_response = client._get_video_intelligence_access_token()
-            self.assertEqual(secret_response, (secret, now + timedelta(seconds=3600)))
-        def call_get_vision_access_token():
-            client = UserSecretsClient()
-            secret_response = client._get_vision_access_token()
-            self.assertEqual(secret_response, (secret, now + timedelta(seconds=3600)))
 
         self._test_client(call_get_bigquery_access_token,
                           '/requests/GetUserSecretRequest', {'Target': GcpTarget.BIGQUERY.target},

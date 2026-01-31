@@ -23,15 +23,9 @@ RUN uv pip uninstall --system --no-cache google-cloud-bigquery-storage
 # to avoid affecting the larger build, we'll post-install it.
 RUN uv pip install --no-build-isolation --no-cache --system "git+https://github.com/Kaggle/learntools"
 
-# newer daal4py requires tbb>=2022, but libpysal is downgrading it for some reason
-RUN uv pip install --system --no-cache "tbb>=2022" "libpysal==4.9.2"
-
-# b/404590350: Ray and torchtune have conflicting tune cli, we will prioritize torchtune.
-# b/315753846: Unpin translate package, currently conflicts with adk 1.17.0
-# b/468379293: Unpin Pandas once cuml/cudf are compatible, version 3.0 causes issues
-# b/468383498: numpy will auto-upgrade to 2.4.x, which causes issues with numerous packages
+# b/404590350: Ray and torchtune have conflicting cli named `tune`. `ray` is not part of Colab's base image. Re-install `tune` to ensure the torchtune CLI is available by default.
 # b/468367647: Unpin protobuf, version greater than v5.29.5 causes issues with numerous packages
-RUN uv pip install --system --force-reinstall --no-cache --no-deps torchtune "google-cloud-translate==3.12.1" "numpy==2.0.2" "pandas==2.2.2"
+RUN uv pip install --system --force-reinstall --no-cache --no-deps torchtune
 RUN uv pip install --system --force-reinstall --no-cache "protobuf==5.29.5"
 
 # Adding non-package dependencies:
