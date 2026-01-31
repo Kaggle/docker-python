@@ -12,6 +12,9 @@ class GcpModuleFinder(importlib.abc.MetaPathFinder):
     _MODULES = [
         'google.cloud.bigquery',
         'google.cloud.storage',
+        'google.cloud.translate',
+        'google.cloud.translate_v2',
+        'google.cloud.translate_v3',
         'google.cloud.language',
         'google.cloud.language_v1',
         'google.cloud.videointelligence',
@@ -51,6 +54,9 @@ class GcpModuleLoader(importlib.abc.Loader):
         _LOADERS = {
             'google.cloud.bigquery': kaggle_gcp.init_bigquery,
             'google.cloud.storage': kaggle_gcp.init_gcs,
+            'google.cloud.translate': kaggle_gcp.init_translation_v3,
+            'google.cloud.translate_v2': kaggle_gcp.init_translation_v2,
+            'google.cloud.translate_v3': kaggle_gcp.init_translation_v3,
             'google.cloud.language': kaggle_gcp.init_natural_language,
             'google.cloud.language_v1': kaggle_gcp.init_natural_language,
             'google.cloud.videointelligence': kaggle_gcp.init_video_intelligence,
