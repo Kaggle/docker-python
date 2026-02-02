@@ -74,7 +74,7 @@ mlcrate
 mne
 mpld3
 # b/274619697: learntools requires a specific nbconvert right now
-nbconvert==6.4.5
+nbconvert==6.5.1
 nbdev
 nilearn
 olefile
