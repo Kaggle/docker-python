@@ -1,4 +1,0 @@
-BASE_IMAGE=us-docker.pkg.dev/colab-images/public/runtime
-BASE_IMAGE_TAG=release-colab-external_20260126-060048_RC00
-CUDA_MAJOR_VERSION=12
-CUDA_MINOR_VERSION=5

@@ -47,18 +47,13 @@ done
 BUILD_ARGS+=" --build-arg GIT_COMMIT=$(git rev-parse HEAD)"
 BUILD_ARGS+=" --build-arg BUILD_DATE=$(date '+%Y%m%d-%H%M%S')"
 
-# Read build args from config.txt file.
-SRCDIR=$(dirname "${BASH_SOURCE[0]}")
-for l in `cat ${SRCDIR}/config.txt`; do
-    BUILD_ARGS+=" --build-arg $l"
-done
-
 readonly CACHE_FLAG
 readonly DOCKERFILE
 readonly ACCELERATOR
 readonly IMAGE_TAG
 readonly BUILD_ARGS
 
+SRCDIR=$(dirname "${BASH_SOURCE[0]}")
 DOCKERFILE_OUTDIR="${SRCDIR}/.generated"
 mkdir -p $DOCKERFILE_OUTDIR
 DOCKERFILE_PATH="$DOCKERFILE_OUTDIR/$DOCKERFILE"
