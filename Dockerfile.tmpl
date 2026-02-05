@@ -1,7 +1,8 @@
-ARG BASE_IMAGE \
-    BASE_IMAGE_TAG
-
-FROM ${BASE_IMAGE}:${BASE_IMAGE_TAG}
+{{ if eq .Accelerator "gpu" }}
+FROM us-docker.pkg.dev/colab-images/public/runtime:release-colab-external_20260126-060048_RC00
+{{ else }}
+FROM us-docker.pkg.dev/colab-images/public/cpu-runtime:release-colab-external_20260123-060023_RC00
+{{ end}}
 
 ADD kaggle_requirements.txt /kaggle_requirements.txt
 
