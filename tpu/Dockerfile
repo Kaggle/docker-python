@@ -28,7 +28,9 @@ ADD patches/kaggle_datasets.py /root/.local/lib/${PYTHON_VERSION_PATH}/site-pack
 # Prereqs
 # This is needed for cv2 (opencv-python):
 # https://stackoverflow.com/questions/55313610/importerror-libgl-so-1-cannot-open-shared-object-file-no-such-file-or-directo
-RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
+RUN /tmp/clean-layer.sh && \
+    apt-get update && apt-get install ffmpeg libsm6 libxext6 -y && \
+    /tmp/clean-layer.sh
 
 # Install all the packages together for maximum compatibility.
 # Additional useful packages should be added in the requirements.txt
