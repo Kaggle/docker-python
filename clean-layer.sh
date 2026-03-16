@@ -18,11 +18,3 @@ apt-get clean
 cd /usr/local/src/
 # Delete source files used for building binaries
 rm -rf /usr/local/src/*
-
-# More clean up to save disk space
-rm -rf /var/lib/apt/lists/*
-find /tmp -mindepth 1 ! -name 'clean-layer.sh' -delete 2>/dev/null || true
-rm -rf /root/.cache
-rm -rf /var/cache/apt/archives/*
-find /usr -name '*.pyc' -delete 2>/dev/null || true
-find /usr -name '__pycache__' -type d -exec rm -rf {} + 2>/dev/null || true
