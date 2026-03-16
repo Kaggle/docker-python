@@ -30,7 +30,7 @@ ADD patches/kaggle_datasets.py /root/.local/lib/${PYTHON_VERSION_PATH}/site-pack
 # https://stackoverflow.com/questions/55313610/importerror-libgl-so-1-cannot-open-shared-object-file-no-such-file-or-directo
 RUN /tmp/clean-layer.sh && \
     apt-get update && \
-    apt-get install --no-install-recommends -y libavcodec61 libavformat61 libswscale8 libsm6 libxext6 && \
+    apt-get install --no-install-recommends -y ffmpeg libsm6 libxext6 && \
     /tmp/clean-layer.sh
 
 # Install all the packages together for maximum compatibility.
