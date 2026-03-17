@@ -29,6 +29,7 @@ emoji
 fasttext
 featuretools
 fiona
+flax
 fury
 fuzzywuzzy
 geojson
