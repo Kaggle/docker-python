@@ -158,7 +158,12 @@ ENV GIT_COMMIT=${GIT_COMMIT} \
 RUN echo "$GIT_COMMIT" > /etc/git_commit && echo "$BUILD_DATE" > /etc/build_date
 
 {{ if eq .Accelerator "gpu" }}
-# Add the CUDA home.
-ENV CUDA_HOME=/usr/local/cuda
+# Add the CUDA home and ensure NVIDIA driver libs (mounted by the NVIDIA Container
+# Toolkit at runtime into /usr/local/nvidia/lib64) are on the library path.
+ENV CUDA_HOME=/usr/local/cuda \
+    LD_LIBRARY_PATH=/usr/local/nvidia/lib64:/usr/local/cuda/lib64:${LD_LIBRARY_PATH}
+# Register the NVIDIA driver lib path with the dynamic linker so libraries can
+# be found even without LD_LIBRARY_PATH being set.
+RUN echo '/usr/local/nvidia/lib64' > /etc/ld.so.conf.d/nvidia-driver.conf && ldconfig 2>/dev/null || true
 {{ end }}
 ENTRYPOINT ["/usr/bin/env"]
