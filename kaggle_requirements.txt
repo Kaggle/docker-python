@@ -64,6 +64,7 @@ kagglehub[pandas-datasets,hf-datasets,signing]>=0.4.2
 keras-cv
 keras-nlp
 keras-tuner
+kmodes
 kornia
 langid
 libpysal
