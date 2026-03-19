@@ -4,7 +4,7 @@ import torch
 import torch.nn as tnn
 import torch.autograd as autograd
 
-from common import gpu_test
+from common import gpu_test, p100_exempt
 
 
 class TestPyTorch(unittest.TestCase):
@@ -16,6 +16,7 @@ class TestPyTorch(unittest.TestCase):
         linear_torch(data_torch)
 
     @gpu_test
+    @p100_exempt
     def test_linalg(self):
         A = torch.randn(3, 3).t().to('cuda')
         B = torch.randn(3).t().to('cuda')
@@ -24,6 +25,7 @@ class TestPyTorch(unittest.TestCase):
         self.assertEqual(3, result.shape[0])
 
     @gpu_test
+    @p100_exempt
     def test_gpu_computation(self):
         cuda = torch.device('cuda')  
         a = torch.tensor([1., 2.], device=cuda)
@@ -33,6 +35,7 @@ class TestPyTorch(unittest.TestCase):
         self.assertEqual(torch.tensor([3.], device=cuda), result)
 
     @gpu_test
+    @p100_exempt
     def test_cuda_nn(self):
         # These throw if cuda is misconfigured
         tnn.GRUCell(10,10).cuda()
