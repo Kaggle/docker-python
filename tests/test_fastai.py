@@ -3,6 +3,8 @@ import unittest
 import fastai
 from fastai.tabular.all import *
 
+from common import p100_exempt
+
 
 class TestFastAI(unittest.TestCase):
   # Basic import
@@ -22,6 +24,7 @@ class TestFastAI(unittest.TestCase):
 
     self.assertTrue(torch.all(a == b))
 
+  @p100_exempt
   def test_tabular(self):
     dls = TabularDataLoaders.from_csv(
         "/input/tests/data/train.csv",
