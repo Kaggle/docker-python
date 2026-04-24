@@ -30,8 +30,8 @@ RUN uv pip install --system --force-reinstall --no-cache --no-deps torchtune
 RUN uv pip install --system --force-reinstall --no-cache "protobuf==5.29.5"
 # b/493600019: Colab base image ships numba that does not support NumPy 2.4; upgrade to latest.
 RUN uv pip install --system --force-reinstall --no-cache numba
-# b/493600019: New Colab base image may drop scikit-learn-intelex; re-install to ensure sklearnex is available.
-RUN uv pip install --system --force-reinstall --no-cache scikit-learn-intelex
+# b/493600019: New Colab base image drops scikit-learn-intelex; install >=2025.10.1 which has NumPy 2.4 fixes.
+RUN uv pip install --system --no-cache "scikit-learn-intelex>=2025.10.1"
 
 # Adding non-package dependencies:
 ADD clean-layer.sh  /tmp/clean-layer.sh
