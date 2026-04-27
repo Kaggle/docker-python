@@ -28,8 +28,8 @@ RUN uv pip install --no-build-isolation --no-cache --system "git+https://github.
 # b/468367647: Unpin protobuf, version greater than v5.29.5 causes issues with numerous packages
 RUN uv pip install --system --force-reinstall --no-cache --no-deps torchtune
 RUN uv pip install --system --force-reinstall --no-cache "protobuf==5.29.5"
-# b/493600019: Colab base image ships numba that does not support NumPy 2.4; upgrade to latest.
-RUN uv pip install --system --force-reinstall --no-cache numba
+# b/493600019: Colab base image ships numba/numba-cuda that do not support NumPy 2.4; upgrade both.
+RUN uv pip install --system --force-reinstall --no-cache numba numba-cuda
 
 # Adding non-package dependencies:
 ADD clean-layer.sh  /tmp/clean-layer.sh
