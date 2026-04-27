@@ -108,8 +108,6 @@ ray
 rgf-python
 s3fs
 scikit-learn
-# Scikit-learn accelerated library for x86
-scikit-learn-intelex>=2025.10.1
 scikit-multilearn
 scikit-optimize
 scikit-plot
