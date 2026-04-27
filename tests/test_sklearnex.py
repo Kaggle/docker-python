@@ -2,6 +2,13 @@ import unittest
 
 import numpy as np
 
+try:
+    from sklearnex.cluster import DBSCAN
+    HAS_SKLEARNEX = True
+except ImportError:
+    HAS_SKLEARNEX = False
+
+@unittest.skipUnless(HAS_SKLEARNEX, 'scikit-learn-intelex is not installed')
 class TestSklearnex(unittest.TestCase):
     def test_dbscan(self):
         from sklearnex.cluster import DBSCAN
