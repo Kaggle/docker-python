@@ -3,13 +3,8 @@ import unittest
 import pandas as pd
 import numpy as np
 
-try:
-    from tsfresh import extract_features
-    HAS_TSFRESH = True
-except ImportError:
-    HAS_TSFRESH = False
+from tsfresh import extract_features
 
-@unittest.skipUnless(HAS_TSFRESH, 'tsfresh is not importable (may require CUDA libs)')
 class TestTsFresh(unittest.TestCase):
     def test_extract_feature(self):
         ts = pd.DataFrame({
