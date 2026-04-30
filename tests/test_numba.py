@@ -1,7 +1,7 @@
 import unittest
 
 import numpy as np
-from numba import jit, cuda
+from numba import jit
 
 from common import gpu_test
 
@@ -20,6 +20,8 @@ class TestNumba(unittest.TestCase):
 
     @gpu_test
     def test_cuda_jit(self):
+        from numba import cuda
+
         x = np.arange(10)
 
         @cuda.jit
