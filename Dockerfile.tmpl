@@ -43,6 +43,11 @@ ARG PACKAGE_PATH=/usr/local/lib/python3.12/dist-packages
 # b/493600019: numba-cuda v0.30.0 fixes np.trapz removal in NumPy 2.4 but requires libcudart.so (GPU only).
 RUN uv pip install --system --force-reinstall --no-cache numba-cuda
 RUN uv pip install --system --no-cache "pycuda"
+{{ else }}
+# b/493600019: On CPU, remove numba-cuda shipped by the Colab base image. Newer numba-cuda
+# depends on cuda-bindings which crashes at import without libcudart.so. Packages like
+# tsfresh/stumpy that import numba.cuda will fall back gracefully without it.
+RUN uv pip uninstall --system numba-cuda 2>/dev/null || true
 {{ end }}
 
 
