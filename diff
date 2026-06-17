@@ -108,3 +108,10 @@ for cmd in "${CMDS[@]}"; do
         <(docker run -v $PWD/tools:/tools --entrypoint bash --rm "$TARGET_IMAGE_TAG" -c "$cmd") \
         && echo 'No diff' || true
 done
+
+# Export full package manifest for downstream tooling (e.g. dependabot-triage).
+# Only for CPU image, which is most relevant for dependency management in other repos.
+if [[ "$TARGET_IMAGE_TAG" == "kaggle/python-build" ]]; then
+    docker run --rm "$TARGET_IMAGE_TAG" pip list --format=freeze | sort > installed_cpu_packages.txt
+    echo "Wrote installed_cpu_packages.txt ($(wc -l < installed_cpu_packages.txt) packages)"
+fi
