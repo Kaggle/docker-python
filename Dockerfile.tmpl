@@ -1,7 +1,7 @@
 {{ if eq .Accelerator "gpu" }}
-FROM us-docker.pkg.dev/colab-images/public/runtime:release-colab-external-images_20260416-060047_RC00
+FROM us-docker.pkg.dev/colab-images/public/runtime:release-colab-external-images_20260514-060047_RC00
 {{ else }}
-FROM us-docker.pkg.dev/colab-images/public/cpu-runtime:release-colab-external-images_20260416-060047_RC00
+FROM us-docker.pkg.dev/colab-images/public/cpu-runtime:release-colab-external-images_20260514-060047_RC00
 {{ end}}
 
 ADD kaggle_requirements.txt /kaggle_requirements.txt
@@ -28,8 +28,6 @@ RUN uv pip install --no-build-isolation --no-cache --system "git+https://github.
 # b/468367647: Unpin protobuf, version greater than v5.29.5 causes issues with numerous packages
 RUN uv pip install --system --force-reinstall --no-cache --no-deps torchtune
 RUN uv pip install --system --force-reinstall --no-cache "protobuf==5.29.5"
-# b/493600019: Colab base image ships numba that does not support NumPy 2.4; upgrade to latest.
-RUN uv pip install --system --force-reinstall --no-cache numba
 
 # Adding non-package dependencies:
 ADD clean-layer.sh  /tmp/clean-layer.sh
@@ -40,14 +38,7 @@ ARG PACKAGE_PATH=/usr/local/lib/python3.12/dist-packages
 
 # Install GPU-specific non-pip packages.
 {{ if eq .Accelerator "gpu" }}
-# b/493600019: numba-cuda v0.30.0 fixes np.trapz removal in NumPy 2.4 but requires libcudart.so (GPU only).
-RUN uv pip install --system --force-reinstall --no-cache numba-cuda
 RUN uv pip install --system --no-cache "pycuda"
-{{ else }}
-# b/493600019: On CPU, remove numba-cuda shipped by the Colab base image. Newer numba-cuda
-# depends on cuda-bindings which crashes at import without libcudart.so. Packages like
-# tsfresh/stumpy that import numba.cuda will fall back gracefully without it.
-RUN uv pip uninstall --system numba-cuda 2>/dev/null || true
 {{ end }}
 
 
