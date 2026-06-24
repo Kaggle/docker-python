@@ -40,7 +40,6 @@ google-cloud-aiplatform
 google-cloud-videointelligence
 google-cloud-vision
 google-genai
-grpcio-tools>=1.60.0
 gpxpy
 h2o
 haversine
