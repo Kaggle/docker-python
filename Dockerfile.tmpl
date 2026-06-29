@@ -27,13 +27,14 @@ RUN uv pip install --no-build-isolation --no-cache --system "git+https://github.
 # b/404590350: Ray and torchtune have conflicting cli named `tune`. `ray` is not part of Colab's base image. Re-install `tune` to ensure the torchtune CLI is available by default.
 # b/468367647: Unpin protobuf, version greater than v5.29.5 causes issues with numerous packages
 # grpcio-tools must be installed here (not in kaggle_requirements.txt) to stay version-compatible with protobuf.
+# setuptools v82+ removed pkg_resources
 RUN uv pip install --system --force-reinstall --no-cache --no-deps torchtune
-RUN uv pip install --system --force-reinstall --no-cache "protobuf==5.29.5" "grpcio-tools>=1.60.0"
+RUN uv pip install --system --force-reinstall --no-cache "protobuf==5.29.5" "grpcio-tools>=1.60.0" "setuptools>=70.0,<82"
 
 # Adding non-package dependencies:
 ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
-ADD patches/template_conf.json /opt/kaggle/conf.json
+ADD patches/template_conf.json /opt/ka`ggle/conf.json
 
 ARG PACKAGE_PATH=/usr/local/lib/python3.12/dist-packages
 
