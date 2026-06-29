@@ -34,7 +34,7 @@ RUN uv pip install --system --force-reinstall --no-cache "protobuf==5.29.5" "grp
 # Adding non-package dependencies:
 ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
-ADD patches/template_conf.json /opt/ka`ggle/conf.json
+ADD patches/template_conf.json /opt/kaggle/conf.json
 
 ARG PACKAGE_PATH=/usr/local/lib/python3.12/dist-packages
 
