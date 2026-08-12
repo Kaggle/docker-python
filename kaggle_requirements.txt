@@ -26,11 +26,22 @@ dipy
 docker
 easyocr
 emoji
+# TODO: b/545164527 - unpin once fastai supports fastcore v2.
+# fastcore v2 removed L.starmap, breaking fastai's Optimizer.set_hypers:
+# https://github.com/fastai/fastai/issues/4154
+# Pinned here rather than on a direct dep because nbdev, execnb, ghapi, fastgit
+# and fastspec all pull fastcore uncapped; only constraining fastcore itself
+# makes the resolver backtrack all of them.
+fastcore<2
 fasttext
 featuretools
 fiona
 flax
-fury
+# TODO: b/545164527 - unpin once dipy ships its fury<2.0 cap.
+# fury 2.0 swapped VTK for pygfx/wgpu, breaking `from dipy.viz import window`.
+# dipy requires fury uncapped; fix is merged upstream but unreleased:
+# https://github.com/dipy/dipy/issues/3978
+fury<2
 fuzzywuzzy
 geojson
 gensim
