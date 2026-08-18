@@ -1,7 +1,7 @@
 {{ if eq .Accelerator "gpu" }}
-FROM us-docker.pkg.dev/colab-images/public/runtime:release-colab-external-images_20260514-060047_RC00
+FROM us-docker.pkg.dev/colab-images/public/runtime:release-colab-external-images_20260716-060051_RC00
 {{ else }}
-FROM us-docker.pkg.dev/colab-images/public/cpu-runtime:release-colab-external-images_20260514-060047_RC00
+FROM us-docker.pkg.dev/colab-images/public/cpu-runtime:release-colab-external-images_20260716-060051_RC00
 {{ end}}
 
 ADD kaggle_requirements.txt /kaggle_requirements.txt
@@ -82,9 +82,11 @@ RUN mkdir -p /usr/share/nltk_data && \
     twitter_samples udhr2 udhr unicode_samples universal_tagset universal_treebanks_v20 \
     vader_lexicon verbnet webtext word2vec_sample wordnet wordnet_ic words ycoe
 
-RUN apt-get install -y git-lfs && \
-    # vtk dependencies
-    apt-get install -y libgl1-mesa-glx && \
+# Don't `apt-get install git-lfs` here. The base image already ships
+# git-lfs 3.7.1 built with Go 1.26, and Ubuntu's git-lfs 3.0.2 package
+# overwrites it with an older build from Go 1.18.
+# vtk dependencies
+RUN apt-get install -y libgl1-mesa-glx && \
     # xvfbwrapper dependencies
     apt-get install -y xvfb && \
     /tmp/clean-layer.sh

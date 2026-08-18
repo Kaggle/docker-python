@@ -4,7 +4,7 @@ import os.path
 import numpy as np
 import tensorflow as tf
 
-from common import gpu_test
+from common import gpu_test, p100_exempt
 
 
 class TestTensorflow(unittest.TestCase):
@@ -46,6 +46,12 @@ class TestTensorflow(unittest.TestCase):
         tf.keras.utils.plot_model(model, to_file="tf_plot_model.png")
         self.assertTrue(os.path.isfile("tf_plot_model.png"))          
 
+    # cuDNN 9.19 (pulled in by torch 2.11) dropped the Pascal (sm_60) kernels from
+    # libcudnn_ops/cnn/adv and ships PTX for sm_121 only, so nothing can be JIT'd
+    # down to sm_60 either. CudnnRNNV3 fails on P100 with
+    # CUDNN_STATUS_EXECUTION_FAILED. Not fixable here: cuDNN 9.19 is a hard
+    # requirement of torch 2.11, which comes from the Colab base image.
+    @p100_exempt
     def test_lstm(self):
         x_train = np.random.random((100, 28, 28))
         y_train = np.random.randint(10, size=(100, 1))

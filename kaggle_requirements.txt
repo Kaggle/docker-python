@@ -100,6 +100,9 @@ papermill
 path
 path.py
 pdf2image
+# The base image ships pillow 11.3; pin up to a newer release.
+# Remove once the base image ships >=12.2 itself.
+pillow>=12.2
 plotly-express
 pudb
 pyLDAvis
@@ -110,6 +113,10 @@ pyexcel-ods
 pymongo
 pypdf
 pytesseract
+# fastprogress pulls in python-fasthtml uncapped, and 0.14.6 raised its
+# floor to fastcore v2, which conflicts with the fastcore<2 pin above.
+# Remove once fastcore can be unpinned.
+python-fasthtml<0.14.6
 python-lsp-server
 pytorch-ignite
 pytorch-lightning
@@ -127,11 +134,14 @@ git+https://github.com/facebookresearch/segment-anything.git
 squarify
 tensorflow-io
 # Must be compatible with torch version: https://github.com/meta-pytorch/torchcodec?tab=readme-ov-file#installing-torchcodec
-torchcodec==0.10.0
+torchcodec==0.11.0
 torchinfo
 torchmetrics
 torchtune
 transformers>=5.0.0
+# The base image ships urllib3 2.5; pin up to a newer release.
+# Remove once the base image ships >=2.7 itself.
+urllib3>=2.7
 vtk
 wavio
 xvfbwrapper
