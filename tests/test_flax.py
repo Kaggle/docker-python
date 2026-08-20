@@ -6,7 +6,9 @@ import numpy as np
 import optax
 
 from flax import linen as nn
-from flax.training import train_state 
+from flax.training import train_state
+
+from common import p100_exempt
 
 
 class TestFlax(unittest.TestCase):
@@ -17,6 +19,12 @@ class TestFlax(unittest.TestCase):
         y = nn.pooling.pool(x, 1., mul_reduce, (2, 2), (1, 1), 'VALID')
         np.testing.assert_allclose(y, np.full((1, 2, 2, 1), 2. ** 4))
 
+    # cuDNN 9.19 (pulled in by torch 2.11) dropped the Pascal (sm_60) kernels from
+    # libcudnn_ops/cnn/adv and ships PTX for sm_121 only, so nothing can be JIT'd
+    # down to sm_60 either. Every cuDNN convolution engine fails on P100 with
+    # CUDNN_STATUS_EXECUTION_FAILED. Not fixable here: cuDNN 9.19 is a hard
+    # requirement of torch 2.11, which comes from the Colab base image.
+    @p100_exempt
     def test_cnn(self):
         class CNN(nn.Module):
             @nn.compact

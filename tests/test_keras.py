@@ -7,7 +7,15 @@ os.environ["KERAS_BACKEND"] = "tensorflow"
 
 import keras
 
+from common import p100_exempt
+
 class TestKeras(unittest.TestCase):
+    # cuDNN 9.19 (pulled in by torch 2.11) dropped the Pascal (sm_60) kernels from
+    # libcudnn_ops/cnn/adv and ships PTX for sm_121 only, so nothing can be JIT'd
+    # down to sm_60 either. Every cuDNN convolution engine fails on P100 with
+    # CUDNN_STATUS_EXECUTION_FAILED. Not fixable here: cuDNN 9.19 is a hard
+    # requirement of torch 2.11, which comes from the Colab base image.
+    @p100_exempt
     def test_train(self):
         path = '/input/tests/data/mnist.npz'
         with np.load(path) as f:
