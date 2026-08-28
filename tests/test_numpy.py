@@ -1,6 +1,7 @@
 import unittest
 
-from distutils.version import StrictVersion
+# from distutils.version import StrictVersion
+# Removed since python version 3.12
 
 import numpy as np
 import io

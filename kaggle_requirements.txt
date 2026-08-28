@@ -136,3 +136,5 @@ vtk
 wavio
 xvfbwrapper
 ydata-profiling
+rslearn-py==1.0.5
+# A Machine Learning Library with Automated Evaluations with one liner code for `sklearn`, `rslearn`, `numpy arrays`
