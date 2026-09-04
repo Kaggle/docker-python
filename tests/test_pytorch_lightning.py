@@ -5,8 +5,6 @@ import torch
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, TensorDataset
 
-from common import p100_exempt
-
 
 class LitDataModule(pl.LightningDataModule):
 
@@ -61,7 +59,6 @@ class TestPytorchLightning(unittest.TestCase):
     def test_version(self):
         self.assertIsNotNone(pl.__version__)
 
-    @p100_exempt
     def test_mnist(self):
         dm = LitDataModule()
         model = LitClassifier()

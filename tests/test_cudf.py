@@ -1,11 +1,10 @@
 import unittest
 
-from common import gpu_test, p100_exempt
+from common import gpu_test
 
 
 class TestCudf(unittest.TestCase):
     @gpu_test
-    @p100_exempt # b/342143152: cuDL(>=24.4v) is inompatible with p100 GPUs.
     def test_cudf_dataframe_operations(self):
         import cudf
 

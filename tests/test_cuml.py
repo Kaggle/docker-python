@@ -1,11 +1,10 @@
 import unittest
 
-from common import gpu_test, p100_exempt
+from common import gpu_test
 
 
 class TestCuml(unittest.TestCase):
     @gpu_test
-    @p100_exempt # b/342143152: cuML(>=24.4v) is inompatible with p100 GPUs.
     def test_pca_fit_transform(self):
         import unittest
         import numpy as np

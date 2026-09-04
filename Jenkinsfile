@@ -51,8 +51,8 @@ pipeline {
           }
         }
         stage('GPU') {
-          agent { label 'ephemeral-linux-gpu' }
-          stages {  
+          agent { label 'ephemeral-linux-gpu-t4x2' }
+          stages {
             stage('Build GPU Image') {
               options {
                 timeout(time: 4324, unit: 'MINUTES')
@@ -131,23 +131,6 @@ pipeline {
                 date
                 docker pull gcr.io/kaggle-images/python:${PRETEST_TAG}
                 ./test --image gcr.io/kaggle-images/python:${PRETEST_TAG}
-              '''
-            }
-          }
-        }
-        stage('Test on P100') {
-          agent { label 'ephemeral-linux-gpu' }
-          options {
-            timeout(time: 40, unit: 'MINUTES')
-          }
-          steps {
-            retry(2) {
-              sh '''#!/bin/bash
-                set -exo pipefail
-
-                date
-                docker pull gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
-                ./test --gpu --image gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
               '''
             }
           }
