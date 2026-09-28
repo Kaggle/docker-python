@@ -16,6 +16,28 @@ RUN cat /kaggle_requirements.txt >> /requirements.txt
 # Install Kaggle packages
 RUN uv pip install --system --no-cache -r /requirements.txt
 
+{{ if eq .Accelerator "gpu" }}
+# b/342143152, Kaggle/docker-python#1546: the Colab GPU base image's PyTorch
+# wheel is built against a CUDA index (currently cu128) whose compute-capability
+# list is sm_70/75/80/86/90/100/120 -- it does not include sm_60 (Pascal, e.g.
+# the Tesla P100 that Kaggle's scheduler still hands out as a free GPU option).
+# Any real GPU op on a P100 then fails with:
+#   torch.AcceleratorError: CUDA error: no kernel image is available for
+#   execution on the device
+# PyTorch's cu126 wheels are still built for {50,60,70,75,80,86,90} (confirmed
+# against pytorch/pytorch's .ci/manywheel/build_env_setup.py arch table), so
+# reinstalling the *same* torch/torchvision/torchaudio version from the cu126
+# index restores sm_60 while keeping every GPU currently offered on Kaggle
+# (e.g. T4, sm_75) working. The known tradeoff is losing sm_100/sm_120
+# (Blackwell) kernels, which Kaggle does not currently offer as a notebook
+# accelerator.
+RUN TORCH_VERSION=$(python -c "import torch; print(torch.__version__.split('+')[0])") && \
+    uv pip install --system --no-cache --force-reinstall \
+        "torch==${TORCH_VERSION}" torchvision torchaudio \
+        --index-url https://download.pytorch.org/whl/cu126 \
+        --extra-index-url https://pypi.org/simple
+{{ end }}
+
 # Install manual packages:
 # b/183041606#comment5: the Kaggle data proxy doesn't support these APIs. If the library is missing, it falls back to using a regular BigQuery query to fetch data.
 RUN uv pip uninstall --system --no-cache google-cloud-bigquery-storage
