@@ -26,17 +26,10 @@ dipy
 docker
 easyocr
 emoji
-# TODO: b/545164527 - unpin once fastai supports fastcore v2.
-# fastcore v2 removed L.starmap, breaking fastai's Optimizer.set_hypers:
-# https://github.com/fastai/fastai/issues/4154
-# Pinned here rather than on a direct dep because nbdev, execnb, ghapi, fastgit
-# and fastspec all pull fastcore uncapped; only constraining fastcore itself
-# makes the resolver backtrack all of them.
-fastcore<2
 fasttext
 featuretools
 fiona
-flax
+flax>=0.12
 # TODO: b/545164527 - unpin once dipy ships its fury<2.0 cap.
 # fury 2.0 swapped VTK for pygfx/wgpu, breaking `from dipy.viz import window`.
 # dipy requires fury uncapped; fix is merged upstream but unreleased:
@@ -62,8 +55,11 @@ isoweek
 jedi
 # jitler 0.11.1 breaks simulation image
 jiter==0.10.0
-# b/276358430: fix Jupyter lsp freezing up the jupyter server
-jupyter-lsp==1.5.1
+# b/276358430: jupyter-lsp was pinned to 1.5.1 to stop Jupyter lsp freezing up
+# the jupyter server. That pin is unusable on Python 3.13: it holds jupyterlab
+# back to the 3.x line, which pulls jupyter-ydoc 0.2.5 -> y-py 0.6.2, and y-py
+# publishes no cp313 wheel and its sdist no longer builds. jupyterlab 4.x
+# replaced y-py with pycrdt, so leave jupyter-lsp unpinned.
 # b/333854354: pin jupyter-server to version 2.12.5; later versions break LSP (b/333854354)
 jupyter_server==2.12.5
 jupyter_server_proxy
@@ -91,6 +87,15 @@ nbdev
 nilearn
 olefile
 onnx
+# The base image ships an inconsistent OpenCV set: opencv-python and
+# opencv-python-headless at 5.0.0.93 but opencv-contrib-python at 4.14.0.94.
+# They all install into the same cv2/ package and clobber each other, and
+# OpenCV 5.0 dropped long-standing APIs (e.g. cv2.CascadeClassifier). Hold the
+# whole set on the last 4.x release so cv2 stays consistent and notebooks that
+# use the 4.x API keep working.
+opencv-contrib-python<5
+opencv-python<5
+opencv-python-headless<5
 openslide-bin
 openslide-python
 optuna
@@ -113,10 +118,6 @@ pyexcel-ods
 pymongo
 pypdf
 pytesseract
-# fastprogress pulls in python-fasthtml uncapped, and 0.14.6 raised its
-# floor to fastcore v2, which conflicts with the fastcore<2 pin above.
-# Remove once fastcore can be unpinned.
-python-fasthtml<0.14.6
 python-lsp-server
 pytorch-ignite
 pytorch-lightning
@@ -132,7 +133,9 @@ scikit-plot
 scikit-surprise
 git+https://github.com/facebookresearch/segment-anything.git
 squarify
-tensorflow-io
+# tensorflow-io was dropped when the base image moved to Python 3.13. Its last
+# release (0.37.1, 2024-07-01) declares requires_python <3.13 and ships no cp313
+# wheels, and the project is unmaintained.
 # Must be compatible with torch version: https://github.com/meta-pytorch/torchcodec?tab=readme-ov-file#installing-torchcodec
 torchcodec==0.11.0
 torchinfo
@@ -142,6 +145,7 @@ transformers>=5.0.0
 # The base image ships urllib3 2.5; pin up to a newer release.
 # Remove once the base image ships >=2.7 itself.
 urllib3>=2.7
+universal-pathlib
 vtk
 wavio
 xvfbwrapper
