@@ -36,7 +36,7 @@ ADD clean-layer.sh  /tmp/clean-layer.sh
 ADD patches/nbconvert-extensions.tpl /opt/kaggle/nbconvert-extensions.tpl
 ADD patches/template_conf.json /opt/kaggle/conf.json
 
-ARG PACKAGE_PATH=/usr/local/lib/python3.12/dist-packages
+ARG PACKAGE_PATH=/usr/local/lib/python3.13/dist-packages
 
 # Install GPU-specific non-pip packages.
 {{ if eq .Accelerator "gpu" }}
@@ -56,9 +56,9 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     apt-get install -y graphviz && pip install graphviz && \
     /tmp/clean-layer.sh
 
-ADD patches/keras_internal.py \
-    patches/keras_internal_test.py \
-    $PACKAGE_PATH/tensorflow_decision_forests/keras/
+# patches/keras_internal.py is not installed right now. tensorflow_decision_forests
+# is no longer in the base image and its latest release (1.12.0) ships no cp313
+# wheel, so there is no tensorflow_decision_forests/keras/ to patch.
 
 RUN apt-get install -y libfreetype6-dev && \
     apt-get install -y libglib2.0-0 libxext6 libsm6 libxrender1 libfontconfig1 --fix-missing && \
@@ -86,7 +86,7 @@ RUN mkdir -p /usr/share/nltk_data && \
 # git-lfs 3.7.1 built with Go 1.26, and Ubuntu's git-lfs 3.0.2 package
 # overwrites it with an older build from Go 1.18.
 # vtk dependencies
-RUN apt-get install -y libgl1-mesa-glx && \
+RUN apt-get install -y libgl1 libglx-mesa0 && \
     # xvfbwrapper dependencies
     apt-get install -y xvfb && \
     /tmp/clean-layer.sh
@@ -147,7 +147,7 @@ ADD patches/kaggle_gcp.py \
 
 # Figure out why this is in a different place?
 # Found by doing a export PYTHONVERBOSE=1 and then running python and checking for where it looked for it.
-ADD patches/sitecustomize.py /usr/lib/python3.12/sitecustomize.py
+ADD patches/sitecustomize.py /usr/lib/python3.13/sitecustomize.py
 
 ARG GIT_COMMIT=unknown \
     BUILD_DATE=unknown
