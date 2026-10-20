@@ -15,6 +15,8 @@ bayesian-optimization
 boto3
 catboost
 category-encoders
+# GHSA-6q48-6c7w-9gw2: older bundles trust emSign intermediates with compromised keys.
+certifi>=2026.10.19
 cesium
 comm
 cytoolz
@@ -108,6 +110,8 @@ pdf2image
 # The base image ships pillow 11.3; pin up to a newer release.
 # Remove once the base image ships >=12.2 itself.
 pillow>=12.2
+# pip < 26.2.2 always loads its vendored certifi, so it needs the GHSA-6q48-6c7w-9gw2 fix separately.
+pip>=26.2.2
 plotly-express
 pudb
 pyLDAvis
