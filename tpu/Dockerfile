@@ -33,6 +33,16 @@ RUN /tmp/clean-layer.sh && \
     apt-get install --no-install-recommends -y ffmpeg libsm6 libxext6 && \
     /tmp/clean-layer.sh
 
+# GHSA-6q48-6c7w-9gw2: emSign ECC Root CA - G3 issued intermediates with compromised keys.
+# Debian's trixie-security ca-certificates 20250419+deb13u1 blocklists it in the system store.
+# Remove once the base image ships that ca-certificates itself.
+RUN apt-get install --no-install-recommends -y --only-upgrade ca-certificates && \
+    /tmp/clean-layer.sh
+
+# grpcio and libtpu embed gRPC's unpatched CA bundle, so point them at the system store.
+# Remove once both ship a release whose bundle drops the G3 root.
+ENV GRPC_DEFAULT_SSL_ROOTS_FILE_PATH=/etc/ssl/certs/ca-certificates.crt
+
 # Install all the packages together for maximum compatibility.
 # Additional useful packages should be added in the requirements.txt
 # Bring in the requirements.txt and replace variables in it:
@@ -60,6 +70,14 @@ RUN export PATH="${HOME}/.local/bin:${PATH}" && \
     uv cache clean && \
     /tmp/clean-layer.sh
 ENV PATH="~/.local/bin:${PATH}"
+
+# pip < 26.2.2 always loads its vendored certifi, so it needs the GHSA-6q48-6c7w-9gw2 fix separately.
+# The compile step above excludes pip, so upgrade it here, with the patched uv rather than the old pip.
+# Remove once the base image ships pip >= 26.2.2 itself.
+RUN export PATH="${HOME}/.local/bin:${PATH}" && \
+    uv pip install --system "pip>=26.2.2" && \
+    uv cache clean && \
+    /tmp/clean-layer.sh
 
 # We install a libtpu version compatible with both jax 0.7.2 and torch 2.8.0.
 # Why? tunix latest -> flax 0.12 -> jax 0.7.2 -> libtpu 0.0.23. However, that
