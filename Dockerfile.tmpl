@@ -16,6 +16,7 @@ RUN cat /kaggle_requirements.txt >> /requirements.txt
 # GHSA-hq85-5cpj-mr62: uv < 0.13.4 vendors a CA bundle that trusts emSign intermediates with compromised keys.
 # Upgrade it first so the patched uv performs all subsequent installs.
 # The base image's uv may not be the pip-managed one, so point every uv on PATH at the new binary.
+# Remove once the base image ships uv >= 0.13.4 itself.
 RUN uv pip install --system --no-cache "uv>=0.13.4" && \
     NEW_UV="$(python -c 'import uv; print(uv.find_uv_bin())')" && \
     for old in $(which -a uv); do [ "$old" -ef "$NEW_UV" ] || ln -sf "$NEW_UV" "$old"; done
@@ -62,6 +63,22 @@ RUN sed -i "s/httpredir.debian.org/debian.uchicago.edu/" /etc/apt/sources.list &
     apt-get install -y openssh-client && \
     apt-get install -y graphviz && pip install graphviz && \
     /tmp/clean-layer.sh
+
+# GHSA-6q48-6c7w-9gw2: emSign ECC Root CA - G3 issued intermediates with compromised keys.
+# Ubuntu's noble-security ca-certificates 20260816ubuntu0.24.04.1 blocklists it in the system store.
+# The Java keystore only drops certificates when rebuilt from scratch.
+# Remove once the base image ships that ca-certificates and a cacerts keystore without the G3 root.
+RUN apt-get install -y --only-upgrade ca-certificates && \
+    rm -f /etc/ssl/certs/java/cacerts && \
+    update-ca-certificates --fresh && \
+    /tmp/clean-layer.sh
+
+# gcloud (including the gsutil and bq it wraps), gRPC, and Node vendor unpatched bundles, so point them at the system store.
+# No upstream fix exists for these yet. Remove each one once the base image ships a release whose bundle drops the G3 root.
+# gcloud ignores the base image's installation properties file (it can't locate its SDK root), so use the env var form.
+ENV CLOUDSDK_CORE_CUSTOM_CA_CERTS_FILE=/etc/ssl/certs/ca-certificates.crt \
+    GRPC_DEFAULT_SSL_ROOTS_FILE_PATH=/etc/ssl/certs/ca-certificates.crt \
+    NODE_OPTIONS=--use-openssl-ca
 
 # patches/keras_internal.py is not installed right now. tensorflow_decision_forests
 # is no longer in the base image and its latest release (1.12.0) ships no cp313

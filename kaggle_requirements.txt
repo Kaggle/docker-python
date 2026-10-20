@@ -16,6 +16,7 @@ boto3
 catboost
 category-encoders
 # GHSA-6q48-6c7w-9gw2: older bundles trust emSign intermediates with compromised keys.
+# Remove once the base image ships >=2026.10.19 itself.
 certifi>=2026.10.19
 cesium
 comm
@@ -111,6 +112,7 @@ pdf2image
 # Remove once the base image ships >=12.2 itself.
 pillow>=12.2
 # pip < 26.2.2 always loads its vendored certifi, so it needs the GHSA-6q48-6c7w-9gw2 fix separately.
+# Remove once the base image ships >=26.2.2 itself.
 pip>=26.2.2
 plotly-express
 pudb
@@ -151,6 +153,9 @@ transformers>=5.0.0
 urllib3>=2.7
 universal-pathlib
 vtk
+# wandb < 0.31.0 embeds a CA bundle with the GHSA-6q48-6c7w-9gw2 emSign root in its Rust binaries.
+# Remove once the base image ships >=0.31.0 itself.
+wandb>=0.31.0
 wavio
 xvfbwrapper
 ydata-profiling
