@@ -13,6 +13,13 @@ RUN pip freeze | grep -E 'tensorflow|keras|torch|jax' > /colab_requirements.txt
 RUN cat /colab_requirements.txt >> /requirements.txt
 RUN cat /kaggle_requirements.txt >> /requirements.txt
 
+# GHSA-hq85-5cpj-mr62: uv < 0.13.4 vendors a CA bundle that trusts emSign intermediates with compromised keys.
+# Upgrade it first so the patched uv performs all subsequent installs.
+# The base image's uv may not be the pip-managed one, so point every uv on PATH at the new binary.
+RUN uv pip install --system --no-cache "uv>=0.13.4" && \
+    NEW_UV="$(python -c 'import uv; print(uv.find_uv_bin())')" && \
+    for old in $(which -a uv); do [ "$old" -ef "$NEW_UV" ] || ln -sf "$NEW_UV" "$old"; done
+
 # Install Kaggle packages
 RUN uv pip install --system --no-cache -r /requirements.txt
 
