@@ -28,8 +28,12 @@ ADD patches/kaggle_datasets.py /root/.local/lib/${PYTHON_VERSION_PATH}/site-pack
 # Prereqs
 # This is needed for cv2 (opencv-python):
 # https://stackoverflow.com/questions/55313610/importerror-libgl-so-1-cannot-open-shared-object-file-no-such-file-or-directo
+# GHSA-6q48-6c7w-9gw2: emSign ECC Root CA - G3 issued intermediates with compromised keys.
+# Debian's trixie-security ca-certificates 20250419+deb13u1 blocklists it in the system store.
+# TODO(b/576329498): Remove upgrade to ca-certificates once the base image ships the newer version.
 RUN /tmp/clean-layer.sh && \
     apt-get update && \
+    apt-get install --no-install-recommends -y --only-upgrade ca-certificates && \
     apt-get install --no-install-recommends -y ffmpeg libsm6 libxext6 && \
     /tmp/clean-layer.sh
 
@@ -42,8 +46,12 @@ RUN envsubst < /kaggle_requirements.in > /requirements.in
 
 # Install uv and then install the requirements:
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-RUN export PATH="${HOME}/.local/bin:${PATH}" && \
-    uv pip compile --system --prerelease=allow \
+ENV PATH="~/.local/bin:${PATH}"
+# TODO(b/576329498): Remove once the base image ships pip >= 26.2.2 itself.
+RUN uv pip install --system "pip>=26.2.2" && \
+    uv cache clean && \
+    /tmp/clean-layer.sh
+RUN uv pip compile --system --prerelease=allow \
         --verbose \
         --upgrade \
         --find-links=https://storage.googleapis.com/jax-releases/libtpu_releases.html \
@@ -59,7 +67,6 @@ RUN export PATH="${HOME}/.local/bin:${PATH}" && \
         -r /requirements.txt && \
     uv cache clean && \
     /tmp/clean-layer.sh
-ENV PATH="~/.local/bin:${PATH}"
 
 # We install a libtpu version compatible with both jax 0.7.2 and torch 2.8.0.
 # Why? tunix latest -> flax 0.12 -> jax 0.7.2 -> libtpu 0.0.23. However, that
