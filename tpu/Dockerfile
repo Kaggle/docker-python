@@ -48,10 +48,12 @@ RUN envsubst < /kaggle_requirements.in > /requirements.in
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 ENV PATH="~/.local/bin:${PATH}"
 # TODO(b/576329498): Remove once the base image ships pip >= 26.2.2 itself.
-RUN uv pip install --system "pip>=26.2.2" && \
+RUN export PATH="${HOME}/.local/bin:${PATH}" && \
+    uv pip install --system "pip>=26.2.2" && \
     uv cache clean && \
     /tmp/clean-layer.sh
-RUN uv pip compile --system --prerelease=allow \
+RUN export PATH="${HOME}/.local/bin:${PATH}" && \
+    uv pip compile --system --prerelease=allow \
         --verbose \
         --upgrade \
         --find-links=https://storage.googleapis.com/jax-releases/libtpu_releases.html \
