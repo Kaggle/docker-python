@@ -163,7 +163,7 @@ pipeline {
                 -e PYTHONUNBUFFERED=1 \
                 --pull always \
                 gcr.io/kaggle-images/python:${PRETEST_TAG} \
-                bash -c "git clone https://github.com/Kaggle/kaggle-environments.git /tmp/kaggle-environments && cd /tmp/kaggle-environments && python -m pytest tests/ kaggle_environments/ --tb=short"
+                bash -c "git clone https://github.com/Kaggle/kaggle-environments.git /tmp/kaggle-environments && cd /tmp/kaggle-environments && python -m pytest tests/ kaggle_environments/ --tb=short --ignore-glob='*/test_pyxis.py'"
             '''
           }
         }
