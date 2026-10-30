@@ -38,14 +38,45 @@ pipeline {
                 '''
               }
             }
-            stage('Diff CPU image') {
+            stage('Test/Diff CPU Image') {
               steps {
-                sh '''#!/bin/bash
-                set -exo pipefail
+                script {
+                  parallel(
+                    'Test CPU Image': {
+                      timeout(time: 15, unit: 'MINUTES') {
+                        retry(2) {
+                          sh '''#!/bin/bash
+                            set -exo pipefail
 
-                docker pull gcr.io/kaggle-images/python:${PRETEST_TAG}
-                ./diff --target gcr.io/kaggle-images/python:${PRETEST_TAG}
-              '''
+                            date
+                            docker pull gcr.io/kaggle-images/python:${PRETEST_TAG}
+                            ./test --image gcr.io/kaggle-images/python:${PRETEST_TAG}
+                          '''
+                        }
+                      }
+                    },
+                    'Test kaggle-environments': {
+                      timeout(time: 15, unit: 'MINUTES') {
+                        sh '''#!/bin/bash
+                          set -exo pipefail
+                          docker run --rm \
+                            -e PYTHONUNBUFFERED=1 \
+                            --pull always \
+                            gcr.io/kaggle-images/python:${PRETEST_TAG} \
+                            bash -c "git clone https://github.com/Kaggle/kaggle-environments.git /tmp/kaggle-environments && cd /tmp/kaggle-environments && python -m pytest tests/ kaggle_environments/ --tb=short --ignore-glob='*/test_pyxis.py'"
+                        '''
+                      }
+                    },
+                    'Diff CPU Image': {
+                      sh '''#!/bin/bash
+                        set -exo pipefail
+
+                        docker pull gcr.io/kaggle-images/python:${PRETEST_TAG}
+                        ./diff --target gcr.io/kaggle-images/python:${PRETEST_TAG}
+                      '''
+                    }
+                  )
+                }
               }
             }
           }
@@ -74,14 +105,33 @@ pipeline {
                 '''
               }
             }
-            stage('Diff GPU Image') {
+            stage('Test/Diff GPU Image') {
               steps {
-                sh '''#!/bin/bash
-                set -exo pipefail
+                script {
+                  parallel(
+                    'Test on T4x2': {
+                      timeout(time: 60, unit: 'MINUTES') {
+                        retry(2) {
+                          sh '''#!/bin/bash
+                            set -exo pipefail
 
-                docker pull gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
-                ./diff --gpu --target gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
-              '''
+                            date
+                            docker pull gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
+                            ./test --gpu --image gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
+                          '''
+                        }
+                      }
+                    },
+                    'Diff GPU Image': {
+                      sh '''#!/bin/bash
+                        set -exo pipefail
+
+                        docker pull gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
+                        ./diff --gpu --target gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
+                      '''
+                    }
+                  )
+                }
               }
             }
           }
@@ -112,59 +162,6 @@ pipeline {
               '''
               }
             }
-          }
-        }
-      }
-    }
-
-    stage('Test') {
-      parallel {
-        stage('Test CPU Image') {
-          options {
-            timeout(time: 15, unit: 'MINUTES')
-          }
-          steps {
-            retry(2) {
-              sh '''#!/bin/bash
-                set -exo pipefail
-
-                date
-                docker pull gcr.io/kaggle-images/python:${PRETEST_TAG}
-                ./test --image gcr.io/kaggle-images/python:${PRETEST_TAG}
-              '''
-            }
-          }
-        }
-        stage('Test on T4x2') {
-          agent { label 'ephemeral-linux-gpu-t4x2' }
-          options {
-            timeout(time: 60, unit: 'MINUTES')
-          }
-          steps {
-            retry(2) {
-              sh '''#!/bin/bash
-                set -exo pipefail
-
-                date
-                docker pull gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
-                ./test --gpu --image gcr.io/kaggle-private-byod/python:${PRETEST_TAG}
-              '''
-            }
-          }
-        }
-        stage('Test kaggle-environments') {
-          options {
-            timeout(time: 15, unit: 'MINUTES')
-          }
-          steps {
-            sh '''#!/bin/bash
-              set -exo pipefail
-              docker run --rm \
-                -e PYTHONUNBUFFERED=1 \
-                --pull always \
-                gcr.io/kaggle-images/python:${PRETEST_TAG} \
-                bash -c "git clone https://github.com/Kaggle/kaggle-environments.git /tmp/kaggle-environments && cd /tmp/kaggle-environments && python -m pytest tests/ kaggle_environments/ --tb=short --ignore-glob='*/test_pyxis.py'"
-            '''
           }
         }
       }
