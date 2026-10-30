@@ -3,3 +3,6 @@
 .vscode
 .mypy_cache
 .generated
+
+# Claude Code
+.claude/settings.local.json
