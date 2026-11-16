@@ -1,15 +1,13 @@
 import unittest
-import io
+
 import pytesseract
-import numpy as np
-from PIL import Image
-from wand.image import Image as wandimage
+from pdf2image import convert_from_path
 
 class TestPytesseract(unittest.TestCase):
     def test_tesseract(self):
-        # Open pdf with Wand
-        with wandimage(filename='/input/tests/data/test.pdf') as wand_image:
-            img_buffer = np.asarray(bytearray(wand_image.make_blob(format='png')), dtype='uint8')
-            bytesio = io.BytesIO(img_buffer)
-            test_string = pytesseract.image_to_string(Image.open(bytesio))
-            self.assertTrue(type(test_string) == str)
+        # Rasterize the pdf with pdf2image (poppler). ImageMagick's PDF coder is
+        # disabled by patches/imagemagick-policy.xml.
+        pages = convert_from_path('/input/tests/data/test.pdf')
+        self.assertGreater(len(pages), 0)
+        test_string = pytesseract.image_to_string(pages[0])
+        self.assertTrue(type(test_string) == str)

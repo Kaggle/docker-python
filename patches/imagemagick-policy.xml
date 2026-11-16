@@ -7,4 +7,65 @@
     name NMTOKEN #IMPLIED pattern CDATA #IMPLIED rights NMTOKEN #IMPLIED
     stealth NMTOKEN #IMPLIED value CDATA #IMPLIED>
 ]>
-<policymap></policymap> 
+<!--
+  Kaggle ImageMagick security policy.
+
+  Notebooks routinely open files from untrusted, user-contributed datasets, so
+  coders that can execute commands, fetch URLs, read arbitrary local files or
+  hand input to Ghostscript are disabled (ImageTragick, CVE-2016-3714 and
+  successors). Common raster formats (PNG, JPEG, GIF, TIFF, WebP, BMP, ...)
+  remain enabled.
+
+  To rasterize PDFs, use pdf2image (poppler) instead of Wand/ImageMagick.
+
+  Resource limits are intentionally generous compared to the distro defaults
+  so that large images (e.g. satellite or medical imagery) keep working, while
+  still bounding decompression bombs.
+-->
+<policymap>
+  <!-- Resource limits -->
+  <policy domain="resource" name="memory" value="8GiB"/>
+  <policy domain="resource" name="map" value="16GiB"/>
+  <policy domain="resource" name="width" value="128KP"/>
+  <policy domain="resource" name="height" value="128KP"/>
+  <policy domain="resource" name="area" value="4GP"/>
+  <policy domain="resource" name="disk" value="32GiB"/>
+
+  <!-- Network access (SSRF) -->
+  <policy domain="delegate" rights="none" pattern="URL" />
+  <policy domain="delegate" rights="none" pattern="HTTPS" />
+  <policy domain="delegate" rights="none" pattern="HTTP" />
+  <policy domain="coder" rights="none" pattern="URL" />
+  <policy domain="coder" rights="none" pattern="HTTPS" />
+  <policy domain="coder" rights="none" pattern="HTTP" />
+  <policy domain="coder" rights="none" pattern="FTP" />
+
+  <!-- Indirect reads of arbitrary files, e.g. label:@/etc/passwd -->
+  <policy domain="path" rights="none" pattern="@*" />
+
+  <!-- Scripting / file manipulation coders -->
+  <policy domain="coder" rights="none" pattern="EPHEMERAL" />
+  <policy domain="coder" rights="none" pattern="MVG" />
+  <policy domain="coder" rights="none" pattern="MSL" />
+  <policy domain="coder" rights="none" pattern="TEXT" />
+  <policy domain="coder" rights="none" pattern="SHOW" />
+  <policy domain="coder" rights="none" pattern="WIN" />
+  <policy domain="coder" rights="none" pattern="PLT" />
+
+  <!-- Ghostscript-backed coders -->
+  <policy domain="coder" rights="none" pattern="PS" />
+  <policy domain="coder" rights="none" pattern="PS2" />
+  <policy domain="coder" rights="none" pattern="PS3" />
+  <policy domain="coder" rights="none" pattern="EPS" />
+  <policy domain="coder" rights="none" pattern="EPSF" />
+  <policy domain="coder" rights="none" pattern="EPSI" />
+  <policy domain="coder" rights="none" pattern="EPI" />
+  <policy domain="coder" rights="none" pattern="EPT" />
+  <policy domain="coder" rights="none" pattern="PDF" />
+  <policy domain="coder" rights="none" pattern="PDFA" />
+  <policy domain="coder" rights="none" pattern="EPDF" />
+  <policy domain="coder" rights="none" pattern="AI" />
+  <policy domain="coder" rights="none" pattern="XPS" />
+  <policy domain="coder" rights="none" pattern="PCL" />
+  <policy domain="module" rights="none" pattern="{PS,PDF,XPS,PCL}" />
+</policymap>
