@@ -103,8 +103,9 @@ RUN mkdir -p /root/.EasyOCR/model && \
     rm /root/.EasyOCR/model/craft_mlt_25k.zip && \
     /tmp/clean-layer.sh
 
-# Tesseract and some associated utility packages
-RUN apt-get install tesseract-ocr -y && \
+# Tesseract and some associated utility packages.
+# poppler-utils provides pdftoppm, required by pdf2image.
+RUN apt-get install tesseract-ocr poppler-utils -y && \
     /tmp/clean-layer.sh
 
 ENV TESSERACT_PATH=/usr/bin/tesseract \
@@ -126,7 +127,7 @@ RUN mkdir -p /root/.jupyter && touch /root/.jupyter/jupyter_nbconvert_config.py 
 RUN apt-get install libmagickwand-dev && \
     /tmp/clean-layer.sh
 
-# Override default imagemagick policies
+# Restrictive imagemagick policy: blocks ImageTragick-class coders (URL, MVG, MSL, PS, PDF, ...)
 ADD patches/imagemagick-policy.xml /etc/ImageMagick-6/policy.xml
 
 # Add Kaggle module resolver
